@@ -1,6 +1,6 @@
-Performance Test on different browser
+Performance Test 
 ===========================
-A Framework for testing web performance on Firefox and Chrome
+A Framework for testing web performance between different browser
 
 # Installation
 * Install Firefox
