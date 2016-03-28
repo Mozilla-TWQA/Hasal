@@ -1,6 +1,6 @@
-Google Doc Performance Test
+Performance Test on different browser
 ===========================
-A Framework for testing Google Doc performance on Firefox
+A Framework for testing web performance on Firefox and Chrome
 
 # Installation
 * Install Firefox
