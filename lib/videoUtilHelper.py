@@ -3,8 +3,8 @@ import os
 import platform
 import subprocess
 from recordscreen import video_capture_line
-from videoAnalyzer import VideoAnalyzer
 from recordscreen import screenshot_capture_line
+import json
 
 
 DEFAULT_VIDEO_RECORDING_FPS = 90
@@ -17,6 +17,9 @@ if platform.system().lower() == "darwin":
 else:
     DEFAULT_VIDEO_RECORDING_DISPLAY = ":0.0+" + str(DEFAULT_VIDEO_RECORDING_POS_X) + "," + str(DEFAULT_VIDEO_RECORDING_POS_X)
 DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
+
+DEFAULT_CONVERT_VIDEO_TOOL_CMD = "python lib/imageTool.py --convertvideo -i %s -o %s -n %s"
+DEFAULT_COMPARING_IMG_TOOL_CMD = "python lib/imageTool.py --compareimg -i %s -o %s -s %s -r %s"
 
 class RecordingVideoObj(object):
 
@@ -43,17 +46,17 @@ class RecordingVideoObj(object):
                        input_codec=DEFAULT_VIDEO_RECORDING_CODEC):
         os.system(" ".join(screenshot_capture_line(input_fps, input_pos_x, input_pos_y, input_width, input_height,
                                                    input_display_device, input_codec, output_video_fp)))
-        video_analyze_obj = VideoAnalyzer()
-        video_analyze_obj.convert_video_to_images(output_video_fp, output_img_dp, output_img_name)
+        os.system(DEFAULT_CONVERT_VIDEO_TOOL_CMD % (output_video_fp, output_img_dp, output_img_name))
 
 class VideoAnalyzeObj(object):
 
-    def run_analyze(self, input_video_fp, output_img_dp, input_sample_dp):
+    def run_analyze(self, input_video_fp, output_img_dp, input_sample_dp, result_fp):
         if os.path.exists(output_img_dp) is False:
             os.mkdir(output_img_dp)
-        video_analyze_obj = VideoAnalyzer()
-        video_analyze_obj.convert_video_to_images(input_video_fp, output_img_dp)
-        return video_analyze_obj.compare_with_sample_image(input_sample_dp)
+        os.system(DEFAULT_COMPARING_IMG_TOOL_CMD % (input_video_fp, output_img_dp, input_sample_dp, result_fp))
+        with open(result_fp) as fh:
+            result = json.load(fh)
+        return result
 
 
 
