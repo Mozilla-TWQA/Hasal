@@ -3,7 +3,6 @@ import os
 import cv2
 import json
 import time
-import numpy
 import argparse
 import shutil
 from argparse import ArgumentDefaultsHelpFormatter
@@ -12,17 +11,16 @@ DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
 DEFAULT_SAMPLE_DIR_PATH = os.path.join(os.getcwd(), "sample")
 DEFAULT_IMG_LIST_DATA_FN = "data.json"
 
-class VideoAnalyzer(object):
+class ImageTool(object):
 
     def __init__(self):
         self.image_list = []
 
-    def dump_image_list_to_json(self, output_dp):
-        output_fp = os.path.join(output_dp, DEFAULT_IMG_LIST_DATA_FN)
+    def dump_result_to_json(self, data, output_fp):
         with open(output_fp, "wb") as fh:
-            json.dump(self.image_list, fh)
+            json.dump(data, fh)
 
-    def convert_video_to_images(self, input_video_fp, output_image_dir_path=DEFAULT_IMG_DIR_PATH, output_image_name=None):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name):
         vidcap = cv2.VideoCapture(input_video_fp)
         result, image = vidcap.read()
         if output_image_name:
@@ -41,10 +39,9 @@ class VideoAnalyzer(object):
                 result, image = vidcap.read()
                 img_cnt += 1
                 self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
-            self.dump_image_list_to_json(output_image_dir_path)
         return self.image_list
 
-    def compare_with_sample_image(self, input_sample_dp=DEFAULT_SAMPLE_DIR_PATH):
+    def compare_with_sample_image(self, input_sample_dp):
         result_list = []
         print "Comparing sample file start %s" % time.strftime("%c")
         sample_fn_list = os.listdir(input_sample_dp)
@@ -74,11 +71,6 @@ class VideoAnalyzer(object):
         print "Comparing sample file end %s" % time.strftime("%c")
         return result_list
 
-    def load_img_list_data(self):
-        data_fp = os.path.join(DEFAULT_IMG_DIR_PATH, DEFAULT_IMG_LIST_DATA_FN)
-        with open(data_fp) as fh:
-            self.image_list = json.load(fh)
-
     def compare_two_images(self, image1_fp, image2_fp):
         match = False
         img1 = cv2.imread(image1_fp)
@@ -101,31 +93,53 @@ class VideoAnalyzer(object):
                 match = True
             return match
 
-    def run(self):
-        pass
-
 
 def main():
-    arg_parser = argparse.ArgumentParser(description='Performance Video Analyzer',
+    arg_parser = argparse.ArgumentParser(description='Image tool',
                                          formatter_class=ArgumentDefaultsHelpFormatter)
+    arg_parser.add_argument('--convertvideo', action='store_true', dest='convert_video_flag', default=False,
+                            help='convert video to images.', required=False)
+    arg_parser.add_argument('--compareimg', action='store_true', dest='compare_img_flag', default=False,
+                            help='compare images.', required=False)
     arg_parser.add_argument('-i', '--input', action='store', dest='input_video_fp', default=None,
                             help='Specify the video file path.', required=False)
-    arg_parser.add_argument('--loadimg', action='store_true', dest='load_img_flag', default=None,
-                            help='load the image folder without converting as comparing data.', required=False)
+    arg_parser.add_argument('-o', '--outputdir', action='store', dest='output_img_dp', default=None,
+                            help='Specify output image dir path.', required=False)
+    arg_parser.add_argument('-n', '--outputimgname', action='store', dest='output_img_name', default=None,
+                            help='Specify output image name.', required=False)
+    arg_parser.add_argument('-s', '--sample', action='store', dest='sample_img_dp', default=None,
+                            help='Specify sample image dir path.', required=False)
+    arg_parser.add_argument('-r', '--resultfp', action='store', dest='result_fp', default=None,
+                            help='Specify result file path.', required=False)
     args = arg_parser.parse_args()
-    input_fp = args.input_video_fp
-    load_img_flag = args.load_img_flag
 
-    run_obj = VideoAnalyzer()
-    if load_img_flag:
-        run_obj.load_img_list_data()
-    else:
-        if input_fp:
-            run_obj.convert_video_to_images(input_fp)
+    img_tool_obj = ImageTool()
+    input_video_fp = args.input_video_fp
+    output_img_dp = args.output_img_dp
+    output_img_name = args.output_img_name
+    sample_img_dp = args.sample_img_dp
+    result_fp = args.result_fp
+
+    if args.convert_video_flag is False and args.compare_img_flag is False:
+        # default is compare images
+        if input_video_fp and output_img_dp and sample_img_dp and result_fp:
+            img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
         else:
-            print "Please specify the video file need to be converted or use --loadimg to load your img data."
-    if len(run_obj.image_list) > 0:
-        print run_obj.compare_with_sample_image()
+            print "Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path."
+    elif args.convert_video_flag:
+        # convert video to images
+        if input_video_fp and output_img_dp:
+            img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
+        else:
+            print "Please specify the input video dir path, output image dir path and output image name."
+    else:
+        # compare images
+        if input_video_fp and output_img_dp and sample_img_dp and result_fp:
+            img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
+        else:
+            print "Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path."
 
 if __name__ == '__main__':
     main()

@@ -1,9 +1,10 @@
 __author__ = 'shako'
 import unittest
-from selenium import webdriver
+#from selenium import webdriver
 from videoUtilHelper import RecordingVideoObj
 from videoUtilHelper import VideoAnalyzeObj
-from selenium.webdriver.common.keys import Keys
+#from selenium.webdriver.common.keys import Keys
+import subprocess
 import json
 import time
 import io
@@ -11,6 +12,7 @@ import os
 
 DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
 DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
+DEFAULT_RESULT_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "results")
 DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
 DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
 DEFAULT_IMAGE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images")
@@ -38,14 +40,22 @@ class PerfBaseTest(unittest.TestCase):
 
     def initOutputDir(self):
         # Init output folder
-        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR, DEFAULT_IMAGE_DIR,
+        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_RESULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR, DEFAULT_IMAGE_DIR,
                         DEFAULT_IMAGE_OUTPUT_DIR, DEFAULT_IMAGE_SAMPLE_DIR]:
             if os.path.exists(chk_dir) is False:
                 os.mkdir(chk_dir)
 
+    def getBrowserType(self):
+        result = DEFAULT_BROWSER_TYPE_FIREFOX
+        test_name_list = self._testMethodName.split("_")
+        if len(test_name_list) > 2:
+            result = test_name_list[1].lower()
+        return result
+
     def initOutputFn(self):
         # Init output file name
         self.output_name = self._testMethodName + "_" + str(int(time.time()))
+        self.output_compare_result_fp = os.path.join(DEFAULT_RESULT_OUTPUT_DIR, self.output_name + ".json")
         self.video_output_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
@@ -56,21 +66,6 @@ class PerfBaseTest(unittest.TestCase):
         self.profile_timing_json_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
 
-    def initWebDriver(self):
-        self.browser_type = DEFAULT_BROWSER_TYPE_FIREFOX
-        test_name_list = self._testMethodName.split("_")
-        if len(test_name_list) > 2:
-            self.browser_type = test_name_list[1].lower()
-        if self.browser_type == DEFAULT_BROWSER_TYPE_CHROME:
-            self.driver = webdriver.Chrome(DEFAULT_CHROME_DRIVER_PATH)
-        else:
-            # The profiler starts automatically
-            # Install gecko profiler addon
-            # Ref: https://github.com/bgirard/Gecko-Profiler-Addon
-            fp = webdriver.FirefoxProfile()
-            fp.add_extension(extension=DEFAULT_GECKO_PROFILER_PATH)
-            self.driver = webdriver.Firefox(firefox_profile=fp)
-
     def setUp(self):
         # Init output folder
         self.initOutputDir()
@@ -78,17 +73,19 @@ class PerfBaseTest(unittest.TestCase):
         # Init output file name
         self.initOutputFn()
 
+        # get browser type
+        self.browser_type = self.getBrowserType()
+
         # Start video recording
         # TODO: Extract the framerate as a variable?
         self.video_recording_obj = RecordingVideoObj()
         self.video_recording_obj.start_video_recording(self.video_output_fp)
 
-        # init webdriver based on your test method name
-        self.initWebDriver()
+        # minimize all windows
+        self.minimizeAllWindows()
 
-        # move the browser window to the top left position
-        self.driver.set_window_position(DEFAULT_BROWSER_POS_X, DEFAULT_BROWSER_POS_Y)
-        self.driver.set_window_size(DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT)
+        # launch browser
+        self.launchBrowser()
 
     def tearDown(self):
         # Stop video recording
@@ -96,32 +93,51 @@ class PerfBaseTest(unittest.TestCase):
 
         if self.browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
             # Stop gecko profiler recording
-            self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.SHIFT + '2')
+            #self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.SHIFT + '2')
 
             time.sleep(10) #XXX: Change this to active wait
 
             # Switch to the cleopetra.io tab
-            main_window = self.driver.current_window_handle
-            self.driver.switch_to_window(main_window) # Switch to current frame
+            #main_window = self.driver.current_window_handle
+            #self.driver.switch_to_window(main_window) # Switch to current frame
 
-            self.driver.set_script_timeout(5)
-            recording = self.driver.execute_async_script(
-                "var done = arguments[0];" +
-                "console.log(done);" +
-                "window.Parser.getSerializedProfile(true, function (serializedProfile) {" +
-                "  done(serializedProfile);"
-                "});"
-            )
+            #self.driver.set_script_timeout(5)
+            #recording = self.driver.execute_async_script(
+            #    "var done = arguments[0];" +
+            #    "console.log(done);" +
+            #    "window.Parser.getSerializedProfile(true, function (serializedProfile) {" +
+            #    "  done(serializedProfile);"
+            #    "});"
+            #)
 
             # dump profile to .bin file
-            with io.open(self.profile_timing_bin_fp, 'w', encoding='utf-8') as f:
-                f.write(recording)
-
-        self.driver.close()
+            #with io.open(self.profile_timing_bin_fp, 'w', encoding='utf-8') as f:
+            #    f.write(recording)
 
         # analyze the video with sample image
         video_analyze_obj = VideoAnalyzeObj()
-        self.outputResult(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp))
+        self.outputResult(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp, self.output_compare_result_fp))
+
+    def minimizeAllWindows(self):
+        get_active_windows_cmd = "xdotool getactivewindow"
+        minimize_all_windows_cmd = "xdotool getactivewindow key ctrl+super+d"
+        org_window_id = subprocess.check_output(get_active_windows_cmd, shell=True)
+        for try_cnt in range(3):
+            subprocess.call(minimize_all_windows_cmd, shell=True)
+            new_window_id = subprocess.check_output(get_active_windows_cmd, shell=True)
+            if new_window_id != org_window_id:
+                break
+
+    def launchBrowser(self):
+        ubuntu_chrome_command = "google-chrome"
+        ubuntu_firefox_command = "firefox"
+        chrome_cmd = "%s --window-position=%s,%s --window-size=%s,%s"
+        firefox_cmd = "%s -height %s -width %s"
+        if self.browser_type == DEFAULT_BROWSER_TYPE_CHROME:
+            exec_cmd = chrome_cmd % (ubuntu_chrome_command, DEFAULT_BROWSER_POS_X, DEFAULT_BROWSER_POS_Y, DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT)
+        else:
+            exec_cmd = firefox_cmd % (ubuntu_firefox_command, DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT)
+        os.system(exec_cmd)
 
     def dumpToJson(self, output_data, output_fp, mode="wb"):
         with open(output_fp, mode) as fh:
