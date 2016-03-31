@@ -4,6 +4,7 @@ import platform
 import subprocess
 from recordscreen import video_capture_line
 from recordscreen import screenshot_capture_line
+from imageTool import ImageTool
 import json
 
 
@@ -46,17 +47,17 @@ class RecordingVideoObj(object):
                        input_codec=DEFAULT_VIDEO_RECORDING_CODEC):
         os.system(" ".join(screenshot_capture_line(input_fps, input_pos_x, input_pos_y, input_width, input_height,
                                                    input_display_device, input_codec, output_video_fp)))
-        os.system(DEFAULT_CONVERT_VIDEO_TOOL_CMD % (output_video_fp, output_img_dp, output_img_name))
+        img_tool_obj = ImageTool()
+        img_tool_obj.convert_video_to_images(output_video_fp, output_img_dp, output_img_name)
 
 class VideoAnalyzeObj(object):
 
-    def run_analyze(self, input_video_fp, output_img_dp, input_sample_dp, result_fp):
+    def run_analyze(self, input_video_fp, output_img_dp, input_sample_dp):
         if os.path.exists(output_img_dp) is False:
             os.mkdir(output_img_dp)
-        os.system(DEFAULT_COMPARING_IMG_TOOL_CMD % (input_video_fp, output_img_dp, input_sample_dp, result_fp))
-        with open(result_fp) as fh:
-            result = json.load(fh)
-        return result
+        img_tool_obj = ImageTool()
+        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp)
+        return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
 
