@@ -9,10 +9,10 @@ class outlier(object):
             lower = Q1 - 1.5*IQR
             upper = Q3 + 1.5*IQR    
             for data in seq:
-                if data <= lower or data >= upper: outliers.append(data)
+                if data < lower or data > upper: outliers.append(data)
     
             self.drop(seq, outliers)
-        if len(seq)==0:
+        if len(seq) == 0:
             median = 0
         elif len(seq)%2:
             median = float(seq[(len(seq)-1)/2])
