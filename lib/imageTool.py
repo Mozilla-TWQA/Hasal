@@ -20,7 +20,7 @@ class ImageTool(object):
         with open(output_fp, "wb") as fh:
             json.dump(data, fh)
 
-    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None):
         vidcap = cv2.VideoCapture(input_video_fp)
         result, image = vidcap.read()
         if output_image_name:

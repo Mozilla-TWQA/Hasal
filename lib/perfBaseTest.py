@@ -1,18 +1,14 @@
 __author__ = 'shako'
 import unittest
-#from selenium import webdriver
 from videoUtilHelper import RecordingVideoObj
 from videoUtilHelper import VideoAnalyzeObj
-#from selenium.webdriver.common.keys import Keys
 import subprocess
 import json
 import time
-import io
 import os
 
 DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
 DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
-DEFAULT_RESULT_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "results")
 DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
 DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
 DEFAULT_IMAGE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images")
@@ -40,7 +36,7 @@ class PerfBaseTest(unittest.TestCase):
 
     def initOutputDir(self):
         # Init output folder
-        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_RESULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR, DEFAULT_IMAGE_DIR,
+        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR, DEFAULT_IMAGE_DIR,
                         DEFAULT_IMAGE_OUTPUT_DIR, DEFAULT_IMAGE_SAMPLE_DIR]:
             if os.path.exists(chk_dir) is False:
                 os.mkdir(chk_dir)
@@ -55,7 +51,6 @@ class PerfBaseTest(unittest.TestCase):
     def initOutputFn(self):
         # Init output file name
         self.output_name = self._testMethodName + "_" + str(int(time.time()))
-        self.output_compare_result_fp = os.path.join(DEFAULT_RESULT_OUTPUT_DIR, self.output_name + ".json")
         self.video_output_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
@@ -116,7 +111,7 @@ class PerfBaseTest(unittest.TestCase):
 
         # analyze the video with sample image
         video_analyze_obj = VideoAnalyzeObj()
-        self.outputResult(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp, self.output_compare_result_fp))
+        self.outputResult(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp))
 
     def minimizeAllWindows(self):
         get_active_windows_cmd = "xdotool getactivewindow"
