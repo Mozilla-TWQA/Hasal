@@ -11,6 +11,7 @@ DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
 DEFAULT_SAMPLE_DIR_PATH = os.path.join(os.getcwd(), "sample")
 DEFAULT_IMG_LIST_DATA_FN = "data.json"
 
+
 class ImageTool(object):
 
     def __init__(self):
