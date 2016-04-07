@@ -1,10 +1,12 @@
 from sikuli import *
 
+
 class GeneralBrowser():
     def enterLink(self, link):
         # Enter the link and open google document
         type(link)
         type(Key.ENTER)
+
 
 class Chrome(GeneralBrowser):
     # Need further permission in Mac OS X and might not be available in windows
@@ -16,8 +18,9 @@ class Chrome(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        wait(Pattern("chrome_urlbar.png").similar(0.70).targetOffset(-40,0))
-        click(Pattern("chrome_urlbar.png").similar(0.70).targetOffset(-40,0))
+        wait(Pattern("chrome_urlbar.png").similar(0.70))
+        click(Pattern("chrome_urlbar.png").similar(0.70).targetOffset(-40, 0))
+
 
 class Firefox(GeneralBrowser):
     # Need further permission in Mac OS X and might not be available in windows
@@ -31,6 +34,4 @@ class Firefox(GeneralBrowser):
     # Wait for URL bar to appear
     def clickBar(self):
         wait(Pattern("ff_urlbar.png").similar(0.70))
-        click(Pattern("ff_urlbar.png").similar(0.70).targetOffset(-100,0))
-
-
+        click(Pattern("ff_urlbar.png").similar(0.70).targetOffset(-100, 0))
