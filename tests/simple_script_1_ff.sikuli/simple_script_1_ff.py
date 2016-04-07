@@ -1,7 +1,9 @@
-# Wait for URL bar to appear
-wait(Pattern("ff_urlbar.png").similar(0.70))
-click(Pattern("ff_urlbar.png").similar(0.70).targetOffset(-100,0))
+# if you are putting your test script folders under {git project folder}/tests/, it will work fine.
+# otherwise, you either add it to system path before you run or hard coded it in here.
+library_path = "/".join(getParentFolder().split("/")[:-2]) + "/lib/sikuli"
+sys.path.append(library_path)
+import browser
 
-# Enter the link and open google document
-type("http://goo.gl/3GR0GN")
-type(Key.ENTER)
+ff = browser.Firefox()
+ff.clickBar()
+ff.enterLink("http://goo.gl/3GR0GN")
