@@ -3,10 +3,17 @@
 library_path = "/".join(getParentFolder().split("/")[:-2]) + "/lib/sikuli"
 sys.path.append(library_path)
 import browser
+import gdoc
 
-chrome = browser.Chrome()
-chrome.clickBar()
-chrome.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?usp=sharing")
+ff = browser.Firefox()
+ff.clickBar()
+ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit")
 
-wait(6)
-chrome.getConsoleInfo("window.performance.timing")
+gd = gdoc.gDoc()
+gd.wait_for_loaded()
+
+for i in range(100):
+    type(Key.PAGE_DOWN)
+
+wait(5)
+ff.getConsoleInfo("window.performance.timing")

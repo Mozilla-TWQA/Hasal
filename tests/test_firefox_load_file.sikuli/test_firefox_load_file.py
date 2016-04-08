@@ -6,7 +6,7 @@ import browser
 
 ff = browser.Firefox()
 ff.clickBar()
-ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?usp=sharing")
+ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit")
 
-wait(5)
+wait(6)
 ff.getConsoleInfo("window.performance.timing")
