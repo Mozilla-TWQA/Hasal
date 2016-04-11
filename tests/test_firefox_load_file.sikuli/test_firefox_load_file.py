@@ -2,9 +2,9 @@
 # otherwise, you either add it to system path before you run or hard coded it in here.
 # library_path = "/".join(getParentFolder().split("/")[:-2]) + "/lib/sikuli"
 # sys.path.append(library_path)
+sys.path.append(sys.argv[2])
 import browser
 import common
-import sys
 
 
 com = common.General()
@@ -15,4 +15,6 @@ ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqS
 
 wait(6)
 ff.getConsoleInfo("window.performance.timing")
+
+wait(1)
 com.dumpToJson(Env.getClipboard(), "timing" + sys.argv[1])

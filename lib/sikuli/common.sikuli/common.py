@@ -6,7 +6,7 @@ class General():
         self.os = str(Settings.getOS())
         self.os_version = str(Settings.getOSVersion())
         self.project_base = "/".join(getBundleFolder().split("/")[:-3])
-        self.json_path = project_base + "/output/json/"
+        self.json_path = self.project_base + "/output/json/"
 
         if self.os.startswith("M"):
             self.control = Key.CMD

@@ -16,6 +16,7 @@ class Environment(object):
     DEFAULT_IMAGE_SAMPLE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "sample")
     DEFAULT_GECKO_PROFILER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "geckoprofiler-signed.xpi")
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
+    DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
 
     DEFAULT_VIDEO_RECORDING_FPS = 90
@@ -31,8 +32,11 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
     def __init__(self, test_method_name):
+        self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
-        self.output_name = test_method_name + "_" + str(int(time.time()))
+        self.hasal_dir = self.DEFAULT_HASAL_DIR
+        self.sikuli_path = self.DEFAULT_SIKULI_PATH
+        self.output_name = test_method_name + "_" + self.time_stamp
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
