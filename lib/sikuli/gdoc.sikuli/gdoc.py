@@ -3,8 +3,8 @@ from sikuli import *
 
 class gDoc():
     def __init__(self):
-        self.os = Settings.getOS()
-        self.os_version = Settings.getOSVersion()
+        self.os = str(Settings.getOS())
+        self.os_version = str(Settings.getOSVersion())
 
         if self.os.startswith("M"):
             self.control = Key.CMD
