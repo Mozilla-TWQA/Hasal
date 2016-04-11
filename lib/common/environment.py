@@ -6,6 +6,7 @@ from ..helper.desktopHelper import DEFAULT_BROWSER_TYPE_FIREFOX
 
 class Environment(object):
 
+    DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
