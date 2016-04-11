@@ -13,5 +13,5 @@ class gDoc():
 
     def wait_for_loaded(self):
         wait(Pattern("pics/gdoc_star.png").similar(0.85))
-        wait(2)
+        wait(3)
 
