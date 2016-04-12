@@ -77,7 +77,7 @@ class Firefox(GeneralBrowser):
 
     # Launch web console for developer
     def triggerConsole(self):
-        type("k", self.control + Key.ALT)
+        type("k", self.control + Key.SHIFT)
 
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info):

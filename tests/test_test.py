@@ -15,19 +15,7 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_1_fn)
         self.sikuli = sikuli.Sikuli()
 
-    def test_chrome_load_file(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
-        assert(True)
-
-    def test_chrome_gdoc_pagedown(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
-        assert(True)
-
     def test_firefox_load_file(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
-        assert(True)
-
-    def test_firefox_gdoc_pagedown(self):
         self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
         assert(True)
 
@@ -40,5 +28,6 @@ class TestSikuli(PerfBaseTest):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_timing", self.env.test_method_name + "_" + self.env.time_stamp)
         elif self.env.test_method_name.startswith("test_chrome"):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_timing",  self.env.test_method_name + "_" + self.env.time_stamp)
+            
 
         super(TestSikuli, self).tearDown()

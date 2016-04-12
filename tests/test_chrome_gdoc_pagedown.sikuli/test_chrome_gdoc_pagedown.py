@@ -15,9 +15,3 @@ gd.wait_for_loaded()
 
 for i in range(100):
     type(Key.PAGE_DOWN)
-
-wait(6)
-chrome.getConsoleInfo("window.performance.timing")
-
-wait(1)
-com.dumpToJson(Env.getClipboard(), "timing" + sys.argv[1])

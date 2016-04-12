@@ -12,9 +12,3 @@ ff = browser.Firefox()
 
 ff.clickBar()
 ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit")
-
-wait(6)
-ff.getConsoleInfo("window.performance.timing")
-
-wait(1)
-com.dumpToJson(Env.getClipboard(), "timing" + sys.argv[1])
