@@ -8,8 +8,8 @@ class BrowserBase(object):
     process_name = None
 
     def __init__(self, window_size_height, windows_size_width):
-        self.window_size_height = window_size_height
-        self.windows_size_width = windows_size_width
+        self.window_size_height = str(window_size_height)
+        self.windows_size_width = str(windows_size_width)
         self.get_browser_settings()
 
     def get_browser_settings(self):
