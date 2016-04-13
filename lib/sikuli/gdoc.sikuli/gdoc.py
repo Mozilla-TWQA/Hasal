@@ -12,7 +12,5 @@ class gDoc():
             self.control = Key.CTRL
 
     def wait_for_loaded(self):
-        # TODO: need to find another reliable wait
-        # wait(Pattern("pics/gdoc_star.png").similar(0.85))
+        wait(Pattern("pics/gdoc.png").similar(0.85))
         wait(3)
-
