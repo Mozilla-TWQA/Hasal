@@ -9,7 +9,7 @@ ff = browser.Firefox()
 gd = gdoc.gDoc()
 
 ff.clickBar()
-ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit")
+ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?hl=en")
 
 gd.wait_for_loaded()
 
