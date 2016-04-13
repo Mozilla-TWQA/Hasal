@@ -40,5 +40,8 @@ class TestSikuli(PerfBaseTest):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_timing", self.env.test_method_name + "_" + self.env.time_stamp)
         elif self.env.test_method_name.startswith("test_chrome"):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_timing",  self.env.test_method_name + "_" + self.env.time_stamp)
+        time.sleep(3)
+        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_gdoc_clean_all", self.env.test_method_name + "_" + self.env.time_stamp)
+        time.sleep(3)
 
         super(TestSikuli, self).tearDown()
