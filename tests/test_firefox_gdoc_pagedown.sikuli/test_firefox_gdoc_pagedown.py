@@ -14,4 +14,5 @@ ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqS
 gd.wait_for_loaded()
 
 for i in range(100):
+    wait(0.3)
     type(Key.PAGE_DOWN)
