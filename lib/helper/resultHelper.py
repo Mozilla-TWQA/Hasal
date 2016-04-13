@@ -36,7 +36,7 @@ def output_result(test_method_name,current_run_result, output_fp):
         if (result[test_method_name]['total_run_no'] - result[test_method_name]['error_no']) == 0:
             result[test_method_name]['avg_time'] = 0
         else:
-            result[test_method_name]['avg_time'] = result[test_method_name]['total_time'] / (result[test_method_name]['total_run_no'] - result[test_method_name]['error_no'])
+            result[test_method_name]['avg_time'] = sum(result[test_method_name]['time_list']) / len(result[test_method_name]['time_list'])
         if run_time > result[test_method_name]['max_time']:
             result[test_method_name]['max_time'] = run_time
         if run_time < result[test_method_name]['min_time']:
