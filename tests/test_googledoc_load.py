@@ -13,9 +13,9 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_1_fn)
         self.sikuli = sikuli.Sikuli()
 
-    #def test_chrome_gdoc_load(self):
-    #    self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
-    #    assert(True)
+    def test_chrome_gdoc_load(self):
+        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
+        assert(True)
 
     def test_firefox_gdoc_load(self):
         self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name, self.env.test_method_name + "_" + self.env.time_stamp)
