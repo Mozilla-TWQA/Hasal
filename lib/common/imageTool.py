@@ -78,7 +78,7 @@ class ImageTool(object):
         img2 = cv2.imread(image2_fp)
         row1, cols1, channel1 = img1.shape
         row2, cols2, channel2 = img2.shape
-        if (row1 != row2) or (cols1 != cols2) or (channel1 != channel2):
+        if (row1 != row2) or (cols1 != cols2) or (channel1 != channel2) or (max(img1.sum(), img2.sum()) - min(img1.sum(), img2.sum()) > 10000):
             return match
         else:
             mismatch = 0
