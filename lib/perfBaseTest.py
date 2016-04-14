@@ -36,7 +36,7 @@ class PerfBaseTest(unittest.TestCase):
         self.profilers.stop_profiling()
 
         # Stop browser
-        desktopHelper.stop_browser(self.browser_type)
+        desktopHelper.stop_browser(self.browser_type, self.env)
 
         # output result
         resultHelper.result_calculation(self.env)
