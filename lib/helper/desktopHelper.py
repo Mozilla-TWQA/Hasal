@@ -1,5 +1,6 @@
 import subprocess
 import platform
+import lib.sikuli
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
 
@@ -19,12 +20,15 @@ def launch_browser(browser_type):
     browser_obj.launch()
 
 
-def stop_browser(browser_type):
-    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-    else:
-        browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-    browser_obj.stop()
+def stop_browser(browser_type, env):
+    # This could sometime cause firefox/chrome safe mode issue
+    # if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+    #     browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+    # else:
+    #     browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+    # browser_obj.stop()
+    print browser_type
+    lib.sikuli.Sikuli().close_browser(browser_type, env)
 
 
 def minimize_window():
