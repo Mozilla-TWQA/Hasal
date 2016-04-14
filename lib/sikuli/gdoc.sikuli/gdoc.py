@@ -12,5 +12,8 @@ class gDoc():
             self.control = Key.CTRL
 
     def wait_for_loaded(self):
+        default_timeout = getAutoWaitTimeout()
+        setAutoWaitTimeout(10)
         wait(Pattern("pics/gdoc.png").similar(0.85))
         wait(3)
+        setAutoWaitTimeout(default_timeout)
