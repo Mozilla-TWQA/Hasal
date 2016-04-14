@@ -77,7 +77,11 @@ class Firefox(GeneralBrowser):
 
     # Launch web console for developer
     def triggerConsole(self):
+        type(Key.F12)
         type("k", self.control + Key.SHIFT)
+
+    def closeConsole(self):
+        type(Key.F12)
 
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info):
@@ -86,5 +90,5 @@ class Firefox(GeneralBrowser):
         click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
         type("copy(" + info + ")")
         type(Key.ENTER)
-        self.triggerConsole()
+        self.closeConsole()
         return Env.getClipboard().strip()
