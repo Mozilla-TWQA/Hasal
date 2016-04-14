@@ -77,7 +77,6 @@ class Firefox(GeneralBrowser):
 
     # Launch web console for developer
     def triggerConsole(self):
-        type(Key.F12)
         type("k", self.control + Key.SHIFT)
 
     def closeConsole(self):
