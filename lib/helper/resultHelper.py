@@ -2,6 +2,7 @@ import os
 import json
 from ..common.imageTool import ImageTool
 from ..common.outlier import outlier
+import numpy as np
 
 
 def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp):
@@ -22,7 +23,7 @@ def output_result(test_method_name,current_run_result, output_fp):
         result = {}
 
     if len(current_run_result) == 2:
-        run_time = current_run_result[0]['time_seq'] - current_run_result[1]['time_seq']
+        run_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[1]['time_seq'])
 
     calc_obj = outlier()
 
