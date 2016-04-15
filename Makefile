@@ -1,5 +1,25 @@
-install: venv-install pip-install video-recording-libs-install
+PYTHON := python
+VENV := ~/.hasalenv
 
+$(VENV)/bin/python:
+	[ -d $(VENV) ] || $(PYTHON) -m virtualenv $(VENV) || virtualenv $(VENV)
+	$(VENV)/bin/pip install --upgrade setuptools
+	$(VENV)/bin/python setup.py develop
+
+
+.PHONY: dev-env
+dev-env: $(VENV)/bin/python
+
+
+# for testing
+.PHONY: test
+test: dev-env
+	$(VENV)/bin/python -m unittest tests.test_googledoc_load
+
+#####################################
+# below are origin makrfile scripts #
+#####################################
+install: venv-install pip-install video-recording-libs-install
 
 opencv-install:
 	wget https://github.com/Itseez/opencv/archive/3.0.0.zip
@@ -11,8 +31,6 @@ opencv-install:
 	sudo apt-get install libgtk2.0-dev
 	sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
 	sudo apt-get install libatlas-base-dev gfortran
-
-
 
 video-recording-libs-install:
 	sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data
