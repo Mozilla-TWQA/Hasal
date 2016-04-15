@@ -13,3 +13,6 @@ while [ $COUNTER -lt 40 ]; do
   python -m unittest tests.test_chrome_gdoc_pagedown
   let COUNTER=COUNTER+1
 done
+
+#Should do a signal in order to show that this is end
+gedit end.txt
