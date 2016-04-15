@@ -5,6 +5,7 @@ import json
 import time
 import argparse
 import shutil
+import numpy as np
 from argparse import ArgumentDefaultsHelpFormatter
 
 DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
@@ -46,54 +47,63 @@ class ImageTool(object):
         result_list = []
         print "Comparing sample file start %s" % time.strftime("%c")
         sample_fn_list = os.listdir(input_sample_dp)
+        if len(sample_fn_list) != 2:
+            return result_list
         sample_fn_list.sort()
-        sample_fn_list.reverse()
-        found_flag = False
-        search_index = 0
+        found_1 = False
+        found_2 = False
         for sample_fn in sample_fn_list:
+            breaking = False
             sample_fp = os.path.join(input_sample_dp, sample_fn)
-            for img_index in range(len(self.image_list)):
-                if found_flag is False:
-                    image_data = self.image_list[img_index]
-                else:
-                    new_index = search_index - img_index
-                    image_data = self.image_list[new_index]
-                    if new_index < 0:
-                        break
-                if self.compare_two_images(sample_fp, image_data['image_fp']):
+            sample_dct = self.convert_to_dct(sample_fp)
+            for img_index in range(len(self.image_list)/4,1,-1):
+                if found_1: break
+                image_data = self.image_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct, comparing_dct):
                     print "Comparing sample file end %s" % time.strftime("%c")
-                    if found_flag is False:
-                        found_flag = True
-                        search_index = img_index - 1
                     result_list.append(image_data)
-                    if len(result_list) == len(os.listdir(input_sample_dp)):
-                        return result_list
+                    breaking = True
+                    found_1 = True
                     break
-        print "Comparing sample file end %s" % time.strftime("%c")
+                #else:
+                #    print "Comparing  sample file [%s] with imgae file [%s] mismatch!" % (sample_fp, image_data['image_fp'])
+            for img_index in range(len(self.image_list)*3/4,len(self.image_list)):
+                if breaking: break
+                if found_2: break
+                image_data = self.image_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct, comparing_dct):
+                    print "Comparing sample file end %s" % time.strftime("%c")
+                    result_list.append(image_data)
+                    breaking = True
+                    found_2 = True
+                    break
+                #else:
+                #    print "Comparing  sample file [%s] with imgae file [%s] mismatch!" % (sample_fp, image_data['image_fp'])
+        print result_list
         return result_list
 
-    def compare_two_images(self, image1_fp, image2_fp):
+    def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
-        img1 = cv2.imread(image1_fp)
-        img2 = cv2.imread(image2_fp)
-        row1, cols1, channel1 = img1.shape
-        row2, cols2, channel2 = img2.shape
-        if (row1 != row2) or (cols1 != cols2) or (channel1 != channel2) or (max(img1.sum(), img2.sum()) - min(img1.sum(), img2.sum()) > 10000):
+        row1, cols1 = dct_obj_1.shape
+        row2, cols2 = dct_obj_2.shape
+        if (row1 != row2) or (cols1 != cols2):
             return match
         else:
-            mismatch = 0
-            for i in range(1, row1):
-                for j in range(1, cols1):
-                    px1 = img1[i, j]
-                    px2 = img2[i, j]
-                    if max(px1[0],px2[0]) - min(px1[0],px2[0]) > 5 or max(px1[1],px2[1]) - min(px1[1],px2[1]) > 5 or max(px1[2],px2[2]) - min(px1[2],px2[2]) > 5:
-                        print "Comparing  sample file [%s] with imgae file [%s] mismatch! value [%s] vs [%s]" % (image1_fp, image2_fp, px1, px2)
-                        mismatch += 1
-                        return match
-            if mismatch == 0:
-                match = True
-            return match
+            threshold = 0.0001
+            mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1,dct_obj_2)))/(row1*cols1)
+            if mismatch_rate > threshold:
+                return False
+            else:
+                return True
 
+    def convert_to_dct(self, image_fp):
+        img_obj = cv2.imread(image_fp)
+        img_gray = cv2.cvtColor(img_obj, cv2.COLOR_BGR2GRAY)
+        img_dct = np.float32(img_gray)/255.0
+        dct_obj = cv2.dct(img_dct)
+        return dct_obj
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Image tool',
