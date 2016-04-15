@@ -46,7 +46,8 @@ class PerfBaseTest(unittest.TestCase):
         desktopHelper.stop_browser(self.browser_type, self.env)
 
         # Delete Url
-        self.target_helper.delete_target(self.test_url_id)
+        if self.test_url_id:
+            self.target_helper.delete_target(self.test_url_id)
 
         # output result
         resultHelper.result_calculation(self.env)
