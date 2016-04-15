@@ -13,9 +13,14 @@ class Sikuli():
     # hasal_dir:  DEFAULT_HASAL_DIR in environment.py
     # test_name:  test_(browser)_(test_name)
     # timestamp:  please pass in the integer generated from main python for folder record
-    def run(self, sikuli_dir, hasal_dir, test_name, timestamp=""):
+    def run(self, sikuli_dir, hasal_dir, test_name, timestamp="", test_url=""):
         script_path = os.path.join(hasal_dir, "tests")
-        cmd = sikuli_dir + "/runsikulix -r " + script_path + "/" + test_name + ".sikuli --args " + str(timestamp) + " " + self.set_syspath(hasal_dir)
+        if test_url == "":
+            cmd = sikuli_dir + "/runsikulix -r " + script_path + "/" + test_name + ".sikuli --args " + str(
+                timestamp) + " " + self.set_syspath(hasal_dir)
+        else:
+            cmd = sikuli_dir + "/runsikulix -r " + script_path + "/" + test_name + ".sikuli --args " + str(
+                timestamp) + " " + self.set_syspath(hasal_dir) + " " + test_url
         os.system(cmd)
 
     def close_browser(self, browser, env):

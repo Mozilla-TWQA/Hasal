@@ -8,7 +8,7 @@ com = common.General()
 ff = browser.Firefox()
 
 ff.clickBar()
-ff.enterLink("https://docs.google.com/document/d/1cSx12G6p-0dCilrevzZUjdl_8QEMiOao33u8BTuzszs/edit?hl=en")
+ff.enterLink(sys.argv[3])
 sleep(5)
 type("Answer: Depending on how one distinguishes a different Bible version from a revision of an existing Bible version, \
 there are as many as 50 different English versions of the Bible. The question then arises: Is there really a need for \

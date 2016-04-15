@@ -1,7 +1,8 @@
 import unittest
 import helper.desktopHelper as desktopHelper
 import helper.resultHelper as resultHelper
-import helper.captureHelper as captureHelper
+import lib.helper.targetHelper as targetHelper
+import lib.sikuli as sikuli
 from common.environment import Environment
 from helper.profilerHelper import Profilers
 
@@ -24,6 +25,12 @@ class PerfBaseTest(unittest.TestCase):
         self.profilers = Profilers(self.env)
         self.profilers.start_profiling(self.profiler_list)
 
+        # init target helper
+        self.target_helper = targetHelper.TagetHelper(self.env)
+
+        # init sikuli
+        self.sikuli = sikuli.Sikuli()
+
         # minimize all windows
         desktopHelper.minimize_window()
 
@@ -37,6 +44,9 @@ class PerfBaseTest(unittest.TestCase):
 
         # Stop browser
         desktopHelper.stop_browser(self.browser_type, self.env)
+
+        # Delete Url
+        self.target_helper.delete_target(self.test_url_id)
 
         # output result
         resultHelper.result_calculation(self.env)

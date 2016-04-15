@@ -24,6 +24,8 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
     DEFAULT_VIDEO_RECORDING_HEIGHT = 768
+
+    DEFAULT_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOTHhJNEhTN1pqYm8"
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
     else:
