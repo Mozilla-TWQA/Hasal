@@ -3,9 +3,16 @@
 .env-*/
 env/
 env-*/
+output
 snapshot
 result.json
 *~
+
+# 3rd party files
+thirdParty/*
+# creds files
+client_secrets.json
+mycreds.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
