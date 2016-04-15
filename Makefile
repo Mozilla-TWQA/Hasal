@@ -19,7 +19,7 @@ video-recording-libs-install:
 
 venv-install:
 ifndef VIRTUAL_ENV
-        virtualenv venv
+	virtualenv venv
 endif
 
 cv2-install-venv:
