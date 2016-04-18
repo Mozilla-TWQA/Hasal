@@ -1,10 +1,12 @@
 from sikuli import *
+import common
 
 
 class gDoc():
     def __init__(self):
         self.os = str(Settings.getOS())
         self.os_version = str(Settings.getOSVersion())
+        self.com = common.General()
 
         if self.os.startswith("M"):
             self.control = Key.CMD
@@ -36,4 +38,21 @@ class gDoc():
             type(Key.DOWN)
         type(Key.ENTER)
 
-
+    def insert_image_url(self, img_url):
+        wait(Pattern("pics/toolbar_insert.png").similar(0.70))
+        type("i", self.alt + Key.SHIFT)
+        wait(Pattern("pics/toolbar_insert_image.png").similar(0.70))
+        type("i")
+        wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.70))
+        click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.85))
+        wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.70))
+        click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.70))
+        type(img_url)
+        sleep(2)
+        self.com.select_all()
+        sleep(1)
+        self.com.copy()
+        sleep(1)
+        self.com.paste()
+        sleep(2)
+        wait(Pattern("pics/url_checked.png").similar(0.85))
