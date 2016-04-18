@@ -33,8 +33,11 @@ class General():
         type("x", self.control)
 
     def paste(self):
-        type("p", self.control)
+        type("v", self.control)
 
     def capLock(self, lock):
         if lock != Key.isLockOn(Key.CAPS_LOCK):
             type(Key.CAPS_LOCK)
+
+    def select_all(self):
+        type("a", self.control)
