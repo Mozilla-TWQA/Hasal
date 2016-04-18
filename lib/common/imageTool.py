@@ -56,7 +56,7 @@ class ImageTool(object):
             breaking = False
             sample_fp = os.path.join(input_sample_dp, sample_fn)
             sample_dct = self.convert_to_dct(sample_fp)
-            for img_index in range(len(self.image_list)/4,1,-1):
+            for img_index in range(len(self.image_list)*3/4,1,-1):
                 if found_1: break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
@@ -68,7 +68,7 @@ class ImageTool(object):
                     break
                 #else:
                 #    print "Comparing  sample file [%s] with imgae file [%s] mismatch!" % (sample_fp, image_data['image_fp'])
-            for img_index in range(len(self.image_list)*3/4,len(self.image_list)):
+            for img_index in range(len(self.image_list)*2/3,len(self.image_list)):
                 if breaking: break
                 if found_2: break
                 image_data = self.image_list[img_index]
