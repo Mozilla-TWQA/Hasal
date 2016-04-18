@@ -23,11 +23,6 @@ class gDoc():
         wait(3)
         setAutoWaitTimeout(default_timeout)
 
-    def insert_image_by_url(self, image_url):
-        type("i", self.alt)
-        type("i", self.alt)
-        wait(Pattern("pics/insert_img_identifier.png").similar(0.85))
-
     # Prevent cursor twinkling on screen
     def deFoucsContentWindow(self):
         wait(Pattern("pics/defoucs_content_window.png").similar(0.85))
