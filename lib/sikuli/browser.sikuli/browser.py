@@ -53,6 +53,10 @@ class Chrome(GeneralBrowser):
         self.triggerConsole()
         return Env.getClipboard().strip()
 
+    # Prevent cursor twinkling on screen
+    def switchToContentWindow(self):
+        type(Key.TAB)
+
 
 class Firefox(GeneralBrowser):
     def __init__(self):
@@ -91,3 +95,9 @@ class Firefox(GeneralBrowser):
         type(Key.ENTER)
         self.closeConsole()
         return Env.getClipboard().strip()
+
+    # Prevent cursor twinkling on screen
+    def switchToContentWindow(self):
+        type(Key.TAB)
+        wait(3)
+        type(Key.TAB)
