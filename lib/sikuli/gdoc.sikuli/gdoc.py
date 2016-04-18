@@ -11,11 +11,6 @@ class gDoc():
         else:
             self.control = Key.CTRL
 
-        if self.os.startswith("M"):
-            self.alt = Key.CMD
-        else:
-            self.alt = Key.ALT
-
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
