@@ -56,3 +56,4 @@ class gDoc():
         self.com.paste()
         sleep(2)
         wait(Pattern("pics/url_checked.png").similar(0.85))
+        type(Key.ENTER)
