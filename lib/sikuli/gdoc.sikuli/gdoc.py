@@ -17,3 +17,8 @@ class gDoc():
         wait(Pattern("pics/gdoc.png").similar(0.85))
         wait(3)
         setAutoWaitTimeout(default_timeout)
+
+    # Prevent cursor twinkling on screen
+    def deFoucsContentWindow(self):
+        wait(Pattern("pics/defoucs_content_window.png").similar(0.85))
+        click(Pattern("pics/defoucs_content_window.png").similar(0.85).targetOffset(0, 25))
