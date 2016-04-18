@@ -7,9 +7,13 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         super(TestSikuli, self).setUp()
-        self.test_url, self.test_url_id = self.target_helper.clone_target("1eY2X556Ce3_MiIzqlGeAhzbWjn2_1Z44Krv94cXhlxU",
+        self.test_url, self.test_url_id = self.target_helper.clone_target("1cSx12G6p-0dCilrevzZUjdl_8QEMiOao33u8BTuzszs",
                                                                           self.env.output_name)
-        time.sleep(5)
+        time.sleep(3)
+        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_switchcontentwindow",
+                        self.env.test_method_name + "_" + self.env.time_stamp)
+
+        time.sleep(3)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                      self.env.img_output_sample_1_fn)
 
@@ -19,7 +23,10 @@ class TestSikuli(PerfBaseTest):
         assert(True)
 
     def tearDown(self):
-        time.sleep(5)
+        time.sleep(3)
+        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_defocuscontentwindow",
+                        self.env.test_method_name + "_" + self.env.time_stamp)
+        time.sleep(3)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                      self.env.img_output_sample_2_fn)
 
