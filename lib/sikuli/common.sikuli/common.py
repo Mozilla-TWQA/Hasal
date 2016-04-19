@@ -41,3 +41,9 @@ class General():
 
     def select_all(self):
         type("a", self.control)
+
+    def page_end(self):
+        type(Key.END, self.control)
+
+    def page_start(self):
+        type(Key.HOME, self.control)
