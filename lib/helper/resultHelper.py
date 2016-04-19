@@ -34,16 +34,14 @@ def output_result(test_method_name,current_run_result, output_fp):
             result[test_method_name]['error_no'] += 1
         else:
             result[test_method_name]['time_list'].append(run_time)
-        if (result[test_method_name]['total_run_no'] - result[test_method_name]['error_no']) == 0:
-            result[test_method_name]['avg_time'] = 0
-        else:
-            result[test_method_name]['avg_time'] = sum(result[test_method_name]['time_list']) / len(result[test_method_name]['time_list'])
         if run_time > result[test_method_name]['max_time']:
             result[test_method_name]['max_time'] = run_time
         if run_time < result[test_method_name]['min_time']:
             result[test_method_name]['min_time'] = run_time
         result[test_method_name]['detail'].extend(current_run_result)
-        result[test_method_name]['med_time'] = calc_obj.detect(result[test_method_name]['time_list'])[0]
+        result[test_method_name]['avg_time'], result[test_method_name]['med_time'], \
+        result[test_method_name]['std_dev'], result[test_method_name]['time_list'], \
+        result[test_method_name]['outlier'] = calc_obj.detect(result[test_method_name]['time_list'])
 
     else:
         result[test_method_name] = {}
@@ -52,7 +50,6 @@ def output_result(test_method_name,current_run_result, output_fp):
         result[test_method_name]['time_list'] = []
         if run_time == 0:
             result[test_method_name]['error_no'] = 1
-            result[test_method_name]['avg_time'] = 0
             result[test_method_name]['max_time'] = 0
             result[test_method_name]['min_time'] = 0
         else:
@@ -62,7 +59,9 @@ def output_result(test_method_name,current_run_result, output_fp):
             result[test_method_name]['min_time'] = run_time
             result[test_method_name]['time_list'].append(run_time)
         result[test_method_name]['detail'] = current_run_result
-        result[test_method_name]['med_time'] = calc_obj.detect(result[test_method_name]['time_list'])[0]
+        result[test_method_name]['avg_time'], result[test_method_name]['med_time'], \
+        result[test_method_name]['std_dev'], result[test_method_name]['time_list'], \
+        result[test_method_name]['outlier'] = calc_obj.detect(result[test_method_name]['time_list'])
 
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)

@@ -1,3 +1,5 @@
+import numpy as np
+
 class outlier(object):
     def detect(self, seq, method=1):
         seq.sort()
@@ -19,12 +21,18 @@ class outlier(object):
     
             self.drop(seq, outliers)
         if len(seq) == 0:
+            mean = 0
             median = 0
+            sigma = 0
         elif len(seq)%2:
             median = float(seq[(len(seq)-1)/2])
+            mean = np.mean(seq)
+            sigma = np.std(seq)
         else:
             median = float(seq[len(seq)/2-1]+seq[len(seq)/2])/2
-        return median, seq, outliers
+            mean = np.mean(seq)
+            sigma = np.std(seq)
+        return mean, median, sigma, seq, outliers
 
     def Q_MooreMcCabe(self, seq):
         seq_len = len(seq)
