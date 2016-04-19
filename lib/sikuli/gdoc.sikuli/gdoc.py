@@ -57,3 +57,17 @@ class gDoc():
         sleep(2)
         wait(Pattern("pics/url_checked.png").similar(0.85))
         type(Key.ENTER)
+
+    def page_text_generate(self, keyword, page):
+        #92*46 is full page, 80*40 to make it faster
+        for j in range(page):
+            for i in range(80*40):
+                if (i % 80 == 0):
+                    type(Key.ENTER)
+                num = i % 26
+                str = keyword
+                if num < str.__len__():
+                    type(str[num])
+                else:
+                    type(chr(97+num))
+            type(Key.ENTER, Key.CTRL)
