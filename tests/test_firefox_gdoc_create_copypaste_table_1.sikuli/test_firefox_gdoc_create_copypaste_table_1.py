@@ -18,6 +18,7 @@ gd.create_table(10,5)
 com.select_all()
 com.copy()
 com.paste()
+sleep(2)
 com.paste()
 
 gdoc.deFoucsContentWindow()
