@@ -21,12 +21,12 @@ class PerfBaseTest(unittest.TestCase):
         # get browser type
         self.browser_type = self.env.get_browser_type()
 
+        # init target helper
+        self.target_helper = targetHelper.TagetHelper(self.env)
+
         # Start video recordings
         self.profilers = Profilers(self.env)
         self.profilers.start_profiling(self.profiler_list)
-
-        # init target helper
-        self.target_helper = targetHelper.TagetHelper(self.env)
 
         # init sikuli
         self.sikuli = sikuli.Sikuli()
