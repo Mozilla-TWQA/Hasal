@@ -47,20 +47,22 @@ class gDoc():
             sleep(2)
             if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png")):
                 click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
-                type(img_url)
-                sleep(2)
-                self.com.select_all()
-                sleep(1)
-                self.com.copy()
-                sleep(1)
-                self.com.paste()
-                sleep(2)
             else:
                 wait(Pattern("pics/toolbar_insert_image_db.png"))
                 click(Pattern("pics/toolbar_insert_image_db_url.png"))
                 sleep(1)
                 wait(Pattern("pics/toolbar_insert_image_db_urlbar.png"))
                 click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
+
+            self.com.select_all()
+            type(img_url)
+            sleep(2)
+            self.com.select_all()
+            sleep(1)
+            self.com.copy()
+            sleep(1)
+            self.com.paste()
+            sleep(2)
 
             if exists(Pattern("pics/url_checked.png")):
                 type(Key.ENTER)
