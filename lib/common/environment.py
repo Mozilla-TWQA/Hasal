@@ -28,6 +28,8 @@ class Environment(object):
     DEFAULT_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOTHhJNEhTN1pqYm8"
 
     TEST_TARGET_ID_3_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1fTGfC2e5hD590gNChcolhOyXFBRV1O2zdfbVLU44Y84"
+    TEST_TARGET_ID_100_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1antDLK_Un8DCtbO-GodBbI7mTaeqrTgoIgdbF2sP8Tg"
+
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
     else:

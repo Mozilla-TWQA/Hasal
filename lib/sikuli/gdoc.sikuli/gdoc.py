@@ -39,14 +39,14 @@ class gDoc():
         type(Key.ENTER)
 
     def insert_image_url(self, img_url):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.70))
+        wait(Pattern("pics/toolbar_insert.png"))
         type("i", self.alt + Key.SHIFT)
-        wait(Pattern("pics/toolbar_insert_image.png").similar(0.70))
+        wait(Pattern("pics/toolbar_insert_image.png"))
         type("i")
         for i in range(5):
             sleep(2)
-            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85)):
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
+            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png")):
+                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
                 type(img_url)
                 sleep(2)
                 self.com.select_all()
@@ -56,12 +56,13 @@ class gDoc():
                 self.com.paste()
                 sleep(2)
             else:
-                wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.70))
-                click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.85))
-                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85))
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
+                wait(Pattern("pics/toolbar_insert_image_db.png"))
+                click(Pattern("pics/toolbar_insert_image_db_url.png"))
+                sleep(1)
+                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png"))
+                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
 
-            if exists(Pattern("pics/url_checked.png").similar(0.85)):
+            if exists(Pattern("pics/url_checked.png")):
                 type(Key.ENTER)
                 break
 
@@ -78,3 +79,22 @@ class gDoc():
                 else:
                     type(chr(97+num))
             type(Key.ENTER, Key.CTRL)
+
+    def text_replace(self, search_keyword, replace_keyword, replace_times):
+        type("h", Key.CTRL)
+        wait(Pattern("pics/FindAndReplace.png"))
+        click(Pattern("pics/FindReplaceInput.png").targetOffset(98, -21))
+        type(search_keyword)
+        click(Pattern("pics/FindReplaceInput.png").targetOffset(98, 26))
+        type(replace_keyword)
+        for i in range(replace_times):
+            wait(Pattern("pics/Replace.png").similar(0.90))
+            click(Pattern("pics/Replace.png").similar(0.90))
+        wait(2)
+        type(Key.ESC)
+
+    def undo(self):
+        type("z", self.control)
+
+    def redo(self):
+        type("y", self.control)
