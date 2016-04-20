@@ -16,7 +16,7 @@ class Environment(object):
     DEFAULT_IMAGE_SAMPLE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "sample")
     DEFAULT_GECKO_PROFILER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "geckoprofiler-signed.xpi")
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
-    DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR)
+    DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
 
     DEFAULT_VIDEO_RECORDING_FPS = 90
