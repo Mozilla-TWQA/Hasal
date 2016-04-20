@@ -79,3 +79,22 @@ class gDoc():
                 else:
                     type(chr(97+num))
             type(Key.ENTER, Key.CTRL)
+
+    def text_replace(self, search_keyword, replace_keyword, replace_times):
+        type("h", Key.CTRL)
+        wait(Pattern("pics/FindAndReplace.png"))
+        click(Pattern("pics/FindReplaceInput.png").targetOffset(98, -21))
+        type(search_keyword)
+        click(Pattern("pics/FindReplaceInput.png").targetOffset(98, 26))
+        type(replace_keyword)
+        for i in range(replace_times):
+            wait(Pattern("pics/Replace.png").similar(0.90))
+            click(Pattern("pics/Replace.png").similar(0.90))
+        wait(2)
+        type(Key.ESC)
+
+    def undo(self):
+        type("z", self.control)
+
+    def redo(self):
+        type("y", self.control)
