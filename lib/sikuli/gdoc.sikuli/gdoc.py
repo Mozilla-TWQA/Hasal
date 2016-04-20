@@ -43,25 +43,18 @@ class gDoc():
         type("i", self.alt + Key.SHIFT)
         wait(Pattern("pics/toolbar_insert_image.png").similar(0.70))
         type("i")
-        for i in range(5):
-            sleep(2)
-            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85)):
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
-                type(img_url)
-                sleep(2)
-                self.com.select_all()
-                sleep(1)
-                self.com.copy()
-                sleep(1)
-                self.com.paste()
-                sleep(2)
-            else:
-                wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.70))
-                click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.85))
-                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85))
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
-
-            if exists(Pattern("pics/url_checked.png").similar(0.85)):
-                type(Key.ENTER)
-                break
+        wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.70))
+        click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.85))
+        wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.70))
+        click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.70))
+        type(img_url)
+        sleep(2)
+        self.com.select_all()
+        sleep(1)
+        self.com.copy()
+        sleep(1)
+        self.com.paste()
+        sleep(2)
+        wait(Pattern("pics/url_checked.png").similar(0.85))
+        type(Key.ENTER)
 
