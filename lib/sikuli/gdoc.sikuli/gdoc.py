@@ -39,14 +39,14 @@ class gDoc():
         type(Key.ENTER)
 
     def insert_image_url(self, img_url):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.70))
+        wait(Pattern("pics/toolbar_insert.png"))
         type("i", self.alt + Key.SHIFT)
-        wait(Pattern("pics/toolbar_insert_image.png").similar(0.70))
+        wait(Pattern("pics/toolbar_insert_image.png"))
         type("i")
         for i in range(5):
             sleep(2)
-            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85)):
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
+            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png")):
+                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
                 type(img_url)
                 sleep(2)
                 self.com.select_all()
@@ -56,20 +56,21 @@ class gDoc():
                 self.com.paste()
                 sleep(2)
             else:
-                wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.70))
-                click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.85))
-                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85))
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.85).targetOffset(100, 0))
+                wait(Pattern("pics/toolbar_insert_image_db.png"))
+                click(Pattern("pics/toolbar_insert_image_db_url.png"))
+                sleep(1)
+                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png"))
+                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
 
-            if exists(Pattern("pics/url_checked.png").similar(0.85)):
+            if exists(Pattern("pics/url_checked.png")):
                 type(Key.ENTER)
                 break
 
     def page_text_generate(self, keyword, page):
         #92*46 is full page, 80*40 to make it faster
         for j in range(page):
-            for i in range(80*40):
-                if (i % 80 == 0):
+            for i in range(60*40):
+                if (i % 60 == 0):
                     type(Key.ENTER)
                 num = i % 26
                 str = keyword
