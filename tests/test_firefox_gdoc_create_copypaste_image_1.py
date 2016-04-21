@@ -23,10 +23,7 @@ class TestSikuli(PerfBaseTest):
         assert(True)
 
     def tearDown(self):
-        time.sleep(3)
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_defocuscontentwindow",
-                        self.env.test_method_name + "_" + self.env.time_stamp)
-        time.sleep(3)
+        time.sleep(5)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                      self.env.img_output_sample_2_fn)
 
