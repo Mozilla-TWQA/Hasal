@@ -100,3 +100,19 @@ class gDoc():
 
     def redo(self):
         type("y", self.control)
+
+    def bold(self):
+        type("b", self.control)
+
+    def underline(self):
+        type("u", self.control)
+
+    def italic(self):
+        type("i", self.control)
+
+    def number_list(self):
+        type("7", self.control + Key.SHIFT)
+
+    def bullet_list(self):
+        type("8", self.control + Key.SHIFT)
+
