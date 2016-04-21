@@ -18,6 +18,9 @@ class PerfBaseTest(unittest.TestCase):
         # Init output dirs
         self.env.init_output_dir()
 
+        # Init sikuli status
+        self.sikuli_status = 0
+
         # get browser type
         self.browser_type = self.env.get_browser_type()
 
@@ -50,4 +53,7 @@ class PerfBaseTest(unittest.TestCase):
             self.target_helper.delete_target(self.test_url_id)
 
         # output result
-        resultHelper.result_calculation(self.env)
+        if self.sikuli_status == 0:
+            resultHelper.result_calculation(self.env)
+        else:
+            print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)

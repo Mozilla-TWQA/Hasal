@@ -21,7 +21,7 @@ class Sikuli():
         else:
             cmd = sikuli_dir + "/runsikulix -r " + script_path + "/" + test_name + ".sikuli --args " + str(
                 timestamp) + " " + self.set_syspath(hasal_dir) + " " + test_url
-        os.system(cmd)
+        return os.system(cmd)
 
     def close_browser(self, browser, env):
         script_path = os.path.join(env.hasal_dir, "lib", "sikuli")

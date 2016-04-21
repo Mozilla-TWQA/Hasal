@@ -43,7 +43,7 @@ class gDoc():
         type("i", self.alt + Key.SHIFT)
         wait(Pattern("pics/toolbar_insert_image.png"))
         type("i")
-        for i in range(5):
+        for i in range(10):
             sleep(2)
             if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png")):
                 click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
@@ -55,7 +55,7 @@ class gDoc():
                 click(Pattern("pics/toolbar_insert_image_db_urlbar.png").targetOffset(100, 0))
 
             self.com.select_all()
-            type(img_url)
+            paste(img_url)
             sleep(2)
             self.com.select_all()
             sleep(1)
