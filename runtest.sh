@@ -18,7 +18,6 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
     pkill avconv
     echo "The counter is $COUNTER and the retry_counter is $RETRY_COUNTER"
     python -m unittest tests.$case_name_no_space
-    break
     out=$?
     if [ "$out" -eq 0 ]; then
       let COUNTER=COUNTER+1
