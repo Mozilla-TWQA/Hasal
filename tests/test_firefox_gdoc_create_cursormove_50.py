@@ -7,7 +7,7 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         super(TestSikuli, self).setUp()
-        self.test_url, self.test_url_id = self.target_helper.clone_target("1cSx12G6p-0dCilrevzZUjdl_8QEMiOao33u8BTuzszs",
+        self.test_url, self.test_url_id = self.target_helper.clone_target(self.env.TEST_TARGET_ID_BLANK_PAGE,
                                                                           self.env.output_name)
         time.sleep(3)
         self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_switchcontentwindow",
@@ -18,9 +18,10 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_1_fn)
 
     def test_firefox_gdoc_create_cursormove_50(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
-                        self.env.test_method_name + "_" + self.env.time_stamp, test_url=self.test_url)
-        assert(True)
+        self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
+                                             self.env.test_method_name + "_" + self.env.time_stamp,
+                                             test_url=self.test_url)
+        assert(self.sikuli_status == 0)
 
     def tearDown(self):
         time.sleep(5)
