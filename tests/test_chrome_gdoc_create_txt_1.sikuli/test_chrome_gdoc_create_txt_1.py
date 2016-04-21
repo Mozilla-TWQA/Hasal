@@ -3,13 +3,16 @@
 sys.path.append(sys.argv[2])
 import browser
 import common
+import gdoc
 
 com = common.General()
 chrome = browser.Chrome()
+gd = gdoc.gDoc()
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
 sleep(5)
+gd.wait_for_loaded()
 type("Answer: Depending on how one distinguishes a different Bible version from a revision of an existing Bible version, \
 there are as many as 50 different English versions of the Bible. The question then arises: Is there really a need for \
 so many different English versions of the Bible? The answer is, of course, no, there is no need for 50 different English \
@@ -43,3 +46,5 @@ dynamic equivalence is that it sometimes results in ?this is what I think it mea
 is right or wrong. The best Bible version is likely produced through a balance of the two methodologies.Listed below are the most common \
 English versions of the Bible. In choosing which Bible version(s) you are going to use/study, do research, discuss with Christians you respect, \
 read the Bibles for yourself, and ultimately, ask God for wisdom regarding which Bible version He desires you to use.")
+sleep(2)
+gd.deFoucsContentWindow()
