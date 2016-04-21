@@ -10,17 +10,18 @@ class TestSikuli(PerfBaseTest):
         self.test_url, self.test_url_id = self.target_helper.clone_target("1EUws7kljkRWPHR0-e7SFAGzQxa8Z6UjlwD437y6U3Cs",
                                                                           self.env.output_name)
         time.sleep(3)
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_switchcontentwindow",
+        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_switchcontentwindow",
                         self.env.test_method_name + "_" + self.env.time_stamp)
 
         time.sleep(5)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                      self.env.img_output_sample_1_fn)
 
-    def test_firefox_gdoc_update_find_replace_3(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
-                        self.env.test_method_name + "_" + self.env.time_stamp, test_url=self.test_url)
-        assert(True)
+    def test_chrome_gdoc_update_replace_3(self):
+        self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
+                                             self.env.test_method_name + "_" + self.env.time_stamp,
+                                             test_url=self.test_url)
+        assert(self.sikuli_status == 0)
 
     def tearDown(self):
         time.sleep(5)
@@ -28,3 +29,4 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_2_fn)
 
         super(TestSikuli, self).tearDown()
+

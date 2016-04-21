@@ -22,5 +22,4 @@ type("a", Key.CTRL)
 sleep(0.3)
 type(Key.DELETE)
 
-gdoc.deFoucsContentWindow()
-
+gd.deFoucsContentWindow()

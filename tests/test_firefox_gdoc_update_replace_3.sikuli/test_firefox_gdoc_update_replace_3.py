@@ -30,5 +30,4 @@ type(Key.TAB)
 type(Key.TAB)
 type(Key.ENTER)
 
-gdoc.deFoucsContentWindow()
-
+gd.deFoucsContentWindow()
