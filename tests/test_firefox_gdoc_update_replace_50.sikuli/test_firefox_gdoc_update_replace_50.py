@@ -28,4 +28,5 @@ gd.bold()
 
 com.page_end()
 
+sleep(2)
 gd.deFoucsContentWindow()

@@ -5,9 +5,15 @@
 sys.path.append(sys.argv[2])
 import browser
 import common
+import gd
+
 
 com = common.General()
 chrome = browser.Chrome()
 
 chrome.clickBar()
-chrome.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?hl=en")
+chrome.enterLink(sys.argv[3])
+
+sleep(2)
+gd.deFoucsContentWindow()
+

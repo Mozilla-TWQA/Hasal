@@ -5,10 +5,15 @@
 sys.path.append(sys.argv[2])
 import browser
 import common
+import gd
 
 
 com = common.General()
 ff = browser.Firefox()
 
 ff.clickBar()
-ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?hl=en")
+ff.enterLink(sys.argv[3])
+
+sleep(2)
+gd.deFoucsContentWindow()
+

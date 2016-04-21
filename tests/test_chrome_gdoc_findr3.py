@@ -18,15 +18,12 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_1_fn)
 
     def test_chrome_gdoc_findr3(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
+        self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
                         self.env.test_method_name + "_" + self.env.time_stamp, test_url=self.test_url)
-        assert(True)
+        assert(self.sikuli_status == 0)
 
     def tearDown(self):
-        time.sleep(3)
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_defocuscontentwindow",
-                        self.env.test_method_name + "_" + self.env.time_stamp)
-        time.sleep(3)
+        time.sleep(5)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                      self.env.img_output_sample_2_fn)
 

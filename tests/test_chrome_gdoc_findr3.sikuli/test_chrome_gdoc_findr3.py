@@ -50,3 +50,6 @@ type("NEW")
 for i in range(15):
     wait(Pattern("Replace.png").similar(0.90))
     click(Pattern("Replace.png").similar(0.90))
+
+sleep(2)
+gd.deFoucsContentWindow()
