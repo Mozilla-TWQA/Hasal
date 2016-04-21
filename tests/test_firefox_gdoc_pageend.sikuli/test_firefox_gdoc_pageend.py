@@ -9,10 +9,13 @@ ff = browser.Firefox()
 gd = gdoc.gDoc()
 
 ff.clickBar()
-ff.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?hl=en")
+ff.enterLink(sys.argv[3])
 ff.focus()
 
 gd.wait_for_loaded()
 
-wait(3)
+sleep(3)
 type(Key.END, Key.CTRL)
+
+sleep(2)
+gd.deFoucsContentWindow()

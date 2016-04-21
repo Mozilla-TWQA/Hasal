@@ -19,9 +19,9 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_1_fn)
 
     def test_firefox_gdoc_update_replace_50(self):
-        self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
+        self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
                         self.env.test_method_name + "_" + self.env.time_stamp, test_url=self.test_url)
-        assert(True)
+        assert(self.sikuli_status == 0)
 
     def tearDown(self):
         time.sleep(5)
@@ -29,3 +29,4 @@ class TestSikuli(PerfBaseTest):
                                      self.env.img_output_sample_2_fn)
 
         super(TestSikuli, self).tearDown()
+

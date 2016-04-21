@@ -16,3 +16,6 @@ gd.wait_for_loaded()
 for i in range(3):
     wait(0.5)
     type(Key.PAGE_DOWN)
+
+sleep(2)
+gd.deFoucsContentWindow()

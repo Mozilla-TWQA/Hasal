@@ -9,10 +9,13 @@ chrome = browser.Chrome()
 gd = gdoc.gDoc()
 
 chrome.clickBar()
-chrome.enterLink("https://docs.google.com/document/d/1EpYUniwtLvBbZ4ECgT_vwGUfTHKnqSWi7vgNJQBemFk/edit?hl=en")
+chrome.enterLink(sys.argv[3])
 chrome.focus()
 
 gd.wait_for_loaded()
 
-wait(3)
+sleep(3)
 type(Key.END, Key.CTRL)
+
+sleep(2)
+gd.deFoucsContentWindow()

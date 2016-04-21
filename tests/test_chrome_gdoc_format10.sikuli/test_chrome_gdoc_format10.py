@@ -66,3 +66,6 @@ for i in range(6):
 	type(".", Key.CTRL+Key.SHIFT)
 sleep(0.3)
 type(Key.END, Key.CTRL)
+
+sleep(2)
+gd.deFoucsContentWindow()
