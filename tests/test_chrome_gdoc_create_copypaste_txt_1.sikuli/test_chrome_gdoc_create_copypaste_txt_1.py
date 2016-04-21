@@ -3,7 +3,9 @@
 sys.path.append(sys.argv[2])
 import browser
 import common
+import gdoc
 
+gd = gdoc.gDoc()
 com = common.General()
 chrome = browser.Chrome()
 
@@ -32,3 +34,5 @@ com.select_all()
 com.cut()
 com.paste()
 com.paste()
+
+gd.deFoucsContentWindow()

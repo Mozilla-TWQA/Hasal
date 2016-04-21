@@ -15,3 +15,5 @@ sleep(5)
 gd.wait_for_loaded()
 
 gd.create_table(10,5)
+
+gd.deFoucsContentWindow()
