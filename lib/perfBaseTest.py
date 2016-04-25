@@ -1,8 +1,10 @@
+import time
 import unittest
 import helper.desktopHelper as desktopHelper
 import helper.resultHelper as resultHelper
 import lib.helper.targetHelper as targetHelper
 import lib.sikuli as sikuli
+import lib.helper.captureHelper as captureHelper
 from common.environment import Environment
 from helper.profilerHelper import Profilers
 
@@ -40,7 +42,26 @@ class PerfBaseTest(unittest.TestCase):
         # launch browser
         desktopHelper.launch_browser(self.browser_type)
 
+        # switch to content window, prevent cursor twinkling
+        time.sleep(3)
+        if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:
+            self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_switchcontentwindow",
+                            self.env.test_method_name + "_" + self.env.time_stamp)
+        else:
+            self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_switchcontentwindow",
+                            self.env.test_method_name + "_" + self.env.time_stamp)
+
+        # capture 1st snapshot
+        time.sleep(5)
+        captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                     self.env.img_output_sample_1_fn)
+
     def tearDown(self):
+
+        # capture 2nd snapshot
+        time.sleep(5)
+        captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+                                     self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling()
