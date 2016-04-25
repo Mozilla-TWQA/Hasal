@@ -73,6 +73,10 @@ class PerfBaseTest(unittest.TestCase):
         if self.test_url_id:
             self.target_helper.delete_target(self.test_url_id)
 
+        # output sikuli status to static file
+        with open(self.env.DEFAULT_SIKULI_STATUS_RESULT, "w") as fh:
+            fh.write(str(self.sikuli_status))
+
         # output result
         if self.sikuli_status == 0:
             resultHelper.result_calculation(self.env)

@@ -18,6 +18,7 @@ class Environment(object):
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
+    DEFAULT_SIKULI_STATUS_RESULT = os.path.join(os.getcwd(), "sikuli_stat.txt")
 
     DEFAULT_VIDEO_RECORDING_FPS = 90
     DEFAULT_VIDEO_RECORDING_POS_X = 72
