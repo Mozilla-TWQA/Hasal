@@ -12,4 +12,3 @@ class TestSikuli(PerfBaseTest):
         self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.env.test_method_name,
                                              self.env.test_method_name + "_" + self.env.time_stamp,
                                              test_url=self.test_url)
-        assert(self.sikuli_status == 0)
