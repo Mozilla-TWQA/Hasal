@@ -29,12 +29,12 @@ class PerfBaseTest(unittest.TestCase):
         # init target helper
         self.target_helper = targetHelper.TagetHelper(self.env)
 
-        # Start video recordings
-        self.profilers = Profilers(self.env)
-        self.profilers.start_profiling(self.profiler_list)
-
         # init sikuli
         self.sikuli = sikuli.Sikuli()
+
+        # Start video recordings
+        self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
+        self.profilers.start_profiling(self.profiler_list)
 
         # minimize all windows
         desktopHelper.minimize_window()
