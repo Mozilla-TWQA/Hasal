@@ -5,11 +5,12 @@
 sys.path.append(sys.argv[2])
 import browser
 import common
-import gd
+import gdoc
 
 
 com = common.General()
 chrome = browser.Chrome()
+gd = gdoc.gDoc()
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
