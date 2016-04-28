@@ -11,7 +11,10 @@ from helper.profilerHelper import Profilers
 
 class PerfBaseTest(unittest.TestCase):
 
-    profiler_list = [{"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler"}]
+    # profiler_list = [{"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None},
+    #                  {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"},
+    #                  {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}]
+    profiler_list = [{"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}]
 
     def setUp(self):
         # Init environment variables
@@ -35,12 +38,13 @@ class PerfBaseTest(unittest.TestCase):
         # Start video recordings
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.profiler_list)
+        self.profile_path = self.profilers.get_profile_path()
 
         # minimize all windows
         desktopHelper.minimize_window()
 
         # launch browser
-        desktopHelper.launch_browser(self.browser_type)
+        desktopHelper.launch_browser(self.browser_type, self.profile_path)
 
         # switch to content window, prevent cursor twinkling
         time.sleep(3)

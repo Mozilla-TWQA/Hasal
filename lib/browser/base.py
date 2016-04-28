@@ -7,9 +7,10 @@ class BrowserBase(object):
     launch_cmd = []
     process_name = None
 
-    def __init__(self, window_size_height, windows_size_width):
+    def __init__(self, window_size_height, windows_size_width, profile_path=None):
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
+        self.profile_path = profile_path
         self.get_browser_settings()
 
     def get_browser_settings(self):

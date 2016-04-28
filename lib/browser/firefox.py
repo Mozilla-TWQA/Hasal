@@ -23,3 +23,6 @@ class BrowserFirefox(BrowserBase):
             self.process_name = "firefox"
             self.launch_cmd = [ubuntu_firefox_command, "-height", self.window_size_height, "-width",
                                self.windows_size_width]
+
+        if self.profile_path is not None:
+            self.launch_cmd.extend(["--profile", self.profile_path])

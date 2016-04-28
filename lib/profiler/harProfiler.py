@@ -1,7 +1,7 @@
 from base import BaseProfiler
 
 
-class GeckoProfiler(BaseProfiler):
+class HarProfiler(BaseProfiler):
 
     def start_recording(self):
         pass
