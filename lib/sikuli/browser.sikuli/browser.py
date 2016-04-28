@@ -87,10 +87,14 @@ class Firefox(GeneralBrowser):
         type(Key.F12)
 
     # Get information from web console, e.g. info = "window.performance.timing"
-    def getConsoleInfo(self, info):
+    def getConsoleInfo(self, info, pre_command=""):
         self.triggerConsole()
         wait(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
         click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
+	if pre_command:
+            type(pre_command)
+            type(Key.Enter)
+        wait(2)
         type("copy(" + info + ")")
         type(Key.ENTER)
         self.closeConsole()
@@ -101,3 +105,10 @@ class Firefox(GeneralBrowser):
         type(Key.TAB)
         wait(3)
         type(Key.TAB)
+        
+    def profilerTrigger(self):
+        type("1", self.control + Key.SHIFT)
+
+    def profileAnalyze(self):
+        type("2", self.control + Key.SHIFT)
+
