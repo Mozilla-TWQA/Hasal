@@ -19,22 +19,22 @@ class Profilers(object):
             profiler_obj.start_recording()
             self.profiler_obj_list.append(profiler_obj)
 
-    def stop_profiling(self):
+    def stop_profiling(self, input_profile_dir_path=None):
         for profiler_obj in self.profiler_obj_list:
-            profiler_obj.stop_recording()
+            profiler_obj.stop_recording(profile_path=input_profile_dir_path)
 
     def get_profile_path(self):
         enable_profile_count = 0
         return_profile_name = None
         for profiler_data in self.profiler_list:
-            if profiler_data['name'] == "GeckoProfiler" or profiler_data['name'] == "HarProfiler":
+            if profiler_data['name'] == self.env.PROFILE_NAME_GECKO_PROFILER or profiler_data['name'] == self.env.PROFILE_NAME_HAR_PROFILER:
                 enable_profile_count += 1
                 return_profile_name = profiler_data['profile_name']
 
         if enable_profile_count == 2:
-            return os.path.join(self.env.DEFAULT_PROFILE_DIR, self.env.PROFILE_NAME_AUTOSAVEHAR_GECKOPROFILER)
+            profile_path = os.path.join(self.env.DEFAULT_PROFILE_DIR, self.env.PROFILE_FILE_NAME_AUTOSAVEHAR_GECKOPROFILER)
         else:
-            if return_profile_name is None:
-                return return_profile_name
-            else:
-                return os.path.join(self.env.DEFAULT_PROFILE_DIR, return_profile_name)
+            if return_profile_name is not None:
+                profile_path = os.path.join(self.env.DEFAULT_PROFILE_DIR, return_profile_name)
+
+        return profile_path
