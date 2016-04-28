@@ -9,6 +9,7 @@ class Environment(object):
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
+    DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
     DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
     DEFAULT_IMAGE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images")
@@ -37,6 +38,8 @@ class Environment(object):
     TEST_TARGET_ID_100_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1antDLK_Un8DCtbO-GodBbI7mTaeqrTgoIgdbF2sP8Tg"
     TEST_TARGET_ID_200_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1EPSmGqm2r4Qq42B4t1VOYacjTlL0JVuC8JSlUvoIhss"
     TEST_TARGET_ID_BLANK_PAGE = "1ORZOuLyxehup7IhBQk02t0qycDr0VcCa3ciXfwTdEmk"
+
+    PROFILE_NAME_AUTOSAVEHAR_GECKOPROFILER = "GeckoProfilerAutoSaveHAR.zip"
 
 
     if platform.system().lower() == "darwin":

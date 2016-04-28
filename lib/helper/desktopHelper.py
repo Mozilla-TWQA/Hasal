@@ -1,6 +1,9 @@
 import subprocess
 import platform
 import lib.sikuli
+import tempfile
+import zipfile
+import os
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
 
@@ -12,11 +15,25 @@ DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
 DEFAULT_BROWSER_TYPE_CHROME = "chrome"
 
 
-def launch_browser(browser_type):
-    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+def extract_profile_data(input_profile_path):
+    tmp_dir = tempfile.mkdtemp()
+    profile_dir_name = input_profile_path.split(".")[0].split(os.sep)[-1]
+    with zipfile.ZipFile(input_profile_path) as zh:
+        zh.extractall(tmp_dir)
+    return_path = os.path.join(tmp_dir, profile_dir_name)
+    return return_path
+
+
+def launch_browser(browser_type, input_profile_path=None):
+    if input_profile_path is not None:
+        profile_path = extract_profile_data(input_profile_path)
     else:
-        browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+        profile_path = input_profile_path
+
+    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+        browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path)
+    else:
+        browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path)
     browser_obj.launch()
 
 
