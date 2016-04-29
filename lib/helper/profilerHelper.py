@@ -26,6 +26,7 @@ class Profilers(object):
     def get_profile_path(self):
         enable_profile_count = 0
         return_profile_name = None
+        profile_path = None
         for profiler_data in self.profiler_list:
             if profiler_data['name'] == self.env.PROFILE_NAME_GECKO_PROFILER or profiler_data['name'] == self.env.PROFILE_NAME_HAR_PROFILER:
                 enable_profile_count += 1
