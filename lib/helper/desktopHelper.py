@@ -42,11 +42,9 @@ def trigger_network_console(browser_type, sikuli_obj, input_env, profiler_list):
     for profiler_data in profiler_list:
         if profiler_data['name'] == input_env.PROFILE_NAME_HAR_PROFILER:
             if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-                sikuli_obj.run(input_env.sikuli_path, input_env.hasal_dir, "test_firefox_trigger_network",
-                               input_env.test_method_name + "_" + input_env.time_stamp)
+                sikuli_obj.run(input_env.sikuli_path, input_env.hasal_dir, "test_firefox_trigger_network")
             else:
-                sikuli_obj.run(input_env.sikuli_path, input_env.hasal_dir, "test_chrome_trigger_network",
-                               input_env.test_method_name + "_" + input_env.time_stamp)
+                sikuli_obj.run(input_env.sikuli_path, input_env.hasal_dir, "test_chrome_trigger_network")
             break
 
 
