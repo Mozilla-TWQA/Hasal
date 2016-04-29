@@ -19,6 +19,6 @@ class AvconvProfiler(BaseProfiler):
                                self.env.DEFAULT_VIDEO_RECORDING_DISPLAY,
                                self.env.DEFAULT_VIDEO_RECORDING_CODEC, self.env.video_output_fp))
 
-    def stop_recording(self):
+    def stop_recording(self, **kwargs):
         self.process.send_signal(3)
 

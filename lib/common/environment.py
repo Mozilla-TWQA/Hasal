@@ -39,7 +39,9 @@ class Environment(object):
     TEST_TARGET_ID_200_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1EPSmGqm2r4Qq42B4t1VOYacjTlL0JVuC8JSlUvoIhss"
     TEST_TARGET_ID_BLANK_PAGE = "1ORZOuLyxehup7IhBQk02t0qycDr0VcCa3ciXfwTdEmk"
 
-    PROFILE_NAME_AUTOSAVEHAR_GECKOPROFILER = "GeckoProfilerAutoSaveHAR.zip"
+    PROFILE_FILE_NAME_AUTOSAVEHAR_GECKOPROFILER = "GeckoProfilerAutoSaveHAR.zip"
+    PROFILE_NAME_HAR_PROFILER = "HarProfiler"
+    PROFILE_NAME_GECKO_PROFILER = "GeckoProfiler"
 
 
     if platform.system().lower() == "darwin":
@@ -64,6 +66,7 @@ class Environment(object):
         self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
+        self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
 
     def init_output_dir(self):
         # Init output folder

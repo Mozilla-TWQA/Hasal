@@ -38,13 +38,16 @@ class PerfBaseTest(unittest.TestCase):
         # Start video recordings
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.profiler_list)
-        self.profile_path = self.profilers.get_profile_path()
+        self.profile_zip_path = self.profilers.get_profile_path()
 
         # minimize all windows
         desktopHelper.minimize_window()
 
         # launch browser
-        desktopHelper.launch_browser(self.browser_type, self.profile_path)
+        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, self.profile_zip_path)
+
+        # trigger network console if needed
+        desktopHelper.trigger_network_console(self.browser_type,self.sikuli,self.env, self.profiler_list)
 
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
@@ -68,7 +71,7 @@ class PerfBaseTest(unittest.TestCase):
                                      self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
-        self.profilers.stop_profiling()
+        self.profilers.stop_profiling(self.profile_dir_path)
 
         # Stop browser
         desktopHelper.stop_browser(self.browser_type, self.env)
