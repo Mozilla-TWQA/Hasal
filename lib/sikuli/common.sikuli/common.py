@@ -13,6 +13,12 @@ class General():
         else:
             self.control = Key.CTRL
 
+    # This will take in an array of key combinations like [[Key.Enter], [Key.ENTER, Key.CTRL], ["8", Key.CTRL+Key.SHIFT]]
+    def key_actions(self, array)
+        for action in array:
+            sleep(0.3)
+            type(*action)
+
     # Use "highlight" or "popup" to make an anchor for current video
     # style == 0: hightlight, input should be image location
     # style == 1: popup, input should be text
