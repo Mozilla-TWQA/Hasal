@@ -8,11 +8,25 @@ import gdoc
 com = common.General()
 ff = browser.Firefox()
 gd = gdoc.gDoc()
+keyword = "OLD"
 
 ff.clickBar()
 ff.enterLink(sys.argv[3])
 sleep(5)
 gd.wait_for_loaded()
 
+sleep(5)
+type("h", Key.CTRL)
+wait(Pattern("FindAndReplace.png").similar(0.85))
+click(Pattern("FindReplaceInput.png").similar(0.85).targetOffset(98,-21))
+type(keyword)
+click(Pattern("FindReplaceInput.png").similar(0.85).targetOffset(98,26))
+type("NEW")
+
+for i in range(15):
+    wait(Pattern("Replace.png").similar(0.90))
+    click(Pattern("Replace.png").similar(0.90))
+
+sleep(2)
 gd.deFoucsContentWindow()
 

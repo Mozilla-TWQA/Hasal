@@ -8,11 +8,25 @@ import gdoc
 com = common.General()
 chrome = browser.Chrome()
 gd = gdoc.gDoc()
+keyword = "OLD"
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
 sleep(5)
 gd.wait_for_loaded()
 
+sleep(5)
+type("h", Key.CTRL)
+wait(Pattern("FindAndReplace.png").similar(0.80))
+click(Pattern("FindReplaceInput.png").similar(0.70).targetOffset(98,-21))
+type(keyword)
+click(Pattern("FindReplaceInput.png").similar(0.70).targetOffset(98,26))
+type("NEW")
+
+for i in range(15):
+    wait(Pattern("Replace.png").similar(0.90))
+    click(Pattern("Replace.png").similar(0.90))
+
+sleep(2)
 gd.deFoucsContentWindow()
 

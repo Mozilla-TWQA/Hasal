@@ -41,10 +41,10 @@ type(Key.ENTER, Key.CTRL)
 
 
 type("h", Key.CTRL)
-wait(Pattern("FindAndReplace.png").similar(0.85))
-click(Pattern("FindReplaceInput.png").similar(0.85).targetOffset(98,-21))
+wait(Pattern("FindAndReplace.png").similar(0.80))
+click(Pattern("FindReplaceInput.png").similar(0.70).targetOffset(98,-21))
 type(keyword)
-click(Pattern("FindReplaceInput.png").similar(0.85).targetOffset(98,26))
+click(Pattern("FindReplaceInput.png").similar(0.70).targetOffset(98,26))
 type("NEW")
 
 for i in range(15):
