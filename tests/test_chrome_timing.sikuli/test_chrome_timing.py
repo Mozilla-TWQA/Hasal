@@ -11,4 +11,4 @@ chrome.focus()
 chrome.getConsoleInfo("window.performance.timing")
 
 wait(1)
-com.dumpToJson(Env.getClipboard(), "timing" + sys.argv[1])
+com.dumpToJson(Env.getClipboard(), sys.argv[1])

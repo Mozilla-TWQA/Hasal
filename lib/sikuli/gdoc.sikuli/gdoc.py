@@ -20,6 +20,14 @@ class gDoc():
         wait(Pattern("pics/gdoc.png").similar(0.85))
         wait(3)
         setAutoWaitTimeout(default_timeout)
+        self.focus_content()
+
+    def focus_content(self):
+        default_timeout = getAutoWaitTimeout()
+        setAutoWaitTimeout(10)
+        click(Pattern("pics/gdocheader.png").similar(0.85))
+        wait(3)
+        setAutoWaitTimeout(default_timeout)
 
     # Prevent cursor twinkling on screen
     def deFoucsContentWindow(self):
