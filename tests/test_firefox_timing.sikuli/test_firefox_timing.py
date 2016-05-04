@@ -13,6 +13,5 @@ ff.getConsoleInfo("window.performance.timing")
 wait(1)
 com.dumpToJson(Env.getClipboard(), sys.argv[1])
 
-ff.closeConsole()
 sleep(2)
 gd.deFoucsContentWindow()
