@@ -13,7 +13,7 @@ class Sikuli():
     # hasal_dir:  DEFAULT_HASAL_DIR in environment.py
     # test_name:  test_(browser)_(test_name)
     # timestamp:  please pass in the integer generated from main python for folder record
-    def run(self, sikuli_dir, hasal_dir, test_name, timestamp="", test_url=""):
+    def run(self, sikuli_dir, hasal_dir, test_name, timestamp="0000000000", test_url=""):
         script_path = os.path.join(hasal_dir, "tests")
         if test_url == "":
             cmd = sikuli_dir + "/runsikulix -r " + script_path + "/" + test_name + ".sikuli --args " + str(
