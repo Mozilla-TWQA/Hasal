@@ -5,6 +5,7 @@ class General():
     def __init__(self):
         self.os = str(Settings.getOS())
         self.os_version = str(Settings.getOSVersion())
+
         if self.os.startswith("M"):
             self.control = Key.CMD
         else:

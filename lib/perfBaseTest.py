@@ -12,8 +12,9 @@ from helper.profilerHelper import Profilers
 class PerfBaseTest(unittest.TestCase):
 
     # profiler_list = [{"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None},
-    #                  {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"},
     #                  {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}]
+    #                  {"path": "lib.profiler.performaceTimingProfiler", "name": "PerformanceTimingProfiler", "profile_name": None},
+    #                  {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"},
     profiler_list = [{"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"}, 
                      {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}]
 

@@ -108,7 +108,6 @@ class Firefox(GeneralBrowser):
         wait(2)
         type("copy(" + info + ")")
         type(Key.ENTER)
-        self.closeConsole()
         return Env.getClipboard().strip()
 
     # Prevent cursor twinkling on screen
