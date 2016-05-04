@@ -5,9 +5,6 @@ class General():
     def __init__(self):
         self.os = str(Settings.getOS())
         self.os_version = str(Settings.getOSVersion())
-        self.project_base = "/".join(getBundleFolder().split("/")[:-3])
-        self.json_path = self.project_base + "/output/profiles/"
-
         if self.os.startswith("M"):
             self.control = Key.CMD
         else:
@@ -29,7 +26,7 @@ class General():
             find(inputc).highlight(1)
 
     def dumpToJson(self, data, filename, mode="w+"):
-        with open(self.json_path + filename, mode) as f:
+        with open(filename, mode) as f:
             json.dump(data, f, indent=2)
 
     def copy(self):

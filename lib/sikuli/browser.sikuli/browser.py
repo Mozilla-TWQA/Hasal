@@ -104,7 +104,7 @@ class Firefox(GeneralBrowser):
         click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
 	if pre_command:
             type(pre_command)
-            type(Key.Enter)
+            type(Key.ENTER)
         wait(2)
         type("copy(" + info + ")")
         type(Key.ENTER)
