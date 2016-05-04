@@ -12,7 +12,7 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
   fi
   COUNTER=0
   RETRY_COUNTER=0
-  while [ $COUNTER -lt 1 ]; do
+  while [ $COUNTER -lt 40 ]; do
     pkill firefox
     pkill chrome
     pkill avconv
@@ -23,7 +23,7 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
       let COUNTER=COUNTER+1
     else
       let RETRY_COUNTER=RETRY_COUNTER+1
-      if [ "$RETRY_COUNTER" -ge 1 ]; then
+      if [ "$RETRY_COUNTER" -ge 15 ]; then
         break
       fi
     fi
