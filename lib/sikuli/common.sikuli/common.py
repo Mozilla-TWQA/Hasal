@@ -14,7 +14,7 @@ class General():
             self.control = Key.CTRL
 
     # This will take in an array of key combinations like [[Key.Enter], [Key.ENTER, Key.CTRL], ["8", Key.CTRL+Key.SHIFT]]
-    def key_actions(self, array)
+    def key_actions(self, array):
         for action in array:
             sleep(0.3)
             type(*action)
