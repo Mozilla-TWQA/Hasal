@@ -53,8 +53,8 @@ class Chrome(GeneralBrowser):
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info):
         self.triggerConsole()
-        wait(Pattern("pics/chrome_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
-        click(Pattern("pics/chrome_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
+        wait(Pattern("pics/chrome_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
+        click(Pattern("pics/chrome_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
         type("copy(" + info + ")")
         type(Key.ENTER)
         self.triggerConsole()
@@ -100,9 +100,9 @@ class Firefox(GeneralBrowser):
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info, pre_command=""):
         self.triggerConsole()
-        wait(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
-        click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14,1))
-	if pre_command:
+        wait(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
+        click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
+        if pre_command:
             type(pre_command)
             type(Key.ENTER)
         wait(2)
@@ -115,10 +115,33 @@ class Firefox(GeneralBrowser):
         type(Key.TAB)
         wait(3)
         type(Key.TAB)
-        
+
     def profilerTrigger(self):
-        type("1", self.control + Key.SHIFT)
+        type("1", Key.CTRL + Key.SHIFT)
 
     def profileAnalyze(self):
-        type("2", self.control + Key.SHIFT)
+        type("2", Key.CTRL + Key.SHIFT)
 
+    def profilerMark_3(self):
+        type("3", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_4(self):
+        type("4", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_5(self):
+        type("5", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_6(self):
+        type("6", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_7(self):
+        type("7", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_8(self):
+        type("8", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_9(self):
+        type("9", Key.CTRL + Key.SHIFT)
+
+    def profilerMark_0(self):
+        type("0", Key.CTRL + Key.SHIFT)
