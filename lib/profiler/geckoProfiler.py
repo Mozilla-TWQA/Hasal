@@ -14,7 +14,14 @@ class GeckoProfiler(BaseProfiler):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_profile",
                             self.env.profile_timing_bin_fp)
             data = pyperclip.paste()
-            with codecs.open(self.env.profile_timing_bin_fp, "w+", "latin_1") as f:
+
+            encoding_list = ["utf8"]
+            encoding = "latin_1"
+            for ec in encoding_list:
+                if ec in self.env.sikuli_path:
+                    encoding = ec
+
+            with codecs.open(self.env.profile_timing_bin_fp, "w+", ec) as f:
                 f.write(data)
         else:
             pass
