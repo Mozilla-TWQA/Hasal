@@ -21,7 +21,7 @@ class GeckoProfiler(BaseProfiler):
                 if ec in self.env.sikuli_path:
                     encoding = ec
 
-            with codecs.open(self.env.profile_timing_bin_fp, "w+", ec) as f:
+            with codecs.open(self.env.profile_timing_bin_fp, "w+", encoding) as f:
                 f.write(data)
         else:
             pass
