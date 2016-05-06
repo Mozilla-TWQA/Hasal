@@ -1,8 +1,21 @@
 #!/bin/bash
 #Should give a test suite file to execute cases
+
 if [ -z "$1" ]; then
   echo "Test suite file is needed"
   exit 1
+fi
+
+if [ -z "$2" ]; then
+  MAX_RUN=40
+else
+  MAX_RUN=$2
+fi
+
+if [ -z "$3" ]; then
+  MAX_RETRY=15
+else
+  MAX_RETRY=$3
 fi
 
 while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
@@ -12,7 +25,7 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
   fi
   COUNTER=0
   RETRY_COUNTER=0
-  while [ $COUNTER -lt 40 ]; do
+  while [ $COUNTER -lt $MAX_RUN ]; do
     pkill firefox
     pkill chrome
     pkill avconv
@@ -23,7 +36,7 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
       let COUNTER=COUNTER+1
     else
       let RETRY_COUNTER=RETRY_COUNTER+1
-      if [ "$RETRY_COUNTER" -ge 15 ]; then
+      if [ "$RETRY_COUNTER" -ge $MAX_RETRY ]; then
         break
       fi
     fi

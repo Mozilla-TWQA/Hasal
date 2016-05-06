@@ -56,4 +56,3 @@ clean:
 	rm -rf output/images/sample/*
 	rm -rf output/profiles/*
 	rm -rf output/videos/*
-	rm result.json
