@@ -5,6 +5,7 @@ import gdoc
 
 com = common.General()
 ff = browser.Firefox()
+gd = gdoc.gDoc()
 
 wait(2)
 ff.focus()
