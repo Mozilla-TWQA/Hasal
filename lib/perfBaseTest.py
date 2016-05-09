@@ -1,3 +1,4 @@
+import os
 import time
 import unittest
 import helper.desktopHelper as desktopHelper
@@ -11,14 +12,27 @@ from helper.profilerHelper import Profilers
 
 class PerfBaseTest(unittest.TestCase):
 
-    profiler_list = [{"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None},
-                     {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"},
-                     {"path": "lib.profiler.performanceTimingProfiler", "name": "PerformanceTimingProfiler", "profile_name": None},
-                     {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"}]
-    #profiler_list = [{"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"},
-    #                 {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}]
+    def get_profiler_list(self):
+        avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}
+        har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}
+        performance_timing_profiler = {"path": "lib.profiler.performanceTimingProfiler", "name": "PerformanceTimingProfiler", "profile_name": None}
+        gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"}
+        result_list = []
+        if int(os.getenv("ENABLE_PROFILER")) == 1:
+            if int(os.getenv("DISABLE_AVCONV")) == 0:
+                result_list.append(avconv_profiler)
+            result_list.append(har_profiler)
+            result_list.append(performance_timing_profiler)
+            result_list.append(gecko_profiler)
+        else:
+            result_list.append(avconv_profiler)
+        return result_list
 
     def setUp(self):
+
+        # Get profiler list
+        self.profiler_list = self.get_profiler_list()
+
         # Init environment variables
         self.env = Environment(self._testMethodName)
 
@@ -76,7 +90,8 @@ class PerfBaseTest(unittest.TestCase):
         self.profilers.stop_profiling(self.profile_dir_path)
 
         # Stop browser
-        desktopHelper.stop_browser(self.browser_type, self.env)
+        if int(os.getenv("CLOSE_BROWSER")) == 1:
+            desktopHelper.stop_browser(self.browser_type, self.env)
 
         # Delete Url
         if self.test_url_id:
