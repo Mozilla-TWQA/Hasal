@@ -62,9 +62,6 @@ class PerfBaseTest(unittest.TestCase):
         # launch browser
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, self.profile_zip_path)
 
-        # trigger network console if needed
-        desktopHelper.trigger_network_console(self.browser_type,self.sikuli,self.env, self.profiler_list)
-
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
         if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:

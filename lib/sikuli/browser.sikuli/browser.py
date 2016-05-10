@@ -43,13 +43,6 @@ class Chrome(GeneralBrowser):
         else:
             type("j", self.control + Key.SHIFT)
 
-    # Launch or close network panel
-    def triggerNetwork(self):
-        if self.os.startswith("M"):
-            type("q", self.control + Key.ALT)
-        else:
-            type("q", self.control + Key.SHIFT)
-
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info):
         self.triggerConsole()
@@ -89,10 +82,6 @@ class Firefox(GeneralBrowser):
     # Launch web console for developer
     def triggerConsole(self):
         type("k", self.control + Key.SHIFT)
-
-    # Launch network panel
-    def triggerNetwork(self):
-        type("q", self.control + Key.SHIFT)
 
     def closeConsole(self):
         type(Key.F12)
