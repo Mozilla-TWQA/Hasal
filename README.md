@@ -35,9 +35,15 @@ follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-
 # Usage
 
 ```
-python -m unittest tests.test_googledoc_sample
+bash runtest.sh suite.txt
 ```
+You can also specify some environment variable to control some other function, for example:
+`ENABLE_PROFILER=1`: enable all profiler when executing script, including avconv, gecko profiler, performance timing, har
+`DISABLE_AVCONV=1` : disable avconv when enable all profilers
+`CLOSE_BROWSER=0`  : keep the brower after script finished
 
+You can also specify the number of running and retry after shell script, for example:
+`bash runtest.sh suite.txt 30 10`: run 30 times and retry 10 times when error happened
 
 Output folder structure as below:
 * `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
