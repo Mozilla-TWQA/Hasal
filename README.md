@@ -30,8 +30,7 @@ brew install opencv3
 ```
 
 # Setup 
-* Create a google doc, share it to the public (don't require login)
-* Copy the link and paste it to `self.docUrl` in `testperf::setUp`
+* Create a google doc, add doc id in lib/environment.py
 
 # Usage
 
