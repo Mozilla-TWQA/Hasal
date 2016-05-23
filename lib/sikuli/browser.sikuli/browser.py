@@ -123,11 +123,8 @@ class Firefox(GeneralBrowser):
     def profilerMark_6(self):
         type("6", Key.CTRL + Key.SHIFT)
 
-    def profilerMark_7(self):
-        type("7", Key.CTRL + Key.SHIFT)
-
-    def profilerMark_8(self):
-        type("8", Key.CTRL + Key.SHIFT)
+    # Ctrl + Shift + 7 and Ctrl + Shift + 8 will disable due to conflict key combination with google doc
+    # updated 2016.05.23
 
     def profilerMark_9(self):
         type("9", Key.CTRL + Key.SHIFT)
