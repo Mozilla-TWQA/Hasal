@@ -56,7 +56,13 @@ class ImageTool(object):
             breaking = False
             sample_fp = os.path.join(input_sample_dp, sample_fn)
             sample_dct = self.convert_to_dct(sample_fp)
-            for img_index in range(len(self.image_list)*3/4,1,-1):
+            # use sample1 image to compare the frames, from the video length of 3/4 to search
+            sample1_search_start_index = len(self.image_list)*3/4
+            if sample1_search_start_index <= 5000:
+                # in general, the prepartion frame will cost 3000 to 4000,
+                # if the default search index smaller than it, we could search from the end
+                sample1_search_start_index = len(self.image_list) - 1
+            for img_index in range(sample1_search_start_index,1,-1):
                 if found_1: break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])

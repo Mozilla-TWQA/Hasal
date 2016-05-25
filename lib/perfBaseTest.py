@@ -71,6 +71,19 @@ class PerfBaseTest(unittest.TestCase):
             self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_switchcontentwindow",
                             self.env.test_method_name + "_" + self.env.time_stamp)
 
+        # execute pre-run-script.
+        # You have to specify the pre_run_script and test_url before calling parent setup in your test class
+        if self.pre_run_script:
+            # clone pre run script test url id
+            if self.pre_run_script_test_url_id:
+                test_url_id = getattr(self.env, self.pre_run_script_test_url_id)
+                self.test_url, self.test_url_id = self.target_helper.clone_target(test_url_id,
+                                                                                  self.pre_run_script + "_" + self.env.time_stamp)
+            # execute pre run script
+            self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.pre_run_script,
+                                                 self.pre_run_script + "_" + self.env.time_stamp,
+                                                 test_url=self.test_url)
+
         # capture 1st snapshot
         time.sleep(5)
         captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
