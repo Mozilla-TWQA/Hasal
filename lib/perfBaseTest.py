@@ -73,9 +73,9 @@ class PerfBaseTest(unittest.TestCase):
 
         # execute pre-run-script.
         # You have to specify the pre_run_script and test_url before calling parent setup in your test class
-        if self.pre_run_script:
+        if hasattr(self, "pre_run_script"):
             # clone pre run script test url id
-            if self.pre_run_script_test_url_id:
+            if hasattr(self, "pre_run_script_test_url_id"):
                 test_url_id = getattr(self.env, self.pre_run_script_test_url_id)
                 self.test_url, self.test_url_id = self.target_helper.clone_target(test_url_id,
                                                                                   self.pre_run_script + "_" + self.env.time_stamp)
