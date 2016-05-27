@@ -52,7 +52,7 @@ while IFS='' read -r case_name || [[ -n "$case_name" ]]; do
     ENABLE_PROFILER=$ENABLE_PROFILER CLOSE_BROWSER=$CLOSE_BROWSER DISABLE_AVCONV=$DISABLE_AVCONV python -m unittest tests.$case_name_no_space
     sikuli_stat=$(head -n 1 sikuli_stat.txt)
     if [ "$sikuli_stat" -eq 0 ]; then
-      let COUNTER=COUNTER+1
+      COUNTER=$(head -n 1 time_list_counter.txt)
     else
       let RETRY_COUNTER=RETRY_COUNTER+1
       if [ "$RETRY_COUNTER" -ge $MAX_RETRY ]; then
