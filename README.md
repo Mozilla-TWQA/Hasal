@@ -27,6 +27,7 @@ brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r -
 brew install libav
 brew tap homebrew/science
 brew install opencv3
+brew isntall opencv
 
 ```
 
