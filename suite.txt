@@ -1,1 +1,1 @@
-test_firefox_gdoc_create_isolate_table_3
+test_firefox_gdoc_create_isolate_image_10
