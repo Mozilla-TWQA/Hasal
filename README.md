@@ -27,7 +27,13 @@ brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r -
 brew install libav
 brew tap homebrew/science
 brew install opencv3
-brew isntall opencv
+manual download the opencv2 package, compile and install
+download the opencv2 package here : https://github.com/Itseez/opencv/archive/2.4.13.zip
+  unzip the package 
+  cmake the folder unzipped 
+  make
+  make install
+  ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
 
 ```
 
