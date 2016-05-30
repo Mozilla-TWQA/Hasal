@@ -25,6 +25,7 @@ follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-
 # For Mac OS:
 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
 brew install libav
+brew tap homebrew/science
 brew install opencv3
 
 ```
