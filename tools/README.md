@@ -1,12 +1,10 @@
-Tools 
-=====
+# Tools
 
 Hasal Tools.
 
-parse_hasal_result
-------------------
+## parse_hasal_result
 
-# Prepare
+### Prepare
 
 Setup the env:
 ```bash
@@ -21,7 +19,7 @@ $ ls result.json
 result.json
 ```
 
-# Running
+### Running
 
 Starting parsing the `result.json` file.
 Note: you can generate your API key from [HERE](https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey). 
