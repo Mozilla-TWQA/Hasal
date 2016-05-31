@@ -3,7 +3,11 @@ VENV := ~/.hasalenv
 
 $(VENV)/bin/python:
 	[ -d $(VENV) ] || $(PYTHON) -m virtualenv $(VENV) || virtualenv $(VENV)
-	$(VENV)/bin/pip install --upgrade setuptools
+	$(VENV)/bin/pip install --upgrade setuptools pip
+	$(VENV)/bin/pip install -U -e git+git://github.com/jbalogh/check.git#egg=check
+	$(VENV)/bin/pip install -U -e git+git://github.com/askeing/remoteobjects.git#egg=remoteobjects
+	$(VENV)/bin/pip install -U -e git+git://github.com/askeing/bztools.git#egg=bztools
+	$(VENV)/bin/pip install -Ur requirements.txt
 	$(VENV)/bin/python setup.py develop
 
 
