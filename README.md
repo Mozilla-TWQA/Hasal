@@ -10,8 +10,8 @@ A Framework for testing web performance between different browser
 * Install opencv
 
 ```
-virtualenv venv
-source venv/bin/activate
+virtualenv ~/.hasalenv            # or "make clean dev-env"
+source ~/.hasalenv/bin/activate
 
 pip install selenium
 
@@ -38,7 +38,7 @@ OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not
 
 ```
 
-# Setup 
+# Setup
 * Create a google doc, add doc id in lib/environment.py
 
 # Usage
