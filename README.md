@@ -34,6 +34,7 @@ download the opencv2 package here : https://github.com/Itseez/opencv/archive/2.4
   make
   make install
   ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
+OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not error when use that command
 
 ```
 
