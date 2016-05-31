@@ -56,6 +56,7 @@ pip-install:
 
 clean:
 	find . -name "*.pyc" -type f -delete
+	rm -rf $(VENV)
 	rm -rf output/images/output/*
 	rm -rf output/images/sample/*
 	rm -rf output/profiles/*
