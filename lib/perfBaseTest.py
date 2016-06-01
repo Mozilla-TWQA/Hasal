@@ -34,7 +34,7 @@ class PerfBaseTest(unittest.TestCase):
         self.profiler_list = self.get_profiler_list()
 
         # Init environment variables
-        self.env = Environment(self._testMethodName)
+        self.env = Environment(self._testMethodName, self._testMethodDoc)
 
         # Init output dirs
         self.env.init_output_dir()

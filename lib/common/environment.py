@@ -59,9 +59,10 @@ class Environment(object):
             DEFAULT_VIDEO_RECORDING_POS_X)
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
-    def __init__(self, test_method_name):
+    def __init__(self, test_method_name, test_method_doc):
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
+        self.test_method_doc = test_method_doc
         self.hasal_dir = self.DEFAULT_HASAL_DIR
         self.sikuli_path = self.DEFAULT_SIKULI_PATH
         self.output_name = test_method_name + "_" + self.time_stamp
