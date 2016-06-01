@@ -69,8 +69,8 @@ class HasalBugSubmitter(object):
         for item in input_dict:
             browser_name, test_name = item.replace('test_', '').split('_', 1)
             contents = {}
-            for key in ['avg_time', 'std_dev', 'max_time', 'min_time', 'med_time']:
-                contents[key] = input_dict[item][key]
+            for key in ['avg_time', 'std_dev', 'max_time', 'min_time', 'med_time', 'description']:
+                contents[key] = input_dict[item][key] if key in input_dict[item] else None
             contents['test_script'] = item
             if test_name not in ret_dict:
                 ret_dict[test_name] = {}
@@ -93,15 +93,21 @@ class HasalBugSubmitter(object):
                     data_chrome = tests_group_by_browser[test]['chrome']
 
                 if data_firefox and data_chrome:
-                    # if ff slower than others, prepare data for filing bug
+                    # Clone a new Bug structure
                     bug_data = self._BUG_TEMPLATE.copy()
+                    # if ff slower than others, prepare data for filing bug
                     if data_firefox['med_time'] > data_chrome['med_time']:
+                        # Get the med time diff, and percent.
                         med_time_diff_firefox_chrome = data_firefox['med_time'] - data_chrome['med_time']
                         med_time_percentage_firefox_chrome = med_time_diff_firefox_chrome / data_chrome['med_time']
+                        # Get test description, if None then fill the test script name
+                        test_description = data_firefox['description'] if data_firefox['description'] else 'running ' + test
+                        # Adding summary into Bug structure
                         bug_data['summary'] = self._BUG_SUMMARY.format(browser='Chrome',
                                                                        percent=med_time_percentage_firefox_chrome,
                                                                        diff=med_time_diff_firefox_chrome,
-                                                                       action='running ' + test)
+                                                                       action=test_description)
+                        # Adding description (comment #0) into Bug structure
                         bug_data['description'] = self._BUG_DESC_TEMPLATE.format(firefox_med_time=data_firefox['med_time'],
                                                                                  firefox_avg_time=data_firefox['avg_time'],
                                                                                  firefox_std_dev=data_firefox['std_dev'],
