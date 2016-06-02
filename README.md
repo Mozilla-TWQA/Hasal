@@ -10,8 +10,8 @@ A Framework for testing web performance between different browser
 * Install opencv
 
 ```
-virtualenv venv
-source venv/bin/activate
+virtualenv ~/.hasalenv            # or "make clean dev-env"
+source ~/.hasalenv/bin/activate
 
 pip install selenium
 
@@ -25,11 +25,20 @@ follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-
 # For Mac OS:
 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
 brew install libav
+brew tap homebrew/science
 brew install opencv3
+manual download the opencv2 package, compile and install
+download the opencv2 package here : https://github.com/Itseez/opencv/archive/2.4.13.zip
+  unzip the package 
+  cmake the folder unzipped 
+  make
+  make install
+  ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
+OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not error when use that command
 
 ```
 
-# Setup 
+# Setup
 * Create a google doc, add doc id in lib/environment.py
 
 # Usage
