@@ -28,6 +28,8 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
     DEFAULT_VIDEO_RECORDING_HEIGHT = 768
 
+    DEFAULT_OUTLIER_CHECK_POINT = 30
+
     DEFAULT_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOTHhJNEhTN1pqYm8"
 
     TEST_TARGET_ID_3_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE = "1fTGfC2e5hD590gNChcolhOyXFBRV1O2zdfbVLU44Y84"
@@ -59,9 +61,10 @@ class Environment(object):
             DEFAULT_VIDEO_RECORDING_POS_X)
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
-    def __init__(self, test_method_name):
+    def __init__(self, test_method_name, test_method_doc):
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
+        self.test_method_doc = test_method_doc
         self.hasal_dir = self.DEFAULT_HASAL_DIR
         self.sikuli_path = self.DEFAULT_SIKULI_PATH
         self.output_name = test_method_name + "_" + self.time_stamp
