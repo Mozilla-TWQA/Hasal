@@ -39,7 +39,7 @@ class RunTest(object):
 
 
     def loop_suite(self, input_suite_fp, input_max_retry, input_max_run):
-        with open(input_suite_fp, "w+") as input_suite_fh:
+        with open(input_suite_fp) as input_suite_fh:
             for read_line in input_suite_fh.readlines():
                 test_case_name = read_line.strip()
                 test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_case_name + ".py")
@@ -55,10 +55,10 @@ class RunTest(object):
                         self.kill_legacy_process()
                         print "The counter is %d and the retry_counter is %d" % (current_run, current_retry)
                         subprocess.call(["python", "-m", "unittest", test_case_module_name], env=test_env)
-                        with open(DEFAULT_SIKULI_STAT_FN, "w+") as sikuli_stat_fh:
+                        with open(DEFAULT_SIKULI_STAT_FN) as sikuli_stat_fh:
                             sikuli_stat = int(sikuli_stat_fh.read())
                             if sikuli_stat == 0:
-                                with open(DEFAULT_TIME_LIST_COUNTER_FN, "w+") as time_list_counter_fh:
+                                with open(DEFAULT_TIME_LIST_COUNTER_FN) as time_list_counter_fh:
                                     current_run = int(time_list_counter_fh.read())
                             else:
                                 current_retry+=1
