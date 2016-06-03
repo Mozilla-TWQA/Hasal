@@ -13,7 +13,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp):
     return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
-def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc):
+def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     run_time = 0
     if os.path.exists(output_fp):
@@ -39,15 +39,17 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
         if run_time < result[test_method_name]['min_time']:
             result[test_method_name]['min_time'] = run_time
         result[test_method_name]['detail'].extend(current_run_result)
-        result[test_method_name]['avg_time'], result[test_method_name]['med_time'], result[test_method_name]['std_dev'], \
-        result[test_method_name]['time_list'], tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
-        result[test_method_name]['outlier'].extend(tmp_outlier)
+        if len(result[test_method_name]['time_list']) > outlier_check_point:
+            result[test_method_name]['avg_time'], result[test_method_name]['med_time'], result[test_method_name]['std_dev'], \
+            result[test_method_name]['time_list'], tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
+            result[test_method_name]['outlier'].extend(tmp_outlier)
     else:
         result[test_method_name] = {}
         result[test_method_name]['description'] = test_method_doc
         result[test_method_name]['total_run_no'] = 1
         result[test_method_name]['total_time'] = run_time
         result[test_method_name]['time_list'] = []
+        result[test_method_name]['outlier'] = []
         if run_time == 0:
             result[test_method_name]['error_no'] = 1
             result[test_method_name]['max_time'] = 0
@@ -59,9 +61,6 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
             result[test_method_name]['min_time'] = run_time
             result[test_method_name]['time_list'].append(run_time)
         result[test_method_name]['detail'] = current_run_result
-        result[test_method_name]['avg_time'], result[test_method_name]['med_time'], \
-        result[test_method_name]['std_dev'], result[test_method_name]['time_list'], \
-        result[test_method_name]['outlier'] = calc_obj.detect(result[test_method_name]['time_list'])
 
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
@@ -72,4 +71,4 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
 
 def result_calculation(env):
     current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp)
-    output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc)
+    output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)
