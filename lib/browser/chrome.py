@@ -5,6 +5,7 @@ from base import BrowserBase
 class BrowserChrome(BrowserBase):
 
     def get_browser_settings(self):
+        windows_chrome_command = 'chrome'
         ubuntu_chrome_command = 'google-chrome'
         darwin_chrome_command = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         current_platform_name = platform.system().lower()
@@ -22,5 +23,5 @@ class BrowserChrome(BrowserBase):
         else:
             self.browser_process = "chrome"
             self.process_name = "chrome"
-            self.launch_cmd = [ubuntu_chrome_command,
+            self.launch_cmd = [windows_chrome_command,
                                "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]

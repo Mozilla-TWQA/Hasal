@@ -12,19 +12,19 @@ DEFAULT_SIKULI_STAT_FN = "sikuli_stat.txt"
 DEFAULT_TIME_LIST_COUNTER_FN = "time_list_counter.txt"
 
 if platform.system().lower() == "windows":
-    DEFAULT_TASK_KILL_CMD = "taskkill /im "
+    DEFAULT_TASK_KILL_CMD = "taskkill /f /t /im "
 else:
     DEFAULT_TASK_KILL_CMD = "pkill "
 
 if platform.system().lower() == "linux":
     DEFAULT_TASK_KILL_LIST = ["avconv", "firefox", "chrome"]
     DEFAULT_EDITOR_CMD = "gedit"
+elif platform.system().lower() == “windows”:
+    DEFAULT_TASK_KILL_LIST = [“ffmpeg”, "firefox.exe”, "chrome.exe”]
+    DEFAULT_EDITOR_CMD = “notepad”
 else:
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
-    if platform.system().lower() == "darwin":
-        DEFAULT_EDITOR_CMD = "/Applications/Notes.app/Contents/MacOS/Notes"
-    else:
-        DEFAULT_EDITOR_CMD = "notepad"
+    DEFAULT_EDITOR_CMD = "/Applications/Notes.app/Contents/MacOS/Notes"
 
 class RunTest(object):
     def __init__(self, enable_profiler, disable_avconv, close_browser):
