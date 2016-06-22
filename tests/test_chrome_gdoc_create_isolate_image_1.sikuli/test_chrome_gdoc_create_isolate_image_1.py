@@ -5,5 +5,7 @@ import gdoc
 
 gd = gdoc.gDoc()
 gd.focus_content()
+type("A")
+type(Key.ENTER)
 gd.insert_image_url("https://drive.google.com/open?id=0B9Zi9TqbRWsdTV9JTmZQUXRFTWM")
 gd.deFoucsContentWindow()
