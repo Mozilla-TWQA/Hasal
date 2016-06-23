@@ -8,6 +8,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 DEFAULT_TEST_FOLDER = "tests"
 DEFAULT_MAX_RUN = 40
 DEFAULT_MAX_RETRY = 15
+DEFAULT_ERROR_CASE_LIST = "error_case_list.txt"
 DEFAULT_SIKULI_STAT_FN = "sikuli_stat.txt"
 DEFAULT_TIME_LIST_COUNTER_FN = "time_list_counter.txt"
 
@@ -62,6 +63,8 @@ class RunTest(object):
                                     current_run = int(time_list_counter_fh.read())
                             else:
                                 current_retry+=1
+                                with open(DEFAULT_ERROR_CASE_LIST, "a+") as error_case_fh:
+                                    error_case_fh.write(test_case_name + "\n")
                                 if current_retry > input_max_retry:
                                     break
                 else:
