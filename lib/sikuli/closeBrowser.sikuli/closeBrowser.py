@@ -10,7 +10,7 @@ for i in range(10):
     if browser.window():
         wait(1)
         if "firefox" in browser_name:
-            type("q", Key.CTRL)
+            type("w", Key.CTRL)
         elif "chrome" in browser_name:
             type("w", Key.SHIFT+Key.CTRL)
 
