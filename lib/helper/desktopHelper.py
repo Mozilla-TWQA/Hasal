@@ -24,16 +24,21 @@ def extract_profile_data(input_profile_path):
     return return_path
 
 
-def launch_browser(browser_type, input_profile_path=None):
-    if input_profile_path is not None:
-        profile_path = extract_profile_data(input_profile_path)
-    else:
-        profile_path = input_profile_path
-
+def launch_browser(browser_type, **kwargs):
+    profile_path = None
     if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path)
+        if kwargs['profile_path'] is not None:
+            profile_path = extract_profile_data(kwargs['profile_path'])
+            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path = profile_path)
+        else:
+            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
     else:
-        browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path)
+        if "tracing_path" in kwargs:
+            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH,
+                                        tracing_path=kwargs['tracing_path'])
+        else:
+            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+
     browser_obj.launch()
     return profile_path
 
