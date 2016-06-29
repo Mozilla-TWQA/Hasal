@@ -70,5 +70,9 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
 
 
 def result_calculation(env):
-    current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp)
-    output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)
+    if os.path.exists(env.video_output_fp):
+        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp)
+    else:
+        current_data = None
+    if current_data is not None:
+        output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)

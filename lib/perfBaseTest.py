@@ -25,7 +25,8 @@ class PerfBaseTest(unittest.TestCase):
             result_list.append(performance_timing_profiler)
             result_list.append(gecko_profiler)
         else:
-            result_list.append(avconv_profiler)
+            if int(os.getenv("DISABLE_AVCONV")) == 0:
+                result_list.append(avconv_profiler)
         return result_list
 
     def setUp(self):
@@ -90,15 +91,17 @@ class PerfBaseTest(unittest.TestCase):
 
         # capture 1st snapshot
         time.sleep(5)
-        captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                     self.env.img_output_sample_1_fn)
+        if int(os.getenv("DISABLE_AVCONV")) == 0:
+            captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                         self.env.img_output_sample_1_fn)
 
     def tearDown(self):
 
         # capture 2nd snapshot
         time.sleep(5)
-        captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                     self.env.img_output_sample_2_fn)
+        if int(os.getenv("DISABLE_AVCONV")) == 0:
+            captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+                                         self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
