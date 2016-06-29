@@ -4,7 +4,7 @@ from base import BrowserBase
 
 class BrowserFirefox(BrowserBase):
 
-    def get_browser_settings(self):
+    def get_browser_settings(self, **kwargs):
         ubuntu_firefox_command = "firefox"
         darwin_firefox_command = "/Applications/Firefox.app/Contents/MacOS/firefox"
         current_platform_name = platform.system().lower()
@@ -25,5 +25,5 @@ class BrowserFirefox(BrowserBase):
             self.launch_cmd = [ubuntu_firefox_command, "-height", self.window_size_height, "-width",
                                self.windows_size_width]
 
-        if self.profile_path is not None:
-            self.launch_cmd.extend(["--profile", self.profile_path])
+        if "profile_path" in kwargs:
+            self.launch_cmd.extend(["--profile", kwargs['profile_path']])

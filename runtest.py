@@ -28,10 +28,11 @@ else:
     DEFAULT_EDITOR_CMD = "/Applications/Notes.app/Contents/MacOS/Notes"
 
 class RunTest(object):
-    def __init__(self, enable_profiler, disable_avconv, close_browser):
+    def __init__(self, enable_profiler, disable_avconv, close_browser, enable_chrome_tracing):
         self.enable_profiler = enable_profiler
         self.disable_avconv = disable_avconv
         self.close_browser = close_browser
+        self.enable_chrome_tracing = enable_chrome_tracing
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -48,6 +49,7 @@ class RunTest(object):
                     test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_case_name
                     test_env = os.environ.copy()
                     test_env['ENABLE_PROFILER'] = self.enable_profiler
+                    test_env['ENABLE_CHROME_TRACING'] = self.enable_chrome_tracing
                     test_env['DISABLE_AVCONV'] = self.disable_avconv
                     test_env['CLOSE_BROWSER'] = self.close_browser
                     current_run = 0
@@ -81,6 +83,8 @@ def main():
                                          formatter_class=ArgumentDefaultsHelpFormatter)
     arg_parser.add_argument('--enable_profiler', action='store_true', dest='enable_profiler_flag', default=False,
                             help='enable profiler', required=False)
+    arg_parser.add_argument('--enable_chrome_tracing', action='store_true', dest='enable_chrome_tracing_flag',
+                            default=False, help='enable chrome tracing', required=False)
     arg_parser.add_argument('--disable_avconv', action='store_true', dest='disable_avconv_flag', default=False,
                             help='disable avconv', required=False)
     arg_parser.add_argument('--keep_browser', action='store_false', dest='keep_browser_flag', default=True,
@@ -94,11 +98,15 @@ def main():
     args = arg_parser.parse_args()
 
     enable_profiler_flag = "0"
+    enable_chrome_tracing_flag = "0"
     disable_avconv_flag = "0"
     keep_browser_flag = "1"
 
     if args.enable_profiler_flag:
         enable_profiler_flag = "1"
+
+    if args.enable_chrome_tracing_flag:
+        enable_chrome_tracing_flag = "1"
 
     if args.disable_avconv_flag:
         disable_avconv_flag = "1"
@@ -106,7 +114,7 @@ def main():
     if args.keep_browser_flag:
         keep_browser_flag = "0"
 
-    run_test_obj = RunTest(enable_profiler_flag, disable_avconv_flag, keep_browser_flag)
+    run_test_obj = RunTest(enable_profiler_flag, disable_avconv_flag, keep_browser_flag, enable_chrome_tracing_flag)
 
     if args.input_max_retry:
         input_max_retry = int(args.input_max_retry)

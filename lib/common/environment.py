@@ -78,6 +78,7 @@ class Environment(object):
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
+        self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")
 
     def init_output_dir(self):
         # Init output folder

@@ -60,7 +60,11 @@ class PerfBaseTest(unittest.TestCase):
         desktopHelper.minimize_window()
 
         # launch browser
-        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, self.profile_zip_path)
+        if int(os.getenv("ENABLE_CHROME_TRACING")) == 1:
+            self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
+                                                                 tracing_path=self.env.chrome_tracing_file_fp)
+        else:
+            self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path)
 
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
