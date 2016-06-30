@@ -25,7 +25,7 @@ class gDoc():
     def focus_content(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        click(Pattern("pics/gdocheader.png").similar(0.85))
+        find(Pattern("pics/printer.png").similar(0.60).targetOffset(50,60))
         wait(3)
         setAutoWaitTimeout(default_timeout)
 
