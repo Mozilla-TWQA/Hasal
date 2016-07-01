@@ -43,6 +43,9 @@ class PerfBaseTest(unittest.TestCase):
         # Init sikuli status
         self.sikuli_status = 0
 
+        # Init timestamp list
+        self.exec_timestamp_list = []
+
         # get browser type
         self.browser_type = self.env.get_browser_type()
 
@@ -56,6 +59,9 @@ class PerfBaseTest(unittest.TestCase):
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.profiler_list)
         self.profile_zip_path = self.profilers.get_profile_path()
+
+        # Record timestamp t1
+        self.exec_timestamp_list.append(time.time())
 
         # minimize all windows
         desktopHelper.minimize_window()
@@ -95,16 +101,24 @@ class PerfBaseTest(unittest.TestCase):
             captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_1_fn)
 
+        # Record timestamp t2
+        self.exec_timestamp_list.append(time.time())
+
     def tearDown(self):
+
+        # Record timestamp t3
+        self.exec_timestamp_list.append(time.time())
 
         # capture 2nd snapshot
         time.sleep(5)
+
         if int(os.getenv("DISABLE_AVCONV")) == 0:
             captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
+
 
         # Stop browser
         if int(os.getenv("CLOSE_BROWSER")) == 1:
@@ -120,6 +134,6 @@ class PerfBaseTest(unittest.TestCase):
 
         # output result
         if self.sikuli_status == 0:
-            resultHelper.result_calculation(self.env)
+            resultHelper.result_calculation(self.env,  self.exec_timestamp_list)
         else:
             print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)
