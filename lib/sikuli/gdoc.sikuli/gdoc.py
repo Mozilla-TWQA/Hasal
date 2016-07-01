@@ -35,7 +35,7 @@ class gDoc():
         click(Pattern("pics/defocus_content_window.png").similar(0.70).targetOffset(0, 25))
 
     def create_table(self, row_no, col_no):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.85))
+        wait(Pattern("pics/toolbar_insert.png").similar(0.8))
         type("i", self.alt + Key.SHIFT)
         wait(Pattern("pics/toolbar_insert_table.png").similar(0.55))
         type("t")
@@ -47,9 +47,9 @@ class gDoc():
         type(Key.ENTER)
 
     def insert_image_url(self, img_url):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.7))
+        wait(Pattern("pics/toolbar_insert.png").similar(0.5))
         type("i", self.alt + Key.SHIFT)
-        wait(Pattern("pics/toolbar_insert_image.png").similar(0.7))
+        wait(Pattern("pics/toolbar_insert_image.png").similar(0.5))
         type("i")
         for i in range(10):
             sleep(2)
