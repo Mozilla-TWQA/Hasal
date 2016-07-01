@@ -17,6 +17,7 @@ class ImageTool(object):
 
     def __init__(self):
         self.image_list = []
+        self.current_fps = 0
 
     def dump_result_to_json(self, data, output_fp):
         with open(output_fp, "wb") as fh:
@@ -24,6 +25,7 @@ class ImageTool(object):
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None):
         vidcap = cv2.VideoCapture(input_video_fp)
+        self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         result, image = vidcap.read()
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
@@ -43,7 +45,7 @@ class ImageTool(object):
                 self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
         return self.image_list
 
-    def compare_with_sample_image(self, input_sample_dp):
+    def compare_with_sample_image(self, input_sample_dp, exec_timestamp_list):
         result_list = []
         print "Comparing sample file start %s" % time.strftime("%c")
         sample_fn_list = os.listdir(input_sample_dp)
@@ -56,12 +58,8 @@ class ImageTool(object):
             breaking = False
             sample_fp = os.path.join(input_sample_dp, sample_fn)
             sample_dct = self.convert_to_dct(sample_fp)
-            # use sample1 image to compare the frames, from the video length of 3/4 to search
-            sample1_search_start_index = len(self.image_list)*3/4
-            if sample1_search_start_index <= 5000:
-                # in general, the prepartion frame will cost 3000 to 4000,
-                # if the default search index smaller than it, we could search from the end
-                sample1_search_start_index = len(self.image_list) - 1
+            # use timestamp to calculate the search index, 5 times of fps is the tolerance
+            sample1_search_start_index = int((exec_timestamp_list[1] - exec_timestamp_list[0])*self.current_fps)+int(self.current_fps*5)
             for img_index in range(sample1_search_start_index,1,-1):
                 if found_1: break
                 image_data = self.image_list[img_index]
@@ -72,9 +70,9 @@ class ImageTool(object):
                     breaking = True
                     found_1 = True
                     break
-                #else:
-                #    print "Comparing  sample file [%s] with imgae file [%s] mismatch!" % (sample_fp, image_data['image_fp'])
-            for img_index in range(len(self.image_list)*2/3,len(self.image_list)):
+            # use timestamp to calculate the search index, 5 times of fps is the tolerance
+            sample2_search_start_index = int((exec_timestamp_list[2] - exec_timestamp_list[0])*self.current_fps)-int(self.current_fps*5)
+            for img_index in range(sample2_search_start_index,len(self.image_list)):
                 if breaking: break
                 if found_2: break
                 image_data = self.image_list[img_index]
@@ -85,8 +83,6 @@ class ImageTool(object):
                     breaking = True
                     found_2 = True
                     break
-                #else:
-                #    print "Comparing  sample file [%s] with imgae file [%s] mismatch!" % (sample_fp, image_data['image_fp'])
         print result_list
         return result_list
 
