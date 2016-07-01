@@ -25,7 +25,10 @@ class ImageTool(object):
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None):
         vidcap = cv2.VideoCapture(input_video_fp)
-        self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
+        if hasattr(cv2, 'CAP_PROP_FPS'):
+            self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
+        else:
+            self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         result, image = vidcap.read()
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
