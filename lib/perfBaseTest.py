@@ -53,7 +53,7 @@ class PerfBaseTest(unittest.TestCase):
         self.target_helper = targetHelper.TagetHelper(self.env)
 
         # init sikuli
-        self.sikuli = sikuli.Sikuli()
+        self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
@@ -76,10 +76,10 @@ class PerfBaseTest(unittest.TestCase):
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
         if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:
-            self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_firefox_switchcontentwindow",
+            self.sikuli.run_test( "test_firefox_switchcontentwindow",
                             self.env.test_method_name + "_" + self.env.time_stamp)
         else:
-            self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, "test_chrome_switchcontentwindow",
+            self.sikuli.run_test( "test_chrome_switchcontentwindow",
                             self.env.test_method_name + "_" + self.env.time_stamp)
 
         # execute pre-run-script.
@@ -91,7 +91,7 @@ class PerfBaseTest(unittest.TestCase):
                 self.test_url, self.test_url_id = self.target_helper.clone_target(test_url_id,
                                                                                   self.pre_run_script + "_" + self.env.time_stamp)
             # execute pre run script
-            self.sikuli_status = self.sikuli.run(self.env.sikuli_path, self.env.hasal_dir, self.pre_run_script,
+            self.sikuli_status = self.sikuli.run_test( self.pre_run_script,
                                                  self.pre_run_script + "_" + self.env.time_stamp,
                                                  test_url=self.test_url)
 
@@ -125,7 +125,7 @@ class PerfBaseTest(unittest.TestCase):
             desktopHelper.stop_browser(self.browser_type, self.env)
 
         # Delete Url
-        if self.test_url_id:
+        if hasattr(self,"test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
         # output sikuli status to static file
