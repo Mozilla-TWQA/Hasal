@@ -67,6 +67,7 @@ class Environment(object):
         self.test_method_doc = test_method_doc
         self.hasal_dir = self.DEFAULT_HASAL_DIR
         self.sikuli_path = self.DEFAULT_SIKULI_PATH
+        self.run_sikulix_cmd_path = os.path.join(self.sikuli_path, "runsikulix")
         self.output_name = test_method_name + "_" + self.time_stamp
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
