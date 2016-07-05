@@ -15,9 +15,12 @@ DEFAULT_IMG_LIST_DATA_FN = "data.json"
 
 class ImageTool(object):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.image_list = []
-        self.current_fps = 0
+        if "fps" in kwargs:
+            self.current_fps = kwargs['fps']
+        else:
+            self.current_fps = 90
 
     def dump_result_to_json(self, data, output_fp):
         with open(output_fp, "wb") as fh:
@@ -25,10 +28,6 @@ class ImageTool(object):
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None):
         vidcap = cv2.VideoCapture(input_video_fp)
-        if hasattr(cv2, 'CAP_PROP_FPS'):
-            self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
-        else:
-            self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         result, image = vidcap.read()
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:

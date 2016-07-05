@@ -5,10 +5,10 @@ from ..common.outlier import outlier
 import numpy as np
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, input_fps):
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
-    img_tool_obj = ImageTool()
+    img_tool_obj = ImageTool(fps=input_fps)
     img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp)
     return img_tool_obj.compare_with_sample_image(input_sample_dp, exec_timestamp_list)
 
@@ -71,7 +71,7 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
 
 def result_calculation(env, exec_timestamp_list):
     if os.path.exists(env.video_output_fp):
-        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list)
+        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, env.DEFAULT_VIDEO_RECORDING_FPS)
     else:
         current_data = None
     if current_data is not None:
