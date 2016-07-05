@@ -65,7 +65,7 @@ class ImageTool(object):
             sample1_search_start_index = int((exec_timestamp_list[1] - exec_timestamp_list[0])*self.current_fps)+int(self.current_fps*5)
             print "current_fps:" + str(self.current_fps)
             print "sample1_search_start_index:" + str(sample1_search_start_index)
-            if sample1_search_start_index > len(self.image_list):
+            if sample1_search_start_index >= len(self.image_list):
                 sample1_search_start_index = len(self.image_list) -1
             print "sample1_search_start_index:" + str(sample1_search_start_index)
             for img_index in range(sample1_search_start_index,1,-1):
