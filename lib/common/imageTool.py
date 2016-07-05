@@ -63,6 +63,11 @@ class ImageTool(object):
             sample_dct = self.convert_to_dct(sample_fp)
             # use timestamp to calculate the search index, 5 times of fps is the tolerance
             sample1_search_start_index = int((exec_timestamp_list[1] - exec_timestamp_list[0])*self.current_fps)+int(self.current_fps*5)
+            print "current_fps:" + str(self.current_fps)
+            print "sample1_search_start_index:" + str(sample1_search_start_index)
+            if sample1_search_start_index > len(self.image_list):
+                sample1_search_start_index = len(self.image_list) -1
+            print "sample1_search_start_index:" + str(sample1_search_start_index)
             for img_index in range(sample1_search_start_index,1,-1):
                 if found_1: break
                 image_data = self.image_list[img_index]
@@ -75,6 +80,10 @@ class ImageTool(object):
                     break
             # use timestamp to calculate the search index, 5 times of fps is the tolerance
             sample2_search_start_index = int((exec_timestamp_list[2] - exec_timestamp_list[0])*self.current_fps)-int(self.current_fps*5)
+            print "sample2_search_start_index:" + str(sample2_search_start_index)
+            if sample2_search_start_index < 0:
+                sample2_search_start_index = 0
+            print "sample2_search_start_index:" + str(sample2_search_start_index)
             for img_index in range(sample2_search_start_index,len(self.image_list)):
                 if breaking: break
                 if found_2: break
