@@ -18,18 +18,27 @@ class ImageTool(object):
     def __init__(self):
         self.image_list = []
         self.current_fps = 0
+        self.search_range = [0, 0, 0, 0]
 
     def dump_result_to_json(self, data, output_fp):
         with open(output_fp, "wb") as fh:
             json.dump(data, fh)
 
-    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[]):
         vidcap = cv2.VideoCapture(input_video_fp)
         if hasattr(cv2, 'CAP_PROP_FPS'):
             self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
         else:
             self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         result, image = vidcap.read()
+        if exec_timestamp_list:
+            ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
+            ref_end_point = exec_timestamp_list[2] - exec_timestamp_list[0]
+            self.search_range = [
+                int((ref_start_point - 10) * self.current_fps),
+                int((ref_start_point + 10) * self.current_fps),
+                int((ref_end_point - 10) * self.current_fps),
+                int((ref_end_point + 10) * self.current_fps)]
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
                 os.mkdir(output_image_dir_path)
@@ -42,10 +51,19 @@ class ImageTool(object):
             os.mkdir(output_image_dir_path)
             while result:
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                cv2.imwrite(str_image_fp, image)
+                if (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]):
+                    cv2.imwrite(str_image_fp, image)
+                self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
                 result, image = vidcap.read()
                 img_cnt += 1
-                self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
+        if self.search_range[0] < 0:
+            self.search_range[0] = 0
+        if self.search_range[1] > len(self.image_list):
+            self.search_range[1] = len(self.image_list)
+        if self.search_range[2] < 0:
+            self.search_range[2] = 0
+        if self.search_range[3] > len(self.image_list):
+            self.search_range[3] = len(self.image_list)
         return self.image_list
 
     def compare_with_sample_image(self, input_sample_dp, exec_timestamp_list):
@@ -61,14 +79,7 @@ class ImageTool(object):
             breaking = False
             sample_fp = os.path.join(input_sample_dp, sample_fn)
             sample_dct = self.convert_to_dct(sample_fp)
-            # use timestamp to calculate the search index, 5 times of fps is the tolerance
-            sample1_search_start_index = int((exec_timestamp_list[1] - exec_timestamp_list[0])*self.current_fps)+int(self.current_fps*5)
-            print "current_fps:" + str(self.current_fps)
-            print "sample1_search_start_index:" + str(sample1_search_start_index)
-            if sample1_search_start_index >= len(self.image_list):
-                sample1_search_start_index = len(self.image_list) -1
-            print "sample1_search_start_index:" + str(sample1_search_start_index)
-            for img_index in range(sample1_search_start_index,1,-1):
+            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
                 if found_1: break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
@@ -78,13 +89,7 @@ class ImageTool(object):
                     breaking = True
                     found_1 = True
                     break
-            # use timestamp to calculate the search index, 5 times of fps is the tolerance
-            sample2_search_start_index = int((exec_timestamp_list[2] - exec_timestamp_list[0])*self.current_fps)-int(self.current_fps*5)
-            print "sample2_search_start_index:" + str(sample2_search_start_index)
-            if sample2_search_start_index < 0:
-                sample2_search_start_index = 0
-            print "sample2_search_start_index:" + str(sample2_search_start_index)
-            for img_index in range(sample2_search_start_index,len(self.image_list)):
+            for img_index in range(self.search_range[2] - 1, self.search_range[3]):
                 if breaking: break
                 if found_2: break
                 image_data = self.image_list[img_index]
