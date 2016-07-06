@@ -13,7 +13,7 @@ chrome.enterLink(sys.argv[3])
 
 gd.wait_for_loaded()
 
-wait(Pattern("EditDropdown.png").similar(0.85))
+wait(Pattern("EditDropdown.png").similar(0.50))
 wait(5)
 
 keyword = "OLD"
