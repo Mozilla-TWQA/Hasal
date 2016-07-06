@@ -32,11 +32,13 @@ class ImageTool(object):
             self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         result, image = vidcap.read()
         if exec_timestamp_list:
+            ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
+            ref_end_point = exec_timestamp_list[2] - exec_timestamp_list[0]
             self.search_range = [
-                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 10),
-                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 10),
-                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 10),
-                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 10)]
+                int((ref_start_point - 10) * self.current_fps),
+                int((ref_start_point + 10) * self.current_fps),
+                int((ref_end_point - 10) * self.current_fps),
+                int((ref_end_point + 10) * self.current_fps)]
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
                 os.mkdir(output_image_dir_path)
