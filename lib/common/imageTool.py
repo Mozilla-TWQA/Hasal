@@ -56,10 +56,14 @@ class ImageTool(object):
                 self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
                 result, image = vidcap.read()
                 img_cnt += 1
-        if self.search_range[0] < 0: self.search_range[0] = 0
-        if self.search_range[1] > len(self.image_list): self.search_range[3] = len(self.image_list)
-        if self.search_range[2] < 0: self.search_range[0] = 0
-        if self.search_range[3] > len(self.image_list): self.search_range[3] = len(self.image_list)
+        if self.search_range[0] < 0:
+            self.search_range[0] = 0
+        if self.search_range[1] > len(self.image_list):
+            self.search_range[1] = len(self.image_list)
+        if self.search_range[2] < 0:
+            self.search_range[2] = 0
+        if self.search_range[3] > len(self.image_list):
+            self.search_range[3] = len(self.image_list)
         return self.image_list
 
     def compare_with_sample_image(self, input_sample_dp, exec_timestamp_list):
