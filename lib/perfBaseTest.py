@@ -12,6 +12,12 @@ from helper.profilerHelper import Profilers
 
 class PerfBaseTest(unittest.TestCase):
 
+    def __init__(self, *args, **kwargs):
+        super(PerfBaseTest, self).__init__(*args, **kwargs)
+
+        # Init environment variables
+        self.env = Environment(self._testMethodName, self._testMethodDoc)
+
     def get_profiler_list(self):
         avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}
         har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}
@@ -29,13 +35,15 @@ class PerfBaseTest(unittest.TestCase):
                 result_list.append(avconv_profiler)
         return result_list
 
+    def set_variable(self, **kwargs):
+        for variable_name in kwargs.keys():
+            print variable_name + "=" + kwargs[variable_name]
+            setattr(self,variable_name,kwargs[variable_name])
+
     def setUp(self):
 
         # Get profiler list
         self.profiler_list = self.get_profiler_list()
-
-        # Init environment variables
-        self.env = Environment(self._testMethodName, self._testMethodDoc)
 
         # Init output dirs
         self.env.init_output_dir()
@@ -95,11 +103,17 @@ class PerfBaseTest(unittest.TestCase):
                                                  self.pre_run_script + "_" + self.env.time_stamp,
                                                  test_url=self.test_url)
 
+
+        # clone test target
+        if hasattr(self, "test_target"):
+            self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target, self.env.output_name)
+
         # capture 1st snapshot
         time.sleep(5)
         if int(os.getenv("DISABLE_AVCONV")) == 0:
             captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_1_fn)
+        time.sleep(2)
 
         # Record timestamp t2
         self.exec_timestamp_list.append(time.time())
