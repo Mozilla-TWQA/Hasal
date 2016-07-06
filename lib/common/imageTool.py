@@ -33,10 +33,10 @@ class ImageTool(object):
         result, image = vidcap.read()
         if exec_timestamp_list:
             self.search_range = [
-                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 3),
-                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 9),
-                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 8),
-                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 3)]
+                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 10),
+                int((exec_timestamp_list[1] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 10),
+                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) - int(self.current_fps * 10),
+                int((exec_timestamp_list[2] - exec_timestamp_list[0]) * self.current_fps) + int(self.current_fps * 10)]
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
                 os.mkdir(output_image_dir_path)
