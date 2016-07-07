@@ -6,6 +6,7 @@ import zipfile
 import os
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
+from ..common.windowController import WindowObject
 
 DEFAULT_BROWSER_POS_X = 0
 DEFAULT_BROWSER_POS_Y = 0
@@ -41,6 +42,25 @@ def launch_browser(browser_type, **kwargs):
 
     browser_obj.launch()
     return profile_path
+
+
+def lock_window_pos(browser_type):
+    window_title = None
+    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+        if platform.system().lower() == "darwin":
+            window_title = "Firefox.app"
+        else:
+            window_title = "Mozilla Firefox"
+
+    else:
+        if platform.system().lower() == "darwin":
+            window_title = "Chrome.app"
+        else:
+            window_title = "Google Chrome"
+
+    window_obj = WindowObject(window_title)
+    window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+
 
 def stop_browser(browser_type, env):
     # This could sometime cause firefox/chrome safe mode issue

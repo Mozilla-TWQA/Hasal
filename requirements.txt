@@ -2,6 +2,7 @@ numpy>=1.10.0
 psutil>=4.1.0
 PyDrive==1.0.1
 pyperclip>=1.5.27
+appscript>=1.01
 
 python-dateutil
 keyring
