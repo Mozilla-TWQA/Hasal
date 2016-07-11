@@ -11,7 +11,8 @@ def validate_pywin32():
     try:
         import win32gui
         import win32con
-    except:
+    except ImportError as e:
+        print e
         sys.exit("Please make sure you already install the pywin32 properly. You can download the latest version from here https://sourceforge.net/projects/pywin32/")
 
 
@@ -33,6 +34,7 @@ DEFAULT_REQUIREMENT_DOC_FOR_MAC = "requirements_mac.txt"
 # dependencies
 with open(DEFAULT_REQUIREMENT_DOC) as f:
     deps = f.read().splitlines()
+
 
 if sys.platform == 'win32':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_WIN):
