@@ -1,11 +1,11 @@
 import time
-import platform
+import sys
 import subprocess
 
-if platform.system().lower() == "windows":
+if sys.platform == "win32":
    import win32gui
    import win32con
-elif platform.system().lower() == "darwin":
+elif sys.platform == "darwin":
     from appscript import *
 
 
@@ -13,12 +13,12 @@ class WindowObject(object):
    DEFAULT_WMCTRL_CMD = "/usr/bin/wmctrl"
 
    def __init__(self, input_window_name):
-       self.window_type = platform.system().lower()
+       self.window_type = sys.platform
        self.window_name = input_window_name
        self.get_window_identity()
 
    def get_window_identity(self):
-       if self.window_type == "linux":
+       if self.window_type == "linux2":
            self.window_identity = self.wmctrl_get_window_id()
 
    def pywin32_callback_func(self, hwnd, extra):
@@ -60,9 +60,9 @@ class WindowObject(object):
        self.window_height = window_height
        self.window_width = window_width
        self.window_gravity = window_gravity
-       if self.window_type == "linux":
+       if self.window_type == "linux2":
            self.wmctrl_move_window()
-       elif self.window_type == "windows":
+       elif self.window_type == "win32":
            self.pywin32_move_window()
        else:
            self.appscript_move_window()
