@@ -6,6 +6,15 @@ import os
 import sys
 from setuptools import setup, find_packages
 
+
+def validate_pywin32():
+    try:
+        import win32gui
+        import win32con
+    except:
+        sys.exit("Please make sure you already install the pywin32 properly. You can download the latest version from here https://sourceforge.net/projects/pywin32/")
+
+
 DEFAULT_REQUIREMENT_DOC = "requirements.txt"
 DEFAULT_REQUIREMENT_DOC_FOR_WIN = "requirements_windows.txt"
 DEFAULT_REQUIREMENT_DOC_FOR_MAC = "requirements_mac.txt"
@@ -29,6 +38,9 @@ if sys.platform == 'win32':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_WIN):
         with open(DEFAULT_REQUIREMENT_DOC_FOR_WIN) as fh_win:
             deps.extend(fh_win.read().splitlines())
+    validate_pywin32()
+
+
 elif sys.platform == 'darwin':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_MAC):
         with open(DEFAULT_REQUIREMENT_DOC_FOR_MAC) as fh_mac:
@@ -50,3 +62,6 @@ setup(
     include_package_data=True,
     zip_safe=False
 )
+
+
+
