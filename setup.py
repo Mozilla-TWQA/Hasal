@@ -3,24 +3,33 @@
 
 # from distutils.sysconfig import get_python_lib
 import os
-import platform
+import sys
 from setuptools import setup, find_packages
 
 DEFAULT_REQUIREMENT_DOC = "requirements.txt"
 DEFAULT_REQUIREMENT_DOC_FOR_WIN = "requirements_windows.txt"
 DEFAULT_REQUIREMENT_DOC_FOR_MAC = "requirements_mac.txt"
 
-
+# platform dependencies
+# System                platform value
+# Linux (2.x and 3.x)   'linux2'
+# Windows               'win32'
+# Windows/Cygwin        'cygwin'
+# Mac OS X              'darwin'
+# OS/2                  'os2'
+# OS/2 EMX              'os2emx'
+# RiscOS                'riscos'
+# AtheOS                'atheos'
 
 # dependencies
 with open(DEFAULT_REQUIREMENT_DOC) as f:
     deps = f.read().splitlines()
 
-if platform.system().lower() == "windows":
+if sys.platform == 'win32':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_WIN):
         with open(DEFAULT_REQUIREMENT_DOC_FOR_WIN) as fh_win:
             deps.extend(fh_win.read().splitlines())
-elif platform.system().lower() == "darwin":
+elif sys.platform == 'darwin':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_MAC):
         with open(DEFAULT_REQUIREMENT_DOC_FOR_MAC) as fh_mac:
             deps.extend(fh_mac.read().splitlines())
