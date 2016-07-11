@@ -90,6 +90,9 @@ class PerfBaseTest(unittest.TestCase):
             self.sikuli.run_test( "test_chrome_switchcontentwindow",
                             self.env.test_method_name + "_" + self.env.time_stamp)
 
+        # lock browser start pos at (0,0)
+        desktopHelper.lock_window_pos(self.browser_type)
+
         # execute pre-run-script.
         # You have to specify the pre_run_script and test_url before calling parent setup in your test class
         if hasattr(self, "pre_run_script"):
