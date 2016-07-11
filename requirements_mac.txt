@@ -1,1 +1,1 @@
-appscript>=1.01
+appscript>=1.0.1
