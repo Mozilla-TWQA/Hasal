@@ -81,9 +81,6 @@ class PerfBaseTest(unittest.TestCase):
         else:
             self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path)
 
-        # lock browser start pos at (0,0)
-        desktopHelper.lock_window_pos(self.browser_type)
-
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
         if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:
@@ -92,6 +89,9 @@ class PerfBaseTest(unittest.TestCase):
         else:
             self.sikuli.run_test( "test_chrome_switchcontentwindow",
                             self.env.test_method_name + "_" + self.env.time_stamp)
+
+        # lock browser start pos at (0,0)
+        desktopHelper.lock_window_pos(self.browser_type)
 
         # execute pre-run-script.
         # You have to specify the pre_run_script and test_url before calling parent setup in your test class
