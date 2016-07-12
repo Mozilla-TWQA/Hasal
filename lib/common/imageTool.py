@@ -207,31 +207,24 @@ class ImageTool(object):
             coord = [(0,0), (w,h)]
             print "WARNING: Incorrect coordinates, using fully image crop"
         else:
-            if coord[0][0] < 0:
-                coord[0] = (0, coord[0][1])
-                print "WARNING: Incorrect coordinates, set origin x coordinate to 0"
-            if coord[0][0] > w:
-                coord[0] = (w, coord[0][1])
-                print "WARNING: Incorrect coordinates, set origin x coordinate to width"
-            if coord[1][0] < 0:
-                coord[1] = (0, coord[1][1])
-                print "WARNING: Incorrect coordinates, set target x coordinate to 0"
-            if coord[1][0] > w:
-                coord[1] = (w, coord[1][1])
-                print "WARNING: Incorrect coordinates, set target x coordinate to width"
-            if coord[0][1] < 0:
-                coord[0] = (coord[0][0], 0)
-                print "WARNING: Incorrect coordinates, set origin y coordinate to 0"
-            if coord[0][1] > h:
-                coord[0] = (coord[0][0], h)
-                print "WARNING: Incorrect coordinates, set origin y coordinate to height"
-            if coord[1][1] < 0:
-                coord[1] = (coord[1][0], 0)
-                print "WARNING: Incorrect coordinates, set target y coordinate to 0"
-            if coord[1][1] > h:
-                coord[1] = (coord[1][0], h)
-                print "WARNING: Incorrect coordinates, set target y coordinate to height"
-        print "Crop image range" + str(coord)
+            for i in range(2):
+                for j in range(2):
+                    new_val = coord[i][j]
+                    if coord[i][j] < 0:
+                        new_val = 0
+                    elif j == 0 and coord[i][j] > w:
+                        new_val = w
+                    elif j == 1 and coord[i][j] > h:
+                        new_val = h
+                    if new_val != coord[i][j]:
+                        new_xy = [coord[i][0], coord[i][1]]
+                        list_index = int(j == 0)
+                        new_xy[list_index] = coord[i][list_index]
+                        new_xy[j] = new_val
+                        coord[i] = tuple(new_xy)
+                        print "WARNING: Incorrect coordinates, set %s %s coordinate to %s" % (
+                        ["origin", "target"][i], str(unichr(120 + j)), str(new_val))
+        print "Crop image range: " + str(coord)
         if coord[0][0] < coord[1][0] and coord[0][1] < coord[1][1]:
             crop_img = img[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]]
         elif coord[0][0] > coord[1][0] and coord[0][1] > coord[1][1]:
