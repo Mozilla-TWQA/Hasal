@@ -25,7 +25,7 @@ class ImageTool(object):
         with open(output_fp, "wb") as fh:
             json.dump(data, fh)
 
-    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[], comp_mode=0):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[], comp_mode=False):
         vidcap = cv2.VideoCapture(input_video_fp)
         if hasattr(cv2, 'CAP_PROP_FPS'):
             self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
@@ -52,11 +52,10 @@ class ImageTool(object):
             os.mkdir(output_image_dir_path)
             while result:
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                if comp_mode and img_cnt >= self.search_range[0]:
+                if (comp_mode and img_cnt >= self.search_range[0]) or \
+                        (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or \
+                        (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]):
                     cv2.imwrite(str_image_fp, image)
-                else:
-                    if (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]):
-                        cv2.imwrite(str_image_fp, image)
                 self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
                 result, image = vidcap.read()
                 img_cnt += 1
@@ -153,7 +152,7 @@ class ImageTool(object):
                     image_data = self.image_list[img_index]
                     comparing_dct = self.convert_to_dct(image_data['image_fp'])
                     if self.compare_two_images(sample_dct, comparing_dct):
-                        print "Comparing sample file end %s" % time.strftime("%c")
+                        print "Comparing sample %d file end %s" % (sample_index+1,time.strftime("%c"))
                         result_list.append(image_data)
                         m_start_index = img_index
                         break
@@ -166,7 +165,7 @@ class ImageTool(object):
                     if match_val < min_val:
                         min_val = match_val
                         result_list[-1] = image_data
-                print "Comparing sample file end %s" % time.strftime("%c")
+                print "Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c"))
         print result_list
         return result_list
 
