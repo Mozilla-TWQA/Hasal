@@ -37,7 +37,6 @@ class PerfBaseTest(unittest.TestCase):
 
     def set_variable(self, **kwargs):
         for variable_name in kwargs.keys():
-            print variable_name + "=" + kwargs[variable_name]
             setattr(self,variable_name,kwargs[variable_name])
 
     def setUp(self):
@@ -151,6 +150,9 @@ class PerfBaseTest(unittest.TestCase):
 
         # output result
         if self.sikuli_status == 0:
-            resultHelper.result_calculation(self.env,  self.exec_timestamp_list)
+            if hasattr(self, "crop_data"):
+                resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data)
+            else:
+                resultHelper.result_calculation(self.env,  self.exec_timestamp_list)
         else:
             print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)
