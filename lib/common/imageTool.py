@@ -157,14 +157,13 @@ class ImageTool(object):
                         m_start_index = img_index
                         break
             else:
-                min_val = 1.0
-                result_list.append(self.image_list[m_start_index])
+                threshold = 0.00001
                 for img_index in range(m_start_index, self.search_range[3]):
                     image_data = self.image_list[img_index]
                     match_val = self.template_match(image_data['image_fp'], sample_fp)
-                    if match_val < min_val:
-                        min_val = match_val
-                        result_list[-1] = image_data
+                    if match_val < threshold:
+                        result_list.append(image_data)
+                        break
                 print "Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c"))
         print result_list
         return result_list
@@ -183,17 +182,11 @@ class ImageTool(object):
         res = cv2.matchTemplate(img_gray, template, method_eval)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-        #For artifactual image output
-        '''
-        str_image_fp = $TBD
-        #Draw a rectangle on the target object
+        #For artifactual image output, draw a rectangle on the target object
+        str_image_fp = base_img_fp.split('.')[0]+"_TemplateMatch.jpg"
         top_left = min_loc
         bottom_right = (top_left[0] + w, top_left[1] + h)
         cv2.imwrite(str_image_fp, cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2))
-
-        #cv2.imshow('original', img)
-        #cv2.waitKey(0)
-        '''
         return min_val
 
     def crop_image(self, input_sample_fp, output_sample_fp, coord=[]):
