@@ -11,7 +11,7 @@ class TestSikuli(PerfBaseTest):
                                      "output": os.path.join(self.env.img_sample_dp, self.env.img_output_crop_fn)})
         super(TestSikuli, self).setUp()
 
-    def test_firefox_gdoc_read_basic_table_1_sampleobj(self):
+    def test_chrome_gdoc_read_basic_table_1_sampleobj(self):
         self.sikuli_status = self.sikuli.run_test( self.env.test_method_name,
                                              self.env.test_method_name + "_" + self.env.time_stamp,
                                              test_url=self.test_url)
