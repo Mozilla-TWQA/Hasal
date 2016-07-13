@@ -9,8 +9,8 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
     img_tool_obj = ImageTool()
-    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp)
-    return img_tool_obj.compare_with_sample_image(input_sample_dp, exec_timestamp_list)
+    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+    return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
 def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point):
