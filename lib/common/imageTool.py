@@ -187,7 +187,8 @@ class ImageTool(object):
         str_image_fp = base_img_fp.split('.')[0]+"_TemplateMatch.jpg"
         top_left = min_loc
         bottom_right = (top_left[0] + w, top_left[1] + h)
-        cv2.imwrite(str_image_fp, cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2))
+        cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2)
+        cv2.imwrite(str_image_fp, img)
         return min_val
 
     def crop_image(self, input_sample_fp, output_sample_fp, coord=[]):
