@@ -52,9 +52,10 @@ class ImageTool(object):
             os.mkdir(output_image_dir_path)
             while result:
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                if (comp_mode and img_cnt >= self.search_range[0]) or \
+                if (comp_mode and img_cnt >= self.search_range[0] and img_cnt <= self.search_range[3]) or \
                         (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or \
-                        (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]):
+                        (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]) or \
+                        not exec_timestamp_list:
                     cv2.imwrite(str_image_fp, image)
                 self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
                 result, image = vidcap.read()
