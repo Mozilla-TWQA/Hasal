@@ -1,6 +1,8 @@
 import os
 import web
 import json
+import time
+from datetime import datetime
 import shutil
 import urlparse
 
@@ -11,6 +13,14 @@ urls = (
     '/reset/(.*)', 'Reset',
     '/hasal/(.*)/(.*)/(.*)', 'HasalServer'
 )
+
+
+class Formater:
+
+    @staticmethod
+    def timestamp_to_date_string(timestamp):
+        # For Javascript, 'var d = new Date(timestamp * 1000)' can work.
+        return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 
 class StorageHandler:
@@ -87,6 +97,7 @@ class HasalServer:
         'origin_values': [],  # the list of (value, video, ip)
         'video_path': '',
         'profile_path': '',
+        'timestamp': 0,
     }
 
     def __init__(self):
@@ -143,6 +154,8 @@ class HasalServer:
         median_value = current_test_obj['median_value']
         mean_value = current_test_obj['mean_value']
         sigma_value = current_test_obj['sigma_value']
+        timestamp = current_test_obj['timestamp']
+        datestring = Formater.timestamp_to_date_string(timestamp) if timestamp else ''
 
         _, video, ip = HasalServer.find_video_ip_by_median(values_list, median_value)
 
@@ -153,7 +166,9 @@ class HasalServer:
             'current_test_times': len(values_list),
             'video': video,
             'ip': ip,
-            'config_test_times': HasalServer._config_test_times
+            'config_test_times': HasalServer._config_test_times,
+            'timestamp': timestamp,
+            'date': datestring
         }
         return json.dumps(ret)
 
@@ -261,6 +276,8 @@ class HasalServer:
                                 current_test_obj['median_value'] = median
                                 current_test_obj['mean_value'] = mean
                                 current_test_obj['sigma_value'] = sigma
+                                # add timestamp
+                                current_test_obj['timestamp'] = time.time()
                                 # return the client
                                 return HasalServer.return_json(current_test_obj)
                     # Keep going and return the client
