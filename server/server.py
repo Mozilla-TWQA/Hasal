@@ -304,78 +304,10 @@ class HasalServer:
 
 
 class Index:
+    render = web.template.render('templates', base='layout')
+
     def GET(self):
-        message = """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Hasal Server Hello World</title>
-</head>
-<body>
-<textarea>
-# Hasal Server
-You can setup the test times by editing the file `~/.hasal_server/config.json`. The content example:
-```json
-{"test_times": 5}
-```
-## Test
-### Start server
-You can press `Ctrl + C` to stop the server. The server's result will dump to `~/.hasal_server/dump.json`.
-```bash
-$ python server.py 1234
-```
-### Group 1
-PC 1
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "fx", "platform": "x86_64", "value": 501, "video": "20160701_fx001.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 2
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "fx", "platform": "x86_64", "value": 505, "video": "20160701_fx002.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 3
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "fx", "platform": "x86_64", "value": 502, "video": "20160701_fx003.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 4
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "fx", "platform": "x86_64", "value": 503, "video": "20160701_fx004.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 5
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "fx", "platform": "x86_64", "value": 504, "video": "20160701_fx005.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-### Group 2
-PC 1
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "ch", "platform": "x86_64", "value": 508, "video": "20160701_ch001.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 2
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "ch", "platform": "x86_64", "value": 505, "video": "20160701_ch002.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 3
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "ch", "platform": "x86_64", "value": 507, "video": "20160701_ch003.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 4
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "ch", "platform": "x86_64", "value": 506, "video": "20160701_ch004.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-PC 5
-```bash
-$ curl --data 'json={"os": "mac", "target": "fx", "test": "test_foo", "browser": "ch", "platform": "x86_64", "value": 508, "video": "20160701_ch005.avi", "comment": "first test"}' http://localhost:1234/hasal/mac/fx/test_foo
-```
-## Check Result
-Open `http://localhost:1234/hasal/mac/fx/test_foo` to check the result of os `mac`, target `fx`, and test `test_foo`.
-## Reset Test Data
-Open `http://localhost:1234/reset/` to reset test data.
-</textarea>
-<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
-</body>
-</html>
-        """
-        return message
+        return self.render.readme()
 
 
 class Reset:
