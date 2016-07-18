@@ -62,17 +62,6 @@ def lock_window_pos(browser_type):
     window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
 
 
-def stop_browser(browser_type, env):
-    # This could sometime cause firefox/chrome safe mode issue
-    # if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-    #     browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-    # else:
-    #     browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-    # browser_obj.stop()
-    print browser_type
-    lib.sikuli.Sikuli().close_browser(browser_type, env)
-
-
 def minimize_window():
     if platform.system().lower() == "linux":
         get_active_windows_cmd = "xdotool getactivewindow"

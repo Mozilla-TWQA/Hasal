@@ -52,7 +52,7 @@ class RunTest(object):
                     test_env['ENABLE_PROFILER'] = self.enable_profiler
                     test_env['ENABLE_CHROME_TRACING'] = self.enable_chrome_tracing
                     test_env['DISABLE_AVCONV'] = self.disable_avconv
-                    test_env['CLOSE_BROWSER'] = self.close_browser
+                    test_env['KEEP_BROWSER'] = self.close_browser
                     if self.sikuli_script_path:
                         test_env['SIKULI_SCRIPT_PATH'] = self.sikuli_script_path
                     current_run = 0
@@ -64,8 +64,11 @@ class RunTest(object):
                         with open(DEFAULT_SIKULI_STAT_FN) as sikuli_stat_fh:
                             sikuli_stat = int(sikuli_stat_fh.read())
                             if sikuli_stat == 0:
-                                with open(DEFAULT_TIME_LIST_COUNTER_FN) as time_list_counter_fh:
-                                    current_run = int(time_list_counter_fh.read())
+                                if os.path.exists(DEFAULT_TIME_LIST_COUNTER_FN):
+                                    with open(DEFAULT_TIME_LIST_COUNTER_FN) as time_list_counter_fh:
+                                        current_run = int(time_list_counter_fh.read())
+                                else:
+                                    current_run+=1
                             else:
                                 current_retry+=1
                                 with open(DEFAULT_ERROR_CASE_LIST, "a+") as error_case_fh:
@@ -90,7 +93,7 @@ def main():
                             default=False, help='enable chrome tracing', required=False)
     arg_parser.add_argument('--disable_avconv', action='store_true', dest='disable_avconv_flag', default=False,
                             help='disable avconv', required=False)
-    arg_parser.add_argument('--keep_browser', action='store_false', dest='keep_browser_flag', default=True,
+    arg_parser.add_argument('--keep_browser', action='store_true', dest='keep_browser_flag', default=False,
                             help='keep browser', required=False)
     arg_parser.add_argument('-i', action='store', dest='input_suite_fp', default=None,
                             help='specify suite file path', required=False)
@@ -108,7 +111,7 @@ def main():
     enable_profiler_flag = "0"
     enable_chrome_tracing_flag = "0"
     disable_avconv_flag = "0"
-    keep_browser_flag = "1"
+    keep_browser_flag = "0"
     sikuli_script_path = None
 
     if args.enable_profiler_flag:
@@ -121,7 +124,7 @@ def main():
         disable_avconv_flag = "1"
 
     if args.keep_browser_flag:
-        keep_browser_flag = "0"
+        keep_browser_flag = "1"
 
     if args.input_sikuli_script_path:
         sikuli_script_path = args.input_sikuli_script_path
