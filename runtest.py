@@ -149,7 +149,6 @@ def main():
     else:
         print "You should specify the suite by using -i !"
 
-    print suite_fp
     if suite_fp:
         run_test_obj.run(suite_fp, input_max_retry, input_max_run)
 
