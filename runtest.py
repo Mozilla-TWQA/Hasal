@@ -28,18 +28,18 @@ else:
     DEFAULT_EDITOR_CMD = "/Applications/Notes.app/Contents/MacOS/Notes"
 
 class RunTest(object):
-    def __init__(self, enable_profiler, disable_avconv, close_browser, enable_chrome_tracing, sikuli_script_path):
+    def __init__(self, enable_profiler, disable_avconv, keep_browser, enable_chrome_tracing, sikuli_script_path, post_run_sikuli_script_path):
         self.enable_profiler = enable_profiler
         self.disable_avconv = disable_avconv
-        self.close_browser = close_browser
+        self.keep_browser = keep_browser
         self.enable_chrome_tracing = enable_chrome_tracing
         self.sikuli_script_path = sikuli_script_path
+        self.post_run_sikuli_script_path = post_run_sikuli_script_path
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
             os.system(cmd_str)
-
 
     def loop_suite(self, input_suite_fp, input_max_retry, input_max_run):
         with open(input_suite_fp) as input_suite_fh:
@@ -52,9 +52,11 @@ class RunTest(object):
                     test_env['ENABLE_PROFILER'] = self.enable_profiler
                     test_env['ENABLE_CHROME_TRACING'] = self.enable_chrome_tracing
                     test_env['DISABLE_AVCONV'] = self.disable_avconv
-                    test_env['CLOSE_BROWSER'] = self.close_browser
+                    test_env['KEEP_BROWSER'] = self.keep_browser
                     if self.sikuli_script_path:
                         test_env['SIKULI_SCRIPT_PATH'] = self.sikuli_script_path
+                    if self.post_run_sikuli_script_path:
+                        test_env['POST_RUN_SIKULI_SCRIPT_PATH'] = self.post_run_sikuli_script_path
                     current_run = 0
                     current_retry = 0
                     while current_run < input_max_run:
@@ -64,8 +66,11 @@ class RunTest(object):
                         with open(DEFAULT_SIKULI_STAT_FN) as sikuli_stat_fh:
                             sikuli_stat = int(sikuli_stat_fh.read())
                             if sikuli_stat == 0:
-                                with open(DEFAULT_TIME_LIST_COUNTER_FN) as time_list_counter_fh:
-                                    current_run = int(time_list_counter_fh.read())
+                                if os.path.exists(DEFAULT_TIME_LIST_COUNTER_FN):
+                                    with open(DEFAULT_TIME_LIST_COUNTER_FN) as time_list_counter_fh:
+                                        current_run = int(time_list_counter_fh.read())
+                                else:
+                                    current_run+=1
                             else:
                                 current_retry+=1
                                 with open(DEFAULT_ERROR_CASE_LIST, "a+") as error_case_fh:
@@ -90,7 +95,7 @@ def main():
                             default=False, help='enable chrome tracing', required=False)
     arg_parser.add_argument('--disable_avconv', action='store_true', dest='disable_avconv_flag', default=False,
                             help='disable avconv', required=False)
-    arg_parser.add_argument('--keep_browser', action='store_false', dest='keep_browser_flag', default=True,
+    arg_parser.add_argument('--keep_browser', action='store_true', dest='keep_browser_flag', default=False,
                             help='keep browser', required=False)
     arg_parser.add_argument('-i', action='store', dest='input_suite_fp', default=None,
                             help='specify suite file path', required=False)
@@ -102,14 +107,17 @@ def main():
                             help='specify sikuli script path', required=False)
     arg_parser.add_argument('--sikuli_script_browser', action='store', dest='input_sikuli_script_browser', default="firefox",
                             help='specify sikuli script browser type', required=False)
+    arg_parser.add_argument('--post_run_sikuli_script', action='store', dest='input_post_run_sikuli_script_path',
+                            default=None, help='specify sikuli script path', required=False)
 
     args = arg_parser.parse_args()
 
     enable_profiler_flag = "0"
     enable_chrome_tracing_flag = "0"
     disable_avconv_flag = "0"
-    keep_browser_flag = "1"
+    keep_browser_flag = "0"
     sikuli_script_path = None
+    post_run_sikuli_script_path = None
 
     if args.enable_profiler_flag:
         enable_profiler_flag = "1"
@@ -121,12 +129,15 @@ def main():
         disable_avconv_flag = "1"
 
     if args.keep_browser_flag:
-        keep_browser_flag = "0"
+        keep_browser_flag = "1"
 
     if args.input_sikuli_script_path:
         sikuli_script_path = args.input_sikuli_script_path
 
-    run_test_obj = RunTest(enable_profiler_flag, disable_avconv_flag, keep_browser_flag, enable_chrome_tracing_flag, sikuli_script_path)
+    if args.input_post_run_sikuli_script_path:
+        post_run_sikuli_script_path = args.input_post_run_sikuli_script_path
+
+    run_test_obj = RunTest(enable_profiler_flag, disable_avconv_flag, keep_browser_flag, enable_chrome_tracing_flag, sikuli_script_path, post_run_sikuli_script_path)
 
     if args.input_max_retry:
         input_max_retry = int(args.input_max_retry)
@@ -146,7 +157,6 @@ def main():
     else:
         print "You should specify the suite by using -i !"
 
-    print suite_fp
     if suite_fp:
         run_test_obj.run(suite_fp, input_max_retry, input_max_run)
 
