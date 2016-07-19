@@ -71,7 +71,6 @@
 </div>
 <pre class="sikuli-code">
 <span class="cmt"># New a message</span>
-<span class="cmt">#openApp("/usr/bin/firefox")</span>
 
 <span class="skw">wait</span>(<img src="1468896948832.png" />)
 paste(<img src="1468896948832.png" />, <span class="str">"https://mail.google.com/mail/u/0/#inbox"</span>)
@@ -79,20 +78,23 @@ paste(<img src="1468896948832.png" />, <span class="str">"https://mail.google.co
 <span class="skw">wait</span>(<span class="dig">5</span>)
 <span class="skw">wait</span>(<img src="1468896733570.png" />)
 <span class="skw">click</span>(<img src="1468896733570.png" />)
-paste(<img src="1468900112789.png" />, <span class="str">"moztpeqa@gmail.com"</span>)
+
+<span class="skw">wait</span>(<img src="1468917426219.png" />)
+hover(<img src="1468917426219.png" />)
+paste(<img src="1468917426219.png" />, <span class="str">"moztpeqa@gmail.com"</span>)
 <span class="skw">wait</span>(<span class="dig">0.5</span>)
 <span class="skw">type</span>(Key.ENTER)
-paste(<img src="1468896824180.png" />, <span class="str">"Hasal Project - OWA"</span>)
+
+hover(<img src="1468917438883.png" />)
+paste(<img src="1468917438883.png" />, <span class="str">"Hasal Project - OWA"</span>)
 <span class="skw">wait</span>(<span class="dig">0.5</span>)
 <span class="skw">type</span>(Key.ENTER)
-<span class="skw">type</span>(Key.TAB)
+
+<span class="skw">click</span>(<img src="1468917714634.png" />)
 <span class="skw">type</span>(<span class="str">"We will do our best to find a time that works for all."</span>)
+
 <span class="skw">wait</span>(<img src="1468896856975.png" />)
 <span class="skw">click</span>(<img src="1468896856975.png" />)
-
-<span class="cmt">#wait(10)</span>
-<span class="cmt">#type("w", KEY_CTRL)</span>
-
 </pre>
 </body>
 </html>
