@@ -1,0 +1,10 @@
+find("1468574381951.png")
+click("1468574381951.png")
+type("https://www.facebook.com/groups/mozhasalimage")
+type(Key.ENTER)
+setAutoWaitTimeout(10)
+wait("1468830834829.png")
+click(Pattern("1468577119085.png").targetOffset(0,200))
+wait("1468577455827.png")
+wait("1468831074590.png")
+

@@ -1,0 +1,8 @@
+find("chrome_urlbar.png")
+click("chrome_urlbar.png")
+type("https://www.facebook.com")
+type(Key.ENTER)
+setAutoWaitTimeout(10)
+wait("1468895945320.png")
+type(Key.PAGE_DOWN)
+wait("1468898489567.png")
