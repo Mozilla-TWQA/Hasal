@@ -38,6 +38,11 @@ OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not
 
 ```
 
+# VM Template
+You can download the VM tempalte for Hasal framework environment from vagrant.
+* vagrant init shako/hasal
+* vagrant up --provider virtualbox
+
 # Setup
 * Create a google doc, add doc id in lib/environment.py
 
