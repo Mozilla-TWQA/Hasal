@@ -135,6 +135,10 @@ class PerfBaseTest(unittest.TestCase):
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
 
+        # Post run sikuli script
+        if os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"):
+            self.sikuli.run_sikulix_cmd(os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"))
+
         # Stop browser
         if int(os.getenv("KEEP_BROWSER")) == 0:
             self.sikuli.close_browser(self.browser_type)
