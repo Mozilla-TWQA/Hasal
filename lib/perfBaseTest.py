@@ -37,7 +37,6 @@ class PerfBaseTest(unittest.TestCase):
 
     def set_variable(self, **kwargs):
         for variable_name in kwargs.keys():
-            print variable_name + "=" + kwargs[variable_name]
             setattr(self,variable_name,kwargs[variable_name])
 
     def setUp(self):
@@ -136,10 +135,13 @@ class PerfBaseTest(unittest.TestCase):
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
 
+        # Post run sikuli script
+        if os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"):
+            self.sikuli.run_sikulix_cmd(os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"))
 
         # Stop browser
-        if int(os.getenv("CLOSE_BROWSER")) == 1:
-            desktopHelper.stop_browser(self.browser_type, self.env)
+        if int(os.getenv("KEEP_BROWSER")) == 0:
+            self.sikuli.close_browser(self.browser_type)
 
         # Delete Url
         if hasattr(self,"test_url_id"):
@@ -151,6 +153,9 @@ class PerfBaseTest(unittest.TestCase):
 
         # output result
         if self.sikuli_status == 0:
-            resultHelper.result_calculation(self.env,  self.exec_timestamp_list)
+            if hasattr(self, "crop_data"):
+                resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data)
+            else:
+                resultHelper.result_calculation(self.env,  self.exec_timestamp_list)
         else:
             print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)

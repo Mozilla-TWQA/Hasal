@@ -5,12 +5,17 @@ from ..common.outlier import outlier
 import numpy as np
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None):
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
     img_tool_obj = ImageTool()
-    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
-    return img_tool_obj.compare_with_sample_image(input_sample_dp)
+    if crop_data:
+        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
+        img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
+        return img_tool_obj.compare_with_sample_object(input_sample_dp)
+    else:
+        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+        return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
 def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point):
@@ -69,9 +74,9 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
         wfh.write(str(len(result[test_method_name]['time_list'])))
 
 
-def result_calculation(env, exec_timestamp_list):
+def result_calculation(env, exec_timestamp_list, crop_data=None):
     if os.path.exists(env.video_output_fp):
-        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list)
+        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data)
     else:
         current_data = None
     if current_data is not None:

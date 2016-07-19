@@ -76,6 +76,7 @@ class Environment(object):
         self.img_output_dp = os.path.join(self.DEFAULT_IMAGE_OUTPUT_DIR, self.output_name)
         self.img_output_sample_1_fn = self.output_name + "_sample_1.jpg"
         self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
+        self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
