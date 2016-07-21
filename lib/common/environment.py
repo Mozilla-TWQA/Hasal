@@ -61,14 +61,18 @@ class Environment(object):
             DEFAULT_VIDEO_RECORDING_POS_X)
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
-    def __init__(self, test_method_name, test_method_doc):
+    def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
         self.test_method_doc = test_method_doc
         self.hasal_dir = self.DEFAULT_HASAL_DIR
         self.sikuli_path = self.DEFAULT_SIKULI_PATH
         self.run_sikulix_cmd_path = os.path.join(self.sikuli_path, "runsikulix")
-        self.output_name = test_method_name + "_" + self.time_stamp
+        if sikuli_script_name:
+            self.test_name = sikuli_script_name
+        else:
+            self.test_name = test_method_name
+        self.output_name = self.test_name + "_" + self.time_stamp
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
@@ -91,7 +95,7 @@ class Environment(object):
 
     def get_browser_type(self):
         result = DEFAULT_BROWSER_TYPE_FIREFOX
-        test_name_list = self.test_method_name.split("_")
+        test_name_list = self.test_name.split("_")
         if len(test_name_list) > 2:
             result = test_name_list[1].lower()
         return result

@@ -12,6 +12,4 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
 
     def test_chrome_gdoc_read_basic_table_1_sampleobj(self):
-        self.sikuli_status = self.sikuli.run_test( self.env.test_method_name,
-                                             self.env.test_method_name + "_" + self.env.time_stamp,
-                                             test_url=self.test_url)
+        self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_url=self.test_url)

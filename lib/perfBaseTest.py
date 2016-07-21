@@ -83,11 +83,9 @@ class PerfBaseTest(unittest.TestCase):
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
         if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:
-            self.sikuli.run_test( "test_firefox_switchcontentwindow",
-                            self.env.test_method_name + "_" + self.env.time_stamp)
+            self.sikuli.run_test("test_firefox_switchcontentwindow", self.env.output_name)
         else:
-            self.sikuli.run_test( "test_chrome_switchcontentwindow",
-                            self.env.test_method_name + "_" + self.env.time_stamp)
+            self.sikuli.run_test("test_chrome_switchcontentwindow", self.env.output_name)
 
         # lock browser start pos at (0,0)
         desktopHelper.lock_window_pos(self.browser_type)
