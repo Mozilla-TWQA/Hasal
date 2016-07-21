@@ -1,5 +1,7 @@
 Performance Test 
 ===========================
+"Hasal" this word is came from Indigenous Taiwanese "Bunun", and it means hail. Why we choose this word is because we expect our testing could like the hail, fast and weighty. And through our testing could bring more improvement on our performance or quality.
+
 A Framework for testing web performance between different browser
 
 # Installation
@@ -37,6 +39,11 @@ download the opencv2 package here : https://github.com/Itseez/opencv/archive/2.4
 OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not error when use that command
 
 ```
+
+# VM Template
+You can download the VM tempalte for Hasal framework environment from vagrant.
+* vagrant init shako/hasal
+* vagrant up --provider virtualbox
 
 # Setup
 * Create a google doc, add doc id in lib/environment.py

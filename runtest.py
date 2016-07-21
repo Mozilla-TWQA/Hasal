@@ -19,13 +19,13 @@ else:
 
 if platform.system().lower() == "linux":
     DEFAULT_TASK_KILL_LIST = ["avconv", "firefox", "chrome"]
-    DEFAULT_EDITOR_CMD = "gedit "
+    DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe"]
-    DEFAULT_EDITOR_CMD = "notepad "
+    DEFAULT_EDITOR_CMD = "type "
 else:
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
-    DEFAULT_EDITOR_CMD = "/Applications/Notes.app/Contents/MacOS/Notes"
+    DEFAULT_EDITOR_CMD = "open -e "
 
 class RunTest(object):
     def __init__(self, enable_profiler, disable_avconv, keep_browser, enable_chrome_tracing, sikuli_script_path, post_run_sikuli_script_path):
@@ -82,7 +82,7 @@ class RunTest(object):
 
     def run(self, input_suite_fp, input_max_retry, input_max_run):
         self.loop_suite(input_suite_fp, input_max_retry, input_max_run)
-        os.system(DEFAULT_EDITOR_CMD + " end.txt" )
+        os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
 
 
