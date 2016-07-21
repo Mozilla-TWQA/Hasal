@@ -19,10 +19,10 @@ else:
 
 if platform.system().lower() == "linux":
     DEFAULT_TASK_KILL_LIST = ["avconv", "firefox", "chrome"]
-    DEFAULT_EDITOR_CMD = "gedit "
+    DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe"]
-    DEFAULT_EDITOR_CMD = "notepad "
+    DEFAULT_EDITOR_CMD = "type "
 else:
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
     DEFAULT_EDITOR_CMD = "open -e "
