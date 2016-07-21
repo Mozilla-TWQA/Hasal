@@ -1,14 +1,17 @@
 # View the Video attachment
 
-wait("1466662802234-2.png")
-paste("1466662802234-2.png", "https://mail.google.com/mail/u/0/#label/GMail_Pilot/1560272d8852c488")
+wait("1469080970628.png")
+paste("1469080970628.png", "https://mail.google.com/mail/u/0/#label/GMail_Pilot")
 type(Key.ENTER)
 wait(5)
 
+# start
+wait("1469079952725.png")
+click("1469079952725.png")
+
 # Select the attachment
-wait("1468920153547.png")
-hover("1468920153547.png")
-click("1468920182335.png")
+wait("1469079980868.png")
+click("1469079980868.png")
 
 # play video
-wait("1468920241331.png", 2*60)
+wait("1469080035507.png", 2*60)

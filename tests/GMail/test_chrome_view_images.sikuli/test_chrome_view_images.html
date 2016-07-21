@@ -67,35 +67,29 @@
    </head>
 <body>
 <div class="info">
-<h2>test_chrome_new_message.sikuli</h2> <a href="test_chrome_new_message.zip">(Download this script)</a>
+<h2>test_chrome_view_images.sikuli</h2> <a href="test_chrome_view_images.zip">(Download this script)</a>
 </div>
 <pre class="sikuli-code">
-<span class="cmt"># New a message</span>
+<span class="cmt"># View the Images</span>
+<span class="cmt"># Images:</span>
+<span class="cmt"># - https://commons.wikimedia.org/wiki/File:Lobo_marino_(Zalophus_californianus_wollebaeki),_Punta_Pitt,_isla_de_San_Crist%C3%B3bal,_islas_Gal%C3%A1pagos,_Ecuador,_2015-07-24,_DD_11.JPG</span>
+<span class="cmt"># - https://commons.wikimedia.org/wiki/File:Lobo_marino_(Zalophus_californianus_wollebaeki),_Punta_Pitt,_isla_de_San_Crist%C3%B3bal,_islas_Gal%C3%A1pagos,_Ecuador,_2015-07-24,_DD_12.JPG</span>
+<span class="cmt"># - https://commons.wikimedia.org/wiki/File:Narcissus_poeticus_Spechtensee_01.JPG</span>
 
 <span class="skw">wait</span>(<img src="1469080970628.png" />)
-paste(<img src="1469080970628.png" />, <span class="str">"https://mail.google.com/mail/u/0/#inbox"</span>)
+paste(<img src="1469080970628.png" />, <span class="str">"https://mail.google.com/mail/u/0/#label/GMail_Pilot"</span>)
 <span class="skw">type</span>(Key.ENTER)
 <span class="skw">wait</span>(<span class="dig">5</span>)
 
 <span class="cmt"># start</span>
-<span class="skw">wait</span>(<img src="1469078403160.png" />)
-<span class="skw">click</span>(<img src="1469078403160.png" />)
+<span class="skw">wait</span>(<img src="1469081587793.png" />)
+<span class="skw">click</span>(<img src="1469081587793.png" />)
 
-<span class="skw">wait</span>(<img src="1469078451311.png" />)
-paste(<img src="1469078451311.png" />, <span class="str">"moztpeqa@gmail.com"</span>)
-<span class="skw">wait</span>(<span class="dig">0.5</span>)
-<span class="skw">type</span>(Key.ENTER)
+<span class="skw">wait</span>(<img src="1469082063366.png" />)
+<span class="skw">wait</span>(<img src="1469081670425.png" />)
+<span class="skw">type</span>(Key.PAGE_DOWN)
 
-hover(<img src="1469078479192.png" />)
-paste(<img src="1469078479192.png" />, <span class="str">"Hasal Project - OWA"</span>)
-<span class="skw">wait</span>(<span class="dig">0.5</span>)
-<span class="skw">type</span>(Key.ENTER)
-
-<span class="skw">click</span>(<img src="1469078497022.png" />)
-<span class="skw">type</span>(<span class="str">"We will do our best to find a time that works for all."</span>)
-
-<span class="skw">wait</span>(<img src="1469078515197.png" />)
-<span class="skw">click</span>(<img src="1469078515197.png" />)
+<span class="skw">wait</span>(<img src="1469082088821.png" />)
 </pre>
 </body>
 </html>
