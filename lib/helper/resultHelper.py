@@ -80,4 +80,4 @@ def result_calculation(env, exec_timestamp_list, crop_data=None):
     else:
         current_data = None
     if current_data is not None:
-        output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)
+        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)

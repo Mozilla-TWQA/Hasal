@@ -18,7 +18,7 @@ class GeckoProfiler(BaseProfiler):
             encoding_list = ["utf8"]
             encoding = "latin_1"
             for ec in encoding_list:
-                if ec in self.env.test_method_name:
+                if ec in self.env.test_name:
                     encoding = ec
 
             with codecs.open(self.env.profile_timing_bin_fp, "w+", encoding) as f:
