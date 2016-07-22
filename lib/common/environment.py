@@ -23,7 +23,7 @@ class Environment(object):
     DEFAULT_SIKULI_STATUS_RESULT = os.path.join(os.getcwd(), "sikuli_stat.txt")
     DEFAULT_TIME_LIST_COUNTER_RESULT = os.path.join(os.getcwd(), "time_list_counter.txt")
 
-    DEFAULT_VIDEO_RECORDING_FPS = 60
+    DEFAULT_VIDEO_RECORDING_FPS = 90
     DEFAULT_VIDEO_RECORDING_POS_X = 72
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
