@@ -71,11 +71,11 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
         json.dump(result, fh, indent=2)
 
     # output sikuli status to static file
-    with open (time_list_counter_fp) as fh:
+    with open (time_list_counter_fp, "r+") as fh:
         stat_data = json.load(fh)
-    with open(time_list_counter_fp, "w") as fh:
         stat_data['time_list_counter'] = str(len(result[test_method_name]['time_list']))
-        json.dump(stat_data, fh)
+        fh.seek(0)
+        fh.write(json.dumps(stat_data))
 
 def result_calculation(env, exec_timestamp_list, crop_data=None):
     if os.path.exists(env.video_output_fp):
