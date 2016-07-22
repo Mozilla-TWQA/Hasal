@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import unittest
 import helper.desktopHelper as desktopHelper
 import helper.resultHelper as resultHelper
@@ -21,18 +22,36 @@ class PerfBaseTest(unittest.TestCase):
     def get_profiler_list(self):
         avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}
         har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}
-        performance_timing_profiler = {"path": "lib.profiler.performanceTimingProfiler", "name": "PerformanceTimingProfiler", "profile_name": None}
-        gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler", "profile_name": "GeckoProfiler.zip"}
+        performance_timing_profiler = {"path": "lib.profiler.performanceTimingProfiler",
+                                       "name": "PerformanceTimingProfiler", "profile_name": None}
+        gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler",
+                          "profile_name": "GeckoProfiler.zip"}
         result_list = []
-        if int(os.getenv("ENABLE_PROFILER")) == 1:
-            if int(os.getenv("DISABLE_AVCONV")) == 0:
-                result_list.append(avconv_profiler)
+
+        profiler_list_str = os.getenv("PROFILER")
+        self.enabled_profiler_list = [item.strip() for item in profiler_list_str.split(',')]
+        if self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
+            result_list.append(avconv_profiler)
             result_list.append(har_profiler)
             result_list.append(performance_timing_profiler)
             result_list.append(gecko_profiler)
-        else:
-            if int(os.getenv("DISABLE_AVCONV")) == 0:
-                result_list.append(avconv_profiler)
+            return result_list
+
+        if self.env.PROFILER_FLAG_JUSTPROFILER in self.enabled_profiler_list:
+            result_list.append(har_profiler)
+            result_list.append(performance_timing_profiler)
+            result_list.append(gecko_profiler)
+            return result_list
+
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list:
+            result_list.append(avconv_profiler)
+
+        if self.env.PROFILER_FLAG_GECKOPROFILER in self.enabled_profiler_list:
+            result_list.append(gecko_profiler)
+
+        if self.env.PROFILER_FLAG_HAREXPORT in self.enabled_profiler_list:
+            result_list.append(har_profiler)
+
         return result_list
 
     def set_variable(self, **kwargs):
@@ -74,7 +93,7 @@ class PerfBaseTest(unittest.TestCase):
         desktopHelper.minimize_window()
 
         # launch browser
-        if int(os.getenv("ENABLE_CHROME_TRACING")) == 1:
+        if self.env.PROFILER_FLAG_CHROMETRACING in self.enabled_profiler_list:
             self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
                                                                  tracing_path=self.env.chrome_tracing_file_fp)
         else:
@@ -83,11 +102,9 @@ class PerfBaseTest(unittest.TestCase):
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
         if self.browser_type == desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX:
-            self.sikuli.run_test( "test_firefox_switchcontentwindow",
-                            self.env.test_method_name + "_" + self.env.time_stamp)
+            self.sikuli.run_test( "test_firefox_switchcontentwindow", self.env.output_name)
         else:
-            self.sikuli.run_test( "test_chrome_switchcontentwindow",
-                            self.env.test_method_name + "_" + self.env.time_stamp)
+            self.sikuli.run_test( "test_chrome_switchcontentwindow", self.env.output_name)
 
         # lock browser start pos at (0,0)
         desktopHelper.lock_window_pos(self.browser_type)
@@ -112,7 +129,8 @@ class PerfBaseTest(unittest.TestCase):
 
         # capture 1st snapshot
         time.sleep(5)
-        if int(os.getenv("DISABLE_AVCONV")) == 0:
+
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
             captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_1_fn)
         time.sleep(2)
@@ -128,7 +146,7 @@ class PerfBaseTest(unittest.TestCase):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if int(os.getenv("DISABLE_AVCONV")) == 0:
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
             captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_2_fn)
 
@@ -136,8 +154,8 @@ class PerfBaseTest(unittest.TestCase):
         self.profilers.stop_profiling(self.profile_dir_path)
 
         # Post run sikuli script
-        if os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"):
-            self.sikuli.run_sikulix_cmd(os.getenv("POST_RUN_SIKULI_SCRIPT_PATH"))
+        if os.getenv("POST_SCRIPT_PATH"):
+            self.sikuli.run_sikulix_cmd(os.getenv("POST_SCRIPT_PATH"))
 
         # Stop browser
         if int(os.getenv("KEEP_BROWSER")) == 0:
@@ -148,8 +166,9 @@ class PerfBaseTest(unittest.TestCase):
             self.target_helper.delete_target(self.test_url_id)
 
         # output sikuli status to static file
-        with open(self.env.DEFAULT_SIKULI_STATUS_RESULT, "w") as fh:
-            fh.write(str(self.sikuli_status))
+        with open(self.env.DEFAULT_STAT_RESULT, "w") as fh:
+            stat_data = {'sikuli_stat' : str(self.sikuli_status)}
+            json.dump(stat_data,fh)
 
         # output result
         if self.sikuli_status == 0:

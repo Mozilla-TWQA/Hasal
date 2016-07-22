@@ -70,9 +70,12 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
 
-    with open(time_list_counter_fp, "w") as wfh:
-        wfh.write(str(len(result[test_method_name]['time_list'])))
-
+    # output sikuli status to static file
+    with open (time_list_counter_fp) as fh:
+        stat_data = json.load(fh)
+    with open(time_list_counter_fp, "w") as fh:
+        stat_data['time_list_counter'] = str(len(result[test_method_name]['time_list']))
+        json.dump(stat_data, fh)
 
 def result_calculation(env, exec_timestamp_list, crop_data=None):
     if os.path.exists(env.video_output_fp):
@@ -80,4 +83,4 @@ def result_calculation(env, exec_timestamp_list, crop_data=None):
     else:
         current_data = None
     if current_data is not None:
-        output_result(env.test_method_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_TIME_LIST_COUNTER_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)
+        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)

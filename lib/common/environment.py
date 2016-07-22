@@ -19,10 +19,11 @@ class Environment(object):
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
+    DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
     DEFAULT_SIKULI_STATUS_RESULT = os.path.join(os.getcwd(), "sikuli_stat.txt")
     DEFAULT_TIME_LIST_COUNTER_RESULT = os.path.join(os.getcwd(), "time_list_counter.txt")
 
-    DEFAULT_VIDEO_RECORDING_FPS = 90
+    DEFAULT_VIDEO_RECORDING_FPS = 60
     DEFAULT_VIDEO_RECORDING_POS_X = 72
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
@@ -53,6 +54,13 @@ class Environment(object):
     PROFILE_NAME_HAR_PROFILER = "HarProfiler"
     PROFILE_NAME_GECKO_PROFILER = "GeckoProfiler"
 
+    PROFILER_FLAG_AVCONV = "avconv"
+    PROFILER_FLAG_HAREXPORT = "harexport"
+    PROFILER_FLAG_GECKOPROFILER = "geckoprofiler"
+    PROFILER_FLAG_CHROMETRACING = "chrometracing"
+    PROFILER_FLAG_FXALL = "fxall"
+    PROFILER_FLAG_JUSTPROFILER = "justprofiler"
+
 
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
@@ -61,14 +69,18 @@ class Environment(object):
             DEFAULT_VIDEO_RECORDING_POS_X)
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
-    def __init__(self, test_method_name, test_method_doc):
+    def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
         self.test_method_doc = test_method_doc
         self.hasal_dir = self.DEFAULT_HASAL_DIR
         self.sikuli_path = self.DEFAULT_SIKULI_PATH
         self.run_sikulix_cmd_path = os.path.join(self.sikuli_path, "runsikulix")
-        self.output_name = test_method_name + "_" + self.time_stamp
+        if sikuli_script_name:
+            self.test_name = sikuli_script_name
+        else:
+            self.test_name = test_method_name
+        self.output_name = self.test_name + "_" + self.time_stamp
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
@@ -84,14 +96,15 @@ class Environment(object):
 
     def init_output_dir(self):
         # Init output folder
-        for chk_dir in [self.DEFAULT_OUTPUT_DIR, self.DEFAULT_VIDEO_OUTPUT_DIR, self.DEFAULT_PROFILE_OUTPUT_DIR, self.DEFAULT_IMAGE_DIR,
+        for chk_dir in [self.DEFAULT_OUTPUT_DIR, self.DEFAULT_VIDEO_OUTPUT_DIR, self.DEFAULT_PROFILE_OUTPUT_DIR,
+                        self.DEFAULT_IMAGE_DIR,
                         self.DEFAULT_IMAGE_OUTPUT_DIR, self.DEFAULT_IMAGE_SAMPLE_DIR]:
             if os.path.exists(chk_dir) is False:
                 os.mkdir(chk_dir)
 
     def get_browser_type(self):
         result = DEFAULT_BROWSER_TYPE_FIREFOX
-        test_name_list = self.test_method_name.split("_")
+        test_name_list = self.test_name.split("_")
         if len(test_name_list) > 2:
             result = test_name_list[1].lower()
         return result
