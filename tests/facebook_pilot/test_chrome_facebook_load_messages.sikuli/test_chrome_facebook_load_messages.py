@@ -1,0 +1,6 @@
+wait("chrome_urlbar-1.png")
+paste("chrome_urlbar-1.png", "https://www.facebook.com")
+type(Key.ENTER)
+setAutoWaitTimeout(10)
+wait("1469155965629.png")
+click("1469170188808.png")

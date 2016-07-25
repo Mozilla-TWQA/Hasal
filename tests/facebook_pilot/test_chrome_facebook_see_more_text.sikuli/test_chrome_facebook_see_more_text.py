@@ -1,0 +1,8 @@
+wait("chrome_urlbar-1.png")
+paste("chrome_urlbar-1.png", "https://www.facebook.com/groups/mozhasaltext")
+type(Key.ENTER)
+setAutoWaitTimeout(10)
+wait("1468576540232.png")
+wheel("1469158648986.png", WHEEL_DOWN, 2)
+find("1468576540232.png")
+click("1468576540232.png")

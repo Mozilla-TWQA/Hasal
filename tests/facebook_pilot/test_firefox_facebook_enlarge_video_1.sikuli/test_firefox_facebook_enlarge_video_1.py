@@ -1,0 +1,8 @@
+wait("1468574381951-1.png")
+paste("1468574381951-1.png", "https://www.facebook.com/groups/mozhasalimage")
+type(Key.ENTER)
+setAutoWaitTimeout(10)
+wait("1468830683686.png")
+doubleClick(Pattern("1468577119085.png").targetOffset(0,200))
+waitVanish("1468577119085.png")
+wait("1468914267501.png",240)
