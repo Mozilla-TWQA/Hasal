@@ -19,8 +19,7 @@ class Environment(object):
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
-    DEFAULT_SIKULI_STATUS_RESULT = os.path.join(os.getcwd(), "sikuli_stat.txt")
-    DEFAULT_TIME_LIST_COUNTER_RESULT = os.path.join(os.getcwd(), "time_list_counter.txt")
+    DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
 
     DEFAULT_VIDEO_RECORDING_FPS = 90
     DEFAULT_VIDEO_RECORDING_POS_X = 72
@@ -52,6 +51,13 @@ class Environment(object):
     PROFILE_FILE_NAME_AUTOSAVEHAR_GECKOPROFILER = "GeckoProfilerAutoSaveHAR.zip"
     PROFILE_NAME_HAR_PROFILER = "HarProfiler"
     PROFILE_NAME_GECKO_PROFILER = "GeckoProfiler"
+
+    PROFILER_FLAG_AVCONV = "avconv"
+    PROFILER_FLAG_HAREXPORT = "harexport"
+    PROFILER_FLAG_GECKOPROFILER = "geckoprofiler"
+    PROFILER_FLAG_CHROMETRACING = "chrometracing"
+    PROFILER_FLAG_FXALL = "fxall"
+    PROFILER_FLAG_JUSTPROFILER = "justprofiler"
 
 
     if platform.system().lower() == "darwin":
@@ -88,9 +94,9 @@ class Environment(object):
 
     def init_output_dir(self):
         # Init output folder
-        for chk_dir in [self.DEFAULT_OUTPUT_DIR, self.DEFAULT_VIDEO_OUTPUT_DIR, self.DEFAULT_PROFILE_OUTPUT_DIR, self.DEFAULT_IMAGE_DIR,
-                        self.DEFAULT_IMAGE_OUTPUT_DIR, self.DEFAULT_IMAGE_SAMPLE_DIR]:
-            if os.path.exists(chk_dir) is False:
+        for chk_dir in [self.DEFAULT_OUTPUT_DIR, self.DEFAULT_VIDEO_OUTPUT_DIR, self.DEFAULT_PROFILE_OUTPUT_DIR,
+                        self.DEFAULT_IMAGE_DIR, self.DEFAULT_IMAGE_OUTPUT_DIR, self.DEFAULT_IMAGE_SAMPLE_DIR]:
+            if not os.path.exists(chk_dir):
                 os.mkdir(chk_dir)
 
     def get_browser_type(self):
