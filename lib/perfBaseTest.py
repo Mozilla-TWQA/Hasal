@@ -21,6 +21,7 @@ class PerfBaseTest(unittest.TestCase):
 
     def get_profiler_list(self):
         avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}
+        mitmdump_profiler = {"path": "lib.profiler.mitmDumpProfiler", "name": "MitmDumpProfiler", "profile_name": None}
         har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}
         performance_timing_profiler = {"path": "lib.profiler.performanceTimingProfiler",
                                        "name": "PerformanceTimingProfiler", "profile_name": None}
@@ -51,6 +52,9 @@ class PerfBaseTest(unittest.TestCase):
 
         if self.env.PROFILER_FLAG_HAREXPORT in self.enabled_profiler_list:
             result_list.append(har_profiler)
+
+        if self.env.PROFILER_FLAG_MITMDUMP in self.enabled_profiler_list:
+            result_list.append(mitmdump_profiler)
 
         return result_list
 
