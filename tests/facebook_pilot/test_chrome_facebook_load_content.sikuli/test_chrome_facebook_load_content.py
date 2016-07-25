@@ -1,8 +1,0 @@
-find("chrome_urlbar.png")
-click("chrome_urlbar.png")
-type("https://www.facebook.com")
-type(Key.ENTER)
-setAutoWaitTimeout(10)
-wait("1468895945320.png")
-type(Key.PAGE_DOWN)
-wait(Pattern("1468914759507.png").similar(0.80))
