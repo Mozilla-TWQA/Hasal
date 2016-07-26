@@ -1,0 +1,101 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>test_chrome_new_message.sikuli</h2> <a href="test_chrome_new_message.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt"># New a message</span>
+
+<span class="skw">wait</span>(<img src="1469080970628.png" />)
+paste(<img src="1469080970628.png" />, <span class="str">"https://mail.google.com/mail/u/0/#inbox"</span>)
+<span class="skw">type</span>(Key.ENTER)
+<span class="skw">wait</span>(<span class="dig">5</span>)
+
+<span class="cmt"># start</span>
+<span class="skw">wait</span>(<img src="1469078403160.png" />)
+<span class="skw">click</span>(<img src="1469078403160.png" />)
+
+<span class="skw">wait</span>(<img src="1469078451311.png" />)
+paste(<img src="1469078451311.png" />, <span class="str">"moztpeqa@gmail.com"</span>)
+<span class="skw">wait</span>(<span class="dig">0.5</span>)
+<span class="skw">type</span>(Key.ENTER)
+
+hover(<img src="1469078479192.png" />)
+paste(<img src="1469078479192.png" />, <span class="str">"Hasal Project - OWA"</span>)
+<span class="skw">wait</span>(<span class="dig">0.5</span>)
+<span class="skw">type</span>(Key.ENTER)
+
+<span class="skw">click</span>(<img src="1469078497022.png" />)
+<span class="skw">type</span>(<span class="str">"We will do our best to find a time that works for all."</span>)
+
+<span class="skw">wait</span>(<img src="1469078515197.png" />)
+<span class="skw">click</span>(<img src="1469078515197.png" />)
+</pre>
+</body>
+</html>
