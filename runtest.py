@@ -81,9 +81,9 @@ class RunTest(object):
             print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
             run_result = self.run_test(test_case_module_name, test_env)
             if run_result:
-                if "sikuli_stat" in run_result and run_result['sikuli_stat'] == 0:
+                if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0:
                     if "time_list_counter" in run_result:
-                        current_run = run_result['time_list_counter']
+                        current_run = int(run_result['time_list_counter'])
                     else:
                         current_run += 1
                 else:
