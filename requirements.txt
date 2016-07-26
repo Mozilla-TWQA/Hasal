@@ -4,6 +4,7 @@ PyDrive==1.0.1
 pyperclip>=1.5.27
 web.py>=0.38
 docopt>=0.6.2
+mitmproxy>=0.17
 
 python-dateutil
 keyring
