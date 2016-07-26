@@ -16,5 +16,5 @@ class TestSikuli(PerfBaseTest):
 
         super(TestSikuli, self).setUp()
 
-    def test_chrome_pilot_run(self):
+    def test_pilot_run(self):
         self.sikuli_status = self.sikuli.run_sikulix_cmd(self.sikuli_script_path)

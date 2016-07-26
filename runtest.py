@@ -39,6 +39,7 @@ else:
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "open -e "
 
+
 class RunTest(object):
     def __init__(self, **kwargs):
         for variable_name in kwargs.keys():
@@ -122,7 +123,7 @@ class RunTest(object):
     def pilottest_loop_suite(self, input_suite_fp):
         with open(input_suite_fp) as input_suite_fh:
             for tmp_line in input_suite_fh.read().splitlines():
-                test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_firefox_pilot_run"
+                test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
                 case_data = self.suite_content_parser(tmp_line)
                 test_sikuli_fp = case_data.keys()[0]
                 case_data[test_sikuli_fp]["SIKULI_SCRIPT_PATH"] = test_sikuli_fp
@@ -135,6 +136,7 @@ class RunTest(object):
         else:
             self.regression_loop_suite(input_suite_fp)
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
+
 
 def main():
     arguments = docopt(__doc__)
