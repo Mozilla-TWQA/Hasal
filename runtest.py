@@ -10,7 +10,7 @@ Options:
   --max-run=<int>           Test run max no [default: 40].
   --max-retry=<int>         Test failed retry max no [default: 15].
   --keep-browser            Keep the browser open after test script executed
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler, mitmdump [default: avconv]
+  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump [default: avconv]
   --online                  Result will be transfer to server, calculated by server
   --online-config=<str>     Online server config [default: server.json]
   --advance                 Only for expert user

@@ -35,4 +35,3 @@ class MitmDumpProfiler(BaseProfiler):
             subprocess.Popen("taskkill /IM mitmdump.exe /T /F", shell=True)
         else:
             self.process.send_signal(3)
-
