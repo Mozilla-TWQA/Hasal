@@ -10,6 +10,7 @@ class Environment(object):
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
+    DEFAULT_FLOW_DIR = os.path.join(os.getcwd(), "flows")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
     DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
     DEFAULT_IMAGE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images")
@@ -58,6 +59,7 @@ class Environment(object):
     PROFILER_FLAG_CHROMETRACING = "chrometracing"
     PROFILER_FLAG_FXALL = "fxall"
     PROFILER_FLAG_JUSTPROFILER = "justprofiler"
+    PROFILER_FLAG_MITMDUMP = "mitmdump"
 
 
     if platform.system().lower() == "darwin":
@@ -79,6 +81,7 @@ class Environment(object):
         else:
             self.test_name = test_method_name
         self.output_name = self.test_name + "_" + self.time_stamp
+        self.flow_file_fp = self.test_name + ".flow"
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")

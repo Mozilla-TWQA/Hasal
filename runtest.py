@@ -1,18 +1,19 @@
 """runtest.
 
 Usage:
-  runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser=<int>] [--profiler=<str>]
-  runtest.py pilottest <suite.txt> [--max-run=<int>] [--max-retry=<int>] [--keep-browser=<int>] [--profiler=<str>]
+  runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--advance]
+  runtest.py pilottest <suite.txt> [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--advance]
   runtest.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
   --max-run=<int>           Test run max no [default: 40].
   --max-retry=<int>         Test failed retry max no [default: 15].
-  --keep-browser=<int>      Keep the browser open after test script executed [default: 0]
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler [default: avconv]
+  --keep-browser            Keep the browser open after test script executed
+  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump [default: avconv]
   --online                  Result will be transfer to server, calculated by server
   --online-config=<str>     Online server config [default: server.json]
+  --advance                 Only for expert user
 
 
 """
@@ -54,9 +55,10 @@ class RunTest(object):
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
         result['PROFILER'] = self.profiler
-        result['KEEP_BROWSER'] = str(self.keep_browser)
-        result['ENABLE_ONLINE'] = str(self.online)
+        result['KEEP_BROWSER'] = str(int(self.keep_browser))
+        result['ENABLE_ONLINE'] = str(int(self.online))
         result['ONLINE_CONFIG'] = self.online_config
+        result['ENABLE_ADVANCE'] = str(int(self.advance))
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -144,7 +146,7 @@ def main():
     run_test_obj = RunTest(profiler=arguments['--profiler'], keep_browser=arguments['--keep-browser'],
                            max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
-                           online_config=arguments['--online-config'])
+                           online_config=arguments['--online-config'], advance=arguments['--advance'])
     if arguments['pilottest']:
         run_test_obj.run("pilottest", arguments['<suite.txt>'])
     elif arguments['regression']:
