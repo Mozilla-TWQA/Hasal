@@ -12,7 +12,7 @@ class MitmDumpProfiler(BaseProfiler):
         default_dump_flow_cmd = ["mitmdump", "--no-http2", "-w"]
         flow_file_fp = os.path.join(self.env.DEFAULT_FLOW_DIR, self.env.flow_file_fp)
         if not os.path.exists(self.env.DEFAULT_FLOW_DIR):
-            os.mkdir(self.env.DEFAULT_FLOW_DIR)
+            os.makedirs(self.env.DEFAULT_FLOW_DIR)
 
         if not os.path.exists(flow_file_fp):
             # Will auto record the packet if the flow file is not exist
