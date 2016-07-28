@@ -1,5 +1,5 @@
 wait("1468574381951-1.png")
-paste("1468574381951-1.png", "https://www.facebook.com/groups/mozhasalimage")
+paste("1468574381951-1.png", "https://www.facebook.com/groups/mozhasalvideo")
 type(Key.ENTER)
 setAutoWaitTimeout(10)
 wait("1468830683686.png")
