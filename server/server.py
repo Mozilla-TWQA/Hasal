@@ -5,13 +5,15 @@ import time
 from datetime import datetime
 import shutil
 import urlparse
+from threading import Lock
 
 from lib.common.outlier import outlier
 
 urls = (
     '/', 'Index',
     '/reset/(.*)', 'Reset',
-    '/hasal/(.*)/(.*)/(.*)', 'HasalServer'
+    '/hasal/(.*)/(.*)/(.*)', 'HasalServer',
+    '/video_profile/(.*)/(.*)/(.*)', 'VideoProfileUpdater'
 )
 
 
@@ -33,6 +35,7 @@ class StorageHandler:
     def __init__(self):
         pass
 
+    _storage_mutex = Lock()
     _storage_dir = os.path.expanduser('~/.hasal_server/')
     _storage_path = os.path.join(_storage_dir, 'dump.json')
     _config_path = os.path.join(_storage_dir, 'config.json')
@@ -58,12 +61,16 @@ class StorageHandler:
         return {}
 
     def save(self, json_obj):
-        if os.path.isdir(self._storage_path):
-            shutil.rmtree(self._storage_path)
-        if not os.path.exists(self._storage_dir):
-            os.makedirs(self._storage_dir)
-        with open(self._storage_path, 'w') as f:
-            json.dump(json_obj, f)
+        StorageHandler._storage_mutex.acquire()
+        try:
+            if os.path.isdir(self._storage_path):
+                shutil.rmtree(self._storage_path)
+            if not os.path.exists(self._storage_dir):
+                os.makedirs(self._storage_dir)
+            with open(self._storage_path, 'w') as f:
+                json.dump(json_obj, f)
+        finally:
+            StorageHandler._storage_mutex.release()
 
     def remove(self):
         if os.path.isdir(self._storage_path):
@@ -76,19 +83,20 @@ class HasalServer:
     """
     Hasal Server handler.
     """
+    storage_handler = StorageHandler()
+    storage = {}
     _calculator = outlier()
-    _storage_handler = StorageHandler()
-    _config = _storage_handler.load_config()
+    _config = storage_handler.load_config()
     _config_test_times = _config.get('test_times', 5)
-    _storage = {}
     _keys = ['os', 'target_browser', 'test', 'browser']
-    _checks = ['os', 'target', 'test', 'browser', 'platform', 'value', 'video', 'comment']
+    _checks = ['os', 'target', 'test', 'browser', 'version', 'platform', 'value', 'video', 'comment']
     _count = 0
     _template = {
         'os': '',
         'target': '',
         'test': '',
         'browser': '',
+        'version': '',
         'platform': '',
         'comment': '',
         'median_value': -1,
@@ -101,7 +109,7 @@ class HasalServer:
     }
 
     def __init__(self):
-        HasalServer._storage = HasalServer._storage_handler.load()
+        HasalServer.storage = HasalServer.storage_handler.load()
 
     """
     def __del__(self):
@@ -137,6 +145,7 @@ class HasalServer:
         info['target'] = json_obj.get('target')
         info['test'] = json_obj.get('test')
         info['browser'] = json_obj.get('browser')
+        info['version'] = json_obj.get('version')
         info['platform'] = json_obj.get('platform')
         info['comment'] = json_obj.get('comment')
         info['origin_values'] = []  # TODO, add new value into it
@@ -145,10 +154,10 @@ class HasalServer:
 
     @staticmethod
     def return_json(current_test_obj):
-        HasalServer._storage_handler.save(HasalServer._storage)
+        HasalServer.storage_handler.save(HasalServer.storage)
 
         # TODO: we should remove this print method in the future.
-        print(json.dumps(HasalServer._storage, indent=4))
+        print(json.dumps(HasalServer.storage, indent=4))
 
         values_list = current_test_obj['origin_values']
         median_value = current_test_obj['median_value']
@@ -179,14 +188,14 @@ class HasalServer:
             assert os is not None and os != '', '[os] is empty.'
             assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
             assert test is not None and test != '', '[test] is empty.'
-            if os not in HasalServer._storage:
+            if os not in HasalServer.storage:
                 return 'No os: {}'.format(os)
-            elif target_browser not in HasalServer._storage[os]:
+            elif target_browser not in HasalServer.storage[os]:
                 return 'No target: {}'.format(target_browser)
-            elif test not in HasalServer._storage[os][target_browser]:
+            elif test not in HasalServer.storage[os][target_browser]:
                 return 'No test: {}'.format(test)
             else:
-                return json.dumps(HasalServer._storage[os][target_browser][test], indent=4)
+                return json.dumps(HasalServer.storage[os][target_browser][test], indent=4)
         except AssertionError as e:
             raise web.badrequest(e.message)
 
@@ -195,9 +204,10 @@ class HasalServer:
         The input json example:
             json={
             "os": "mac",
-            "target": "firefox 36",
+            "target": "firefox-36.0.1",
             "test": "test_foo",
-            "browser": "firefox 36",
+            "browser": "firefox",
+            "version": "36.0.1",
             "platform": "x86_64",
             "value": 500,
             "video": "20160701_001.avi",
@@ -235,17 +245,17 @@ class HasalServer:
             HasalServer.check_input_json(json_obj)
 
             # add the os/target/test into storage
-            if os not in HasalServer._storage:
-                HasalServer._storage[os] = {}
-            if target_browser not in HasalServer._storage[os]:
-                HasalServer._storage[os][target_browser] = {}
-            if test not in HasalServer._storage[os][target_browser]:
-                HasalServer._storage[os][target_browser][test] = {}
+            if os not in HasalServer.storage:
+                HasalServer.storage[os] = {}
+            if target_browser not in HasalServer.storage[os]:
+                HasalServer.storage[os][target_browser] = {}
+            if test not in HasalServer.storage[os][target_browser]:
+                HasalServer.storage[os][target_browser][test] = {}
 
             comment_name = json_obj.get('comment')
             # if there is /os/target/test/comment exists, then do following code
-            if comment_name in HasalServer._storage[os][target_browser][test]:
-                comment_obj = HasalServer._storage[os][target_browser][test][comment_name]
+            if comment_name in HasalServer.storage[os][target_browser][test]:
+                comment_obj = HasalServer.storage[os][target_browser][test][comment_name]
 
                 browser_name = json_obj.get('browser')
                 # if there is /os/target/test/comment/browser exists, then do following code
@@ -294,11 +304,92 @@ class HasalServer:
                 comment_obj = {
                     json_obj.get('browser'): current_test
                 }
-                HasalServer._storage[os][target_browser][test] = {
+                HasalServer.storage[os][target_browser][test] = {
                     comment_name: comment_obj
                 }
                 return HasalServer.return_json(current_test)
 
+        except AssertionError as e:
+            raise web.badrequest(e.message)
+
+
+class VideoProfileUpdater:
+    """
+    Update the video and profile to Hasal server storage.
+    """
+    _checks = ['os', 'target', 'test', 'browser', 'version', 'comment', 'video_path', 'profile_path']
+
+    def __init__(self):
+        HasalServer.storage = HasalServer.storage_handler.load()
+
+    @staticmethod
+    def check_input_json(json_obj):
+        print('# check:')
+        print(VideoProfileUpdater._checks)
+        for item in VideoProfileUpdater._checks:
+            assert item in json_obj, 'The json should have "{}" value.'.format(item)
+
+    def POST(self, os, target_browser, test):
+        """
+        The input json example:
+            json={
+            "os": "mac",
+            "target": "firefox-36.0.1",
+            "test": "test_foo",
+            "browser": "firefox",
+            "version": "36.0.1",
+            "comment": "first test",
+            "video_path": "http://foo.bar/video",
+            "profile_path": "http://foo.bar/profile"
+            }
+        :param os: os. ex: 'linux'
+        :param target_browser: target. ex: 'firefox 36'
+        :param test: test name. ex: 'test_foo'
+        :return: OK with 200 code.
+        """
+        HasalServer.storage = HasalServer.storage_handler.load()
+        try:
+            # check the url, server/hasal/<os>/<target_browser>/<test>
+            assert os is not None and os != '', '[os] is empty.'
+            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
+            assert test is not None and test != '', '[test] is empty.'
+
+            # get the POST data
+            ip = web.ctx.ip
+            data = web.data()
+            parameters = urlparse.parse_qs(data)
+            # check the POST data contain 'json'
+            assert 'json' in parameters, 'Can not get "json" parameter from POST data.'
+
+            # check the input json object
+            json_obj = json.loads(parameters['json'][0])
+            VideoProfileUpdater.check_input_json(json_obj)
+
+            comment_name = json_obj.get('comment')
+            browser_name = json_obj.get('browser')
+
+            # check the storage
+            assert os in HasalServer.storage, \
+                'No os [{}] in storage'.format(os)
+            assert target_browser in HasalServer.storage[os], \
+                'No target [{}] under os [{}]'.format(target_browser, os)
+            assert test in HasalServer.storage[os][target_browser], \
+                'No test [{}] under os [{}], target [{}]'.format(test, os, target_browser)
+            assert comment_name in HasalServer.storage[os][target_browser][test], \
+                'No comment [{}] under os [{}], target [{}], test [{}]'.format(comment_name, os, target_browser, test)
+            assert browser_name in HasalServer.storage[os][target_browser][test][comment_name], \
+                'No browser [{}] under os [{}], target [{}], test [{}], comment[{}]'.format(
+                    browser_name, os, target_browser, test, comment_name)
+
+            # Update Video and Profile
+            HasalServer.storage[os][target_browser][test][comment_name][browser_name]['video_path'] = \
+                json_obj.get('video_path', '')
+            HasalServer.storage[os][target_browser][test][comment_name][browser_name]['profile_path'] = \
+                json_obj.get('profile_path', '')
+            # Save
+            HasalServer.storage_handler.save(HasalServer.storage)
+
+            return 'OK'
         except AssertionError as e:
             raise web.badrequest(e.message)
 
