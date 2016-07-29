@@ -1,6 +1,6 @@
+import sys
 import psutil
 import subprocess
-
 
 class BrowserBase(object):
     browser_process = None
@@ -8,16 +8,26 @@ class BrowserBase(object):
     process_name = None
 
     def __init__(self, window_size_height, windows_size_width, **kwargs):
+        self.current_platform_name = sys.platform
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
 
+
     def get_browser_settings(self, **kwargs):
+        pass
+
+    def get_version_command(self):
         pass
 
     def launch(self):
         print self.launch_cmd
         self.browser_process = subprocess.Popen(self.launch_cmd)
+
+    def get_version(self):
+        cmd = self.get_version_command()
+        return_version = subprocess.check_output(cmd).splitlines()[0].split(" ")[2]
+        return return_version
 
     def stop(self):
         for proc in psutil.process_iter():

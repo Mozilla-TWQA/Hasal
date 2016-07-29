@@ -18,7 +18,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
         return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
-def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point):
+def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     run_time = 0
     if os.path.exists(output_fp):
@@ -67,6 +67,8 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
             result[test_method_name]['time_list'].append(run_time)
         result[test_method_name]['detail'] = current_run_result
 
+    result[test_method_name]['video_fp'] = video_fp
+
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
 
@@ -83,4 +85,4 @@ def result_calculation(env, exec_timestamp_list, crop_data=None):
     else:
         current_data = None
     if current_data is not None:
-        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT)
+        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp)
