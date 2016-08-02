@@ -21,7 +21,12 @@ class GeckoProfiler(BaseProfiler):
                 if ec in self.env.test_name:
                     encoding = ec
 
-            with codecs.open(self.env.profile_timing_bin_fp, "w+", encoding) as f:
-                f.write(data)
+            try:
+                with codecs.open(self.env.profile_timing_bin_fp, "w+", encoding) as f:
+                    f.write(data)
+            except:
+                # if failed, then try to save profile data to utf-8
+                with codecs.open(self.env.profile_timing_bin_fp, "w+", 'utf8') as f:
+                    f.write(data)
         else:
             pass
