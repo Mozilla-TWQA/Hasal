@@ -317,7 +317,8 @@ class VideoProfileUpdater:
     """
     Update the video and profile to Hasal server storage.
     """
-    _checks = ['os', 'target', 'test', 'browser', 'version', 'comment', 'video_path', 'profile_path']
+    _checks = ['os', 'target', 'test', 'browser', 'version', 'comment']
+    _keys = ['video_path', 'profile_path']
 
     def __init__(self):
         HasalServer.storage = HasalServer.storage_handler.load()
@@ -382,10 +383,11 @@ class VideoProfileUpdater:
                     browser_name, os, target_browser, test, comment_name)
 
             # Update Video and Profile
-            HasalServer.storage[os][target_browser][test][comment_name][browser_name]['video_path'] = \
-                json_obj.get('video_path', '')
-            HasalServer.storage[os][target_browser][test][comment_name][browser_name]['profile_path'] = \
-                json_obj.get('profile_path', '')
+            for key in VideoProfileUpdater._keys:
+                value = json_obj.get(key, None)
+                if value:
+                    HasalServer.storage[os][target_browser][test][comment_name][browser_name][key] = value
+
             # Save
             HasalServer.storage_handler.save(HasalServer.storage)
 
