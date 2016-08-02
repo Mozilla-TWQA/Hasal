@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--advance]
-  runtest.py pilottest <suite.txt> [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--advance]
+  runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py pilottest <suite.txt> [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
   runtest.py (-h | --help)
 
 Options:
@@ -12,7 +12,8 @@ Options:
   --keep-browser            Keep the browser open after test script executed
   --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump [default: avconv]
   --online                  Result will be transfer to server, calculated by server
-  --online-config=<str>     Online server config [default: server.json]
+  --online-config=<str>     Online server config [default: svrConfig.json]
+  --comment=<str>           Tag the comment on this test [default: <today>]
   --advance                 Only for expert user
 
 
@@ -21,8 +22,11 @@ import os
 import json
 import platform
 import subprocess
+from lib.helper.uploadAgentHelper import UploadAgent
 from docopt import docopt
 
+
+DEFAULT_RESULT_FP = "./result.json"
 DEFAULT_TEST_FOLDER = "tests"
 DEFAULT_RUNNING_STAT_FN = "stat.json"
 DEFAULT_ERROR_CASE_LIST = "error_case_list.txt"
@@ -78,15 +82,33 @@ class RunTest(object):
         return result
 
     def loop_test(self, test_case_module_name, test_env, current_run=0, current_retry=0):
+        if self.online:
+            upload_agent_obj = UploadAgent(svr_config_fp=self.online_config, test_comment=self.test_comment)
         while current_run < self.max_run:
             print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
+            if self.online and os.path.exists(DEFAULT_RESULT_FP):
+                os.remove(DEFAULT_RESULT_FP)
             run_result = self.run_test(test_case_module_name, test_env)
             if run_result:
                 if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0:
-                    if "time_list_counter" in run_result:
-                        current_run = int(run_result['time_list_counter'])
+                    if self.online:
+                        # Online mode handling
+                        upload_result = upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
+                        if upload_result:
+                            print "===== upload success ====="
+                            print upload_result
+                            print "===== upload success ====="
+                            if "current_test_times" in upload_result:
+                                current_run = upload_result["current_test_times"]
+                            else:
+                                current_run += 1
+                        else:
+                            current_run += 1
                     else:
-                        current_run += 1
+                        if "time_list_counter" in run_result:
+                            current_run = int(run_result['time_list_counter'])
+                        else:
+                            current_run += 1
                 else:
                     current_retry += 1
             else:
@@ -142,11 +164,11 @@ class RunTest(object):
 
 def main():
     arguments = docopt(__doc__)
-    print arguments
     run_test_obj = RunTest(profiler=arguments['--profiler'], keep_browser=arguments['--keep-browser'],
                            max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
-                           online_config=arguments['--online-config'], advance=arguments['--advance'])
+                           online_config=arguments['--online-config'], advance=arguments['--advance'],
+                           test_comment=arguments['--comment'])
     if arguments['pilottest']:
         run_test_obj.run("pilottest", arguments['<suite.txt>'])
     elif arguments['regression']:

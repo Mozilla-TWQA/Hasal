@@ -1,5 +1,5 @@
 import subprocess
-import platform
+import sys
 import lib.sikuli
 import tempfile
 import zipfile
@@ -44,16 +44,24 @@ def launch_browser(browser_type, **kwargs):
     return profile_path
 
 
+def get_browser_version(browser_type):
+    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+        browser_obj = BrowserFirefox(0,0)
+    else:
+        browser_obj = BrowserChrome(0,0)
+    return_version = browser_obj.get_version()
+    return return_version
+
 def lock_window_pos(browser_type):
     window_title = None
     if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        if platform.system().lower() == "darwin":
+        if sys.platform == "darwin":
             window_title = "Firefox.app"
         else:
             window_title = "Mozilla Firefox"
 
     else:
-        if platform.system().lower() == "darwin":
+        if sys.platform == "darwin":
             window_title = "Chrome.app"
         else:
             window_title = "Google Chrome"
@@ -63,7 +71,7 @@ def lock_window_pos(browser_type):
 
 
 def minimize_window():
-    if platform.system().lower() == "linux":
+    if sys.platform == "linux2":
         get_active_windows_cmd = "xdotool getactivewindow"
         minimize_all_windows_cmd = "xdotool getactivewindow key ctrl+super+d"
         org_window_id = subprocess.check_output(get_active_windows_cmd, shell=True)
