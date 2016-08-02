@@ -6,7 +6,7 @@ import helper.desktopHelper as desktopHelper
 import helper.resultHelper as resultHelper
 import lib.helper.targetHelper as targetHelper
 import lib.sikuli as sikuli
-import lib.helper.captureHelper as captureHelper
+import lib.helper.videoHelper as videoHelper
 from common.environment import Environment
 from helper.profilerHelper import Profilers
 
@@ -135,7 +135,7 @@ class PerfBaseTest(unittest.TestCase):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
-            captureHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+            videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_1_fn)
         time.sleep(2)
 
@@ -151,7 +151,7 @@ class PerfBaseTest(unittest.TestCase):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
-            captureHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+            videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                          self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data

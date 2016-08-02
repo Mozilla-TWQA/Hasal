@@ -6,12 +6,13 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 class PyDriveUtil(object):
 
-    def __init__(self):
-        self.gauth = self.get_gauth()
+    def __init__(self, settings = None):
+        if settings is None:
+            settings = {"settings_file": None, "local_cred_file":"mycreds.txt"}
+        self.gauth = self.get_gauth(settings)
         self.drive = GoogleDrive(self.gauth)
 
     def get_file_object(self, folder_uri, file_name):
-
         search_string = "'%s' in parents and trashed=false" % folder_uri
         file_list = self.drive.ListFile({'q': search_string}).GetList()
         for file_obj in file_list:
@@ -24,10 +25,13 @@ class PyDriveUtil(object):
         file_obj.SetContentString(content)
         file_obj.Upload()
 
-    def get_gauth(self):
-        gauth = GoogleAuth()
+    def get_gauth(self, settings):
+        if settings['settings_file']:
+            gauth = GoogleAuth(settings_file=settings['settings_file'])
+        else:
+            gauth = GoogleAuth()
         # Try to load saved client credentials
-        gauth.LoadCredentialsFile("mycreds.txt")
+        gauth.LoadCredentialsFile(settings['local_cred_file'])
         if gauth.credentials is None:
             # Authenticate if they're not there
             gauth.LocalWebserverAuth()
@@ -38,7 +42,7 @@ class PyDriveUtil(object):
         # Initialize the saved creds
         gauth.Authorize()
         # Save the current credentials to a file
-        gauth.SaveCredentialsFile("mycreds.txt")
+        gauth.SaveCredentialsFile(settings['local_cred_file'])
         return gauth
 
     def copy_file(self, file_id, folder_uri, new_title):
@@ -49,23 +53,35 @@ class PyDriveUtil(object):
     def delete_file(self, file_id):
         self.drive.auth.service.files().delete(fileId=file_id).execute()
 
+    def upload_file(self, folder_uri, upload_fp):
+        file_obj = self.drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_uri}]})
+        file_obj.SetContentFile(upload_fp)
+        file_obj.Upload()
+        return file_obj
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Pydrive util',
                                          formatter_class=ArgumentDefaultsHelpFormatter)
-    arg_parser.add_argument('-u', action='store', dest='input_folder_uri', default=None,
-                            help='Specify the uri path of folder.', required=True)
-    arg_parser.add_argument('-f', action='store', dest='input_file_name', default=None,
-                            help='Specify file name your want to update.', required=True)
-    arg_parser.add_argument('-c', action='store', dest='input_content', default=None,
-                            help='Specify content want to update.', required=True)
+    arg_parser.add_argument('input_folder_uri', default=None, help='Specify the uri path of folder.')
+    arg_parser.add_argument('input_file_name', default=None, help='Specify file name your want to update.')
+    arg_parser.add_argument('input_content', default=None, help='Specify content want to update.')
+    arg_parser.add_argument('-s', action='store', dest='input_settings_file', default=None,
+                            help='Specify the settings file using in getting auth')
+    arg_parser.add_argument('-l', action='store', dest='input_local_cred_file', default=None,
+                            help='Specify the local cred file using in getting auth')
     args = arg_parser.parse_args()
 
     folder_uri = args.input_folder_uri
     file_name = args.input_file_name
     content = args.input_content
 
-    pydrive_obj = PyDriveUtil()
+    if args.input_settings_file and args.input_local_cred_file:
+        pydrive_obj = PyDriveUtil(
+            settings={"settings_file": args.input_settings_file, "local_cred_file": args.input_local_cred_file})
+    elif args.input_settings_file is None and args.input_local_cred_file is None:
+        pydrive_obj = PyDriveUtil()
+    else:
+        print "pleas specify the -s and -l at same time!"
     pydrive_obj.update_file_content(folder_uri, file_name, content)
 
 if __name__ == '__main__':

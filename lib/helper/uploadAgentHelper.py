@@ -1,12 +1,20 @@
+import os
 import json
 import sys
 import urllib
 import urllib2
 import platform
 import desktopHelper
+import videoHelper
 from datetime import date
+from ..common.pyDriveUtil import PyDriveUtil
 from desktopHelper import DEFAULT_BROWSER_TYPE_FIREFOX
 from desktopHelper import DEFAULT_BROWSER_TYPE_CHROME
+
+DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
+DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
+DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
+DEFAULT_CONVERT_VIDEO_RESOLUTION = "320x240"
 
 class UploadAgent(object):
 
@@ -33,10 +41,12 @@ class UploadAgent(object):
             self.test_comment_str = self.test_comment
 
 
-    def generate_url_str(self, input_test_name):
+    def generate_url_str(self, input_test_name, api_root=None):
         url_format = "http://%s:%s/%s"
+        if api_root is None:
+            api_root = self.svr_config["project_name"]
         path_str = "/".join(
-            [self.svr_config["project_name"], sys.platform, DEFAULT_BROWSER_TYPE_FIREFOX,
+            [api_root, sys.platform, DEFAULT_BROWSER_TYPE_FIREFOX,
              input_test_name])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
@@ -48,8 +58,6 @@ class UploadAgent(object):
             print "[ERROR] current result file consist over 1 test case result!"
             return None
         else:
-            query_args = {}
-
             # init test data
             test_name = result_data.keys()[0]
             test_browser_type = test_name.split("_")[1]
@@ -78,14 +86,42 @@ class UploadAgent(object):
             print "===== Upload result post data ====="
             print json_data
             print "===== Upload result post data ====="
+            return json.loads(self.send_post_data(json_data, url_str).read())
 
-            # compose query and send request
-            json_data_str = json.dumps(json_data)
-            query_args['json'] = json_data_str
-            encoded_args = urllib.urlencode(query_args)
-            response_obj = urllib2.urlopen(url_str, encoded_args)
-            if response_obj.getcode() == 200:
-                return json.loads(response_obj.read())
-            else:
-                print "[ERROR] response status code is [%d]" % response_obj.getcode()
-                return None
+    def send_post_data(self, post_data, url_str):
+        query_args = {}
+        # compose query and send request
+        json_data_str = json.dumps(post_data)
+        query_args['json'] = json_data_str
+        encoded_args = urllib.urlencode(query_args)
+        response_obj = urllib2.urlopen(url_str, encoded_args)
+        if response_obj.getcode() == 200:
+            return response_obj
+        else:
+            print "[ERROR] response status code is [%d]" % response_obj.getcode()
+            return None
+
+    def upload_videos(self, input_upload_list):
+        pyDriveObj = PyDriveUtil(settings={"settings_file": DEFAULT_UPLOAD_VIDEO_YAML_SETTING,
+                                           "local_cred_file": DEFAULT_UPLOAD_VIDEO_MYCRED_TXT})
+        for upload_data in input_upload_list:
+            if os.path.exists(upload_data['video_path']):
+                new_video_path = upload_data['video_path'].replace(".mkv", ".mp4")
+                videoHelper.convert_video_to_specify_size(upload_data['video_path'], new_video_path,
+                                                          DEFAULT_CONVERT_VIDEO_RESOLUTION)
+                upload_result = pyDriveObj.upload_file(DEFAULT_UPLOAD_FOLDER_URI, new_video_path)
+                video_preview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
+                test_browser_type = upload_data['test_name'].split("_")[1]
+                json_data = {"os": sys.platform,
+                             "target": self.test_target,
+                             "test": upload_data['test_name'],
+                             "browser": test_browser_type,
+                             "version": self.current_browser_version[test_browser_type],
+                             "video_path": video_preview_url,
+                             "comment": self.test_comment_str}
+                url_str = self.generate_url_str(upload_data['test_name'],api_root="video_profile")
+                print "===== Upload video post data ====="
+                print url_str
+                print json_data
+                print "===== Upload video post data ====="
+                self.send_post_data(json_data,url_str)
