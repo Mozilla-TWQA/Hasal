@@ -62,12 +62,9 @@ class PyDriveUtil(object):
 def main():
     arg_parser = argparse.ArgumentParser(description='Pydrive util',
                                          formatter_class=ArgumentDefaultsHelpFormatter)
-    arg_parser.add_argument('-u', action='store', dest='input_folder_uri', default=None,
-                            help='Specify the uri path of folder.', required=True)
-    arg_parser.add_argument('-f', action='store', dest='input_file_name', default=None,
-                            help='Specify file name your want to update.', required=True)
-    arg_parser.add_argument('-c', action='store', dest='input_content', default=None,
-                            help='Specify content want to update.', required=True)
+    arg_parser.add_argument('input_folder_uri', default=None, help='Specify the uri path of folder.')
+    arg_parser.add_argument('input_file_name', default=None, help='Specify file name your want to update.')
+    arg_parser.add_argument('input_content', default=None, help='Specify content want to update.')
     arg_parser.add_argument('-s', action='store', dest='input_settings_file', default=None,
                             help='Specify the settings file using in getting auth')
     arg_parser.add_argument('-l', action='store', dest='input_local_cred_file', default=None,
