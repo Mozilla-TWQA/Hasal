@@ -82,8 +82,7 @@ class RunTest(object):
         return result
 
     def loop_test(self, test_case_module_name, test_env, current_run=0, current_retry=0):
-        if self.online:
-            upload_agent_obj = UploadAgent(svr_config_fp=self.online_config, test_comment=self.test_comment)
+        return_result = {"ip":None, "video_path":None, "test_name":None}
         while current_run < self.max_run:
             print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
             if self.online and os.path.exists(DEFAULT_RESULT_FP):
@@ -93,16 +92,20 @@ class RunTest(object):
                 if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0:
                     if self.online:
                         # Online mode handling
-                        upload_result = upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
+                        upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
                         if upload_result:
                             print "===== upload success ====="
                             print upload_result
+                            return_result['ip'] = upload_result['ip']
+                            return_result['video_path'] = upload_result['video']
+                            return_result['test_name'] = test_case_module_name.split(".")[1]
                             print "===== upload success ====="
                             if "current_test_times" in upload_result:
                                 current_run = upload_result["current_test_times"]
                             else:
                                 current_run += 1
                         else:
+
                             current_run += 1
                     else:
                         if "time_list_counter" in run_result:
@@ -115,6 +118,7 @@ class RunTest(object):
                 current_retry += 1
             if current_retry >= self.max_retry:
                 break
+        return return_result
 
     def run_test(self, test_case_module_name, test_env):
         self.kill_legacy_process()
@@ -133,34 +137,30 @@ class RunTest(object):
             print "[ERROR] test could raise exception during execution!!"
             return None
 
-    def regression_loop_suite(self, input_suite_fp):
+    def loop_suite(self, type, input_suite_fp):
+        response_result_data = []
         with open(input_suite_fp) as input_suite_fh:
             for tmp_line in input_suite_fh.read().splitlines():
                 case_data = self.suite_content_parser(tmp_line)
-                test_case_name = case_data.keys()[0]
-                test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_case_name + ".py")
-                if os.path.exists(test_case_fp):
-                    test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_case_name
-                    test_env = self.get_test_env(**case_data[test_case_name])
-                    self.loop_test(test_case_module_name, test_env)
-
-    def pilottest_loop_suite(self, input_suite_fp):
-        with open(input_suite_fp) as input_suite_fh:
-            for tmp_line in input_suite_fh.read().splitlines():
-                test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
-                case_data = self.suite_content_parser(tmp_line)
-                test_sikuli_fp = case_data.keys()[0]
-                case_data[test_sikuli_fp]["SIKULI_SCRIPT_PATH"] = test_sikuli_fp
-                test_env = self.get_test_env(**case_data[test_sikuli_fp])
-                self.loop_test(test_case_module_name, test_env)
+                test_name = case_data.keys()[0]
+                if type == "pilottest":
+                    test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
+                    case_data[test_name]["SIKULI_SCRIPT_PATH"] = test_name
+                    test_env = self.get_test_env(**case_data[test_name])
+                else:
+                    test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_name + ".py")
+                    if os.path.exists(test_case_fp):
+                        test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_name
+                        test_env = self.get_test_env(**case_data[test_name])
+                response_result_data.append(self.loop_test(test_case_module_name, test_env))
+            if self.online:
+                self.upload_agent_obj.upload_videos(response_result_data)
 
     def run(self, type, input_suite_fp):
-        if type == "pilottest":
-            self.pilottest_loop_suite(input_suite_fp)
-        else:
-            self.regression_loop_suite(input_suite_fp)
+        if self.online:
+            self.upload_agent_obj = UploadAgent(svr_config_fp=self.online_config, test_comment=self.test_comment)
+        self.loop_suite(type,input_suite_fp)
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
-
 
 def main():
     arguments = docopt(__doc__)
