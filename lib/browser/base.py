@@ -22,7 +22,10 @@ class BrowserBase(object):
 
     def launch(self):
         print self.launch_cmd
-        self.browser_process = subprocess.Popen(self.launch_cmd)
+        if hasattr(self, "test_env"):
+            self.browser_process = subprocess.Popen(self.launch_cmd, env=self.test_env)
+        else:
+            self.browser_process = subprocess.Popen(self.launch_cmd)
 
     def get_version(self):
         cmd = self.get_version_command()

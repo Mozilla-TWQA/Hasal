@@ -26,17 +26,35 @@ def extract_profile_data(input_profile_path):
 
 
 def launch_browser(browser_type, **kwargs):
+    env = kwargs['env']
+    enabled_profiler_list = kwargs['enabled_profiler_list']
     profile_path = None
-    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        if kwargs['profile_path'] is not None:
-            profile_path = extract_profile_data(kwargs['profile_path'])
-            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path = profile_path)
+
+    if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
+        if browser_type == DEFAULT_BROWSER_TYPE_CHROME:
+            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH,
+                                        tracing_path=env.chrome_tracing_file_fp)
         else:
             browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+    elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
+        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+            if kwargs['profile_path'] is not None:
+                profile_path = extract_profile_data(kwargs['profile_path'])
+                browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, tracelogger=True,
+                                             profile_path=profile_path)
+            else:
+                browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, tracelogger=True)
+        else:
+            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+    elif kwargs['profile_path'] is not None:
+        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+
+            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
+        else:
+            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
     else:
-        if "tracing_path" in kwargs:
-            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH,
-                                        tracing_path=kwargs['tracing_path'])
+        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
         else:
             browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
 
