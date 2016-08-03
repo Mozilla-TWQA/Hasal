@@ -5,7 +5,7 @@ from ..common.imageTool import ImageTool
 
 
 def capture_screen(env, output_video_fp, output_img_dp, output_img_name):
-    if sys.platform == "windows":
+    if sys.platform == "win32":
         os.system("ffmpeg -f gdigrab -draw_mouse 0 -framerate 90 -video_size 1024*768 -i desktop -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
     else:
         os.system(" ".join(screenshot_capture_line(env.DEFAULT_VIDEO_RECORDING_FPS, env.DEFAULT_VIDEO_RECORDING_POS_X,

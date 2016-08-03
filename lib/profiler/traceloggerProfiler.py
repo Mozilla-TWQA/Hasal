@@ -39,7 +39,7 @@ class TraceLoggerProfiler(BaseProfiler):
         # Make sure logger data is updated!
         time.sleep(5)
 
-        if sys.platform == "windows":
+        if sys.platform == "win32":
             dir_path = os.getcwd()
             files = [f for f in os.listdir(dir_path) if re.match(r'tl-.*\.[json|tl]',f)]
         else:
