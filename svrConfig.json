@@ -1,5 +1,5 @@
 {
-  "svr_addr": "localhost",
+  "svr_addr": "127.0.0.1",
   "svr_port": 1234,
   "project_name": "hasal"
 }
