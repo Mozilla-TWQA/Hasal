@@ -80,7 +80,7 @@ class RunTest(object):
                 result[data_array[0]]["PRE_SCRIPT_PATH"] = data_array[1].strip()
         return result
 
-    def loop_test(self, test_case_module_name, test_env, current_run=0, current_retry=0):
+    def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         return_result = {"ip":None, "video_path":None, "test_name":None}
         while current_run < self.max_run:
             print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
@@ -97,10 +97,11 @@ class RunTest(object):
                             print upload_result
                             return_result['ip'] = upload_result['ip']
                             return_result['video_path'] = upload_result['video']
-                            return_result['test_name'] = test_case_module_name.split(".")[1]
+                            return_result['test_name'] = test_name
                             print "===== upload success ====="
                             if "current_test_times" in upload_result:
                                 current_run = upload_result["current_test_times"]
+                                self.max_run = upload_result['config_test_times']
                             else:
                                 current_run += 1
                         else:
@@ -151,7 +152,7 @@ class RunTest(object):
                     if os.path.exists(test_case_fp):
                         test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_name
                         test_env = self.get_test_env(**case_data[test_name])
-                response_result_data.append(self.loop_test(test_case_module_name, test_env))
+                response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:
                 self.upload_agent_obj.upload_videos(response_result_data)
 
