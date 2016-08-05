@@ -30,7 +30,7 @@ class StorageHandler:
     Please add the 'config.json' file under '~/.hasal_server/'.
     The file content example:
         {"test_times": 30}
-    If there is no config file, the default value will be 5 times.
+    If there is no config file, the default value will be 30 times.
     """
     def __init__(self):
         pass
@@ -48,7 +48,7 @@ class StorageHandler:
         if os.path.isfile(self._config_path):
             with open(self._config_path, 'r') as f:
                 return json.load(f)
-        return {}
+        return {"test_times": 30}
 
     def load(self):
         """
@@ -87,7 +87,7 @@ class HasalServer:
     storage = {}
     _calculator = outlier()
     _config = storage_handler.load_config()
-    _config_test_times = _config.get('test_times', 5)
+    _config_test_times = _config.get('test_times', 30)
     _keys = ['os', 'target_browser', 'test', 'browser']
     _checks = ['os', 'target', 'test', 'browser', 'version', 'platform', 'value', 'video', 'comment']
     _count = 0

@@ -7,7 +7,7 @@ Usage:
 
 Options:
   -h --help                 Show this screen.
-  --max-run=<int>           Test run max no [default: 40].
+  --max-run=<int>           Test run max no [default: 30].
   --max-retry=<int>         Test failed retry max no [default: 15].
   --keep-browser            Keep the browser open after test script executed
   --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
@@ -15,7 +15,6 @@ Options:
   --online-config=<str>     Online server config [default: svrConfig.json]
   --comment=<str>           Tag the comment on this test [default: <today>]
   --advance                 Only for expert user
-
 
 """
 import os
