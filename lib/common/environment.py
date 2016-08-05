@@ -60,6 +60,7 @@ class Environment(object):
     PROFILER_FLAG_FXALL = "fxall"
     PROFILER_FLAG_JUSTPROFILER = "justprofiler"
     PROFILER_FLAG_MITMDUMP = "mitmdump"
+    PROFILER_FLAG_FXTRACELOGGER = "fxtracelogger"
 
 
     if platform.system().lower() == "darwin":
@@ -93,6 +94,7 @@ class Environment(object):
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
+        self.profile_tracelogger_zip_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracelogger.zip")
         self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")
 
     def init_output_dir(self):

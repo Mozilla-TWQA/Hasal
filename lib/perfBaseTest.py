@@ -27,6 +27,8 @@ class PerfBaseTest(unittest.TestCase):
                                        "name": "PerformanceTimingProfiler", "profile_name": None}
         gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler",
                           "profile_name": "GeckoProfiler.zip"}
+        tracelogger_profiler = {"path": "lib.profiler.traceloggerProfiler", "name": "TraceLoggerProfiler",
+                                "profile_name": None}
         result_list = []
 
         profiler_list_str = os.getenv("PROFILER")
@@ -36,12 +38,14 @@ class PerfBaseTest(unittest.TestCase):
             result_list.append(har_profiler)
             result_list.append(performance_timing_profiler)
             result_list.append(gecko_profiler)
+            result_list.append(tracelogger_profiler)
             return result_list
 
         if self.env.PROFILER_FLAG_JUSTPROFILER in self.enabled_profiler_list:
             result_list.append(har_profiler)
             result_list.append(performance_timing_profiler)
             result_list.append(gecko_profiler)
+            result_list.append(tracelogger_profiler)
             return result_list
 
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list:
@@ -55,6 +59,9 @@ class PerfBaseTest(unittest.TestCase):
 
         if self.env.PROFILER_FLAG_MITMDUMP in self.enabled_profiler_list:
             result_list.append(mitmdump_profiler)
+
+        if self.env.PROFILER_FLAG_FXTRACELOGGER in self.enabled_profiler_list:
+            result_list.append(tracelogger_profiler)
 
         return result_list
 
@@ -97,11 +104,9 @@ class PerfBaseTest(unittest.TestCase):
         desktopHelper.minimize_window()
 
         # launch browser
-        if self.env.PROFILER_FLAG_CHROMETRACING in self.enabled_profiler_list:
-            self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
-                                                                 tracing_path=self.env.chrome_tracing_file_fp)
-        else:
-            self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path)
+        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
+                                                             env=self.env,
+                                                             enabled_profiler_list=self.enabled_profiler_list)
 
         # switch to content window, prevent cursor twinkling
         time.sleep(3)
