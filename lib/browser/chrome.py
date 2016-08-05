@@ -1,4 +1,5 @@
 from base import BrowserBase
+import subprocess
 
 
 class BrowserChrome(BrowserBase):
@@ -23,4 +24,15 @@ class BrowserChrome(BrowserBase):
             self.launch_cmd.extend(["--trace-startup", "--trace-startup-file="+kwargs['tracing_path'], "--trace-startup-duration="+str(default_tracing_capture_period)])
 
     def get_version_command(self):
-        return  [self.command, "--version"]
+        if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
+            return [self.command, "--version"]
+        else:
+            return ['reg', 'query', 'HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon', '/v', 'version']
+
+    def get_version(self):
+        cmd = self.get_version_command()
+        if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
+            return_version = subprocess.check_output(cmd).splitlines()[0].split(" ")[2]
+        else:
+            return_version = subprocess.check_output(cmd).splitlines()[2].split()[2]
+        return return_version
