@@ -40,16 +40,12 @@ class UploadAgent(object):
         else:
             self.test_comment_str = self.test_comment
 
-
     def generate_url_str(self, input_test_name, api_root=None):
         url_format = "http://%s:%s/%s"
         if api_root is None:
             api_root = self.svr_config["project_name"]
-        path_str = "/".join(
-            [api_root, sys.platform, DEFAULT_BROWSER_TYPE_FIREFOX,
-             input_test_name])
+        path_str = "/".join([api_root, sys.platform, self.test_target, input_test_name])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
-
 
     def upload_result(self, input_result_fp):
         with open(input_result_fp) as json_fh:
