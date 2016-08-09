@@ -44,7 +44,7 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
         if run_time < result[test_method_name]['min_time']:
             result[test_method_name]['min_time'] = run_time
         result[test_method_name]['detail'].extend(current_run_result)
-        if len(result[test_method_name]['time_list']) > outlier_check_point:
+        if len(result[test_method_name]['time_list']) >= outlier_check_point:
             result[test_method_name]['avg_time'], result[test_method_name]['med_time'], result[test_method_name]['std_dev'], \
             result[test_method_name]['time_list'], tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
             result[test_method_name]['outlier'].extend(tmp_outlier)
