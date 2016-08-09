@@ -147,6 +147,10 @@ class RunTest(object):
                     test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
                     case_data[test_name]["SIKULI_SCRIPT_PATH"] = test_name
                     test_env = self.get_test_env(**case_data[test_name])
+                    if test_name.endswith(os.sep):
+                        test_name = test_name.split(os.sep)[-2].split(".")[0]
+                    else:
+                        test_name = test_name.split(os.sep)[-1].split(".")[0]
                 else:
                     test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_name + ".py")
                     if os.path.exists(test_case_fp):
