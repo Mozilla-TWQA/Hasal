@@ -146,6 +146,7 @@ class RunTest(object):
                 if type == "pilottest":
                     test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
                     case_data[test_name]["SIKULI_SCRIPT_PATH"] = test_name
+                    case_data[test_name]["MAX_RUN"] = self.max_run
                     test_env = self.get_test_env(**case_data[test_name])
                     if test_name.endswith(os.sep):
                         test_name = test_name.split(os.sep)[-2].split(".")[0]
