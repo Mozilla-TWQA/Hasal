@@ -154,6 +154,7 @@ class RunTest(object):
                         test_name = test_name.split(os.sep)[-1].split(".")[0]
                 else:
                     test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_name + ".py")
+                    case_data[test_name]["MAX_RUN"] = self.max_run
                     if os.path.exists(test_case_fp):
                         test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_name
                         test_env = self.get_test_env(**case_data[test_name])
