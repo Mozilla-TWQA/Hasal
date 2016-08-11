@@ -187,7 +187,11 @@ class HasalServer:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os is not None and os != '', '[os] is empty.'
             assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
-            assert test is not None and test != '', '[test] is empty.'
+
+            if test is None or test == '':
+                # return all test result of provided target
+                return json.dumps(HasalServer.storage[os][target_browser], indent=4)
+
             if os not in HasalServer.storage:
                 return 'No os: {}'.format(os)
             elif target_browser not in HasalServer.storage[os]:
