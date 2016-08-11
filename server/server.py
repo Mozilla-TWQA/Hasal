@@ -12,6 +12,7 @@ from lib.common.outlier import outlier
 urls = (
     '/', 'Index',
     '/reset/(.*)', 'Reset',
+    '/all_result/', 'AllResult',
     '/hasal/(.*)/(.*)/(.*)', 'HasalServer',
     '/video_profile/(.*)/(.*)/(.*)', 'VideoProfileUpdater'
 )
@@ -77,6 +78,35 @@ class StorageHandler:
             shutil.rmtree(self._storage_path)
         elif os.path.isfile(self._storage_path):
             os.remove(self._storage_path)
+
+
+class AllResult:
+    render = web.template.render('templates', base='layout')
+
+    def __init__(self):
+        HasalServer.storage = HasalServer.storage_handler.load()
+
+    def GET(self):
+        md = []
+        for os in HasalServer.storage.keys():
+            md.append('# {}'.format(os))
+            targets = HasalServer.storage[os]
+            for target in targets.keys():
+                md.append('## {}'.format(target))
+                tests = targets[target]
+                for test in tests.keys():
+                    md.append('### {}'.format(test))
+                    comments = tests[test]
+                    for comment in comments.keys():
+                        md.append('* {}'.format(comment))
+                        browsers = comments[comment]
+                        for browser in browsers.keys():
+                            #md.append('  * {}'.format(browser))
+                            data = browsers[browser]
+                            md.append('  * Median: {}'.format(data.get('median_value')))
+                            md.append('  * Sigma: {}'.format(data.get('sigma_value')))
+        markdown_str = '\n'.join(md)
+        return self.render.all_result(markdown=markdown_str)
 
 
 class HasalServer:
