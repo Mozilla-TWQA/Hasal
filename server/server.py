@@ -1,4 +1,5 @@
 import os
+import re
 import web
 import json
 import time
@@ -88,25 +89,34 @@ class AllResult:
 
     def GET(self):
         md = []
+        comments_dict = {}
         for os in HasalServer.storage.keys():
             md.append('# {}'.format(os))
             targets = HasalServer.storage[os]
             for target in targets.keys():
                 md.append('## {}'.format(target))
+
                 tests = targets[target]
-                for test in tests.keys():
-                    md.append('### {}'.format(test))
+                for test in sorted(tests.keys(), key=lambda k: re.sub(r'test_[\w]+_', '', k)):
                     comments = tests[test]
                     for comment in comments.keys():
-                        md.append('* {}'.format(comment))
+                        if comment not in comments_dict:
+                            comments_dict[comment] = []
+
+                        comments_dict[comment].append('* {}'.format(test))
+
                         browsers = comments[comment]
                         for browser in browsers.keys():
                             if len(browsers)>1:
-                                md.append('  * {}'.format(browser))
+                                comments_dict[comment].append('  * {}'.format(browser))
                             data = browsers[browser]
-                            md.append('    * Median: {}'.format(data.get('median_value')))
-                            md.append('    * Sigma: {}'.format(data.get('sigma_value')))
-                        md.append('\n')
+                            comments_dict[comment].append('    * Median: {}'.format(data.get('median_value')))
+                            comments_dict[comment].append('    * Sigma: {}'.format(data.get('sigma_value')))
+                        comments_dict[comment].append('\n')
+
+        for comment_md_str in sorted(comments_dict.keys()):
+            md.append('### {}'.format(comment_md_str))
+            md.append('\n'.join(comments_dict[comment_md_str]))
         markdown_str = '\n'.join(md)
         return self.render.all_result(markdown=markdown_str)
 
