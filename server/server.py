@@ -101,10 +101,12 @@ class AllResult:
                         md.append('* {}'.format(comment))
                         browsers = comments[comment]
                         for browser in browsers.keys():
-                            #md.append('  * {}'.format(browser))
+                            if len(browsers)>1:
+                                md.append('  * {}'.format(browser))
                             data = browsers[browser]
-                            md.append('  * Median: {}'.format(data.get('median_value')))
-                            md.append('  * Sigma: {}'.format(data.get('sigma_value')))
+                            md.append('    * Median: {}'.format(data.get('median_value')))
+                            md.append('    * Sigma: {}'.format(data.get('sigma_value')))
+                        md.append('\n')
         markdown_str = '\n'.join(md)
         return self.render.all_result(markdown=markdown_str)
 
