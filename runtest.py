@@ -142,22 +142,28 @@ class RunTest(object):
         with open(input_suite_fp) as input_suite_fh:
             for tmp_line in input_suite_fh.read().splitlines():
                 case_data = self.suite_content_parser(tmp_line)
-                test_name = case_data.keys()[0]
+                print "======= case_data  ========"
+                print case_data
+                print "======= case_data  ========"
+                test_case = case_data.keys()[0]
+                case_data[test_case]["MAX_RUN"] = self.max_run
+
                 if type == "pilottest":
                     test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
-                    case_data[test_name]["SIKULI_SCRIPT_PATH"] = test_name
-                    case_data[test_name]["MAX_RUN"] = self.max_run
-                    test_env = self.get_test_env(**case_data[test_name])
-                    if test_name.endswith(os.sep):
-                        test_name = test_name.split(os.sep)[-2].split(".")[0]
+                    case_data[test_case]["SIKULI_SCRIPT_PATH"] = test_case
+                    case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case_module_name.split(".")[:-1])
+                    test_env = self.get_test_env(**case_data[test_case])
+                    if test_case.endswith(os.sep):
+                        test_name = test_case.split(os.sep)[-2].split(".")[0]
                     else:
-                        test_name = test_name.split(os.sep)[-1].split(".")[0]
+                        test_name = test_case.split(os.sep)[-1].split(".")[0]
                 else:
-                    test_case_fp = os.path.join(os.getcwd(), DEFAULT_TEST_FOLDER, test_name + ".py")
-                    case_data[test_name]["MAX_RUN"] = self.max_run
+                    test_case_fp = test_case.replace(".", os.sep) + ".py"
+                    test_name = test_case.split(".")[-1]
+                    case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case.split(".")[:-1])
                     if os.path.exists(test_case_fp):
-                        test_case_module_name = DEFAULT_TEST_FOLDER + "." + test_name
-                        test_env = self.get_test_env(**case_data[test_name])
+                        test_case_module_name = test_case
+                        test_env = self.get_test_env(**case_data[test_case])
                 response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:
                 self.upload_agent_obj.upload_videos(response_result_data)

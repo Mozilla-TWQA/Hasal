@@ -81,6 +81,7 @@ class Environment(object):
             self.test_name = sikuli_script_name
         else:
             self.test_name = test_method_name
+        self.test_script_py_dp = os.getenv("TEST_SCRIPT_PY_DIR_PATH")
         self.output_name = self.test_name + "_" + self.time_stamp
         self.flow_file_fp = self.test_name + ".flow"
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
