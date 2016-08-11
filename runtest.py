@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pilottest <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
   runtest.py (-h | --help)
 
 Options:
@@ -148,7 +148,7 @@ class RunTest(object):
                 test_case = case_data.keys()[0]
                 case_data[test_case]["MAX_RUN"] = self.max_run
 
-                if type == "pilottest":
+                if type == "pt":
                     test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
                     case_data[test_case]["SIKULI_SCRIPT_PATH"] = test_case
                     case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case_module_name.split(".")[:-1])
@@ -181,12 +181,12 @@ def main():
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'])
-    if arguments['pilottest']:
-        run_test_obj.run("pilottest", arguments['<suite.txt>'])
-    elif arguments['regression']:
-        run_test_obj.run("regression", arguments['<suite.txt>'])
+    if arguments['pt']:
+        run_test_obj.run("pt", arguments['<suite.txt>'])
+    elif arguments['re']:
+        run_test_obj.run("re", arguments['<suite.txt>'])
     else:
-        run_test_obj.run("regression", arguments['<suite.txt>'])
+        run_test_obj.run("re", arguments['<suite.txt>'])
 
 if __name__ == '__main__':
     main()
