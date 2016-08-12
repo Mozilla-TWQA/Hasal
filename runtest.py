@@ -67,6 +67,7 @@ class RunTest(object):
         return result
 
     def suite_content_parser(self, input_line):
+        # in suite file, use comma to distinguish test case script, pre-execute script, post-execute script
         result = {}
         data_array = input_line.split(",")
         result[data_array[0]] = {}

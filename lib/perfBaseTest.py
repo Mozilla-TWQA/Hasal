@@ -69,6 +69,21 @@ class PerfBaseTest(unittest.TestCase):
         for variable_name in kwargs.keys():
             setattr(self,variable_name,kwargs[variable_name])
 
+    def args_parser(self, input_script_name, input_args):
+        result_args = []
+        for arg in input_args:
+            if type(arg) == dict:
+                if "clone_url" in arg.keys():
+                    test_url_id = getattr(self.env, arg["clone_url"])
+                    self.test_url, self.test_url_id = self.target_helper.clone_target(test_url_id, input_script_name + "_" + self.env.time_stamp)
+                    result_args.append(arg["clone_url"])
+                else:
+                    result_args.append(arg[arg.keys()[0]])
+            else:
+                result_args = input_args
+        return result_args
+
+
     def setUp(self):
 
         # Get profiler list
@@ -120,16 +135,17 @@ class PerfBaseTest(unittest.TestCase):
 
         # execute pre-run-script.
         # You have to specify the pre_run_script and test_url before calling parent setup in your test class
-        if hasattr(self, "pre_run_script"):
+        if os.getenv("PRE_SCRIPT_PATH"):
+            pre_script_args = []
+
             # clone pre run script test url id
-            if hasattr(self, "pre_run_script_test_url_id"):
-                test_url_id = getattr(self.env, self.pre_run_script_test_url_id)
-                self.test_url, self.test_url_id = self.target_helper.clone_target(test_url_id,
-                                                                                  self.pre_run_script + "_" + self.env.time_stamp)
+            if hasattr(self, "pre_script_args"):
+                pre_script_args = self.args_parser(os.getenv("PRE_SCRIPT_PATH"), self.pre_script_args)
+
             # execute pre run script
-            self.sikuli_status = self.sikuli.run_test( self.pre_run_script,
-                                                 self.pre_run_script + "_" + self.env.time_stamp,
-                                                 test_url=self.test_url)
+            self.sikuli_status = self.sikuli.run_test(os.getenv("PRE_SCRIPT_PATH"),
+                                                      os.getenv("PRE_SCRIPT_PATH") + "_" + self.env.time_stamp,
+                                                      args_list=pre_script_args)
 
 
         # clone test target
@@ -164,7 +180,11 @@ class PerfBaseTest(unittest.TestCase):
 
         # Post run sikuli script
         if os.getenv("POST_SCRIPT_PATH"):
-            self.sikuli.run_sikulix_cmd(os.getenv("POST_SCRIPT_PATH"))
+            post_script_args = []
+            if hasattr(self, "post_script_args"):
+                post_script_args = self.args_parser(os.getenv("POST_SCRIPT_PATH"), self.post_script_args)
+            self.sikuli.run_test(os.getenv("POST_SCRIPT_PATH"),
+                                 os.getenv("POST_SCRIPT_PATH") + "_" + self.env.time_stamp, args_list=post_script_args)
 
         # Stop browser
         if int(os.getenv("KEEP_BROWSER")) == 0:
