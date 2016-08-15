@@ -12,6 +12,7 @@ A Framework for testing web performance between different browser
 * Install opencv
 
 ```
+apt-get install virtualenv python-dev
 virtualenv ~/.hasalenv            # or "make clean dev-env"
 source ~/.hasalenv/bin/activate
 
