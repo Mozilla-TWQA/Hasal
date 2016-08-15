@@ -88,33 +88,33 @@
     <span class="kw">def</span> wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(<span class="dig">10</span>)
-        <span class="skw">wait</span>(Pattern(<img src="1470820258980.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">wait</span>(Pattern(<img src="facebook_logo.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
         setAutoWaitTimeout(default_timeout)
         self.focus_window()
 
     <span class="kw">def</span> focus_window(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(<span class="dig">10</span>)
-        <span class="skw">click</span>(Pattern(<img src="1470820258980.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">0</span>,<span class="dig">15</span>))
+        <span class="skw">click</span>(Pattern(<img src="facebook_logo.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">0</span>,<span class="dig">15</span>))
         setAutoWaitTimeout(default_timeout)
 
     <span class="kw">def</span> post_url(self):
-        <span class="skw">click</span>(Pattern(<img src="1470818721451.png" />).similar(<span class="dig">0.85</span>))
+        <span class="skw">click</span>(Pattern(<img src="facebook_home_post_area.png" />).similar(<span class="dig">0.85</span>))
         paste(<span class="str">'https://en.wikipedia.org/wiki/Sun_Tzu '</span>)
-        <span class="skw">wait</span>(<img src="1470822122151.png" />, <span class="dig">10</span>)
-        <span class="skw">click</span>(Pattern(<img src="1470818889053.png" />).similar(<span class="dig">0.85</span>))
-        <span class="skw">wait</span>(Pattern(<img src="1470821414750.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">wait</span>(<img src="facebook_post_url_thumbnail.png" />, <span class="dig">10</span>)
+        <span class="skw">click</span>(Pattern(<img src="facebook_post_button.png" />).similar(<span class="dig">0.85</span>))
+        <span class="skw">wait</span>(Pattern(<img src="facebook_post_url_result_image.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
         <span class="kw">print</span>(<span class="str">'[Facebook] post_url() done.'</span>)
 
     <span class="kw">def</span> post_url_del(self):
-        <span class="skw">wait</span>(Pattern(<img src="1470821414750.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
-        <span class="skw">click</span>(Pattern(<img src="1470821414750.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">230</span>,-<span class="dig">200</span>))
-        <span class="skw">wait</span>(Pattern(<img src="1470822426794.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
-        <span class="skw">click</span>(Pattern(<img src="1470822426794.png" />).similar(<span class="dig">0.85</span>).targetOffset(-<span class="dig">70</span>,-<span class="dig">70</span>))
-        <span class="skw">wait</span>(Pattern(<img src="1470821690209.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
-        <span class="skw">click</span>(Pattern(<img src="1470821690209.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">160</span>,<span class="dig">50</span>))
-        waitVanish(Pattern(<img src="1470821690209.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
-        waitVanish(Pattern(<img src="1470821414750.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">wait</span>(Pattern(<img src="facebook_post_url_result_image.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">click</span>(Pattern(<img src="facebook_post_url_result_image.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">230</span>,-<span class="dig">200</span>))
+        <span class="skw">wait</span>(Pattern(<img src="facebook_delete_post_menu.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">click</span>(Pattern(<img src="facebook_delete_post_menu.png" />).similar(<span class="dig">0.85</span>).targetOffset(-<span class="dig">70</span>,-<span class="dig">70</span>))
+        <span class="skw">wait</span>(Pattern(<img src="facebook_delete_post_comfirm_dialog.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        <span class="skw">click</span>(Pattern(<img src="facebook_delete_post_comfirm_dialog.png" />).similar(<span class="dig">0.85</span>).targetOffset(<span class="dig">160</span>,<span class="dig">50</span>))
+        waitVanish(Pattern(<img src="facebook_delete_post_comfirm_dialog.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
+        waitVanish(Pattern(<img src="facebook_post_url_result_image.png" />).similar(<span class="dig">0.85</span>), <span class="dig">10</span>)
         <span class="kw">print</span>(<span class="str">'[Facebook] post_url_del() done.'</span>)
 
 
