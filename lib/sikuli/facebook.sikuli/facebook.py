@@ -27,7 +27,7 @@ class facebook():
         setAutoWaitTimeout(default_timeout)
 
     def post_url(self):
-        click(Pattern("pics/facebook_home_post_area.png").similar(0.85))
+        self.click_home_post_area()
         paste('https://en.wikipedia.org/wiki/Sun_Tzu ')
         wait("pics/facebook_post_url_thumbnail.png", 10)
         wait(1)
@@ -38,19 +38,22 @@ class facebook():
     def post_url_del(self):
         wait(Pattern("pics/facebook_post_url_result.png").similar(0.85), 10)
         click(Pattern("pics/facebook_post_url_result.png").similar(0.85).targetOffset(230,-200))
-        wait("pics/facebook_delete_post_menu.png", 10)
-        click(Pattern("pics/facebook_delete_post_menu.png").targetOffset(-70,-70))
+        wait(Pattern("pics/facebook_delete_post_menu.png").similar(0.60), 10)
+        click(Pattern("pics/facebook_delete_post_menu.png").targetOffset(0,-10))
         wait(Pattern("pics/facebook_delete_post_button.png").similar(0.85), 10)
         click(Pattern("pics/facebook_delete_post_button.png").similar(0.85).targetOffset(30,0))
         waitVanish(Pattern("pics/facebook_delete_post_button.png").similar(0.85), 10)
         waitVanish(Pattern("pics/facebook_post_url_result.png").similar(0.85), 10)
         print('[Facebook] post_url_del() done.')
 
+    def click_home_post_area(self):
+        click(Pattern("pics/facebook_home_post_area.png").similar(0.85))
+        wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
 
-my_fb = facebook()
-my_fb.wait_for_loaded()
+    def click_club_post_area(self):
+        click(Pattern("pics/facebook_club_post_area.png").similar(0.85).targetOffset(0,15))
+        wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
 
-# Post URL
-my_fb.post_url()
-# Delete posted URL after testing
-my_fb.post_url_del()
+    def click_personal_post_area(self):
+        click(Pattern("pics/facebook_personal_post_area.png").similar(0.85))
+        wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
