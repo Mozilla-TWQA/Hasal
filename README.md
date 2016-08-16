@@ -79,19 +79,18 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 
 # Usage
 
-```
-Trigger the framework: python runtest.py regression suite.txt
-Run only once:         python runtest.py regression suite.txt --max-run=1 --max-retry=1
-Record the profiler:   python runtest.py regression suite.txt --profiler=justprofiler
-Run with proxy:        python runtest.py regression suite.txt --profiler=avconv,mitmdump
+## Sample 
+* Trigger the framework: `python runtest.py regression suite.txt`
+* Run only once:         `python runtest.py regression suite.txt --max-run=1 --max-retry=1`
+* Record the profiler:   `python runtest.py regression suite.txt --profiler=justprofiler`
+* Run with proxy:        `python runtest.py regression suite.txt --profiler=avconv,mitmdump`
 
-```
-Usage
+## Usage
 * runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
 * runtest.py pilottest <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
 * runtest.py (-h | --help)
 
-Options:
+## Options:
 *  -h --help                 Show this screen.
 *  --max-run=<int>           Test run max no [default: 30].
 *  --max-retry=<int>         Test failed retry max no [default: 15].
@@ -102,9 +101,22 @@ Options:
 *  --comment=<str>           Tag the comment on this test [default: <today>]
 *  --advance                 Only for expert user
 
-Output folder structure as below:
+## Output folder structure as below:
 * `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
 * `/output/images/output/[case_class_name]_[timestamp]`: images converted from desktop recording video 
 * `/output/videos`: video recording during case execution
 * `/output/profiles`: profile recording during case execution
 * * `.bin`: the Geckon profile recording, can be viewed on https://cleopatra.io/
+ 
+## suite file template
+* regression test case format
+* `test_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
+* example:
+`tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1,regression/gdoc/common/test_firefox_switchcontentwindow`
+
+* pilot test case format
+* `test_sikuli_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
+* example:
+`tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/`
+
+
