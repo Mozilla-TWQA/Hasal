@@ -80,7 +80,11 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 # Usage
 
 ```
-python runtest.py regression suite.txt
+Trigger the framework: python runtest.py regression suite.txt
+Run only once:         python runtest.py regression suite.txt --max-run=1 --max-retry=1
+Record the profiler:   python runtest.py regression suite.txt --profiler=justprofiler
+Run with proxy:        python runtest.py regression suite.txt --profiler=avconv,mitmdump
+
 ```
 Usage
 * runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
