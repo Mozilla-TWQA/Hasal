@@ -12,6 +12,7 @@ A Framework for testing web performance between different browser
 * Install opencv
 
 ```
+apt-get install virtualenv python-dev
 virtualenv ~/.hasalenv            # or "make clean dev-env"
 source ~/.hasalenv/bin/activate
 
@@ -21,7 +22,34 @@ pip install selenium
 sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data xsel xclip
 wget https://github.com/bgirard/Gecko-Profiler-Addon/blob/master/geckoprofiler-signed.xpi?raw=true
 wget https://github.com/Itseez/opencv/archive/3.0.0.zip
-follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-python-2-7-on-ubuntu/] to install the opencv
+follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-python-2-7-on-ubuntu/] to install opencv or:
+
+sudo apt-get install build-essential cmake git pkg-config
+sudo apt-get install libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
+sudo apt-get install libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libatlas-base-dev gfortran
+sudo pip install virtualenv virtualenvwrapper
+sudo apt-get install pip
+sudo apt-get install python-pip
+sudo apt-get install python2.7-dev
+pip install numpy
+git clone https://github.com/Itseez/opencv.git
+cd opencv
+git checkout 3.1.0
+cd ..
+git clone https://github.com/Itseez/opencv_contrib.git
+cd opencv_contrib/
+git checkout 3.1.0
+cd ../opencv
+
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local-D INSTALL_C_EXAMPLES=OFF -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules -D BUILD_EXAMPLES=ON ..
+make -j4
+sudo make install
+sudo ldconfig
 
 
 # For Mac OS:
