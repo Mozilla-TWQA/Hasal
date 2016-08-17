@@ -38,8 +38,8 @@ class facebook():
     def post_url_del(self):
         wait(Pattern("pics/facebook_post_url_result.png").similar(0.85), 10)
         click(Pattern("pics/facebook_post_url_result.png").similar(0.85).targetOffset(230,-200))
-        wait(Pattern("pics/facebook_delete_post_menu.png").similar(0.60), 10)
-        click(Pattern("pics/facebook_delete_post_menu.png").targetOffset(0,-10))
+        wait(Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.60), 10)
+        click(Pattern("pics/facebook_non_club_delete_post_menu.png").targetOffset(0,-10))
         wait(Pattern("pics/facebook_delete_post_button.png").similar(0.85), 10)
         click(Pattern("pics/facebook_delete_post_button.png").similar(0.85).targetOffset(30,0))
         waitVanish(Pattern("pics/facebook_delete_post_button.png").similar(0.85), 10)
