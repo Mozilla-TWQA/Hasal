@@ -82,6 +82,14 @@ class Environment(object):
         else:
             self.test_name = test_method_name
         self.test_script_py_dp = os.getenv("TEST_SCRIPT_PY_DIR_PATH")
+        if os.getenv("SIKULI_SCRIPT_PATH"):
+            script_path_list = os.getenv("SIKULI_SCRIPT_PATH").split(os.sep)
+            if self.test_name in script_path_list:
+                self.web_app_name = script_path_list[script_path_list.index(self.test_name)-1]
+            else:
+                self.web_app_name = script_path_list[-3]
+        else:
+            self.web_app_name = self.test_script_py_dp.split(os.sep)[-1]
         self.output_name = self.test_name + "_" + self.time_stamp
         self.flow_file_fp = self.test_name + ".flow"
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
