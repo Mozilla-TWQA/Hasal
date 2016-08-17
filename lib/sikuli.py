@@ -16,13 +16,17 @@ class Sikuli():
 
     # test_name:  test_(browser)_(test_name)
     # timestamp:  please pass in the integer generated from main python for folder record
-    def run_test(self, test_name, timestamp="0000000000", test_url=""):
-        script_path = os.path.join(self.hasal_dir, "tests")
-        script_dir_path = script_path + "/" + test_name + ".sikuli"
-        args_list = [str(timestamp), self.set_syspath(self.hasal_dir)]
-        if test_url != "":
-            args_list.append(test_url)
-        return self.run_sikulix_cmd(script_dir_path, args_list)
+    def run_test(self, script_name, timestamp="0000000000", test_target="", script_dp=None, args_list=[]):
+        if script_dp:
+            script_dir_path = script_dp + os.sep + script_name + ".sikuli"
+        else:
+            script_path = os.path.join(self.hasal_dir, "tests")
+            script_dir_path = script_path + os.sep + script_name + ".sikuli"
+        args = [str(timestamp), self.set_syspath(self.hasal_dir)]
+        args.extend(args_list)
+        if test_target != "":
+            args.append(test_target)
+        return self.run_sikulix_cmd(script_dir_path, args)
 
     def run_sikulix_cmd(self, script_dir_path, args_list=[]):
         args_str = " ".join(args_list)
