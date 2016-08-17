@@ -6,9 +6,9 @@ A Framework for testing web performance between different browser
 
 # Installation
 * Install Firefox
-* Install Selenium for Python
-* Install video recording codes and libs
-* Install video recording main program
+* Install SikluliX (https://launchpad.net/sikuli/sikulix/1.1.0), place the runsikulix in hasal/thirdparty
+* Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
+* Install video recording main program (windows/mac:ffmpeg or ubuntu:avconv)
 * Install opencv
 
 ```
