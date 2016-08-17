@@ -76,7 +76,6 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 * Default user name and password : hasal/hasal
 
 # Setup
-* Create a google doc, add doc id in lib/environment.py
 
 # Usage
 
