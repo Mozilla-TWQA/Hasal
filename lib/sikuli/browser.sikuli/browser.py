@@ -12,7 +12,7 @@ class GeneralBrowser():
             self.control = Key.CTRL
 
     def enterLink(self, link):
-        type(link)
+        paste(link)
         type(Key.ENTER)
 
 
