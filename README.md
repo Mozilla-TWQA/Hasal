@@ -10,7 +10,7 @@ A Framework for testing web performance between different browser
 * Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
 * Install video recording main program (windows/mac:ffmpeg or ubuntu:avconv)
 * Install opencv
-* Download the client certificate from here (https://goo.gl/yfki48), place all certificates in your hasal working dir. 
+* Download the client certificate from here (https://goo.gl/yfki48 -- note: needs a mozilla.com account ATM), place all certificates in your hasal working dir. 
 
 ```
 apt-get install virtualenv python-dev
@@ -51,6 +51,7 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_
 make -j4
 sudo make install
 sudo ldconfig
+ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
 
 
 # For Mac OS:
