@@ -10,7 +10,7 @@ A Framework for testing web performance between different browser
 * Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
 * Install video recording main program (windows/mac:ffmpeg or ubuntu:avconv)
 * Install opencv
-* Download the client certificate from here (https://goo.gl/yfki48), place all certificates in your hasal working dir. 
+* Download the client certificate from here (https://goo.gl/yfki48 -- note: needs a mozilla.com account ATM), place all certificates in your hasal working dir. 
 
 ```
 apt-get install virtualenv python-dev
