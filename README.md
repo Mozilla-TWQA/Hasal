@@ -6,7 +6,7 @@ A Framework for testing web performance between different browser
 
 # Installation
 * Install Firefox
-* Install SikluliX (https://launchpad.net/sikuli/sikulix/1.1.0), place the runsikulix and other installation files in hasal/thirdparty
+* Install SikluliX (https://launchpad.net/sikuli/sikulix/1.1.0), place the runsikulix and other installation files in hasal/thirdparty. When sikulix setup diaglog come out, please select the Pack 1 and make sure scripting language: Python is checked.
 * Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
 * Install video recording main program (windows/mac:ffmpeg or ubuntu:avconv)
 * Install opencv
