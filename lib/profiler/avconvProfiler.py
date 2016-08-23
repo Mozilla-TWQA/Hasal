@@ -15,7 +15,8 @@ class AvconvProfiler(BaseProfiler):
             os.remove(self.env.video_output_fp)
 
         if platform.system().lower() == "windows":
-            self.process = subprocess.Popen("ffmpeg -f gdigrab -draw_mouse 0 -framerate 90 -video_size 1024*768 -i desktop -c:v libx264 -r 90 -preset veryfast -g 15 -crf 0 " + self.env.video_output_fp)
+            with open(self.env.recording_log_fp, 'w') as self.fh:
+                self.process = subprocess.Popen("ffmpeg -f gdigrab -draw_mouse 0 -framerate 90 -video_size 1024*768 -i desktop -c:v libx264 -r 90 -preset veryfast -g 15 -crf 0 " + self.env.video_output_fp, stdout=self.fh, stderr=self.fh)
         else:
             vline = video_capture_line(self.env.DEFAULT_VIDEO_RECORDING_FPS, self.env.DEFAULT_VIDEO_RECORDING_POS_X,
                 self.env.DEFAULT_VIDEO_RECORDING_POS_Y,
