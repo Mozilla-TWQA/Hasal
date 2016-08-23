@@ -105,6 +105,7 @@ class Environment(object):
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
         self.profile_tracelogger_zip_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracelogger.zip")
         self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")
+        self.recording_log_fp = os.path.join(self.hasal_dir, "recording.log")
 
     def init_output_dir(self):
         # Init output folder
