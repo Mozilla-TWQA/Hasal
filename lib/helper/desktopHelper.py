@@ -48,7 +48,7 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
     elif kwargs['profile_path'] is not None:
         if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-
+            profile_path = extract_profile_data(kwargs['profile_path'])
             browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
