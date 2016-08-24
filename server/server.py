@@ -112,6 +112,13 @@ class AllResult:
                             data = browsers[browser]
                             comments_dict[comment].append('    * Median: {}'.format(data.get('median_value')))
                             comments_dict[comment].append('    * Sigma: {}'.format(data.get('sigma_value')))
+                            comments_dict[comment].append('    * Mean: {}'.format(data.get('median_value')))
+                            if data.get('webappname', '') != '':
+                                comments_dict[comment].append('    * Web App: {}'.format(data.get('webappname')))
+                            if data.get('video_path', '') != '':
+                                comments_dict[comment].append('    * Video: {}'.format(data.get('video_path')))
+                            if data.get('profile_path', '') != '':
+                                comments_dict[comment].append('    * Profile: {}'.format(data.get('profile_path')))
                         comments_dict[comment].append('\n')
 
         for comment_md_str in sorted(comments_dict.keys()):
