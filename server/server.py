@@ -138,12 +138,13 @@ class HasalServer:
     _config = storage_handler.load_config()
     _config_test_times = _config.get('test_times', 30)
     _keys = ['os', 'target_browser', 'test', 'browser']
-    _checks = ['os', 'target', 'test', 'browser', 'version', 'platform', 'value', 'video', 'comment']
+    _checks = ['os', 'target', 'test', 'webappname', 'browser', 'version', 'platform', 'value', 'video', 'comment']
     _count = 0
     _template = {
         'os': '',
         'target': '',
         'test': '',
+        'webappname': '',
         'browser': '',
         'version': '',
         'platform': '',
@@ -193,6 +194,7 @@ class HasalServer:
         info['os'] = json_obj.get('os')
         info['target'] = json_obj.get('target')
         info['test'] = json_obj.get('test')
+        info['webappname'] = json_obj.get('webappname')
         info['browser'] = json_obj.get('browser')
         info['version'] = json_obj.get('version')
         info['platform'] = json_obj.get('platform')
@@ -204,9 +206,6 @@ class HasalServer:
     @staticmethod
     def return_json(current_test_obj):
         HasalServer.storage_handler.save(HasalServer.storage)
-
-        # TODO: we should remove this print method in the future.
-        print(json.dumps(HasalServer.storage, indent=4))
 
         values_list = current_test_obj['origin_values']
         median_value = current_test_obj['median_value']
@@ -259,6 +258,7 @@ class HasalServer:
             "os": "mac",
             "target": "firefox-36.0.1",
             "test": "test_foo",
+            "webappname": "WEB_APP",
             "browser": "firefox",
             "version": "36.0.1",
             "platform": "x86_64",
