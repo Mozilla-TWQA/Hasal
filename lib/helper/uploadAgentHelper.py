@@ -59,6 +59,7 @@ class UploadAgent(object):
             test_browser_type = test_name.split("_")[1]
             test_time_list = result_data[test_name]['time_list']
             test_video_fp = result_data[test_name]['video_fp']
+            web_app_name = result_data[test_name]['web_app_name']
             if len(test_time_list) != 1:
                 print "[ERROR] current time list is not equal to 1, current: %d!" % len(test_time_list)
                 return None
@@ -73,6 +74,7 @@ class UploadAgent(object):
                          "browser": test_browser_type,
                          "version": self.current_browser_version[test_browser_type],
                          "platform": platform.machine(),
+                         "webappname": web_app_name,
                          "value": test_value,
                          "video": test_video_fp,
                          "comment": self.test_comment_str}
