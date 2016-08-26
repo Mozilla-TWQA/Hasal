@@ -3,12 +3,13 @@ import json
 from ..common.imageTool import ImageTool
 from ..common.outlier import outlier
 import numpy as np
+import re
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0):
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
-    img_tool_obj = ImageTool()
+    img_tool_obj = ImageTool(fps=fps)
     if crop_data:
         img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
         img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
@@ -18,7 +19,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
         return img_tool_obj.compare_with_sample_image(input_sample_dp)
 
 
-def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name):
+def output_result(test_method_name,current_run_result, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     run_time = 0
     if os.path.exists(output_fp):
@@ -68,7 +69,6 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
         result[test_method_name]['detail'] = current_run_result
 
     result[test_method_name]['video_fp'] = video_fp
-    result[test_method_name]['web_app_name'] = web_app_name
 
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
@@ -82,8 +82,20 @@ def output_result(test_method_name,current_run_result, output_fp, time_list_coun
 
 def result_calculation(env, exec_timestamp_list, crop_data=None):
     if os.path.exists(env.video_output_fp):
-        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data)
+        fps = fps_cal(env.recording_log_fp)
+        current_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps)
     else:
         current_data = None
     if current_data is not None:
-        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name)
+        output_result(env.test_name, current_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp)
+
+def fps_cal(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as fh:
+            data = ''.join([line.replace('\n', '') for line in fh.readlines()])
+            fps = re.findall('fps=(\s\d+\s)', data)
+            fps_ave = np.sum(map(int, fps)) / len(fps)
+        fh.close()
+        return fps_ave
+    else:
+        return 0
