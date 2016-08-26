@@ -18,6 +18,8 @@ def capture_screen(env, output_video_fp, output_img_dp, output_img_name):
     img_tool_obj.convert_video_to_images(output_video_fp, output_img_dp, output_img_name)
 
 def convert_video_to_specify_size(input_video_fp, output_video_fp, resolution_str):
+    if os.path.exists(output_video_fp):
+        os.remove(output_video_fp)
     if sys.platform == "linux2":
         cmd_format = "avconv -i %s -s %s %s"
     else:
