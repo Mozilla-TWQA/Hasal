@@ -13,21 +13,40 @@ class facebook():
             self.control = Key.CTRL
             self.alt = Key.ALT
 
+        self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.85)
+        self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.85)
+        self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.85)
+        self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.85)
+        self.notification_icon = Pattern("pics/facebook_notification_icon.png").similar(0.85)
+        self.post_button = Pattern("pics/facebook_post_button.png").similar(0.85)
+        self.post_action = Pattern("pics/facebook_post_action.png").similar(0.85)
+        self.home_post_area = Pattern("pics/facebook_home_post_area.png").similar(0.85)
+        self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.85)
+        self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.85)
+        self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.85)
+        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.85)
+        self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.85)
+        self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.85)
+        self.club_delete_post_menu = Pattern("pics/facebook_club_delete_post_menu.png").similar(0.85)
+        self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85)
+        self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.85)
+        self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.85)
+
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        wait(Pattern("pics/facebook_logo.png").similar(0.85), 10)
+        wait(self.fb_logo, 10)
         setAutoWaitTimeout(default_timeout)
         self.focus_window()
 
     def focus_window(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        click(Pattern("pics/facebook_logo.png").similar(0.85).targetOffset(0,15))
+        click(self.fb_logo.targetOffset(0,15))
         setAutoWaitTimeout(default_timeout)
 
     def post_content(self, location=None, content_type=None, input_string=None):
-        if not location or not file_path or not content_type:
+        if not location or not input_string or not content_type:
             print "[ERROR]: Please specify the location, input_string, and content_type"
             print "Location: home, club, or personal"
             print "Content Type: photo_video, text, or url"
@@ -45,7 +64,7 @@ class facebook():
                 self.action_post_upload(input_string)
             elif content_type == 'url':
                 self.click_post_area_home(type='center')
-                self.action_post_url(location,input_string)
+                self.action_post_url(location, input_string)
         elif location == 'club':
             if content_type == 'text':
                 self.click_post_area_club(type='center')
@@ -55,7 +74,7 @@ class facebook():
                 self.action_post_upload(input_string)
             elif content_type == 'url':
                 self.click_post_area_club(type='center')
-                self.action_post_url(location,input_string)
+                self.action_post_url(location, input_string)
         elif location == 'personal':
             if content_type == 'text':
                 self.click_post_area_personal()
@@ -65,7 +84,7 @@ class facebook():
                 return -1
             elif content_type == 'url':
                 self.click_post_area_personal()
-                self.action_post_url(location,input_string)
+                self.action_post_url(location, input_string)
         self.wait_post_area(location)
         print('[Facebook] post_content() done.')
 
@@ -85,7 +104,7 @@ class facebook():
     def action_post_text(self, string):
         paste(ucode(string))
         sleep(1)
-        self.click_post_button()
+        click(self.post_button)
 
     # paste file path to file browser, wait for upload finished then post
     def action_post_upload(self, file_path):
@@ -93,8 +112,8 @@ class facebook():
         type(Key.DELETE)
         paste(file_path)
         type(Key.ENTER)
-        while(exists(Pattern("pics/facebook_post_button.png").similar(0.85)) and exists(Pattern("pics/facebook_post_area_focused.png").similar(0.85))):
-            self.click_post_button()
+        while exists(self.post_button) and exists(self.post_area_focused):
+            click(self.post_button)
             sleep(1)
 
     # paste url, wait thumbnail shown then post
@@ -102,23 +121,23 @@ class facebook():
         paste(url)
         self.wait_post_area_vanish(location)
         sleep(1)
-        self.click_post_button()
+        click(self.post_button)
 
     # invoke menu of top post from club then delete post
     def action_club_del_post_top(self):
-        click(Pattern("pics/facebook_club_post_marker.png").similar(0.85), 10)
-        wait(Pattern("pics/facebook_club_delete_post_menu.png"))
-        click(Pattern("pics/facebook_club_delete_post_menu.png").targetOffset(0,-10))
-        wait(Pattern("pics/facebook_club_delete_post_button.png").similar(0.85), 10)
-        click(Pattern("pics/facebook_club_delete_post_button.png").similar(0.85))
+        click(self.club_post_marker, 10)
+        wait(self.club_delete_post_menu)
+        click(self.club_delete_post_menu.targetOffset(0,-10))
+        wait(self.club_delete_post_button, 10)
+        click(self.club_delete_post_button)
 
-    # # invoke menu of top post from home or personal page then delete post
+    # invoke menu of top post from home or personal page then delete post
     def action_non_club_del_post_top(self):
-        click(Pattern("pics/facebook_non_club_post_marker.png").similar(0.85))
-        wait(Pattern("pics/facebook_non_club_delete_post_menu.png"))
-        click(Pattern("pics/facebook_non_club_delete_post_menu.png").targetOffset(0,-10))
-        wait(Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85), 10)
-        click(Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85))
+        click(self.non_club_post_marker)
+        wait(self.non_club_delete_post_menu)
+        click(self.non_club_delete_post_menu.targetOffset(0,-10))
+        wait(self.non_club_delete_post_button, 10)
+        click(self.non_club_delete_post_button)
 
     def wait_post_area(self, location=None):
         if not location:
@@ -126,11 +145,11 @@ class facebook():
             raise Exception
 
         if location == 'home':
-            wait(Pattern("pics/facebook_home_post_area.png").similar(0.85))
+            wait(self.home_post_area)
         elif location == 'club':
-            wait(Pattern("pics/facebook_club_post_area.png").similar(0.85))
+            wait(self.club_post_area)
         elif location == 'personal':
-            wait(Pattern("pics/facebook_personal_post_area.png").similar(0.85))
+            wait(self.personal_post_area)
 
     def wait_post_area_vanish(self, location=None):
         if not location:
@@ -138,11 +157,11 @@ class facebook():
             raise Exception
 
         if location == 'home':
-            waitVanish(Pattern("pics/facebook_home_post_area.png").similar(0.85))
+            waitVanish(self.home_post_area)
         elif location == 'club':
-            waitVanish(Pattern("pics/facebook_club_post_area.png").similar(0.85))
+            waitVanish(self.club_post_area)
         elif location == 'personal':
-            waitVanish(Pattern("pics/facebook_personal_post_area.png").similar(0.85))
+            waitVanish(self.personal_post_area)
 
     def wait_del_button_vanish(self, location=None):
         if not location:
@@ -150,36 +169,56 @@ class facebook():
             raise Exception
 
         if location == 'club':
-            waitVanish(Pattern("pics/facebook_club_delete_post_button.png").similar(0.85))
+            waitVanish(self.club_delete_post_button)
         else:
-            waitVanish(Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85))
-
-    def click_post_button(self):
-        click(Pattern("pics/facebook_post_button.png").similar(0.85))
+            waitVanish(self.non_club_delete_post_button)
 
     # base on post type to click different areas from home
     def click_post_area_home(self, type='center'):
         if type == 'center':
-            click(Pattern("pics/facebook_home_post_area.png").similar(0.85))
-            wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
+            click(self.home_post_area)
+            wait(self.post_area_focused)
         elif type == 'photo_video':
-            click(Pattern("pics/facebook_home_post_area.png").similar(0.85).targetOffset(-180,-60))
-            waitVanish(Pattern("pics/facebook_home_post_area.png").similar(0.85), 10)
+            click(self.home_post_area.targetOffset(-180,-60))
+            waitVanish(self.home_post_area, 10)
 
     # base on post type to click different areas from club
     def click_post_area_club(self, type='center'):
         if type == 'center':
-            click(Pattern("pics/facebook_club_post_area.png").similar(0.85).targetOffset(0,15))
-            wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
+            click(self.club_post_area.targetOffset(0,15))
+            wait(self.post_area_focused)
         elif type == 'photo_video':
-            click(Pattern("pics/facebook_club_post_area.png").similar(0.85).targetOffset(-60, -35))
-            wait(Pattern("pics/facebook_club_post_area_upload.png").similar(0.65))
-            click(Pattern("pics/facebook_club_post_area_upload.png").similar(0.65).targetOffset(-125, 15)) 
-            waitVanish(Pattern("pics/facebook_club_post_area_upload.png").similar(0.65), 10)
+            click(self.club_post_area.targetOffset(-60, -35))
+            wait(self.club_post_area_upload)
+            click(self.club_post_area_upload.targetOffset(-125, 15)) 
+            waitVanish(self.club_post_area_upload, 10)
 
     def click_post_area_personal(self):
-        click(Pattern("pics/facebook_personal_post_area.png").similar(0.85))
-        wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
+        click(self.personal_post_area)
+        wait(self.post_area_focused)
+
+    # extend a post which is folded
+    def extend_post(self):
+        click(self.folding_icon)
+        waitVanish(self.folding_icon)
+
+    # invoke message list from notification bar
+    def invoke_messages(self):
+        click(self.notification_icon)
+        waitVanish(self.notification_icon)
+
+    def search_content(self, keyword):
+        click(self.search_bar)
+        paste(keyword)
+        click(self.search_icon)
+
+    # share an enlarged post, which has previewed pop up screen to post
+    def share_enlarged_post(self):
+        wait(self.post_action, 10)
+        click(self.post_action.targetOffset(80, 0))
+        waitVanish(self.post_action, 10)
+        click(self.post_button)
+        waitVanish(self.post_button, 10)
 
     # return all content from file
     def get_text_from_file(self, file_path):
