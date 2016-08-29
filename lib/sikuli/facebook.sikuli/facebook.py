@@ -81,11 +81,13 @@ class facebook():
         self.wait_del_button_vanish(location)
         print('[Facebook] del_post_top() done.')
 
+    # paste string then post
     def action_post_text(self, string):
         paste(ucode(string))
         sleep(1)
         self.click_post_button()
 
+    # paste file path to file browser, wait for upload finished then post
     def action_post_upload(self, file_path):
         type("a", Key.CTRL)
         type(Key.DELETE)
@@ -95,12 +97,14 @@ class facebook():
             self.click_post_button()
             sleep(1)
 
+    # paste url, wait thumbnail shown then post
     def action_post_url(self, location, url):
         paste(url)
         self.wait_post_area_vanish(location)
         sleep(1)
         self.click_post_button()
 
+    # invoke menu of top post from club then delete post
     def action_club_del_post_top(self):
         click(Pattern("pics/facebook_club_post_marker.png").similar(0.85), 10)
         wait(Pattern("pics/facebook_club_delete_post_menu.png"))
@@ -108,6 +112,7 @@ class facebook():
         wait(Pattern("pics/facebook_club_delete_post_button.png").similar(0.85), 10)
         click(Pattern("pics/facebook_club_delete_post_button.png").similar(0.85))
 
+    # # invoke menu of top post from home or personal page then delete post
     def action_non_club_del_post_top(self):
         click(Pattern("pics/facebook_non_club_post_marker.png").similar(0.85))
         wait(Pattern("pics/facebook_non_club_delete_post_menu.png"))
@@ -152,6 +157,7 @@ class facebook():
     def click_post_button(self):
         click(Pattern("pics/facebook_post_button.png").similar(0.85))
 
+    # base on post type to click different areas from home
     def click_post_area_home(self, type='center'):
         if type == 'center':
             click(Pattern("pics/facebook_home_post_area.png").similar(0.85))
@@ -160,6 +166,7 @@ class facebook():
             click(Pattern("pics/facebook_home_post_area.png").similar(0.85).targetOffset(-180,-60))
             waitVanish(Pattern("pics/facebook_home_post_area.png").similar(0.85), 10)
 
+    # base on post type to click different areas from club
     def click_post_area_club(self, type='center'):
         if type == 'center':
             click(Pattern("pics/facebook_club_post_area.png").similar(0.85).targetOffset(0,15))
@@ -174,6 +181,7 @@ class facebook():
         click(Pattern("pics/facebook_personal_post_area.png").similar(0.85))
         wait(Pattern("pics/facebook_post_area_focused.png").similar(0.85))
 
+    # return all content from file
     def get_text_from_file(self, file_path):
         f = open(file_path, 'r')
         content = ucode(f.read())
