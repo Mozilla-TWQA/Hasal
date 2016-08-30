@@ -1,0 +1,13 @@
+language: python
+
+matrix:
+  fast_finish: true
+  include:
+    - sudo: false
+      script:
+         - ./mach test-tidy --no-progress --all
+      cache: false
+
+branches:
+  only:
+    - master
