@@ -1,0 +1,8 @@
+mach == 0.6.0
+
+# For Python linting
+flake8 == 2.4.1
+pep8 == 1.5.7
+pyflakes == 0.8.1
+
+-e python/tidy

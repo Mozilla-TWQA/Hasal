@@ -7,6 +7,7 @@ env-*/
 output
 snapshot
 result.json
+_virtualenv
 *~
 
 # 3rd party files
