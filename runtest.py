@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
   runtest.py (-h | --help)
 
 Options:
@@ -10,6 +10,7 @@ Options:
   --max-run=<int>           Test run max no [default: 30].
   --max-retry=<int>         Test failed retry max no [default: 15].
   --keep-browser            Keep the browser open after test script executed
+  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
   --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
   --online                  Result will be transfer to server, calculated by server
   --online-config=<str>     Online server config [default: svrConfig.json]
@@ -62,6 +63,7 @@ class RunTest(object):
         result['ENABLE_ONLINE'] = str(int(self.online))
         result['ONLINE_CONFIG'] = self.online_config
         result['ENABLE_ADVANCE'] = str(int(self.advance))
+        result['CALC_SI'] = str(int(self.calc_si))
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -181,7 +183,7 @@ def main():
                            max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
-                           test_comment=arguments['--comment'])
+                           test_comment=arguments['--comment'], calc_si=arguments['--calc-si'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
