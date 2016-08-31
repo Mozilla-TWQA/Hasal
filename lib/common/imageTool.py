@@ -1,13 +1,43 @@
-__author__ = 'shako'
+#!/usr/bin/env python
+"""
+Copyright (c) 2014, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+    * Neither the name of the company nor the names of its contributors may be
+      used to endorse or promote products derived from this software without
+      specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 import os
 import cv2
 import json
+import copy
 import time
 import argparse
 import shutil
 import numpy as np
 from argparse import ArgumentDefaultsHelpFormatter
 import re
+import gc
+import math
 
 DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
 DEFAULT_SAMPLE_DIR_PATH = os.path.join(os.getcwd(), "sample")
@@ -233,6 +263,116 @@ class ImageTool(object):
             crop_img = img[coord[0][1]:coord[1][1], coord[1][0]:coord[0][0]]
         cv2.imwrite(output_sample_fp, crop_img)
         return output_sample_fp
+
+    def calculate_progress_for_si(self, result_list):
+        histograms = []
+        start_index = self.image_list.index(result_list[0])
+        end_index = self.image_list.index(result_list[1])
+        for i_index in range(start_index, end_index+1, 10):
+            image_data = copy.deepcopy(self.image_list[i_index])
+            image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
+            histograms.append(image_data)
+            gc.collect()
+
+        progress = []
+        first = histograms[0]['histogram']
+        last = histograms[-1]['histogram']
+        for index, histogram in enumerate(histograms):
+            p = self.calculate_frame_progress(histogram['histogram'], first, last)
+            progress.append({'time': histogram['time_seq'],
+                             'progress': p,
+                             'image_fp': histogram['image_fp']})
+        return progress
+
+    def calculate_speed_index(self, progress):
+        si = 0
+        last_ms = progress[0]['time']
+        last_progress = progress[0]['progress']
+        for p in progress:
+            elapsed = p['time'] - last_ms
+            si += elapsed * (1.0 - last_progress)
+            last_ms = p['time']
+            last_progress = p['progress'] / 100.0
+        return int(si)
+
+    def calculate_perceptual_speed_index(self, progress):
+        from ssim import compute_ssim
+        x = len(progress)
+        first_paint_frame = progress[1]['image_fp']
+        target_frame = progress[x-1]['image_fp']
+        ssim_1 = compute_ssim(first_paint_frame, target_frame)
+        per_si = float(progress[1]['time'])
+        last_ms = progress[1]['time']
+        # Full Path of the Target Frame
+        print "Target image for perSI is %s" % target_frame
+        ssim = ssim_1
+        for p in progress[1:]:
+            elapsed = p['time'] - last_ms
+            # print '*******elapsed %f'%elapsed
+            # Full Path of the Current Frame
+            current_frame = p['image_fp']
+            print "Current Image is %s" % current_frame
+            # Takes full path of PNG frames to compute SSIM value
+            per_si += elapsed * (1.0 - ssim)
+            ssim = compute_ssim(current_frame, target_frame)
+            gc.collect()
+            last_ms = p['time']
+        return int(per_si)
+
+    def calculate_frame_progress(self, histogram, start, final):
+        total = 0
+        matched = 0
+        slop = 5  # allow for matching slight color variations
+        channels = ['r', 'g', 'b']
+        for channel in channels:
+            channel_total = 0
+            channel_matched = 0
+            buckets = 256
+            available = [0 for i in xrange(buckets)]
+            for i in xrange(buckets):
+                available[i] = abs(histogram[channel][i] - start[channel][i])
+            for i in xrange(buckets):
+                target = abs(final[channel][i] - start[channel][i])
+                if (target):
+                    channel_total += target
+                    low = max(0, i - slop)
+                    high = min(buckets, i + slop)
+                    for j in xrange(low, high):
+                        this_match = min(target, available[j])
+                        available[j] -= this_match
+                        channel_matched += this_match
+                        target -= this_match
+            total += channel_total
+            matched += channel_matched
+        progress = (float(matched) / float(total)) if total else 1
+        return math.floor(progress * 100)
+
+    def calculate_image_histogram(self, file):
+        print 'Calculating histogram for ' + file
+        try:
+            from PIL import Image
+
+            im = Image.open(file)
+            width, height = im.size
+            pixels = im.load()
+            histogram = {'r': [0 for i in xrange(256)],
+                         'g': [0 for i in xrange(256)],
+                         'b': [0 for i in xrange(256)]}
+            for y in xrange(height):
+                for x in xrange(width):
+                    try:
+                        pixel = pixels[x, y]
+                        # Don't include White pixels (with a tiny bit of slop for compression artifacts)
+                        if pixel[0] < 250 or pixel[1] < 250 or pixel[2] < 250:
+                            histogram['r'][pixel[0]] += 1
+                            histogram['g'][pixel[1]] += 1
+                            histogram['b'][pixel[2]] += 1
+                    except:
+                        pass
+        except:
+            histogram = None
+            print 'Error calculating histogram for ' + file
+        return histogram
 
 
 def main():
