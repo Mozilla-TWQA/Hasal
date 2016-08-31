@@ -38,4 +38,3 @@ class Sikuli():
         script_dir_path = script_path + "/closeBrowser.sikuli"
         args_list = [browser, self.set_syspath(self.hasal_dir)]
         self.run_sikulix_cmd(script_dir_path, args_list)
-

@@ -2,6 +2,7 @@ import sys
 import psutil
 import subprocess
 
+
 class BrowserBase(object):
     browser_process = None
     launch_cmd = []
@@ -12,7 +13,6 @@ class BrowserBase(object):
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
-
 
     def get_browser_settings(self, **kwargs):
         pass

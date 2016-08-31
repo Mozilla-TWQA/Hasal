@@ -84,7 +84,7 @@ class RunTest(object):
         return result
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
-        return_result = {"ip":None, "video_path":None, "test_name":None}
+        return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.max_run:
             print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
             if self.online and os.path.exists(DEFAULT_RESULT_FP):
@@ -174,8 +174,9 @@ class RunTest(object):
     def run(self, type, input_suite_fp):
         if self.online:
             self.upload_agent_obj = UploadAgent(svr_config_fp=self.online_config, test_comment=self.test_comment)
-        self.loop_suite(type,input_suite_fp)
+        self.loop_suite(type, input_suite_fp)
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
+
 
 def main():
     arguments = docopt(__doc__)

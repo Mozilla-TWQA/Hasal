@@ -9,8 +9,8 @@ from setuptools import setup, find_packages
 
 def validate_pywin32():
     try:
-        import win32gui
-        import win32con
+        import win32gui  # NOQA
+        import win32con  # NOQA
     except ImportError as e:
         print e
         sys.exit("Please make sure you already install the pywin32 properly. You can download the latest version from here https://sourceforge.net/projects/pywin32/")
@@ -64,6 +64,3 @@ setup(
     include_package_data=True,
     zip_safe=False
 )
-
-
-
