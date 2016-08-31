@@ -190,7 +190,7 @@ class facebook():
         elif type == 'photo_video':
             click(self.club_post_area.targetOffset(-60, -35))
             wait(self.club_post_area_upload)
-            click(self.club_post_area_upload.targetOffset(-125, 15)) 
+            click(self.club_post_area_upload.targetOffset(-125, 15))
             waitVanish(self.club_post_area_upload, 10)
 
     def click_post_area_personal(self):
