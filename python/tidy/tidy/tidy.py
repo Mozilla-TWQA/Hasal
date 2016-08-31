@@ -238,8 +238,7 @@ def get_file_list(directory, only_changed_files=False, exclude_dirs=[]):
 def scan(only_changed_files=False, progress=True):
     # standard checks
     files_to_check = filter_files('.', only_changed_files, progress)
-    # checking_functions = (check_flake8, check_json, check_hasal_testname)
-    checking_functions = (check_json, check_hasal_testname)
+    checking_functions = (check_flake8, check_json, check_hasal_testname)
     line_checking_functions = (check_by_line,)
     errors = collect_errors_for_files(files_to_check, checking_functions, line_checking_functions)
     # collect errors
