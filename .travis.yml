@@ -1,12 +1,14 @@
 language: python
 
-matrix:
-  fast_finish: true
-  include:
-    - sudo: false
-      script:
-         - ./mach test-tidy --no-progress --all
-      cache: false
+python:
+  - "2.7"
+#  - "pypy"
+
+install:
+  - ./mach
+
+script:
+  - ./mach test-tidy --no-progress --all
 
 branches:
   only:
