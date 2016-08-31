@@ -153,7 +153,7 @@ def check_hasal_testname(file_name, contents):
     webappname = os.path.dirname(file_name).split(os.sep)[3]
     r = re.compile(r'test_(firefox|chrome)_{}'.format(webappname))
     if not r.match(basename):
-        yield (0, "the file name should starts with 'test_<BROWSER>_{}_'".format(webappname))
+        yield (0, "the file name should starts with 'test_$BROWSER_{}_'".format(webappname))
 
 # Avoid flagging <Item=Foo> constructs
 def is_associated_type(match, line):
