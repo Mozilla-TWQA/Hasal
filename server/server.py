@@ -90,9 +90,9 @@ class AllResult:
     def GET(self):
         md = []
         comments_dict = {}
-        for os in HasalServer.storage.keys():
-            md.append('# {}'.format(os))
-            targets = HasalServer.storage[os]
+        for os_name in HasalServer.storage.keys():
+            md.append('# {}'.format(os_name))
+            targets = HasalServer.storage[os_name]
             for target in targets.keys():
                 md.append('## {}'.format(target))
 
@@ -107,7 +107,7 @@ class AllResult:
 
                         browsers = comments[comment]
                         for browser in browsers.keys():
-                            if len(browsers)>1:
+                            if len(browsers) > 1:
                                 comments_dict[comment].append('  * {}'.format(browser))
                             data = browsers[browser]
                             comments_dict[comment].append('    * Median: {}'.format(data.get('median_value')))
@@ -409,7 +409,7 @@ class VideoProfileUpdater:
             assert test is not None and test != '', '[test] is empty.'
 
             # get the POST data
-            ip = web.ctx.ip
+            # ip = web.ctx.ip
             data = web.data()
             parameters = urlparse.parse_qs(data)
             # check the POST data contain 'json'
