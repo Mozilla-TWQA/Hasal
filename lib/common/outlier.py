@@ -15,10 +15,10 @@ class outlier(object):
             [Q1,Q3] = Q_Calculation.setdefault(str(method),self.Q_MooreMcCabe)(seq)
             IQR = Q3 - Q1
             lower = Q1 - 1.5*IQR
-            upper = Q3 + 1.5*IQR    
+            upper = Q3 + 1.5*IQR
             for data in seq:
                 if data < lower or data > upper: outliers.append(data)
-    
+
             self.drop(seq, outliers)
         if len(seq) == 0:
             mean = 0
