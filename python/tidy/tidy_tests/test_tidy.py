@@ -34,21 +34,22 @@ class CheckTidiness(unittest.TestCase):
 
     def test_hasal_testname(self):
         webappname = 'webFOO'
-        filename='./tests/pilot/{}/nothing/test_firefox_BAR_launch.py'.format(webappname)
+        filename = './tests/pilot/{}/nothing/test_firefox_BAR_launch.py'.format(webappname)
         errors = tidy.check_hasal_testname(filename, '')
         self.assertEqual("the file name should starts with 'test_<BROWSER>_{}_".format(webappname), errors.next()[2])
         self.assertNoMoreErrors(errors)
 
     def test_file_list(self):
-        base_path='./python/tidy/tidy_tests/test_ignored'
+        base_path = './python/tidy/tidy_tests/test_ignored'
         file_list = tidy.get_file_list(base_path, only_changed_files=False,
                                        exclude_dirs=[])
         lst = list(file_list)
         self.assertEqual([os.path.join(base_path, 'whee', 'test.rs')], lst)
         file_list = tidy.get_file_list(base_path, only_changed_files=False,
-                                       exclude_dirs=[os.path.join(base_path,'whee')])
+                                       exclude_dirs=[os.path.join(base_path, 'whee')])
         lst = list(file_list)
         self.assertEqual([], lst)
+
 
 def do_tests():
     suite = unittest.TestLoader().loadTestsFromTestCase(CheckTidiness)

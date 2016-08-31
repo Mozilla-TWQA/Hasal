@@ -102,8 +102,8 @@ def check_whitespace(idx, line):
         yield (idx + 1, "trailing whitespace")
 
     # skip CR check due to we will run Hasal on Windows platform.
-    #if "\r" in line:
-    #    yield (idx + 1, "CR on line")
+    # if "\r" in line:
+    #     yield (idx + 1, "CR on line")
 
     if "\t" in line:
         yield (idx + 1, "tab on line")
@@ -158,6 +158,7 @@ def check_hasal_testname(file_name, contents):
     r = re.compile(r'test_(firefox|chrome)_{}'.format(webappname))
     if not r.match(basename):
         yield (0, "the file name should starts with 'test_$BROWSER_{}_'".format(webappname))
+
 
 # Avoid flagging <Item=Foo> constructs
 def is_associated_type(match, line):
@@ -237,7 +238,7 @@ def get_file_list(directory, only_changed_files=False, exclude_dirs=[]):
 def scan(only_changed_files=False, progress=True):
     # standard checks
     files_to_check = filter_files('.', only_changed_files, progress)
-    #checking_functions = (check_flake8, check_json, check_hasal_testname)
+    # checking_functions = (check_flake8, check_json, check_hasal_testname)
     checking_functions = (check_json, check_hasal_testname)
     line_checking_functions = (check_by_line,)
     errors = collect_errors_for_files(files_to_check, checking_functions, line_checking_functions)
