@@ -62,6 +62,11 @@ class Environment(object):
     PROFILER_FLAG_MITMDUMP = "mitmdump"
     PROFILER_FLAG_FXTRACELOGGER = "fxtracelogger"
 
+    TEST_FB_HOME = "https://www.facebook.com/"
+    TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/moztext/")
+    TEST_FB_IMAGE_GROUP = os.path.join(TEST_FB_HOME, "groups/mozimage/")
+    TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/mozvideo/")
+
 
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"

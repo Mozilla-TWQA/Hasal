@@ -1,5 +1,5 @@
 from sikuli import *
-import json	
+import json
 
 class General():
     def __init__(self):

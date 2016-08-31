@@ -20,7 +20,7 @@ type("h", Key.CTRL)
 # Type the keyword that you want to search
 type("Mozilla")
 
-# Type the keyword that you want to replace to be 
+# Type the keyword that you want to replace to be
 type(Key.TAB)
 type("Firefox")
 
