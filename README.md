@@ -1,19 +1,21 @@
-Performance Test 
-===========================
+# Hasal Performance Test
+
 [![Build Status](https://travis-ci.org/Mozilla-TWQA/Hasal.svg?branch=master)](https://travis-ci.org/Mozilla-TWQA/Hasal)
 
 "**Hasal**" */ha'sɑlu/* this word is came from Indigenous Taiwanese "**Bunun**", and it means hail. Why we choose this word is because we expect our testing could like the hail, fast and weighty. And through our testing could bring more improvement on our performance or quality.
 
 A Framework for testing web performance between different browser
 
-# Installation
+## Installation
 * Install Firefox
 * Install SikluliX (https://launchpad.net/sikuli/sikulix/1.1.0), place the runsikulix and other installation files in hasal/thirdparty. When sikulix setup diaglog come out, please select the Pack 1 and make sure scripting language: Python is checked.
 * Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
 * Install video recording main program (windows/mac:ffmpeg or ubuntu:avconv)
 * Install opencv
 * Download the client certificate from here (https://goo.gl/yfki48 -- note: needs a mozilla.com account ATM), place all certificates in your hasal working dir. 
+* Run setup.py
 
+## For Ubuntu:
 ```
 apt-get install virtualenv python-dev
 virtualenv ~/.hasalenv            # or "make clean dev-env"
@@ -21,7 +23,6 @@ source ~/.hasalenv/bin/activate
 
 pip install selenium
 
-# For Ubuntu:
 sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data xsel xclip
 wget https://github.com/bgirard/Gecko-Profiler-Addon/blob/master/geckoprofiler-signed.xpi?raw=true
 wget https://github.com/Itseez/opencv/archive/3.0.0.zip
@@ -55,63 +56,88 @@ sudo make install
 sudo ldconfig
 ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
 
+cd PATH_TO_HASAL
+python setup.py install
+```
 
-# For Mac OS:
+## For Mac OS:
+
+```
+virtualenv PATH_TO_YOUR_VENV            # or "make clean dev-env"
+source PATH_TO_YOUR_VENV/bin/activate
+
 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
 brew install libav
 brew tap homebrew/science
-brew install opencv3
-manual download the opencv2 package, compile and install
+brew install opencv
+ln -s /usr/local//Cellar/opencv/2.4.13/lib/python2.7/site-packages/cv2.so PATH_TO_YOUR_VENV/lib/python2.7/site-packages/cv2.so
+
+cd PATH_TO_HASAL
+python setup.py install
+```
+
+OR manual build opencv2
+```
+virtualenv PATH_TO_YOUR_VENV           # or "make clean dev-env"
+source PATH_TO_YOUR_VENV/bin/activate
+
+download the opencv2 package, compile and install
 download the opencv2 package here : https://github.com/Itseez/opencv/archive/2.4.13.zip
   unzip the package 
   cmake the folder unzipped 
   make
   make install
-  ln -s /usr/local/lib/python2.7/site-packages/cv2.so virtualenv_path_you_create/lib/python2.7/site-packages/cv2.so
-OR you can use brew install opencv --with-ffmpeg -v, please make sure you go not error when use that command
+  ln -s /usr/local/lib/python2.7/site-packages/cv2.so PATH_TO_YOUR_VENV/lib/python2.7/site-packages/cv2.so
 
+cd PATH_TO_HASAL
+python setup.py install
 ```
 
-# VM Template
+## VM Template
 You can download the VM tempalte for Hasal framework environment from vagrant.
 * vagrant init shako/hasal
 * vagrant up --provider virtualbox
 * Default user name and password : hasal/hasal
 
-# Setup
-
-# Usage
-
-## Sample 
-* Trigger the framework: `python runtest.py regression suite.txt`
-* Run only once:         `python runtest.py regression suite.txt --max-run=1 --max-retry=1`
-* Record the profiler:   `python runtest.py regression suite.txt --profiler=justprofiler`
-* Run with proxy:        `python runtest.py regression suite.txt --profiler=avconv,mitmdump`
+## Setup
 
 ## Usage
-* runtest.py regression <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
-* runtest.py pilottest <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--profiler=<str>] [--comment=<str>] [--advance]
-* runtest.py (-h | --help)
 
-## Options:
-*  -h --help                 Show this screen.
-*  --max-run=<int>           Test run max no [default: 30].
-*  --max-retry=<int>         Test failed retry max no [default: 15].
-*  --keep-browser            Keep the browser open after test script executed
-*  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-*  --online                  Result will be transfer to server, calculated by server
-*  --online-config=<str>     Online server config [default: svrConfig.json]
-*  --comment=<str>           Tag the comment on this test [default: <today>]
-*  --advance                 Only for expert user
+### Sample 
+* Trigger the framework: `python runtest.py re suite.txt`
+* Run only once:         `python runtest.py re suite.txt --max-run=1 --max-retry=1`
+* Record the profiler:   `python runtest.py re suite.txt --profiler=justprofiler`
+* Run with proxy:        `python runtest.py re suite.txt --profiler=avconv,mitmdump`
 
-## Output folder structure as below:
+### Usage
+```
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py (-h | --help)
+```
+
+### Options:
+```
+  -h --help                 Show this screen.
+  --max-run=<int>           Test run max no [default: 30].
+  --max-retry=<int>         Test failed retry max no [default: 15].
+  --keep-browser            Keep the browser open after test script executed
+  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
+  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
+  --online                  Result will be transfer to server, calculated by server
+  --online-config=<str>     Online server config [default: svrConfig.json]
+  --comment=<str>           Tag the comment on this test [default: <today>]
+  --advance                 Only for expert user
+```
+
+### Output folder structure as below:
 * `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
 * `/output/images/output/[case_class_name]_[timestamp]`: images converted from desktop recording video 
 * `/output/videos`: video recording during case execution
 * `/output/profiles`: profile recording during case execution
 * * `.bin`: the Geckon profile recording, can be viewed on https://cleopatra.io/
  
-## suite file template
+#### suite file template
 * regression test case format
 * `test_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
 * example:
@@ -121,5 +147,3 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 * `test_sikuli_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
 * example:
 `tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/`
-
-
