@@ -14,7 +14,7 @@ chrome.enterLink(sys.argv[3])
 sleep(5)
 gd.wait_for_loaded()
 
-gd.create_table(10,5)
+gd.create_table(10, 5)
 
 
 gd.deFoucsContentWindow()

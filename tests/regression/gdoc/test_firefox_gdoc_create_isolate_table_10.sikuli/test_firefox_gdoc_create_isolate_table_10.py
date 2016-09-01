@@ -8,7 +8,7 @@ com = common.General()
 gd = gdoc.gDoc()
 gd.focus_content()
 for i in range(10):
-    gd.create_table(10,5)
+    gd.create_table(10, 5)
     com.page_end()
     sleep(3)
 

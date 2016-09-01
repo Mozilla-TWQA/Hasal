@@ -43,13 +43,13 @@ for i in range(3):
     sleep(0.3)
     type(Key.UP, Key.SHIFT)
     sleep(0.3)
-    type("8", Key.CTRL+Key.SHIFT)
+    type("8", Key.CTRL + Key.SHIFT)
     sleep(0.3)
     type(Key.END, Key.CTRL)
 
     # Create 20*20 table and go to next page
     sleep(1)
-    gd.create_table(20,20)
+    gd.create_table(20, 20)
     sleep(6)
     type(Key.END, Key.CTRL)
     sleep(0.3)
@@ -63,7 +63,7 @@ sleep(0.3)
 type(Key.UP, Key.SHIFT)
 for i in range(6):
     sleep(0.3)
-    type(".", Key.CTRL+Key.SHIFT)
+    type(".", Key.CTRL + Key.SHIFT)
 sleep(0.3)
 type(Key.END, Key.CTRL)
 

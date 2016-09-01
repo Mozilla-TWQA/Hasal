@@ -23,4 +23,3 @@ sleep(0.3)
 type(Key.DELETE)
 
 gd.deFoucsContentWindow()
-

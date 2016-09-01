@@ -18,4 +18,3 @@ ff.enterLink(sys.argv[3])
 
 sleep(2)
 gd.deFoucsContentWindow()
-
