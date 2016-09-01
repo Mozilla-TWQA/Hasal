@@ -1,5 +1,6 @@
-from sikuli import *
+from sikuli import *  # NOQA
 import json
+
 
 class General():
     def __init__(self):

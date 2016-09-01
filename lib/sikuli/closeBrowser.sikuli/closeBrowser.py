@@ -12,7 +12,7 @@ for i in range(10):
         if "firefox" in browser_name:
             type("w", Key.CTRL)
         elif "chrome" in browser_name:
-            type("w", Key.SHIFT+Key.CTRL)
+            type("w", Key.SHIFT + Key.CTRL)
 
 # Try to close the app one last time
 if browser.window():

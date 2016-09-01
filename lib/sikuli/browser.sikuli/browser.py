@@ -1,4 +1,4 @@
-from sikuli import *
+from sikuli import *  # NOQA
 
 
 class GeneralBrowser():
@@ -110,8 +110,8 @@ class Firefox(GeneralBrowser):
 
     def profileAnalyze(self):
         type("2", Key.CTRL + Key.SHIFT)
-        wait(Pattern("pics/cleopatra_complete.png"), 1*60*60)
-        wait(Pattern("pics/cleopatra_geckomain.png"), 30*60)
+        wait(Pattern("pics/cleopatra_complete.png"), 1 * 60 * 60)
+        wait(Pattern("pics/cleopatra_geckomain.png"), 30 * 60)
         wait(30)
 
     def profilerMark_3(self):

@@ -1,4 +1,4 @@
-from sikuli import *
+from sikuli import *  # NOQA
 import common
 
 
@@ -25,7 +25,7 @@ class gDoc():
     def focus_content(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        click(Pattern("pics/printer.png").similar(0.60).targetOffset(50,60))
+        click(Pattern("pics/printer.png").similar(0.60).targetOffset(50, 60))
         wait(3)
         setAutoWaitTimeout(default_timeout)
 
@@ -77,17 +77,17 @@ class gDoc():
                 break
 
     def page_text_generate(self, keyword, page):
-        #92*46 is full page, 80*40 to make it faster
+        # 92*46 is full page, 80*40 to make it faster
         for j in range(page):
-            for i in range(60*40):
-                if (i % 60 == 0):
+            for i in range(60 * 40):
+                if i % 60 == 0:
                     type(Key.ENTER)
                 num = i % 26
                 str = keyword
                 if num < str.__len__():
                     type(str[num])
                 else:
-                    type(chr(97+num))
+                    type(chr(97 + num))
             type(Key.ENTER, Key.CTRL)
 
     def text_replace(self, search_keyword, replace_keyword, replace_times):
@@ -123,4 +123,3 @@ class gDoc():
 
     def bullet_list(self):
         type("8", self.control + Key.SHIFT)
-
