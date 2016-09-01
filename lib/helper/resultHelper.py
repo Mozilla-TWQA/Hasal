@@ -57,8 +57,9 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
             result[test_method_name]['min_time'] = run_time
         result[test_method_name]['detail'].extend(current_run_result)
         if len(result[test_method_name]['time_list']) >= outlier_check_point:
-            result[test_method_name]['avg_time'], result[test_method_name]['med_time'], result[test_method_name]['std_dev'], \
-            result[test_method_name]['time_list'], tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
+            result[test_method_name]['avg_time'], result[test_method_name]['med_time'],\
+                result[test_method_name]['std_dev'], result[test_method_name]['time_list'],\
+                tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
             result[test_method_name]['outlier'].extend(tmp_outlier)
     else:
         result[test_method_name] = {}
@@ -89,11 +90,12 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         json.dump(result, fh, indent=2)
 
     # output sikuli status to static file
-    with open (time_list_counter_fp, "r+") as fh:
+    with open(time_list_counter_fp, "r+") as fh:
         stat_data = json.load(fh)
         stat_data['time_list_counter'] = str(len(result[test_method_name]['time_list']))
         fh.seek(0)
         fh.write(json.dumps(stat_data))
+
 
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
     if os.path.exists(env.video_output_fp):
@@ -103,6 +105,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
         result_data = None
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name)
+
 
 def fps_cal(file_path):
     if os.path.exists(file_path):

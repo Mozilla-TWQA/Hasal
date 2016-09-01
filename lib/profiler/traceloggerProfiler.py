@@ -10,14 +10,11 @@ class TraceLoggerProfiler(BaseProfiler):
 
     def zipFiles(self, dir_path, file_list, output_fp):
         try:
-            import zlib
+            import zlib  # NOQA
             compression = zipfile.ZIP_DEFLATED
         except:
             compression = zipfile.ZIP_STORED
 
-        modes = {zipfile.ZIP_DEFLATED: 'deflated',
-                 zipfile.ZIP_STORED: 'stored',
-                 }
         zf = zipfile.ZipFile(output_fp, mode='w')
         try:
             for file_name in file_list:
@@ -41,7 +38,7 @@ class TraceLoggerProfiler(BaseProfiler):
 
         if sys.platform == "win32":
             dir_path = os.getcwd()
-            files = [f for f in os.listdir(dir_path) if re.match(r'tl-.*\.[json|tl]',f)]
+            files = [f for f in os.listdir(dir_path) if re.match(r'tl-.*\.[json|tl]', f)]
         else:
             dir_path = "/tmp"
             files = [f for f in os.listdir(dir_path) if re.match(r'tl-.*\.[json|tl]', f)]

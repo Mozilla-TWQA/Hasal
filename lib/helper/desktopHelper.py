@@ -1,6 +1,6 @@
 import subprocess
 import sys
-import lib.sikuli
+import lib.sikuli  # NOQA
 import tempfile
 import zipfile
 import os
@@ -64,11 +64,12 @@ def launch_browser(browser_type, **kwargs):
 
 def get_browser_version(browser_type):
     if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-        browser_obj = BrowserFirefox(0,0)
+        browser_obj = BrowserFirefox(0, 0)
     else:
-        browser_obj = BrowserChrome(0,0)
+        browser_obj = BrowserChrome(0, 0)
     return_version = browser_obj.get_version()
     return return_version
+
 
 def lock_window_pos(browser_type):
     window_title = None
