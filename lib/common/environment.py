@@ -67,7 +67,6 @@ class Environment(object):
     TEST_FB_IMAGE_GROUP = os.path.join(TEST_FB_HOME, "groups/mozimage/")
     TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/mozvideo/")
 
-
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
     else:
@@ -91,7 +90,7 @@ class Environment(object):
             script_path_list = os.getenv("SIKULI_SCRIPT_PATH").split(os.sep)
             test_sikuli_name = self.test_name + ".sikuli"
             if test_sikuli_name in script_path_list:
-                self.web_app_name = script_path_list[script_path_list.index(test_sikuli_name)-1]
+                self.web_app_name = script_path_list[script_path_list.index(test_sikuli_name) - 1]
             else:
                 self.web_app_name = script_path_list[-3]
         else:
@@ -127,6 +126,3 @@ class Environment(object):
         if len(test_name_list) > 2:
             result = test_name_list[1].lower()
         return result
-
-
-

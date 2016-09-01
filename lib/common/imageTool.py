@@ -119,7 +119,8 @@ class ImageTool(object):
             sample_fp = os.path.join(input_sample_dp, sample_fn)
             sample_dct = self.convert_to_dct(sample_fp)
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
-                if found_1: break
+                if found_1:
+                    break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
@@ -129,8 +130,10 @@ class ImageTool(object):
                     found_1 = True
                     break
             for img_index in range(self.search_range[2] - 1, self.search_range[3]):
-                if breaking: break
-                if found_2: break
+                if breaking:
+                    break
+                if found_2:
+                    break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
@@ -150,7 +153,7 @@ class ImageTool(object):
             return match
         else:
             threshold = 0.0001
-            mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1,dct_obj_2)))/(row1*cols1)
+            mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
             if mismatch_rate > threshold:
                 return False
             else:
@@ -159,7 +162,7 @@ class ImageTool(object):
     def convert_to_dct(self, image_fp):
         img_obj = cv2.imread(image_fp)
         img_gray = cv2.cvtColor(img_obj, cv2.COLOR_BGR2GRAY)
-        img_dct = np.float32(img_gray)/255.0
+        img_dct = np.float32(img_gray) / 255.0
         dct_obj = cv2.dct(img_dct)
         return dct_obj
 
@@ -187,7 +190,7 @@ class ImageTool(object):
                     image_data = self.image_list[img_index]
                     comparing_dct = self.convert_to_dct(image_data['image_fp'])
                     if self.compare_two_images(sample_dct, comparing_dct):
-                        print "Comparing sample %d file end %s" % (sample_index+1,time.strftime("%c"))
+                        print "Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c"))
                         result_list.append(image_data)
                         m_start_index = img_index
                         break
@@ -209,7 +212,7 @@ class ImageTool(object):
         template = cv2.imread(template_fp, 0)
         w, h = template.shape[::-1]
 
-        #Choose SQDIFF_NORMED method to perform template matching
+        # Choose SQDIFF_NORMED method to perform template matching
         methods = 'cv2.TM_SQDIFF_NORMED'
         method_eval = eval(methods)
 
@@ -217,8 +220,8 @@ class ImageTool(object):
         res = cv2.matchTemplate(img_gray, template, method_eval)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-        #For artifactual image output, draw a rectangle on the target object
-        str_image_fp = base_img_fp.split('.')[0]+"_TemplateMatch.jpg"
+        # For artifactual image output, draw a rectangle on the target object
+        str_image_fp = base_img_fp.split('.')[0] + "_TemplateMatch.jpg"
         top_left = min_loc
         bottom_right = (top_left[0] + w, top_left[1] + h)
         cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2)
@@ -229,10 +232,10 @@ class ImageTool(object):
         img = cv2.imread(input_sample_fp)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         w, h = img_gray.shape[::-1]
-        if not coord or len(coord) != 2 or \
-                        type(coord[0]) is not tuple or len(coord[0]) !=2 or \
-                        type(coord[1]) is not tuple or len(coord[1]) !=2 :
-            coord = [(0,0), (w,h)]
+        if (not coord or len(coord) != 2 or
+                type(coord[0]) is not tuple or len(coord[0]) != 2 or
+                type(coord[1]) is not tuple or len(coord[1]) != 2):
+            coord = [(0, 0), (w, h)]
             print "WARNING: Incorrect coordinates, using fully image crop"
         else:
             for i in range(2):
@@ -251,7 +254,7 @@ class ImageTool(object):
                         new_xy[j] = new_val
                         coord[i] = tuple(new_xy)
                         print "WARNING: Incorrect coordinates, set %s %s coordinate to %s" % (
-                        ["origin", "target"][i], str(unichr(120 + j)), str(new_val))
+                            ["origin", "target"][i], str(unichr(120 + j)), str(new_val))
         print "Crop image range: " + str(coord)
         if coord[0][0] < coord[1][0] and coord[0][1] < coord[1][1]:
             crop_img = img[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]]
@@ -268,7 +271,7 @@ class ImageTool(object):
         histograms = []
         start_index = self.image_list.index(result_list[0])
         end_index = self.image_list.index(result_list[1])
-        for i_index in range(start_index, end_index+1, 10):
+        for i_index in range(start_index, end_index + 1, 10):
             image_data = copy.deepcopy(self.image_list[i_index])
             image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
             histograms.append(image_data)
@@ -299,7 +302,7 @@ class ImageTool(object):
         from ssim import compute_ssim
         x = len(progress)
         first_paint_frame = progress[1]['image_fp']
-        target_frame = progress[x-1]['image_fp']
+        target_frame = progress[x - 1]['image_fp']
         ssim_1 = compute_ssim(first_paint_frame, target_frame)
         per_si = float(progress[1]['time'])
         last_ms = progress[1]['time']
@@ -407,7 +410,7 @@ def main():
         if input_video_fp and output_img_dp and output_img_name:
             if not os.path.exists(output_img_dp):
                 os.mkdir(output_img_dp)
-            img_tool_obj.crop_image(input_video_fp, os.path.join(output_img_dp,output_img_name))
+            img_tool_obj.crop_image(input_video_fp, os.path.join(output_img_dp, output_img_name))
         else:
             print "Please specify the sample image file path, output image dir path, and output image name."
     elif args.convert_video_flag is False and args.compare_img_flag is False:
