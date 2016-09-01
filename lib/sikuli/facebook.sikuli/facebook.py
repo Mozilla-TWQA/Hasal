@@ -1,4 +1,4 @@
-from sikuli import *
+from sikuli import *  # NOQA
 import sys
 import common
 
@@ -42,7 +42,7 @@ class facebook():
     def focus_window(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        click(self.fb_logo.targetOffset(0,15))
+        click(self.fb_logo.targetOffset(0, 15))
         setAutoWaitTimeout(default_timeout)
 
     def post_content(self, location=None, content_type=None, input_string=None):
@@ -127,7 +127,7 @@ class facebook():
     def action_club_del_post_top(self):
         click(self.club_post_marker, 10)
         wait(self.club_delete_post_menu)
-        click(self.club_delete_post_menu.targetOffset(0,-10))
+        click(self.club_delete_post_menu.targetOffset(0, -10))
         wait(self.club_delete_post_button, 10)
         click(self.club_delete_post_button)
 
@@ -135,7 +135,7 @@ class facebook():
     def action_non_club_del_post_top(self):
         click(self.non_club_post_marker)
         wait(self.non_club_delete_post_menu)
-        click(self.non_club_delete_post_menu.targetOffset(0,-10))
+        click(self.non_club_delete_post_menu.targetOffset(0, -10))
         wait(self.non_club_delete_post_button, 10)
         click(self.non_club_delete_post_button)
 
@@ -179,13 +179,13 @@ class facebook():
             click(self.home_post_area)
             wait(self.post_area_focused)
         elif type == 'photo_video':
-            click(self.home_post_area.targetOffset(-180,-60))
+            click(self.home_post_area.targetOffset(-180, -60))
             waitVanish(self.home_post_area, 10)
 
     # base on post type to click different areas from club
     def click_post_area_club(self, type='center'):
         if type == 'center':
-            click(self.club_post_area.targetOffset(0,15))
+            click(self.club_post_area.targetOffset(0, 15))
             wait(self.post_area_focused)
         elif type == 'photo_video':
             click(self.club_post_area.targetOffset(-60, -35))
