@@ -16,6 +16,7 @@ DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
 DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
 DEFAULT_CONVERT_VIDEO_RESOLUTION = "320x240"
 
+
 class UploadAgent(object):
 
     def __init__(self, **kwargs):
@@ -117,9 +118,9 @@ class UploadAgent(object):
                              "version": self.current_browser_version[test_browser_type],
                              "video_path": video_preview_url,
                              "comment": self.test_comment_str}
-                url_str = self.generate_url_str(upload_data['test_name'],api_root="video_profile")
+                url_str = self.generate_url_str(upload_data['test_name'], api_root="video_profile")
                 print "===== Upload video post data ====="
                 print url_str
                 print json_data
                 print "===== Upload video post data ====="
-                self.send_post_data(json_data,url_str)
+                self.send_post_data(json_data, url_str)

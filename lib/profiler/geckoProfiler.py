@@ -11,8 +11,8 @@ class GeckoProfiler(BaseProfiler):
 
     def stop_recording(self, **kwargs):
         if self.browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-            self.sikuli.run_test( "test_firefox_profile",
-                            self.env.profile_timing_bin_fp)
+            self.sikuli.run_test("test_firefox_profile",
+                                 self.env.profile_timing_bin_fp)
             data = pyperclip.paste()
 
             encoding_list = ["utf8"]
