@@ -2,6 +2,7 @@ import json
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
+
 class HarParser(object):
     def __init__(self, input_har):
         self.old_har = input_har
@@ -14,18 +15,17 @@ class HarParser(object):
 
         entries = self.har_dict["log"]["entries"]
         if method == "remove":
-            rm = False
             for i in range(len(entries)):
-                if self.har_dict["log"]["entries"][i]['time'] == None:
+                if self.har_dict["log"]["entries"][i]['time'] is None:
                     del self.har_dict["log"]["entries"][i]
                     break
-                if self.har_dict["log"]["entries"][i]['timings']['send'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['send'] is None:
                     del self.har_dict["log"]["entries"][i]
                     break
-                if self.har_dict["log"]["entries"][i]['timings']['wait'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['wait'] is None:
                     del self.har_dict["log"]["entries"][i]
                     break
-                if self.har_dict["log"]["entries"][i]['timings']['receive'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['receive'] is None:
                     del self.har_dict["log"]["entries"][i]
                     break
                 if 'mimeType' not in self.har_dict["log"]["entries"][i]['response']['content']:
@@ -33,13 +33,13 @@ class HarParser(object):
                     break
         elif method == "putzero":
             for i in range(len(entries)):
-                if self.har_dict["log"]["entries"][i]['time'] == None:
+                if self.har_dict["log"]["entries"][i]['time'] is None:
                     self.har_dict["log"]["entries"][i]['time'] = 0
-                if self.har_dict["log"]["entries"][i]['timings']['send'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['send'] is None:
                     self.har_dict["log"]["entries"][i]['timings']['send'] = 0
-                if self.har_dict["log"]["entries"][i]['timings']['wait'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['wait'] is None:
                     self.har_dict["log"]["entries"][i]['timings']['wait'] = 0
-                if self.har_dict["log"]["entries"][i]['timings']['receive'] == None:
+                if self.har_dict["log"]["entries"][i]['timings']['receive'] is None:
                     self.har_dict["log"]["entries"][i]['timings']['receive'] = 0
                 if 'mimeType' not in self.har_dict["log"]["entries"][i]['response']['content']:
                     self.har_dict["log"]["entries"][i]['response']['content']['mimeType'] = 'None'
@@ -48,16 +48,17 @@ class HarParser(object):
         with open(filename, "w+") as f:
             json.dump(self.har_dict, f, indent=4)
 
+
 def main():
     arg_parser = argparse.ArgumentParser(description='HAR Parser to HAR version 1.2',
                                          formatter_class=ArgumentDefaultsHelpFormatter)
     arg_parser.add_argument('-i', action='store', dest='input_har', default=False,
-                        help='specify the file need to parse', required=True)
+                            help='specify the file need to parse', required=True)
     args = arg_parser.parse_args()
     obj = HarParser(args.input_har)
     obj.parse("remove")
     obj.output()
 
+
 if __name__ == '__main__':
     main()
-

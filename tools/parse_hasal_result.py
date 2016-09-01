@@ -3,8 +3,9 @@ import os
 import json
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
-from bugzilla.agents import *
-from bugzilla.utils import *
+# bztools
+from bugzilla.agents import *  # NOQA bztools
+from bugzilla.utils import *  # NOQA bztools
 
 
 class BugAgent(BugzillaAgent):

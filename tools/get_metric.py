@@ -26,7 +26,7 @@ class ResultMetricGenerator(object):
                 key_count = 0
                 for key_name in ['med_time', 'avg_time', 'std_dev']:
                     if key_name in obj_json[case_name]:
-                        key_count+=1
+                        key_count += 1
 
                 if key_count == len(['med_time', 'avg_time', 'std_dev']):
                     print(
@@ -49,7 +49,7 @@ def main():
     arg_parser = argparse.ArgumentParser(description='Result Metric Generator',
                                          formatter_class=ArgumentDefaultsHelpFormatter)
     arg_parser.add_argument('-i', action='store', dest='input_result_fp', default=False,
-                        help='specify the file need to parse', required=True)
+                            help='specify the file need to parse', required=True)
     args = arg_parser.parse_args()
     run_obj = ResultMetricGenerator(args.input_result_fp)
     run_obj.run()
