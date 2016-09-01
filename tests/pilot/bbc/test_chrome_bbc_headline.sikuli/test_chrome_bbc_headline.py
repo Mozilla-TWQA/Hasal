@@ -6,5 +6,5 @@ wait(2)
 
 # Click the headline
 wait("BBC.png")
-click(Pattern("BBC.png").targetOffset(144,218))
+click(Pattern("BBC.png").targetOffset(144, 218))
 wait(2)

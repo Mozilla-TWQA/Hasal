@@ -16,6 +16,5 @@ sleep(2)
 fb.wait_for_loaded()
 fb.focus_window()
 wait(fb.club_post_header)
-click(fb.club_post_header.targetOffset(0,200))
-mouseMove(Location(0,0))
-
+click(fb.club_post_header.targetOffset(0, 200))
+mouseMove(Location(0, 0))

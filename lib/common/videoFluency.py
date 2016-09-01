@@ -36,12 +36,12 @@ class VideoFluency(object):
                 difference.append(mismatch_rate)
         difference_norm = []
         for i in range(len(difference)):
-            norm = difference[i]/max(difference)
+            norm = difference[i] / max(difference)
             if norm < 0.1:
                 difference_norm.append(0)
             else:
                 difference_norm.append(norm)
-        #CommonUtil.plot_waveform(difference_norm)
+        # CommonUtil.plot_waveform(difference_norm)
         return difference_norm, img_list
 
     def moving_average(self, data, n, type='simple'):
@@ -111,17 +111,20 @@ class VideoFluency(object):
             - matrix which contains accumulated distances between two input sequences
             - pure distance matrix between two input sequences
         """
-        distance = np.zeros((len(first_data),len(second_data)))
-        dtw = np.zeros((len(first_data),len(second_data)))
-        dtw[0][0] = np.abs(first_data[0]-second_data[0])
+        distance = np.zeros((len(first_data), len(second_data)))
+        dtw = np.zeros((len(first_data), len(second_data)))
+        dtw[0][0] = np.abs(first_data[0] - second_data[0])
         for i in range(len(first_data)):
             for j in range(len(second_data)):
-                cost = np.abs(first_data[i]-second_data[j])
-                distance[i][j]=cost
+                cost = np.abs(first_data[i] - second_data[j])
+                distance[i][j] = cost
                 min_val = 0
-                if i and j: min_val = min(dtw[i-1][j],dtw[i][j-1],dtw[i-1][j-1])
-                elif not i and j: min_val = dtw[i][j-1]
-                elif not j and i: min_val = dtw[i-1][j]
+                if i and j:
+                    min_val = min(dtw[i - 1][j], dtw[i][j - 1], dtw[i - 1][j - 1])
+                elif not i and j:
+                    min_val = dtw[i][j - 1]
+                elif not j and i:
+                    min_val = dtw[i - 1][j]
                 dtw[i][j] = cost + min_val
         return dtw, distance
 
@@ -131,8 +134,8 @@ class VideoFluency(object):
         Input: distance matrix
         Output: warp path which contains pair of coordinates from input matrix
         """
-        i = dist.shape[0]-1
-        j = dist.shape[1]-1
+        i = dist.shape[0] - 1
+        j = dist.shape[1] - 1
         path = [[i, j]]
         while i > 0 and j > 0:
             if i == 0:
@@ -141,7 +144,7 @@ class VideoFluency(object):
                 i = i - 1
             else:
                 min_val = min(dist[i - 1][j - 1], dist[i - 1][j], dist[i][j - 1])
-                if dist[i-1][j-1] == min_val:
+                if dist[i - 1][j - 1] == min_val:
                     i = i - 1
                     j = j - 1
                 elif dist[i - 1][j] == min_val:
@@ -314,7 +317,7 @@ class VideoFluency(object):
         fourcc = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
         video_list = []
         for i in range(len(v_duration)):
-            video_fp = os.path.join(output_video_dp, 'Defect_' + str(i+1) + '.avi')
+            video_fp = os.path.join(output_video_dp, 'Defect_' + str(i + 1) + '.avi')
             video_list.append(video_fp)
             video.open(video_fp, fourcc, 30, (2048, 768), True)
             ind_seq1_s = v_duration[i][0][0]
@@ -354,7 +357,6 @@ def main():
     video_fluency_obj = VideoFluency()
     input_img_dp = args.input_img_dp
     golden_img_dp = args.golden_img_dp
-
 
     if not args.input_img_dp or not args.golden_img_dp:
         print "Please specify golden image dir path and input image dir path."

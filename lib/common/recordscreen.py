@@ -4,7 +4,7 @@
 By default it captures the entire desktop.
 """
 
-################################ LICENSE BLOCK ################################
+# ############################### LICENSE BLOCK ################################
 # Copyright (c) 2011 Nathan Vegdahl
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -72,16 +72,16 @@ vcodecs = {}
 vcodecs["h264"] = ["-vcodec", "libx264", "-preset", "medium", "-cqp", "0"]
 vcodecs["h264_fast"] = ["-vcodec", "libx264", "-preset", "ultrafast", "-g", "15", "-crf", "0", "-pix_fmt", "yuv444p"]
 vcodecs["mpeg4"] = ["-vcodec", "mpeg4", "-qmax", "1", "-qmin", "1"]
-#vcodecs["xvid"] = ["-vcodec", "libxvid", "-b", "40000kb"]
+# vcodecs["xvid"] = ["-vcodec", "libxvid", "-b", "40000kb"]
 vcodecs["huffyuv"] = ["-vcodec", "huffyuv"]
 vcodecs["vp8"] = ["-vcodec", "libvpx", "-qmax", "2", "-qmin", "1"]
 vcodecs["theora"] = ["-vcodec", "libtheora", "-b", "40000kb"]
-#vcodecs["dirac"] = ["-vcodec", "libschroedinger", "-b", "40000kb"]
+# vcodecs["dirac"] = ["-vcodec", "libschroedinger", "-b", "40000kb"]
 
 # Audio codec lines
 acodecs = {}
 acodecs["pcm"] = ["-acodec", "pcm_s16le"]
-#acodecs["flac"] = ["-acodec", "flac"]
+# acodecs["flac"] = ["-acodec", "flac"]
 acodecs["vorbis"] = ["-acodec", "libvorbis", "-ab", "320k"]
 acodecs["mp3"] = ["-acodec", "libmp3lame", "-ab", "320k"]
 acodecs["aac"] = ["-acodec", "libfaac", "-ab", "320k"]
@@ -108,6 +108,7 @@ def capture_line(fps, x, y, height, width, display_device, audio_device, video_c
     line += ["-threads", str(threads), str(output_path)]
     return line
 
+
 def screenshot_capture_line(fps, x, y, height, width, display_device, video_codec, output_path):
     """ Returns the command line to capture video (no audio), in a list form
         compatible with Popen.
@@ -126,6 +127,7 @@ def screenshot_capture_line(fps, x, y, height, width, display_device, video_code
     line += vcodecs[video_codec]
     line += ["-threads", str(threads), str(output_path)]
     return line
+
 
 def video_capture_line(fps, x, y, height, width, display_device, video_codec, output_path):
     """ Returns the command line to capture video (no audio), in a list form
@@ -234,7 +236,7 @@ def get_default_output_path():
     """
     filenames = glob.glob("out_????" + DEFAULT_FILE_EXTENSION)
     for i in range(1, 9999):
-        name = "out_" + str(i).rjust(4,'0') + DEFAULT_FILE_EXTENSION
+        name = "out_" + str(i).rjust(4, '0') + DEFAULT_FILE_EXTENSION
         tally = 0
         for f in filenames:
             if f == name:
@@ -387,4 +389,3 @@ if __name__ == "__main__":
         proc = subprocess.Popen(video_capture_line(fps, x, y, width, height, opts.display_device, opts.vcodec, out_path)).wait()
 
     print("Done!")
-

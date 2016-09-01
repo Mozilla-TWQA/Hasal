@@ -6,9 +6,9 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 class PyDriveUtil(object):
 
-    def __init__(self, settings = None):
+    def __init__(self, settings=None):
         if settings is None:
-            settings = {"settings_file": None, "local_cred_file":"mycreds.txt"}
+            settings = {"settings_file": None, "local_cred_file": "mycreds.txt"}
         self.gauth = self.get_gauth(settings)
         self.drive = GoogleDrive(self.gauth)
 
@@ -47,8 +47,8 @@ class PyDriveUtil(object):
 
     def copy_file(self, file_id, folder_uri, new_title):
         return self.drive.auth.service.files().copy(fileId=file_id,
-                                             body={"parents": [{"kind": "drive#fileLink", "id": folder_uri}],
-                                                   'title': new_title}).execute()
+                                                    body={"parents": [{"kind": "drive#fileLink", "id": folder_uri}],
+                                                          'title': new_title}).execute()
 
     def delete_file(self, file_id):
         self.drive.auth.service.files().delete(fileId=file_id).execute()
@@ -58,6 +58,7 @@ class PyDriveUtil(object):
         file_obj.SetContentFile(upload_fp)
         file_obj.Upload()
         return file_obj
+
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Pydrive util',
