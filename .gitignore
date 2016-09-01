@@ -9,6 +9,7 @@ snapshot
 result.json
 _virtualenv
 *~
+*.log
 
 # 3rd party files
 thirdParty/*
