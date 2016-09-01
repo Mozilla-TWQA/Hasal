@@ -23,9 +23,9 @@ class Sikuli():
             script_path = os.path.join(self.hasal_dir, "tests")
             script_dir_path = script_path + os.sep + script_name + ".sikuli"
         args = [str(timestamp), self.set_syspath(self.hasal_dir)]
-        args.extend(args_list)
         if test_target != "":
             args.append(test_target)
+        args.extend(args_list)
         return self.run_sikulix_cmd(script_dir_path, args)
 
     def run_sikulix_cmd(self, script_dir_path, args_list=[]):

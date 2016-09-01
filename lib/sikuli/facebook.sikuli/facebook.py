@@ -16,7 +16,7 @@ class facebook():
         self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.85)
         self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.85)
         self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.85)
-        self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.85)
+        self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.70)
         self.notification_icon = Pattern("pics/facebook_notification_icon.png").similar(0.85)
         self.post_button = Pattern("pics/facebook_post_button.png").similar(0.85)
         self.post_action = Pattern("pics/facebook_post_action.png").similar(0.85)
@@ -31,13 +31,14 @@ class facebook():
         self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85)
         self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.85)
         self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.85)
+        self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
+        self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        wait(self.fb_logo, 10)
+        wait(self.fb_logo)
         setAutoWaitTimeout(default_timeout)
-        self.focus_window()
 
     def focus_window(self):
         default_timeout = getAutoWaitTimeout()

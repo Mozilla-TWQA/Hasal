@@ -63,9 +63,11 @@ class Environment(object):
     PROFILER_FLAG_FXTRACELOGGER = "fxtracelogger"
 
     TEST_FB_HOME = "https://www.facebook.com/"
-    TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/moztext/")
-    TEST_FB_IMAGE_GROUP = os.path.join(TEST_FB_HOME, "groups/mozimage/")
-    TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/mozvideo/")
+    TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/testmoztext/")
+    TEST_FB_IMAGE_GROUP = os.path.join(TEST_FB_HOME, "groups/testmozimage/")
+    TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/testmozvideo/")
+    TEST_FB_FIRST_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013326969542")
+    TEST_FB_SECOND_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013275014638")
 
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
