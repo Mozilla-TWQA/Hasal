@@ -73,7 +73,7 @@ for repeat in range(2):
         type(Key.BACKSPACE)
         sleep(1)
 
-    gd.create_table(10,5)
+    gd.create_table(10, 5)
     sleep(1)
     type(Key.UP)
 com.paste()

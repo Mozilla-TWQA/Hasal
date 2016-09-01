@@ -5,5 +5,5 @@ import gdoc
 
 gd = gdoc.gDoc()
 gd.focus_content()
-gd.create_table(10,5)
+gd.create_table(10, 5)
 gd.deFoucsContentWindow()

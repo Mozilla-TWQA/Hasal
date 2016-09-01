@@ -18,9 +18,9 @@ gd.wait_for_loaded()
 sleep(5)
 type("h", Key.CTRL)
 wait(Pattern("FindAndReplace.png").similar(0.50))
-click(Pattern("FindReplaceInput.png").targetOffset(98,-21))
+click(Pattern("FindReplaceInput.png").targetOffset(98, -21))
 type(keyword)
-click(Pattern("FindReplaceInput.png").targetOffset(98,26))
+click(Pattern("FindReplaceInput.png").targetOffset(98, 26))
 type("NEW")
 
 for i in range(15):
@@ -29,4 +29,3 @@ for i in range(15):
 
 sleep(2)
 gd.deFoucsContentWindow()
-

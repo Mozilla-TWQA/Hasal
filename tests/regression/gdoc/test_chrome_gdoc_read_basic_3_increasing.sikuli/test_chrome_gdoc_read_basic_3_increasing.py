@@ -15,4 +15,3 @@ sleep(5)
 gd.wait_for_loaded()
 
 gd.deFoucsContentWindow()
-
