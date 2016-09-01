@@ -67,7 +67,7 @@ class PerfBaseTest(unittest.TestCase):
 
     def set_variable(self, **kwargs):
         for variable_name in kwargs.keys():
-            setattr(self,variable_name,kwargs[variable_name])
+            setattr(self, variable_name, kwargs[variable_name])
 
     def args_parser(self, input_script_name, input_args):
         result_args = []
@@ -82,7 +82,6 @@ class PerfBaseTest(unittest.TestCase):
             else:
                 result_args = input_args
         return result_args
-
 
     def setUp(self):
 
@@ -147,7 +146,6 @@ class PerfBaseTest(unittest.TestCase):
                                                       os.getenv("PRE_SCRIPT_PATH") + "_" + self.env.time_stamp,
                                                       args_list=pre_script_args)
 
-
         # clone test target
         if hasattr(self, "test_target"):
             self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target, self.env.output_name)
@@ -157,7 +155,7 @@ class PerfBaseTest(unittest.TestCase):
 
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
             videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                         self.env.img_output_sample_1_fn)
+                                       self.env.img_output_sample_1_fn)
         time.sleep(2)
 
         # Record timestamp t2
@@ -173,7 +171,7 @@ class PerfBaseTest(unittest.TestCase):
 
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
             videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                         self.env.img_output_sample_2_fn)
+                                       self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
@@ -191,19 +189,19 @@ class PerfBaseTest(unittest.TestCase):
             self.sikuli.close_browser(self.browser_type)
 
         # Delete Url
-        if hasattr(self,"test_url_id"):
+        if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
         # output sikuli status to static file
         with open(self.env.DEFAULT_STAT_RESULT, "w") as fh:
-            stat_data = {'sikuli_stat' : str(self.sikuli_status)}
-            json.dump(stat_data,fh)
+            stat_data = {'sikuli_stat': str(self.sikuli_status)}
+            json.dump(stat_data, fh)
 
         # output result
         if self.sikuli_status == 0:
             if hasattr(self, "crop_data"):
                 resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data, int(os.getenv("CALC_SI")))
             else:
-                resultHelper.result_calculation(self.env,  self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")))
+                resultHelper.result_calculation(self.env, self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")))
         else:
             print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)

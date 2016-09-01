@@ -8,7 +8,7 @@ class BrowserChrome(BrowserBase):
     darwin_chrome_command = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
     def get_browser_settings(self, **kwargs):
-        default_tracing_capture_period = 900 #sec
+        default_tracing_capture_period = 900  # sec
         self.browser_process = "chrome"
         self.process_name = "chrome"
         if self.current_platform_name == "darwin":
@@ -21,7 +21,7 @@ class BrowserChrome(BrowserBase):
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]
 
         if "tracing_path" in kwargs:
-            self.launch_cmd.extend(["--trace-startup", "--trace-startup-file="+kwargs['tracing_path'], "--trace-startup-duration="+str(default_tracing_capture_period)])
+            self.launch_cmd.extend(["--trace-startup", "--trace-startup-file=" + kwargs['tracing_path'], "--trace-startup-duration=" + str(default_tracing_capture_period)])
 
     def get_version_command(self):
         if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
