@@ -6,17 +6,13 @@ import common
 import facebook
 
 com = common.General()
-chrome = browser.Chrome()
+ff = browser.Firefox()
 fb = facebook.facebook()
 
-chrome.clickBar()
-chrome.enterLink(sys.argv[3])
+ff.clickBar()
+ff.enterLink(sys.argv[3])
 
 sleep(2)
+setAutoWaitTimeout(10)
 fb.wait_for_loaded()
-fb.focus_window()
-wait(fb.club_post_header)
-doubleClick(fb.club_post_header.targetOffset(0, 200))
-mouseMove(Location(0, 0))
-fb.wait_post_area_vanish(location='club')
-wait(fb.video_stop_icon, 240)
+fb.post_content(location='personal', content_type='url', input_string=sys.argv[4])
