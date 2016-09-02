@@ -3,28 +3,34 @@ language: python
 
 matrix:
   include:
-    - os: linux
+  # Linux
+    # Test tidy
+    - env: GOAL=test-tidy
+      os: linux
       python: 2.7
       install:
         - ./mach
       script:
         - ./mach test-tidy --no-progress --all
-    - os: osx
+  # Mac OS X
+    # Test tidy
+    - env: GOAL=test-tidy TOXENV=py27
+      os: osx
       sudo: required
       language: generic
       osx_image: xcode7.3
-      env: TOXENV=py27
       install:
         - brew install python
         - pip install virtualenv
         - ./mach
       script:
         - ./mach test-tidy --no-progress --all
-    - os: osx
+    # Test bootstrap-mac
+    - env: GOAL=bootstrap TOXENV=py27
+      os: osx
       sudo: required
       language: generic
       osx_image: xcode7.3
-      env: TOXENV=py27
       install:
         - brew install python
         - pip install virtualenv
