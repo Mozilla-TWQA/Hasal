@@ -52,7 +52,7 @@ class MainRunner(object):
 
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
-        self.load_dir(dirpath)
+        self.load_dir(self.dirpath)
 
         event_handler = JsonHandler(patterns=["*.json"], ignore_directories=True)
         event_handler.set_handler(oncreated=self.load, onmodified=self.load, ondeleted=self.remove)
