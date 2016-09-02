@@ -68,6 +68,7 @@ class Environment(object):
     TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/testmozvideo/")
     TEST_FB_FIRST_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013326969542")
     TEST_FB_SECOND_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013275014638")
+    TEST_FB_MIX_CONTENT = "http://goo.gl/PZNikF"
 
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
