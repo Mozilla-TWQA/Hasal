@@ -195,7 +195,7 @@ class ImageTool(object):
                         m_start_index = img_index
                         break
             else:
-                threshold = 0.00001
+                threshold = 0.00003
                 for img_index in range(m_start_index, self.search_range[3]):
                     image_data = self.image_list[img_index]
                     match_val = self.template_match(image_data['image_fp'], sample_fp)

@@ -13,24 +13,24 @@ class facebook():
             self.control = Key.CTRL
             self.alt = Key.ALT
 
-        self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.85)
-        self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.85)
-        self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.85)
+        self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.70)
+        self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.70)
+        self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.70)
         self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.70)
-        self.notification_icon = Pattern("pics/facebook_notification_icon.png").similar(0.85)
-        self.post_button = Pattern("pics/facebook_post_button.png").similar(0.85)
-        self.post_action = Pattern("pics/facebook_post_action.png").similar(0.85)
-        self.home_post_area = Pattern("pics/facebook_home_post_area.png").similar(0.85)
-        self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.85)
-        self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.85)
-        self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.85)
-        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.85)
-        self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.85)
-        self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.85)
-        self.club_delete_post_menu = Pattern("pics/facebook_club_delete_post_menu.png").similar(0.85)
-        self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.85)
-        self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.85)
-        self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.85)
+        self.notification_icon = Pattern("pics/facebook_notification_icon.png").similar(0.70)
+        self.post_button = Pattern("pics/facebook_post_button.png").similar(0.70)
+        self.post_action = Pattern("pics/facebook_post_action.png").similar(0.70)
+        self.home_post_area = Pattern("pics/facebook_home_post_area.png").similar(0.70)
+        self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.70)
+        self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.70)
+        self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.70)
+        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.70)
+        self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.70)
+        self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.70)
+        self.club_delete_post_menu = Pattern("pics/facebook_club_delete_post_menu.png").similar(0.70)
+        self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.70)
+        self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.70)
+        self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.70)
         self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
         self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
 
@@ -215,11 +215,11 @@ class facebook():
 
     # share an enlarged post, which has previewed pop up screen to post
     def share_enlarged_post(self):
-        wait(self.post_action, 10)
+        wait(self.post_action)
         click(self.post_action.targetOffset(80, 0))
-        waitVanish(self.post_action, 10)
+        waitVanish(self.post_action)
         click(self.post_button)
-        waitVanish(self.post_button, 10)
+        waitVanish(self.post_button)
 
     # return all content from file
     def get_text_from_file(self, file_path):
