@@ -73,6 +73,7 @@ pip install -U pip
 
 func_log "[INFO] Running brew install homebrew/science ..."
 brew tap homebrew/science
+brew update
 
 func_log "[INFO] Running brew install ffmpeg ..."
 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
@@ -81,7 +82,7 @@ func_log "[INFO] Running brew install libav ..."
 brew install libav
 
 func_log "[INFO] Running brew install opencv ..."
-brew install opencv
+brew install homebrew/science/opencv
 
 func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
 CV2_SO_PATH=`find /usr/local/Cellar/opencv/ -name "cv2.so"`
@@ -92,10 +93,6 @@ pip install -r requirements.txt
 python setup.py install
 
 func_log "[INFO] Done."
-
-func_log '[INFO] Run "runtest.py -h" for testing ...'
-python runtest.py -h
-
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
 
 echo "===================="
