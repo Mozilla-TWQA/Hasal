@@ -72,6 +72,8 @@ func_log "[INFO] Upgrading pip itself ..."
 pip install -U pip
 
 func_log "[INFO] Running brew install homebrew/science ..."
+# updating brew before tap homebrew/science
+brew update
 brew tap homebrew/science
 brew update
 
@@ -92,9 +94,25 @@ func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
 python setup.py install
 
+func_log "[INFO] Checking Python CV2 Module ..."
+PYTHON_CV2_CHECK_RESULT=`./scripts/cv2_checker.py`
+func_log ${PYTHON_CV2_CHECK_RESULT}
+BOOTSTRAP_RET=$?
+
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
+func_log ""
 
-echo "===================="
-echo "Welcome to Hasal! :)"
-echo "        - by askeing"
+if [[ ${RET_SUCCESS} == ${BOOTSTRAP_RET} ]]; then
+    echo "### Hasal ##############"
+    echo "# Welcome to Hasal! :) #"
+    echo "########################"
+else
+    echo "### Hasal ########################"
+    echo "# It seems like something wrong! #"
+    echo "# Please check bootstrap log.    #"
+    echo "##################################"
+fi
+
+# Return cv2_checker's return code as bootstrap return code.
+exit ${BOOTSTRAP_RET}

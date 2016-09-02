@@ -48,7 +48,7 @@ matrix:
         - ./scripts/wait_cmd.sh 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
         - ./bootstrap-mac.sh
         - cat bootstrap-mac.log
-        # Run "runtest.py -h" for testing ...
+        # Run "runtest.py -h" for testing Hasal can works basically ...
         - source .env-python/bin/activate
         - python runtest.py -h
 
