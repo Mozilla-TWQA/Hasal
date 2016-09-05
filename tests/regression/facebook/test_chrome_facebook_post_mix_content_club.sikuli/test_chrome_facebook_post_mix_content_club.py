@@ -15,7 +15,7 @@ chrome.enterLink(sys.argv[3])
 sleep(2)
 setAutoWaitTimeout(10)
 fb.wait_for_loaded()
-fb.post_content(location='home', content_type='text',
+fb.post_content(location='club', content_type='text',
                 input_string='https://en.wikipedia.org/wiki/Sun_Tzu  All warfare is based on deception. Hence, when we '
                              'are able to attack, we must seem unable; when using our forces, we must appear inactive; '
                              'when we are near, we must make the enemy believe we are far away; when far away, we must '
