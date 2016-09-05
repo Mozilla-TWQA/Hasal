@@ -16,12 +16,7 @@ sleep(2)
 setAutoWaitTimeout(10)
 fb.wait_for_loaded()
 fb.post_content(location='home', content_type='text',
-                input_string='https://www.mozilla.org/en-US/  Answer: Depending on how one distinguishes a different '
-                             'Bible version from a revision of an existing Bible version, there are as many as 50 '
-                             'different English versions of the Bible. The question then arises: Is there really a '
-                             'need for so many different English versions of the Bible? The answer is, of course, no, '
-                             'there is no need for 50 different English versions of the Bible. This is especially true '
-                             'considering that there are hundreds of languages into which the entire Bible has not yet '
-                             'been translated. At the same time, there is nothing wrong with there being multiple '
-                             'versions of the Bible in a language. In fact, multiple versions of the Bible can '
-                             'actually be an aid in understanding the message of the Bible.')
+                input_string='https://en.wikipedia.org/wiki/Sun_Tzu  All warfare is based on deception. Hence, when we '
+                             'are able to attack, we must seem unable; when using our forces, we must appear inactive; '
+                             'when we are near, we must make the enemy believe we are far away; when far away, we must '
+                             'make him believe we are near.')

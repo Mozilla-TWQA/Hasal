@@ -1,4 +1,5 @@
 from sikuli import *  # NOQA
+import os
 import sys
 import common
 
@@ -35,6 +36,9 @@ class facebook():
         self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
         self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
         self.feed_end_reminder = Pattern("pics/facebook_feed_end_reminder.png").similar(0.70)
+        self.activity_end_reminder = Pattern("pics/facebook_activity_end_reminder.png").similar(0.70)
+
+        self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content/sample_1.jpg")
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
