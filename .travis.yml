@@ -1,14 +1,58 @@
 language: python
 
-python:
-  - "2.7"
-#  - "pypy"
 
-install:
-  - ./mach
+cache:
+  - pip
 
-script:
-  - ./mach test-tidy --no-progress --all
+
+matrix:
+  include:
+  # Linux
+    # Test tidy
+    - env: GOAL=test-tidy
+      os: linux
+      python: 2.7
+      install:
+        - ./mach
+      script:
+        - ./mach test-tidy --no-progress --all
+  # Mac OS X
+    # Test tidy
+    - env: GOAL=test-tidy
+      os: osx
+      sudo: required
+      language: generic
+      osx_image: xcode7.3
+      before_install:
+        - brew update
+        - brew install python
+        - pip install virtualenv
+      install:
+        - ./mach
+      script:
+        - ./mach test-tidy --no-progress --all
+    # Test bootstrap-mac
+    - env: GOAL=bootstrap
+      os: osx
+      sudo: required
+      language: generic
+      osx_image: xcode7.3
+      before_install:
+        - brew update
+        - brew install python
+        - pip install virtualenv
+      script:
+        # Install ffmpeg before running bootstrap, due to it take more than 10 min.
+        # Ref: https://docs.travis-ci.com/user/common-build-problems/#Build-times-out-because-no-output-was-received
+        # - travis_wait 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+        - ./scripts/wait_cmd.sh 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+        - ./bootstrap-mac.sh
+        - cat bootstrap-mac.log
+        # Run "runtest.py -h" for testing Hasal can works basically ...
+        - source .env-python/bin/activate
+        - python runtest.py -h
+
+
 
 branches:
   only:
