@@ -41,7 +41,12 @@ class HasalTask(object):
             with open(suite_fn, "w") as suite_fh:
                 case_name_list = self.configurations['OTHERS'].split(",")
                 for case_name in case_name_list:
-                    suite_fh.write(case_name + os.linesep)
+                    if self.configurations['TYPE'] == 're':
+                        case_full_name = ".".join(
+                            ['tests', 'regression', case_name.split["_"][2], case_name])
+                    else:
+                        case_full_name = os.sep.join(['tests', 'pilot', case_name.split["_"][2], case_name])
+                    suite_fh.write(case_full_name + os.linesep)
         else:
             # Generate suite file for selected web application
             if self.configurations['TYPE'] == 're':
