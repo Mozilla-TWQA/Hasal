@@ -39,7 +39,7 @@ class HasalTask(object):
         if self.configurations['SUITE'] == "others":
             # Generate others suite file for this job
             with open(suite_fn, "w") as suite_fh:
-                case_name_list = self.configurations['Others'].split(",")
+                case_name_list = self.configurations['OTHERS'].split(",")
                 for case_name in case_name_list:
                     suite_fh.write(case_name + os.linesep)
         else:
