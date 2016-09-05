@@ -37,6 +37,8 @@ class facebook():
         self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
         self.feed_end_reminder = Pattern("pics/facebook_feed_end_reminder.png").similar(0.70)
         self.activity_end_reminder = Pattern("pics/facebook_activity_end_reminder.png").similar(0.70)
+        self.share_button = Pattern("pics/facebook_share_button.png").similar(0.70)
+        self.share_menu = Pattern("pics/facebook_share_menu.png").similar(0.70)
 
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content/sample_1.jpg")
 
@@ -224,6 +226,14 @@ class facebook():
         wait(self.post_action)
         click(self.post_action.targetOffset(80, 0))
         waitVanish(self.post_action)
+        click(self.post_button)
+        waitVanish(self.post_button)
+
+    # share post, e.g., url link or video
+    def share_post(self):
+        click(self.share_button)
+        click(self.share_menu.targetOffset(0, -12))
+        waitVanish(self.share_button)
         click(self.post_button)
         waitVanish(self.post_button)
 
