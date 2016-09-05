@@ -68,9 +68,9 @@ class HasalTask(object):
         # Combine the parameter with cmd list
         for key in self.configurations:
             if key.startswith("--"):
-                if self.configurations[key] in ['true', 'false']:
+                if self.configurations[key] == 'true':
                     result_list.append(key.lower())
-                else:
+                elif self.configurations[key] != 'false':
                     result_list.append(key.lower() + "=" + self.configurations[key])
 
         return result_list
