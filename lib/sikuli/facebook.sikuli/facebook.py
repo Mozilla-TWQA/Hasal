@@ -14,6 +14,7 @@ class facebook():
             self.alt = Key.ALT
 
         self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.70)
+        self.blue_bar = Pattern("pics/facebook_blue_bar.png").similar(0.70)
         self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.70)
         self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.70)
         self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.70)
@@ -33,6 +34,7 @@ class facebook():
         self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.70)
         self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
         self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
+        self.feed_end_reminder = Pattern("pics/facebook_feed_end_reminder.png").similar(0.70)
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
@@ -211,7 +213,7 @@ class facebook():
     def search_content(self, keyword):
         click(self.search_bar)
         paste(keyword)
-        click(self.search_icon)
+        wait(self.search_icon)
 
     # share an enlarged post, which has previewed pop up screen to post
     def share_enlarged_post(self):
