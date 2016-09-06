@@ -1,96 +1,95 @@
-__author__ = 'shako'
-import os
-import json
-import subprocess
+"""
+
+Usage:
+  get_build.py <user_email> <platform> [--build-hash=<str>]
+  get_build.py (-h | --help)
+
+Options:
+  -h --help                 Show this screen.
+  --build-hash=<str>        Specify the build has want to retrieve.
+
+"""
+import re
+import urllib2
+from thclient import TreeherderClient
+from docopt import docopt
 
 
-class HasalTask(object):
+class GetBuild(object):
+    ARCHIVE_URL = "https://archive.mozilla.org"
 
-    configurations = {}
-    cmd_parameter_keys = []
+    def __init__(self, user_email):
+        self.project = 'try'
+        self.platform_option = 'opt'
+        self.resultsets = []
+        self.user_email = user_email
+        self.thclient = TreeherderClient()
 
-    def __init__(self, name, **kwargs):
-        self.name = name
-        if "path" in kwargs:
-            self.src_conf_path = kwargs['path']
-        self.read_configuration(**kwargs)
+    def fetch_resultset(self, build_hash, default_count=500):
+        tmp_resultsets = self.thclient.get_resultsets(self.project, count=default_count)
+        for resultset in tmp_resultsets:
+            if resultset['author'].lower() == self.user_email.lower():
+                self.resultsets.append(resultset)
+                if build_hash is None:
+                    return resultset
+                elif resultset['revision'] == build_hash:
+                    return resultset
+        print "Can't find the specify build hash [%s] in resultsets!!" % build_hash
+        return None
 
-    def update(self, **kwargs):
-        if 'name' in kwargs:
-            self.name = kwargs['name']
-        self.read_configuration(**kwargs)
+    def get_job(self, resultset, platform):
+        jobs = self.thclient.get_jobs('try', result_set_id=resultset['id'])
+        for job in jobs:
+            if job['platform_option'] == self.platform_option and job['platform'] == platform:
+                return job
+        print "Can't find the spcify platform and platform_options in jobs!!!" % (platform, self.platform_option)
+        return None
 
-    def read_configuration(self, **kwargs):
-        self.configurations = kwargs
-        print self.configurations
+    def get_build_link(self, platform, build_folder_url):
+        response_obj = urllib2.urlopen(build_folder_url)
+        if response_obj.getcode() == 200:
+            for line in response_obj.readlines():
+                match = re.search(r'(?<=href=").*?(?=")', line)
+                if match:
+                    href_link = match.group(0)
+                    f_name = href_link.split("/")[-1]
+                    if 'firefox' in f_name:
+                        if platform.find("linux") >= 0:
+                            if "linux" in f_name and ".tar.bz2" in f_name:
+                                return href_link
+                        elif platform.find("mac") >= 0:
+                            if "mac" in f_name and ".dmg" in f_name:
+                                return href_link
+                        elif platform.find("win") >=0:
+                            if "win" in f_name and ".zip" in f_name:
+                                return href_link
+        return None
 
-    def update_svr_config(self):
-        updated_key = ['svr_addr', 'svr_port', 'project_name']
-        config_dict = {}
-        for key in self.configurations:
-            if key.lower() in updated_key:
-                config_dict[key.lower()] = self.configurations[key]
-        with open('svrConfig.json', 'w') as svrconfig_fh:
-            json.dump(config_dict, svrconfig_fh)
-
-    def generate_command_list(self):
-        result_list = ['python', 'runtest.py', self.configurations['TYPE']]
-        suite_fn = ".".join(['suite', self.configurations['TYPE'], self.configurations['SUITE']])
-        if self.configurations['SUITE'] == "others":
-            # Generate others suite file for this job
-            with open(suite_fn, "w") as suite_fh:
-                case_name_list = self.configurations['Others'].split(",")
-                for case_name in case_name_list:
-                    suite_fh.write(case_name + os.linesep)
-        else:
-            # Generate suite file for selected web application
-            if self.configurations['TYPE'] == 're':
-                case_dir = os.path.join(os.getcwd(), 'tests', 'regression', self.configurations['SUITE'])
-                with open(suite_fn, 'w') as suite_fh:
-                    for f_name in os.listdir(case_dir):
-                        if f_name.endswith(".py") and f_name != "__init__.py":
-                            case_name = ".".join(['tests', 'regression', self.configurations['SUITE'], f_name.split(".")[0]])
-                            suite_fh.write(case_name + os.linesep)
-            else:
-                case_dir = os.path.join(os.getcwd(), 'tests', 'pilot', self.configurations['SUITE'])
-                with open(suite_fn, 'w') as suite_fh:
-                    for f_name in os.listdir(case_dir):
-                        if f_name.endswith(".sikuli"):
-                            case_name = os.sep.join(['tests', 'pilot', self.configurations['SUITE'], f_name])
-                            suite_fh.write(case_name + os.linesep)
-        result_list.append(suite_fn)
-
-        # Combine the parameter with cmd list
-        for key in self.configurations:
-            if key.startswith("--"):
-                if self.configurations[key] in ['true', 'false']:
-                    result_list.append(key.lower())
+    def get_build(self, build_hash, platform):
+        resultset = self.fetch_resultset(build_hash)
+        if resultset:
+            job = self.get_job(resultset, platform)
+            if job:
+                if job['result'].lower() == "success":
+                    # generate url for build folder
+                    build_folder_url_template = "%s/pub/firefox/%s-builds/%s-%s/%s-%s/"
+                    build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
+                                                                        self.project, self.user_email, build_hash,
+                                                                        self.project, platform)
+                    build_link = self.get_build_link(platform, build_folder_url)
+                    download_fn = build_link.split("/")[-1]
+                    download_link = self.ARCHIVE_URL + build_link
+                    response = urllib2.urlopen(download_link)
+                    with open(download_fn, 'wb') as fh:
+                        fh.write(response.read())
                 else:
-                    result_list.append(key.lower() + "=" + self.configurations[key])
+                    "Current job status is [%s] !!" % job['result'].lower()
+                    return None
 
-        return result_list
+def main():
+    arguments = docopt(__doc__)
+    get_build_obj = GetBuild(arguments['<user_email>'])
+    get_build_obj.get_build(arguments['--build-hash'], arguments['<platform>'])
 
-    def run(self):
-        print "run"
-        cmd_list = self.generate_command_list()
-        print " ".join(cmd_list)
-        self.update_svr_config()
-        with open("job.log", "w") as log_fh:
-            p = subprocess.Popen(cmd_list, stdout=log_fh, stderr=log_fh, env=os.environ.copy())
-            p.wait()
-            log_fh.flush()
-        os.remove(self.src_conf_path)
-
-    def onstop(self):
-        print "===== onstop ====="
-        print self.src_conf_path
-        print "===== onstop ====="
-        if os.path.exists(self.src_conf_path):
-            os.remove(self.src_conf_path)
-
-    def teardown(self):
-        print "===== teardown ====="
-        print self.src_conf_path
-        print "===== teardown ====="
-        if os.path.exists(self.src_conf_path):
-            os.remove(self.src_conf_path)
+if __name__ == '__main__':
+    main()
