@@ -96,23 +96,23 @@ python setup.py install
 
 func_log "[INFO] Checking Python CV2 Module ..."
 PYTHON_CV2_CHECK_RESULT=`./scripts/cv2_checker.py`
-func_log ${PYTHON_CV2_CHECK_RESULT}
 BOOTSTRAP_RET=$?
+func_log ${PYTHON_CV2_CHECK_RESULT}
 
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
-func_log ""
 
 if [[ ${RET_SUCCESS} == ${BOOTSTRAP_RET} ]]; then
-    echo "### Hasal ##############"
-    echo "# Welcome to Hasal! :) #"
-    echo "########################"
+    func_log "### Hasal ##############"
+    func_log "# Welcome to Hasal! :) #"
+    func_log "########################"
+    func_log ""
 else
-    echo "### Hasal ########################"
-    echo "# It seems like something wrong! #"
-    echo "# Please check bootstrap log.    #"
-    echo "##################################"
+    func_log "### Hasal ########################"
+    func_log "# It seems like something wrong! #"
+    func_log "# Please check bootstrap log.    #"
+    func_log "##################################"
+    func_log ""
+    exit 1
 fi
 
-# Return cv2_checker's return code as bootstrap return code.
-exit ${BOOTSTRAP_RET}
