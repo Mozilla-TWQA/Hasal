@@ -16,6 +16,19 @@ matrix:
         - ./mach
       script:
         - ./mach test-tidy --no-progress --all
+    # Test bootstrap-linux
+    - env: GOAL=bootstrap
+      os: linux
+      python: 2.7
+      sudo: required
+      install:
+        - ./mach
+      script:
+        - ./bootstrap-linux.sh
+        - cat bootstrap-linux.log
+        # Run "runtest.py -h" for testing Hasal can works basically ...
+        - source .env-python/bin/activate
+        - python runtest.py -h
   # Mac OS X
     # Test tidy
     - env: GOAL=test-tidy
@@ -44,7 +57,6 @@ matrix:
       script:
         # Install ffmpeg before running bootstrap, due to it take more than 10 min.
         # Ref: https://docs.travis-ci.com/user/common-build-problems/#Build-times-out-because-no-output-was-received
-        # - travis_wait 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
         - ./scripts/wait_cmd.sh 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
         - ./bootstrap-mac.sh
         - cat bootstrap-mac.log
