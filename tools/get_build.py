@@ -60,7 +60,7 @@ class GetBuild(object):
                         elif platform.find("mac") >= 0:
                             if "mac" in f_name and ".dmg" in f_name:
                                 return href_link
-                        elif platform.find("win") >=0:
+                        elif platform.find("win") >= 0:
                             if "win" in f_name and ".zip" in f_name:
                                 return href_link
         return None
