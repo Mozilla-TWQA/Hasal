@@ -68,6 +68,9 @@ class GetBuild(object):
     def get_build(self, build_hash, platform):
         resultset = self.fetch_resultset(build_hash)
         if resultset:
+            if build_hash is None:
+                build_hash = resultset['revision']
+            print "Resultset is found, and build hash is [%s]" % build_hash
             job = self.get_job(resultset, platform)
             if job:
                 if job['result'].lower() == "success":
@@ -76,9 +79,11 @@ class GetBuild(object):
                     build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
                                                                         self.project, self.user_email, build_hash,
                                                                         self.project, platform)
+                    print "Build folder url [%s]" % build_folder_url
                     build_link = self.get_build_link(platform, build_folder_url)
                     download_fn = build_link.split("/")[-1]
                     download_link = self.ARCHIVE_URL + build_link
+                    print "Prepare to download the build from link [%s]" % download_link
                     response = urllib2.urlopen(download_link)
                     with open(download_fn, 'wb') as fh:
                         fh.write(response.read())
