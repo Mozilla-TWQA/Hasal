@@ -40,6 +40,7 @@ matrix:
       cache:
         pip: true
         directories:
+          # brew install pkg-config gettext texi2html yasm x264 lame xvid libpng freetype libogg libvorbis theora libvpx rtmpdump opencore-amr libffi pcre glib fribidi fontconfig pixman cairo gobject-introspection icu4c harfbuzz libass libtiff little-cms2 openjpeg sdl speex orc schroedinger fdk-aac opus frei0r
           - /usr/local/Cellar/ffmpeg/
       before_install:
         - brew update
