@@ -55,9 +55,6 @@ matrix:
         - brew install python
         - pip install virtualenv
       script:
-        # Install ffmpeg before running bootstrap, due to it take more than 10 min.
-        # Ref: https://docs.travis-ci.com/user/common-build-problems/#Build-times-out-because-no-output-was-received
-        - ./scripts/wait_cmd.sh 60 brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
         - ./bootstrap-mac.sh
         - cat bootstrap-mac.log
         # Run "runtest.py -h" for testing Hasal can works basically ...

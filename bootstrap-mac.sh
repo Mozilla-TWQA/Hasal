@@ -77,8 +77,12 @@ brew update
 brew tap homebrew/science
 brew update
 
-func_log "[INFO] Running brew install ffmpeg ..."
-brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+if [[ ${TRAVIS} ]]; then
+    func_log "[WARN] Skip brew install ffmpeg on Travis CI, due to it is very slow!"
+else
+    func_log "[INFO] Running brew install ffmpeg ..."
+    brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+fi
 
 func_log "[INFO] Running brew install libav ..."
 brew install libav
