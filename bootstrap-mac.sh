@@ -45,7 +45,7 @@ declare -a REQUIREMENTS_INSTALL=(
     '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
     "brew install python"
     "sudo easy_install pip"
-    "pip install virtualenv")
+    "sudo pip install virtualenv")
 
 REQUIREMENTS_LENGTH=${#REQUIREMENTS[@]}
 
