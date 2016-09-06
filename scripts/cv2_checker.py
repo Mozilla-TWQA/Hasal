@@ -23,7 +23,7 @@ class CV2Checker(object):
         while ret:
             ret, _ = video_capture.read()
             counter += 1
-        assert counter > self.input_video_frame_base , 'The video [{}] frame should be more than {}, not {}.'.format(self.input_video, self.input_video_frame_base, counter)
+        assert counter > self.input_video_frame_base, 'The video [{}] frame should be more than {}, not {}.'.format(self.input_video, self.input_video_frame_base, counter)
 
 
 def main():
