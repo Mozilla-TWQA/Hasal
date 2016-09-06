@@ -37,6 +37,10 @@ matrix:
       sudo: required
       language: generic
       osx_image: xcode7.3
+      cache:
+        pip: true
+        directories:
+          - /usr/local/Cellar/ffmpeg/
       before_install:
         - brew update
         - brew install python
