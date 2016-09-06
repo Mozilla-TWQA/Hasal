@@ -39,9 +39,14 @@ class HasalTask(object):
         if self.configurations['SUITE'] == "others":
             # Generate others suite file for this job
             with open(suite_fn, "w") as suite_fh:
-                case_name_list = self.configurations['Others'].split(",")
+                case_name_list = self.configurations['OTHERS'].split(",")
                 for case_name in case_name_list:
-                    suite_fh.write(case_name + os.linesep)
+                    if self.configurations['TYPE'] == 're':
+                        case_full_name = ".".join(
+                            ['tests', 'regression', case_name.split("_")[2], case_name])
+                    else:
+                        case_full_name = os.sep.join(['tests', 'pilot', case_name.split("_")[2], case_name])
+                    suite_fh.write(case_full_name + os.linesep)
         else:
             # Generate suite file for selected web application
             if self.configurations['TYPE'] == 're':
@@ -63,11 +68,10 @@ class HasalTask(object):
         # Combine the parameter with cmd list
         for key in self.configurations:
             if key.startswith("--"):
-                if self.configurations[key] in ['true', 'false']:
+                if self.configurations[key] == 'true':
                     result_list.append(key.lower())
-                else:
+                elif self.configurations[key] != 'false':
                     result_list.append(key.lower() + "=" + self.configurations[key])
-
         return result_list
 
     def run(self):
@@ -84,13 +88,11 @@ class HasalTask(object):
     def onstop(self):
         print "===== onstop ====="
         print self.src_conf_path
-        print "===== onstop ====="
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
 
     def teardown(self):
         print "===== teardown ====="
         print self.src_conf_path
-        print "===== teardown ====="
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
