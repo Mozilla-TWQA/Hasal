@@ -77,6 +77,7 @@ brew update
 brew tap homebrew/science
 brew update
 
+# ffmpeg, skip on CI
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip brew install ffmpeg on Travis CI, due to it is very slow!"
 else
@@ -84,15 +85,26 @@ else
     brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
 fi
 
+# libav (avconv)
 func_log "[INFO] Running brew install libav ..."
 brew install libav
 
+# OpenCV
 func_log "[INFO] Running brew install opencv ..."
 brew install homebrew/science/opencv
-
 func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
 CV2_SO_PATH=`find /usr/local/Cellar/opencv/ -name "cv2.so"`
 ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
+
+# imagemagick, for Speed Index
+brew install imagemagick
+
+# mitmproxy
+brew install mitmproxy
+
+###############
+# Hasal Setup #
+###############
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt

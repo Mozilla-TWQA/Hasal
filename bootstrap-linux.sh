@@ -40,6 +40,10 @@ sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev 
 # opencv
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
 func_log "[INFO] Install Requiremants finished."
+# imagemagick, for Speed Index
+sudo apt-get install -y --force-yes imagemagick
+# mitmproxy
+sudo apt-get install -y --force-yes mitmproxy
 
 ################
 # Installation #
@@ -49,6 +53,10 @@ func_log "[INFO] Creating virtualenv ..."
 virtualenv .env-python
 source .env-python/bin/activate
 
+func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
+CV2_SO_PATH=`find /usr/ -name "cv2.so" -print | head -n 1`  # only get first result
+ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
+
 func_log "[INFO] Upgrading pip itself ..."
 pip install -U pip
 pip install -U setuptools
@@ -56,9 +64,9 @@ pip install -U setuptools
 func_log "[INFO] Install numpy and scipy ..."
 pip install numpy scipy
 
-func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
-CV2_SO_PATH=`find /usr/ -name "cv2.so" -print | head -n 1`  # only get first result
-ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
+###############
+# Hasal Setup #
+###############
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
