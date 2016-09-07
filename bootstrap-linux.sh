@@ -28,22 +28,35 @@ else
 fi
 
 
-func_log "[INFO] Install Requiremants ..."
+func_log "[INFO] Install Requirements ..."
+
 # tools
+func_log "[INFO] Installing tools ..."
 sudo apt-get install -y --force-yes unzip wget git
 # python
+func_log "[INFO] Installing python ..."
 sudo apt-get install -y --force-yes python-dev python-virtualenv python-pip
-# build toolchains
+# build toolchain
+func_log "[INFO] Installing build toolchain ..."
 sudo apt-get install -y build-essential cmake libffi-dev libssl-dev
 # req of numpy, scipy
+func_log "[INFO] Installing req of numpy, scipy ..."
 sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev gfortran
-# opencv
+# OpenCV
+func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
-func_log "[INFO] Install Requiremants finished."
 # imagemagick, for Speed Index
+func_log "[INFO] Installing imagemagick ..."
 sudo apt-get install -y --force-yes imagemagick
 # mitmproxy
+func_log "[INFO] Installing mitmproxy ..."
 sudo apt-get install -y --force-yes mitmproxy
+# sikulix
+func_log "[INFO] Installing Sikulix 1.1.0 ..."
+wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
+java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
+
+func_log "[INFO] Install Requirements finished."
 
 ################
 # Installation #
