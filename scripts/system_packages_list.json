@@ -24,7 +24,7 @@
     "CMD": ["mitmdump", "-h"]
   },
   {
-    "CI_SKIP": false,
+    "CI_SKIP": true,
     "PLATFORM": "ALL",
     "PKG_NAME": "sikulix",
     "CMD": ["./thirdParty/runsikulix", "-h"]

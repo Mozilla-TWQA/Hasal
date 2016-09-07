@@ -39,17 +39,17 @@ class SysPkgChecker(object):
         try:
             sys_pkg_list_file = os.path.join(self.current_file_dir, SysPkgChecker._SYS_PKG_LIST_FILE_NAME)
             with open(sys_pkg_list_file, 'r') as fp:
-                print('[INFO] Loading packages list from {} ...'.format(sys_pkg_list_file))
+                print('[INFO] Loading packages list from {} ...'.format(sys_pkg_list_file), end='\n')
                 self.sys_pkg_info_list = json.load(fp)
         except Exception as e:
             print(e)
-            print('[WARN] Loading default packages list ...')
+            print('[WARN] Loading default packages list ...', end='\n')
             self.sys_pkg_info_list = [
                 {'CI_SKIP': True, 'PLATFORM': 'darwin', 'PKG_NAME': 'ffmpeg', 'CMD': ['ffmpeg', '-h']},
                 {'CI_SKIP': False, 'PLATFORM': 'ALL', 'PKG_NAME': 'imagemagick', 'CMD': ['convert', '-version']},
                 {'CI_SKIP': False, 'PLATFORM': 'ALL', 'PKG_NAME': 'imagemagick', 'CMD': ['compare', '-version']},
                 {'CI_SKIP': False, 'PLATFORM': 'ALL', 'PKG_NAME': 'mitmproxy', 'CMD': ['mitmdump', '-h']},
-                {'CI_SKIP': False, 'PLATFORM': 'ALL', 'PKG_NAME': 'sikulix', 'CMD': ['./thirdParty/runsikulix', '-h']}]
+                {'CI_SKIP': True, 'PLATFORM': 'ALL', 'PKG_NAME': 'sikulix', 'CMD': ['./thirdParty/runsikulix', '-h']}]
 
     def setup_ci(self, is_ci=False):
         self.is_ci = is_ci
@@ -72,19 +72,19 @@ class SysPkgChecker(object):
                 print('CI Skip'.format(pkg_name))
                 continue
             elif platform != SysPkgChecker._PLATFORM_ALL and platform != self.current_platform:
-                print('not {}, current {}'.format(platform, self.current_platform))
+                print('Skip, current platform is {}, not {}'.format(self.current_platform, platform), end='\n')
                 continue
             else:
                 with open(os.devnull) as fp:
                     try:
                         ret_code = subprocess.call(cmd, stdout=fp, stderr=fp)
                         if ret_code == SysPkgChecker._CMD_SUCCESS:
-                            print('OK')
+                            print('OK', end='\n')
                         else:
-                            print('Fail')
+                            print('Fail', end='\n')
                             error_pkg_list.append(pkg_name)
                     except Exception:
-                        print('Fail')
+                        print('Fail', end='\n')
                         error_pkg_list.append(pkg_name)
         return error_pkg_list
 
@@ -93,18 +93,18 @@ def main():
     try:
         checker = SysPkgChecker()
         if os.getenv('TRAVIS', False):
-            print('[INFO] The environment variable "TRAVIS" is True, enable CI mode.')
+            print('[INFO] The environment variable "TRAVIS" is True, enable CI mode.', end='\n')
             checker.setup_ci(True)
         error_pkg_list = checker.check()
         if not error_pkg_list:
-            print('[INFO] Check system packages passed.')
+            print('[INFO] Check system packages passed.', end='\n')
         else:
-            print('[Error] Some system packages failed.')
+            print('[Error] Some system packages failed.', end='\n')
             for pkg in error_pkg_list:
                 print('\t{}'.format(pkg))
             exit(1)
     except Exception as e:
-        print('[Error] Check system packages failed.')
+        print('[Error] Check system packages failed.', end='\n')
         print(e)
         exit(1)
 

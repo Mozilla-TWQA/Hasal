@@ -27,6 +27,44 @@ else
     exit 1
 fi
 
+# Checking requirements
+func_install_requirement () {
+    echo "[EXEC] $@"
+    $@
+    if [[ ${RET_SUCCESS} != `echo $?` ]]; then
+        func_log "[FAIL] Install failed."
+        return 1
+    fi
+}
+
+declare -a REQUIREMENTS=(
+    "java"
+    )
+declare -a REQUIREMENTS_INSTALL=(
+    "sudo apt-get install -y --force-yes default-jre"
+    )
+
+REQUIREMENTS_LENGTH=${#REQUIREMENTS[@]}
+
+for (( i=1; i<${REQUIREMENTS_LENGTH}+1; i++ ));
+do
+    func_log "${i}/${REQUIREMENTS_LENGTH}: Check ${REQUIREMENTS[${i}-1]} ..."
+    if [[ ${RET_SUCCESS} != `which ${REQUIREMENTS[${i}-1]} > /dev/null; echo $?` ]]; then
+        func_log "[FAIL] No ${REQUIREMENTS[${i}-1]} installed."
+        func_install_requirement ${REQUIREMENTS_INSTALL[${i}-1]}
+        INSTALL_RET=$?
+        if [[ ${RET_SUCCESS} != ${INSTALL_RET} ]]; then
+            func_log "[FAIL] Install ${REQUIREMENTS[${i}-1]} failed."
+        else
+            func_log "[INFO] Install ${REQUIREMENTS[${i}-1]} done."
+        fi
+    fi
+done
+func_log "[PASS] Checking finished."
+
+################
+# Installation #
+################
 
 func_log "[INFO] Install Requirements ..."
 
@@ -35,13 +73,16 @@ func_log "[INFO] Installing tools ..."
 sudo apt-get install -y --force-yes unzip wget git
 # python
 func_log "[INFO] Installing python ..."
-sudo apt-get install -y --force-yes python-dev python-virtualenv python-pip
+# python-pip has some problem of urllib3
+# ref: http://stackoverflow.com/questions/27341064/how-do-i-fix-importerror-cannot-import-name-incompleteread
+sudo apt-get install -y --force-yes python-dev python-virtualenv
+sudo easy_install pip
 # build toolchain
 func_log "[INFO] Installing build toolchain ..."
 sudo apt-get install -y build-essential cmake libffi-dev libssl-dev
 # req of numpy, scipy
 func_log "[INFO] Installing req of numpy, scipy ..."
-sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev gfortran
+sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev libyaml-dev gfortran
 # OpenCV
 func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
@@ -61,9 +102,9 @@ func_log "[INFO] Install Requirements finished."
 
 echo ""
 
-################
-# Installation #
-################
+###############
+# Hasal Setup #
+###############
 
 func_log "[INFO] Creating virtualenv ..."
 virtualenv .env-python
@@ -78,11 +119,7 @@ pip install -U pip
 pip install -U setuptools
 
 func_log "[INFO] Install numpy and scipy ..."
-pip install numpy scipy
-
-###############
-# Hasal Setup #
-###############
+pip install requests[security] numpy scipy
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
@@ -122,4 +159,3 @@ else
     func_log ""
     exit 1
 fi
-

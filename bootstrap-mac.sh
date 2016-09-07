@@ -55,6 +55,12 @@ do
     if [[ ${RET_SUCCESS} != `which ${REQUIREMENTS[${i}-1]} > /dev/null; echo $?` ]]; then
         func_log "[FAIL] No ${REQUIREMENTS[${i}-1]} installed."
         func_install_requirement ${REQUIREMENTS_INSTALL[${i}-1]}
+        INSTALL_RET=$?
+        if [[ ${RET_SUCCESS} != ${INSTALL_RET} ]]; then
+            func_log "[FAIL] Install ${REQUIREMENTS[${i}-1]} failed."
+        else
+            func_log "[INFO] Install ${REQUIREMENTS[${i}-1]} done."
+        fi
     fi
 done
 func_log "[PASS] Checking finished."
@@ -156,4 +162,3 @@ else
     func_log ""
     exit 1
 fi
-
