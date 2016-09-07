@@ -77,8 +77,8 @@ class GetBuild(object):
                     # generate url for build folder
                     build_folder_url_template = "%s/pub/firefox/%s-builds/%s-%s/%s-%s/"
                     build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
-                                                                        self.project, self.user_email, build_hash,
-                                                                        self.project, platform)
+                                                                    self.project, self.user_email, build_hash,
+                                                                    self.project, platform)
                     print "Build folder url [%s]" % build_folder_url
                     build_link = self.get_build_link(platform, build_folder_url)
                     download_fn = build_link.split("/")[-1]
@@ -90,6 +90,7 @@ class GetBuild(object):
                 else:
                     "Current job status is [%s] !!" % job['result'].lower()
                     return None
+
 
 def main():
     arguments = docopt(__doc__)
