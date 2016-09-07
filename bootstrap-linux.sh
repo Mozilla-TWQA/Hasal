@@ -58,6 +58,8 @@ java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
 func_log "[INFO] Install Requirements finished."
 
+echo ""
+
 ################
 # Installation #
 ################
@@ -85,16 +87,28 @@ func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
 python setup.py install
 
+############
+# Checking #
+############
+
+echo ""
+
 func_log "[INFO] Checking Python CV2 Module ..."
-PYTHON_CV2_CHECK_RESULT=`./scripts/cv2_checker.py`
-BOOTSTRAP_RET=$?
-func_log ${PYTHON_CV2_CHECK_RESULT}
+CHECK_CV2_STDOUT=`./scripts/cv2_checker.py`
+CHECK_CV2_RET=$?
+func_log ${CHECK_CV2_STDOUT}
+
+func_log "[INFO] Checking System Packages ..."
+CHECK_SYS_STDOUT=`./scripts/sys_pkg_checker.py`
+CHECK_SYS_RET=$?
+func_log ${CHECK_SYS_STDOUT}
+
+echo ""
 
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
-func_log ""
 
-if [[ ${RET_SUCCESS} == ${BOOTSTRAP_RET} ]]; then
+if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_RET} ]]; then
     func_log "### Hasal ##############"
     func_log "# Welcome to Hasal! :) #"
     func_log "########################"
