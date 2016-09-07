@@ -1,5 +1,5 @@
 import os
-import platform
+import sys
 import subprocess
 from base import BaseProfiler
 
@@ -9,7 +9,10 @@ class MitmDumpProfiler(BaseProfiler):
     process = None
 
     def start_recording(self):
-        default_dump_flow_cmd = ["mitmdump", "--no-http2", "-w"]
+        if sys.platform == "linux2":
+            default_dump_flow_cmd = ["mitmdump", "-w"]
+        else:
+            default_dump_flow_cmd = ["mitmdump", "--no-http2", "-w"]
         flow_file_fp = os.path.join(self.env.DEFAULT_FLOW_DIR, self.env.flow_file_fp)
         if not os.path.exists(self.env.DEFAULT_FLOW_DIR):
             os.makedirs(self.env.DEFAULT_FLOW_DIR)
@@ -27,11 +30,14 @@ class MitmDumpProfiler(BaseProfiler):
                 else:
                     print "According to your answer, we will not record the packet during this test!"
         else:
-            replay_cmd_list = ["mitmdump", "--no-http2", "-S", flow_file_fp, "--no-pop", "--norefresh"]
+            if sys.platform == "linux2":
+                replay_cmd_list = ["mitmdump", "-S", flow_file_fp, "--no-pop", "--norefresh"]
+            else:
+                replay_cmd_list = ["mitmdump", "--no-http2", "-S", flow_file_fp, "--no-pop", "--norefresh"]
             self.process = subprocess.Popen(replay_cmd_list)
 
     def stop_recording(self, **kwargs):
-        if platform.system().lower() == "windows":
+        if sys.platform == "win32":
             subprocess.Popen("taskkill /IM mitmdump.exe /T /F", shell=True)
         else:
             self.process.send_signal(3)
