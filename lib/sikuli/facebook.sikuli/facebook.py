@@ -26,12 +26,13 @@ class facebook():
         self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.70)
         self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.70)
         self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.70)
-        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.70)
+        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.85)
         self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.70)
         self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.70)
         self.club_delete_post_menu = Pattern("pics/facebook_club_delete_post_menu.png").similar(0.70)
         self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.70)
         self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.70)
+        self.non_club_post_menu_edit = Pattern("pics/facebook_non_club_post_menu_edit.png").similar(0.70)
         self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.70)
         self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
         self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
@@ -39,6 +40,8 @@ class facebook():
         self.activity_end_reminder = Pattern("pics/facebook_activity_end_reminder.png").similar(0.70)
         self.share_button = Pattern("pics/facebook_share_button.png").similar(0.70)
         self.share_menu = Pattern("pics/facebook_share_menu.png").similar(0.70)
+        self.save_button = Pattern("pics/facebook_save_button.png").similar(0.70)
+        self.club_post_menu_delete = Pattern("pics/facebook_club_post_menu_delete.png").similar(0.70)
 
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content/sample_1.jpg")
 
