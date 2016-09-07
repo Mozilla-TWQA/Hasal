@@ -11,6 +11,7 @@ matrix:
     # Test tidy
     - env: GOAL=test-tidy
       os: linux
+      dist: trusty
       python: 2.7
       install:
         - ./mach
@@ -19,9 +20,13 @@ matrix:
     # Test bootstrap-linux
     - env: GOAL=bootstrap
       os: linux
+      dist: trusty
       python: 2.7
       sudo: required
       install:
+        # enable universe repository
+        - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
+        - sudo apt-get update
         - ./mach
       script:
         - ./bootstrap-linux.sh
