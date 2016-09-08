@@ -101,7 +101,7 @@ func_log "[INFO] Installing mitmproxy ..."
 sudo apt-get install -y --force-yes mitmproxy
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
-sudo apt-get install -y --force-yes libcv2.4 libcvaux2.4 libhighgui2.4 libtesseract-dev
+sudo apt-get install -y --force-yes libcv2.4 libcvaux2.4 libhighgui2.4 libtesseract-dev wmctrl
 rm thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
