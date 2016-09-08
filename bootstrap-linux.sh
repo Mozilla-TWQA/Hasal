@@ -93,6 +93,9 @@ sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev 
 # OpenCV
 func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
+# avconv
+func_log "[INFO] Installing avconv ..."
+sudo apt-get install -y --force-yes libav-tools
 # imagemagick, for Speed Index
 func_log "[INFO] Installing imagemagick ..."
 sudo apt-get install -y --force-yes imagemagick
