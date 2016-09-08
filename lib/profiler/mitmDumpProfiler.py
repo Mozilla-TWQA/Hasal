@@ -39,9 +39,9 @@ class MitmDumpProfiler(BaseProfiler):
             self.process = subprocess.Popen(replay_cmd_list)
 
         if sys.platform == "linux2":
-            subprocess.call(["gsettings", "set", "org.gnome.system.proxy",       "mode", "manual"])
-            subprocess.call(["gsettings", "set", "org.gnome.system.proxy.http",  "host", "127.0.0.1"])
-            subprocess.call(["gsettings", "set", "org.gnome.system.proxy.http",  "port", "8080"])
+            subprocess.call(["gsettings", "set", "org.gnome.system.proxy", "mode", "manual"])
+            subprocess.call(["gsettings", "set", "org.gnome.system.proxy.http", "host", "127.0.0.1"])
+            subprocess.call(["gsettings", "set", "org.gnome.system.proxy.http", "port", "8080"])
             subprocess.call(["gsettings", "set", "org.gnome.system.proxy.https", "host", "127.0.0.1"])
             subprocess.call(["gsettings", "set", "org.gnome.system.proxy.https", "port", "8080"])
         else:
