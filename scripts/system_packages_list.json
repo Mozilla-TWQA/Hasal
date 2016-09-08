@@ -1,0 +1,32 @@
+[
+  {
+    "CI_SKIP": true,
+    "PLATFORM": "darwin",
+    "PKG_NAME": "ffmpeg",
+    "CMD": ["ffmpeg", "-h"]
+  },
+  {
+    "CI_SKIP": false,
+    "PLATFORM": "ALL",
+    "PKG_NAME": "imagemagick",
+    "CMD": ["convert", "-version"]
+  },
+  {
+    "CI_SKIP": false,
+    "PLATFORM": "ALL",
+    "PKG_NAME": "imagemagick",
+    "CMD": ["compare", "-version"]
+  },
+  {
+    "CI_SKIP": false,
+    "PLATFORM": "ALL",
+    "PKG_NAME": "mitmproxy",
+    "CMD": ["mitmdump", "-h"]
+  },
+  {
+    "CI_SKIP": true,
+    "PLATFORM": "ALL",
+    "PKG_NAME": "sikulix",
+    "CMD": ["./thirdParty/runsikulix", "-h"]
+  }
+]

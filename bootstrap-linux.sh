@@ -3,8 +3,15 @@
 # Version: 0.0.1
 
 
+LOG_FILE="bootstrap.log"
+
+func_log_exec () {
+    # It will only log the STDOUT result, and the return code will always be 0.
+    $@ >> ${LOG_FILE}
+}
+
 func_log () {
-    echo "$@" | tee -a bootstrap-linux.log
+    echo "$@" | tee -a ${LOG_FILE}
 }
 
 ################
@@ -27,6 +34,44 @@ else
     exit 1
 fi
 
+# Checking requirements
+func_install_requirement () {
+    echo "[EXEC] $@"
+    $@
+    if [[ ${RET_SUCCESS} != `echo $?` ]]; then
+        func_log "[FAIL] Install failed."
+        return 1
+    fi
+}
+
+declare -a REQUIREMENTS=(
+    "java"
+    )
+declare -a REQUIREMENTS_INSTALL=(
+    "sudo apt-get install -y --force-yes default-jre"
+    )
+
+REQUIREMENTS_LENGTH=${#REQUIREMENTS[@]}
+
+for (( i=1; i<${REQUIREMENTS_LENGTH}+1; i++ ));
+do
+    func_log "${i}/${REQUIREMENTS_LENGTH}: Check ${REQUIREMENTS[${i}-1]} ..."
+    if [[ ${RET_SUCCESS} != `which ${REQUIREMENTS[${i}-1]} > /dev/null; echo $?` ]]; then
+        func_log "[FAIL] No ${REQUIREMENTS[${i}-1]} installed."
+        func_install_requirement ${REQUIREMENTS_INSTALL[${i}-1]}
+        INSTALL_RET=$?
+        if [[ ${RET_SUCCESS} != ${INSTALL_RET} ]]; then
+            func_log "[FAIL] Install ${REQUIREMENTS[${i}-1]} failed."
+        else
+            func_log "[INFO] Install ${REQUIREMENTS[${i}-1]} done."
+        fi
+    fi
+done
+func_log "[PASS] Checking finished."
+
+################
+# Installation #
+################
 
 func_log "[INFO] Install Requirements ..."
 
@@ -35,13 +80,16 @@ func_log "[INFO] Installing tools ..."
 sudo apt-get install -y --force-yes unzip wget git
 # python
 func_log "[INFO] Installing python ..."
-sudo apt-get install -y --force-yes python-dev python-virtualenv python-pip
+# python-pip has some problem of urllib3
+# ref: http://stackoverflow.com/questions/27341064/how-do-i-fix-importerror-cannot-import-name-incompleteread
+sudo apt-get install -y --force-yes python-dev python-virtualenv
+sudo easy_install pip
 # build toolchain
 func_log "[INFO] Installing build toolchain ..."
 sudo apt-get install -y build-essential cmake libffi-dev libssl-dev
 # req of numpy, scipy
 func_log "[INFO] Installing req of numpy, scipy ..."
-sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev gfortran
+sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev libyaml-dev gfortran
 # OpenCV
 func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
@@ -53,14 +101,18 @@ func_log "[INFO] Installing mitmproxy ..."
 sudo apt-get install -y --force-yes mitmproxy
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
+sudo apt-get install -y --force-yes libcv2.4 libcvaux2.4 libhighgui2.4 libtesseract-dev
+rm thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
 func_log "[INFO] Install Requirements finished."
 
-################
-# Installation #
-################
+echo ""
+
+###############
+# Hasal Setup #
+###############
 
 func_log "[INFO] Creating virtualenv ..."
 virtualenv .env-python
@@ -75,26 +127,34 @@ pip install -U pip
 pip install -U setuptools
 
 func_log "[INFO] Install numpy and scipy ..."
-pip install numpy scipy
-
-###############
-# Hasal Setup #
-###############
+pip install requests[security] numpy scipy
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
 python setup.py install
 
+############
+# Checking #
+############
+
+echo ""
+
 func_log "[INFO] Checking Python CV2 Module ..."
-PYTHON_CV2_CHECK_RESULT=`./scripts/cv2_checker.py`
-BOOTSTRAP_RET=$?
-func_log ${PYTHON_CV2_CHECK_RESULT}
+func_log_exec ./scripts/cv2_checker.py
+./scripts/cv2_checker.py
+CHECK_CV2_RET=$?
+
+func_log "[INFO] Checking System Packages ..."
+func_log_exec ./scripts/sys_pkg_checker.py
+./scripts/sys_pkg_checker.py
+CHECK_SYS_RET=$?
+
+echo ""
 
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
-func_log ""
 
-if [[ ${RET_SUCCESS} == ${BOOTSTRAP_RET} ]]; then
+if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_RET} ]]; then
     func_log "### Hasal ##############"
     func_log "# Welcome to Hasal! :) #"
     func_log "########################"
@@ -107,4 +167,3 @@ else
     func_log ""
     exit 1
 fi
-
