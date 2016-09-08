@@ -8,6 +8,12 @@
   {
     "CI_SKIP": false,
     "PLATFORM": "ALL",
+    "PKG_NAME": "libav-tools",
+    "CMD": ["avconv", "-h"]
+  },
+  {
+    "CI_SKIP": false,
+    "PLATFORM": "ALL",
     "PKG_NAME": "imagemagick",
     "CMD": ["convert", "-version"]
   },
