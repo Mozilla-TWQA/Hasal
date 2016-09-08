@@ -82,7 +82,11 @@ func_log "[INFO] Running brew install homebrew/science ..."
 # updating brew before tap homebrew/science
 brew update
 brew tap homebrew/science
+brew tap caskroom/cask
 brew update
+
+# tools
+brew install wget
 
 # ffmpeg, skip on CI
 if [[ ${TRAVIS} ]]; then
@@ -110,8 +114,9 @@ brew install mitmproxy
 
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
-rm thirdParty/sikulixsetup-1.1.0.jar
+rm -rf thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
+brew cask install java
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
 func_log "[INFO] Install Requirements finished."
@@ -153,7 +158,37 @@ func_log_exec ./scripts/sys_pkg_checker.py
 ./scripts/sys_pkg_checker.py
 CHECK_SYS_RET=$?
 
-echo ""
+###########
+# Browser #
+###########
+
+if [[ ${TRAVIS} ]]; then
+    func_log "[WARN] Skip checking browsers."
+else
+    func_log "[INFO] Checking browsers ..."
+
+    ls /Applications/Firefox.app/Contents/MacOS/firefox > /dev/null
+    CHK_FX_RET=$?
+    if [[ ${RET_SUCCESS} == ${CHK_FX_RET} ]]; then
+        func_log "[INFO] Your Firefox version: `/Applications/Firefox.app/Contents/MacOS/firefox -v`"
+    else
+        func_log "[INFO] Installing \"Firefox\" ..."
+        brew cask install firefox
+    fi
+
+    ls "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" > /dev/null
+    CHK_GC_RET=$?
+    if [[ ${RET_SUCCESS} == ${CHK_GC_RET} ]]; then
+        func_log "[INFO] Your Chrome version: `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version`"
+    else
+        func_log "[INFO] Installing \"Chrome\" ..."
+        brew cask install google-chrome
+    fi
+fi
+
+########
+# Done #
+########
 
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
@@ -162,7 +197,15 @@ if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_
     func_log "### Hasal ##############"
     func_log "# Welcome to Hasal! :) #"
     func_log "########################"
+
+    if [[ ${TRAVIS} ]]; then
+        func_log "[NOTE] Skip download Certificates into Hasal's folder ..."
+    else
+        func_log "[NOTE] Please login your Mozilla account, and download Certificates into Hasal's folder ..."
+        open -a firefox -g http://goo.gl/ALcw0B
+    fi
     func_log ""
+
 else
     func_log "### Hasal ########################"
     func_log "# It seems like something wrong! #"

@@ -105,7 +105,7 @@ sudo apt-get install -y --force-yes mitmproxy
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
 sudo apt-get install -y --force-yes libcv2.4 libcvaux2.4 libhighgui2.4 libtesseract-dev wmctrl xdotool
-rm thirdParty/sikulixsetup-1.1.0.jar
+rm -rf thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
@@ -154,6 +154,41 @@ CHECK_SYS_RET=$?
 
 echo ""
 
+###########
+# Browser #
+###########
+
+if [[ ${TRAVIS} ]]; then
+    func_log "[WARN] Skip checking browsers."
+else
+    func_log "[INFO] Checking browsers ..."
+
+    which firefox > /dev/null
+    CHK_FX_RET=$?
+    if [[ ${RET_SUCCESS} == ${CHK_FX_RET} ]]; then
+        func_log "[INFO] Your Firefox version: `firefox -v`"
+    else
+        func_log "[INFO] Installing \"Firefox\" ..."
+        brew cask install firefox
+    fi
+
+    which google-chrome > /dev/null
+    CHK_GC_RET=$?
+    if [[ ${RET_SUCCESS} == ${CHK_GC_RET} ]]; then
+        func_log "[INFO] Your Chrome version: `google-chrome --version`"
+    else
+        func_log "[INFO] Installing \"Chrome\" ..."
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install google-chrome-stable
+    fi
+fi
+
+########
+# Done #
+########
+
 func_log "[INFO] Done."
 func_log "[END] `date +%Y-%m-%d:%H:%M:%S`"
 
@@ -161,7 +196,15 @@ if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_
     func_log "### Hasal ##############"
     func_log "# Welcome to Hasal! :) #"
     func_log "########################"
+
+    if [[ ${TRAVIS} ]]; then
+        func_log "[NOTE] Skip download Certificates into Hasal's folder ..."
+    else
+        func_log "[NOTE] Please login your Mozilla account, and download Certificates into Hasal's folder ..."
+        firefox --new-window http://goo.gl/ALcw0B &
+    fi
     func_log ""
+
 else
     func_log "### Hasal ########################"
     func_log "# It seems like something wrong! #"
