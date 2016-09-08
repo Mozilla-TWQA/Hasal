@@ -111,7 +111,7 @@ brew install mitmproxy
 
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
-rm thirdParty/sikulixsetup-1.1.0.jar
+rm -rf thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 brew cask install java
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
