@@ -59,6 +59,9 @@ class MitmDumpProfiler(BaseProfiler):
         if sys.platform == "win32":
             proxy_disable_cmd = ["reg", "add", "\"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\"", "/v", "ProxyEnable", "/t", "REG_DWORD", "/d", "0", "/f"]
             os.system(" ".join(proxy_disable_cmd))
+            os.system("cmd /c start \"\" /min \"C:\\Program Files\\Internet Explorer\\iexplore.exe\"")
+            time.sleep(5)
+            os.system("taskkill /T /IM iexplore.exe /F")
             subprocess.Popen("taskkill /IM mitmdump.exe /T /F", shell=True)
         elif sys.platform == "linux2":
             subprocess.call(["gsettings", "set", "org.gnome.system.proxy", "mode", "none"])
