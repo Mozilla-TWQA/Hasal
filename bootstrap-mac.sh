@@ -2,8 +2,16 @@
 # Author: askeing
 # Version: 0.0.1
 
+
+LOG_FILE="bootstrap.log"
+
+func_log_exec () {
+    # It will only log the STDOUT result, and the return code will always be 0.
+    $@ >> ${LOG_FILE}
+}
+
 func_log () {
-    echo "$@" | tee -a bootstrap-mac.log
+    echo "$@" | tee -a ${LOG_FILE}
 }
 
 ################
@@ -102,6 +110,7 @@ brew install mitmproxy
 
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
+rm thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
@@ -135,14 +144,14 @@ python setup.py install
 echo ""
 
 func_log "[INFO] Checking Python CV2 Module ..."
-CHECK_CV2_STDOUT=`./scripts/cv2_checker.py`
+func_log_exec ./scripts/cv2_checker.py
+./scripts/cv2_checker.py
 CHECK_CV2_RET=$?
-func_log ${CHECK_CV2_STDOUT}
 
 func_log "[INFO] Checking System Packages ..."
-CHECK_SYS_STDOUT=`./scripts/sys_pkg_checker.py`
+func_log_exec ./scripts/sys_pkg_checker.py
+./scripts/sys_pkg_checker.py
 CHECK_SYS_RET=$?
-func_log ${CHECK_SYS_STDOUT}
 
 echo ""
 

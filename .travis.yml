@@ -30,7 +30,7 @@ matrix:
         - ./mach
       script:
         - ./bootstrap-linux.sh
-        - cat bootstrap-linux.log
+        - cat bootstrap.log
         # Run "runtest.py -h" for testing Hasal can works basically ...
         - source .env-python/bin/activate
         - python runtest.py -h
@@ -61,7 +61,7 @@ matrix:
         - pip install virtualenv
       script:
         - ./bootstrap-mac.sh
-        - cat bootstrap-mac.log
+        - cat bootstrap.log
         # Run "runtest.py -h" for testing Hasal can works basically ...
         - source .env-python/bin/activate
         - python runtest.py -h
