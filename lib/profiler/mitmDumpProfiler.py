@@ -55,9 +55,9 @@ class MitmDumpProfiler(BaseProfiler):
 
     def stop_recording(self, **kwargs):
         if sys.platform == "win32":
-            subprocess.call(["gsettings", "set", "org.gnome.system.proxy", "mode", "none"])
-            subprocess.Popen("taskkill /IM mitmdump.exe /T /F", shell=True)
-        else:
-            self.process.send_signal(3)
             proxy_disable_cmd = ["reg", "add", "\"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\"", "/v", "ProxyEnable", "/t", "REG_DWORD", "/d", "0", "/f"]
             os.system(" ".join(proxy_disable_cmd))
+            subprocess.Popen("taskkill /IM mitmdump.exe /T /F", shell=True)
+        else:
+            subprocess.call(["gsettings", "set", "org.gnome.system.proxy", "mode", "none"])
+            self.process.send_signal(3)
