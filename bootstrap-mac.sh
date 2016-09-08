@@ -85,6 +85,9 @@ brew tap homebrew/science
 brew tap caskroom/cask
 brew update
 
+# tools
+brew install wget
+
 # ffmpeg, skip on CI
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
