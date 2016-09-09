@@ -89,20 +89,21 @@ brew update
 brew install wget
 
 # ffmpeg, skip on CI
+# OpenCV
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
+    func_log "[INFO] Installing opencv withour ffmpeg (on Travis CI) ..."
+    brew install homebrew/science/opencv
 else
     func_log "[INFO] Installing ffmpeg ..."
     brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+    func_log "[INFO] Installing opencv with ffmpeg ..."
+    brew install homebrew/science/opencv --with-ffmpeg -v
 fi
 
 # libav (avconv)
 func_log "[INFO] Installing libav ..."
 brew install libav
-
-# OpenCV
-func_log "[INFO] Installing opencv ..."
-brew install homebrew/science/opencv
 
 # imagemagick, for Speed Index
 func_log "[INFO] Installing imagemagick ..."
