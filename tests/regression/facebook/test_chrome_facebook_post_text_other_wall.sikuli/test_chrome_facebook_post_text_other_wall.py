@@ -6,7 +6,7 @@ import common
 import facebook
 
 com = common.General()
-chrome = browser.Firefox()
+chrome = browser.Chrome()
 fb = facebook.facebook()
 
 chrome.clickBar()
