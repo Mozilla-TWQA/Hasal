@@ -169,7 +169,7 @@ else
         func_log "[INFO] Your Firefox version: `firefox -v`"
     else
         func_log "[INFO] Installing \"Firefox\" ..."
-        brew cask install firefox
+        sudo apt-get install firefox
     fi
 
     which google-chrome > /dev/null
