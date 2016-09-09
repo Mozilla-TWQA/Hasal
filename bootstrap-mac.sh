@@ -92,7 +92,7 @@ brew install wget
 # OpenCV
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
-    func_log "[INFO] Installing opencv withour ffmpeg (on Travis CI) ..."
+    func_log "[INFO] Installing opencv without ffmpeg (on Travis CI) ..."
     brew install homebrew/science/opencv
 else
     func_log "[INFO] Installing ffmpeg ..."
