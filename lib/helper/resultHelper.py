@@ -112,7 +112,7 @@ def fps_cal(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
             fps = re.findall('fps=(\s\d+\s)', data)
-            fps_ave = np.sum(map(int, fps)) / len(fps)
+            fps_ave = int(round(np.sum(map(float, fps)) / len(fps)))
         fh.close()
         return fps_ave
     else:

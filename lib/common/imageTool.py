@@ -57,14 +57,16 @@ class ImageTool(object):
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[], comp_mode=False):
         vidcap = cv2.VideoCapture(input_video_fp)
+        if hasattr(cv2, 'CAP_PROP_FPS'):
+            header_fps = vidcap.get(cv2.CAP_PROP_FPS)
+        else:
+            header_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         if not self.current_fps:
-            if hasattr(cv2, 'CAP_PROP_FPS'):
-                self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
-            else:
-                self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
+            self.current_fps = header_fps
             print '============== FPS from video header: ' + str(self.current_fps) + '==================='
         else:
             print '============== FPS from log file: ' + str(self.current_fps) + '==================='
+        real_time_shift = float(header_fps) / self.current_fps
         result, image = vidcap.read()
         if exec_timestamp_list:
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
@@ -91,7 +93,7 @@ class ImageTool(object):
                         (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]) or \
                         not exec_timestamp_list:
                     cv2.imwrite(str_image_fp, image)
-                self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
+                self.image_list.append({"time_seq": vidcap.get(0) * real_time_shift, "image_fp": str_image_fp})
                 result, image = vidcap.read()
                 img_cnt += 1
         if self.search_range[0] < 0:
