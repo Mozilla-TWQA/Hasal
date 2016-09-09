@@ -1,5 +1,6 @@
 import os
 import json
+from collections import Counter
 from ..common.imageTool import ImageTool
 from ..common.outlier import outlier
 import numpy as np
@@ -111,9 +112,9 @@ def fps_cal(file_path):
     if os.path.exists(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
-            fps = re.findall('fps=(\s\d+\s)', data)
-            fps_ave = np.sum(map(int, fps)) / len(fps)
+            fps = map(int, re.findall('fps=(\s\d+\s)', data))
+            count = Counter(fps)
         fh.close()
-        return fps_ave
+        return count.most_common()[0][0]
     else:
         return 0
