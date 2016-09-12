@@ -2,6 +2,9 @@ import argparse
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from argparse import ArgumentDefaultsHelpFormatter
+from logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class PyDriveUtil(object):
@@ -82,7 +85,7 @@ def main():
     elif args.input_settings_file is None and args.input_local_cred_file is None:
         pydrive_obj = PyDriveUtil()
     else:
-        print "pleas specify the -s and -l at same time!"
+        logger.error("pleas specify the -s and -l at same time!")
     pydrive_obj.update_file_content(folder_uri, file_name, content)
 
 if __name__ == '__main__':

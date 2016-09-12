@@ -1,6 +1,9 @@
 import sys
 import psutil
 import subprocess
+from ..common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class BrowserBase(object):
@@ -21,7 +24,7 @@ class BrowserBase(object):
         pass
 
     def launch(self):
-        print self.launch_cmd
+        logger.debug("browser launch command:%s" % self.launch_cmd)
         if hasattr(self, "test_env"):
             self.browser_process = subprocess.Popen(self.launch_cmd, env=self.test_env)
         else:

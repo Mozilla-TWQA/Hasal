@@ -32,6 +32,10 @@ import optparse
 import subprocess
 import platform
 import re
+from logConfig import get_logger
+
+
+logger = get_logger(__name__)
 
 # Easy-to-change defaults for users
 DEFAULT_FPS = 15
@@ -258,13 +262,13 @@ def print_codecs():
     a.sort()
     v.sort()
 
-    print("Audio codecs:")
+    logger.info("Audio codecs:")
     for i in a:
-        print("  " + str(i))
+        logger.info("  " + str(i))
 
-    print("Video codecs:")
+    logger.info("Video codecs:")
     for i in vcodecs:
-        print("  " + str(i))
+        logger.info("  " + str(i))
 
 if __name__ == "__main__":
     # Set up default file path
@@ -332,13 +336,13 @@ if __name__ == "__main__":
     try:
         dres = get_desktop_resolution()
     except:
-        print("Error: unable to determine desktop resolution.")
+        logger.error("unable to determine desktop resolution.")
         raise
 
     # Capture values
     fps = opts.fps
     if opts.capture_window:
-        print("Please click on a window to capture.")
+        logger.error("Please click on a window to capture.")
         x, y, width, height = get_window_position_and_size()
     else:
         if opts.xy:
@@ -379,8 +383,8 @@ if __name__ == "__main__":
     if (x + width) > dres[0] or (y + height) > dres[1]:
         parser.error("specified capture area is off screen.")
 
-    print (width)
-    print (height)
+    logger.info(width)
+    logger.info(height)
 
     # Capture!
     if not opts.no_audio:
@@ -388,4 +392,4 @@ if __name__ == "__main__":
     else:
         proc = subprocess.Popen(video_capture_line(fps, x, y, width, height, opts.display_device, opts.vcodec, out_path)).wait()
 
-    print("Done!")
+    logger.info("Done!")

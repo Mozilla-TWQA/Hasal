@@ -24,7 +24,7 @@ import platform
 import subprocess
 from lib.helper.uploadAgentHelper import UploadAgent
 from docopt import docopt
-
+from lib.common.logConfig import get_logger
 
 DEFAULT_RESULT_FP = "./result.json"
 DEFAULT_TEST_FOLDER = "tests"
@@ -47,8 +47,9 @@ else:
 
 class RunTest(object):
     def __init__(self, **kwargs):
+        self.logger = get_logger(__file__, kwargs['advance'])
         for variable_name in kwargs.keys():
-            print "Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name])
+            self.logger.debug("Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name]))
             setattr(self, variable_name, kwargs[variable_name])
 
     def kill_legacy_process(self):
@@ -86,7 +87,7 @@ class RunTest(object):
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.max_run:
-            print "The counter is %d and the retry counter is %d" % (current_run, current_retry)
+            self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             if self.online and os.path.exists(DEFAULT_RESULT_FP):
                 os.remove(DEFAULT_RESULT_FP)
             run_result = self.run_test(test_case_module_name, test_env)
@@ -96,12 +97,12 @@ class RunTest(object):
                         # Online mode handling
                         upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
                         if upload_result:
-                            print "===== upload success ====="
-                            print upload_result
+                            self.logger.info("===== upload success =====")
+                            self.logger.info(upload_result)
                             return_result['ip'] = upload_result['ip']
                             return_result['video_path'] = upload_result['video']
                             return_result['test_name'] = test_name
-                            print "===== upload success ====="
+                            self.logger.info("===== upload success =====")
                             if "current_test_times" in upload_result:
                                 current_run = upload_result["current_test_times"]
                                 self.max_run = upload_result['config_test_times']
@@ -126,10 +127,10 @@ class RunTest(object):
     def run_test(self, test_case_module_name, test_env):
         self.kill_legacy_process()
 
-        print "========== Environment data ======"
-        print test_env
-        print "========== Environment data ======"
-        print " ".join(["python", "-m", "unittest", test_case_module_name])
+        self.logger.debug("========== Environment data ======")
+        self.logger.debug(test_env)
+        self.logger.debug("========== Environment data ======")
+        self.logger.info(" ".join(["python", "-m", "unittest", test_case_module_name]))
         subprocess.call(["python", "-m", "unittest", test_case_module_name], env=test_env)
 
         if os.path.exists(DEFAULT_RUNNING_STAT_FN):
@@ -137,7 +138,7 @@ class RunTest(object):
                 stat_dict = json.load(stat_fh)
                 return stat_dict
         else:
-            print "[ERROR] test could raise exception during execution!!"
+            self.logger.error("test could raise exception during execution!!")
             return None
 
     def loop_suite(self, type, input_suite_fp):
@@ -145,9 +146,9 @@ class RunTest(object):
         with open(input_suite_fp) as input_suite_fh:
             for tmp_line in input_suite_fh.read().splitlines():
                 case_data = self.suite_content_parser(tmp_line)
-                print "======= case_data  ========"
-                print case_data
-                print "======= case_data  ========"
+                self.logger.info("======= case_data  ========")
+                self.logger.info(case_data)
+                self.logger.info("======= case_data  ========")
                 test_case = case_data.keys()[0]
                 case_data[test_case]["MAX_RUN"] = self.max_run
 

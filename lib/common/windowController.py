@@ -1,6 +1,9 @@
 import time
 import sys
 import subprocess
+from logConfig import get_logger
+
+logger = get_logger(__name__)
 
 if sys.platform == "win32":
     import win32gui
@@ -40,7 +43,7 @@ class WindowObject(object):
                 if self.window_name in window_title:
                     return tmp_list[0]
             time.sleep(1)
-        print "Can't find window name [%s] in wmctrl list!!!" % self.window_name
+        logger.warning("Can't find window name [%s] in wmctrl list!!!" % self.window_name)
         return "0"
 
     def appscript_move_window(self):
@@ -65,5 +68,5 @@ class WindowObject(object):
     def wmctrl_move_window(self):
         mvarg_val = ",".join([str(self.window_gravity), str(self.pos_x), str(self.pos_y), str(self.window_width), str(self.window_height)])
         wmctrl_cmd = " ".join([self.DEFAULT_WMCTRL_CMD, "-i", "-r", self.window_identity, "-e", mvarg_val])
-        print "Move windows command: [%s]" % wmctrl_cmd
+        logger.debug("Move windows command: [%s]" % wmctrl_cmd)
         subprocess.call(wmctrl_cmd, shell=True)
