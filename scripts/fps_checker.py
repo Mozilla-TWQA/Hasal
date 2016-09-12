@@ -26,8 +26,7 @@ class FPSChecker(object):
         print('[INFO] Recording fps should match default setting: ' + str(self.default_fps))
         time.sleep(10)
         self.stop_recording()
-        #fps = self.fps_cal()
-        fps = 59
+        fps = self.fps_cal()
         assert fps == self.default_fps, "[Error] Your recording fps is: " + str(fps)
 
     def start_recording(self):
