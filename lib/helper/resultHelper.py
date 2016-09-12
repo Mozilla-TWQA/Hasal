@@ -1,5 +1,6 @@
 import os
 import json
+from collections import Counter
 from ..common.imageTool import ImageTool
 from ..common.outlier import outlier
 import numpy as np
@@ -100,7 +101,11 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
     if os.path.exists(env.video_output_fp):
         fps = fps_cal(env.recording_log_fp)
-        result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
+        if fps != env.DEFAULT_VIDEO_RECORDING_FPS:
+            result_data = None
+            print('[WARN] Real FPS cannot reach default setting, ignore current result!')
+        else:
+            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
     else:
         result_data = None
     if result_data is not None:
@@ -111,9 +116,9 @@ def fps_cal(file_path):
     if os.path.exists(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
-            fps = re.findall('fps=(\s\d+\s)', data)
-            fps_ave = np.sum(map(int, fps)) / len(fps)
+            fps = map(int, re.findall('fps=(\s\d+\s)', data))
+            count = Counter(fps)
         fh.close()
-        return fps_ave
+        return count.most_common()[0][0]
     else:
         return 0
