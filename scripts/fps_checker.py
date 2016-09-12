@@ -26,9 +26,9 @@ class FPSChecker(object):
         print('[INFO] Recording fps should match default setting: ' + str(self.default_fps))
         time.sleep(10)
         self.stop_recording()
-        fps = self.fps_cal()
+        #fps = self.fps_cal()
+        fps = 59
         assert fps == self.default_fps, "[Error] Your recording fps is: " + str(fps)
-        return fps
 
     def start_recording(self):
         if os.path.exists(self.video_fn):
@@ -73,13 +73,21 @@ class FPSChecker(object):
             print('[Error] Parsing recording log failed.')
             return None
 
+    def teardown(self):
+        if os.path.exists(self.video_fn):
+            os.remove(self.video_fn)
+        if os.path.exists(self.recording_log):
+            os.remove(self.recording_log)
+
 
 def main():
     try:
         FPSChecker().check_recording_fps()
         print('[INFO] Check recording capability passed.')
+        FPSChecker().teardown()
     except Exception as e:
         print(e)
+        FPSChecker().teardown()
         exit(1)
 
 
