@@ -1,16 +1,17 @@
 import os
-import json
-from collections import Counter
-from ..common.imageTool import ImageTool
-from ..common.outlier import outlier
-import numpy as np
 import re
+import json
+import numpy as np
+from collections import Counter
+from ..common.outlier import outlier
 from ..common.logConfig import get_logger
+from ..common.imageTool import ImageTool
+from ..common.commonUtil import CommonUtil
+from ..common.videoFluency import VideoFluency
 
 logger = get_logger(__name__)
 
-
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0, waveform=0):
     return_result = {}
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
@@ -20,7 +21,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
         img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_object(input_sample_dp)
     else:
-        if calc_si == 0:
+        if calc_si == 0 and waveform == 0:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
         else:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
@@ -109,18 +110,41 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.write(json.dumps(stat_data))
 
 
-def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
+def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
+    waveform_info = {}
+    waveform_info['video'] = video_fp
+    current_run_result = result_data['running_time_result']
+    if len(current_run_result) == 2:
+        video_fluency_obj = VideoFluency()
+        img_list = os.listdir(img_dp)
+        img_list.sort(key=CommonUtil.natural_keys)
+        start_fn = os.path.basename(current_run_result[0]['image_fp'])
+        start_index = img_list.index(start_fn)
+        end_fn = os.path.basename(current_run_result[1]['image_fp'])
+        end_index = img_list.index(end_fn)
+        for img_index in range(len(img_list)):
+            img_list[img_index] = os.path.join(img_dp, img_list[img_index])
+            if img_index < start_index or img_index > end_index:
+                os.remove(img_list[img_index])
+        waveform_info['data'], waveform_info['img_list'] = video_fluency_obj.frame_difference(img_dp)
+        with open(waveform_fp, "wb") as fh:
+            json.dumps(waveform_info, fh, indent=2)
+
+
+def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0):
     if os.path.exists(env.video_output_fp):
         fps = fps_cal(env.recording_log_fp)
         if fps != env.DEFAULT_VIDEO_RECORDING_FPS:
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
-            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
+            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si, waveform)
     else:
         result_data = None
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name)
+        if waveform == 1:
+            output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
 
 def fps_cal(file_path):

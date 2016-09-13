@@ -34,10 +34,10 @@ import time
 import argparse
 import shutil
 import numpy as np
-from argparse import ArgumentDefaultsHelpFormatter
-import re
 import gc
 import math
+from commonUtil import CommonUtil
+from argparse import ArgumentDefaultsHelpFormatter
 from ..common.logConfig import get_logger
 logger = get_logger(__name__)
 
@@ -168,12 +168,6 @@ class ImageTool(object):
         dct_obj = cv2.dct(img_dct)
         return dct_obj
 
-    def atoi(self, text):
-        return int(text) if text.isdigit() else text
-
-    def natural_keys(self, text):
-        return [self.atoi(c) for c in re.split('(\d+)', text)]
-
     def compare_with_sample_object(self, input_sample_dp):
         result_list = []
         m_start_index = 0
@@ -181,7 +175,7 @@ class ImageTool(object):
         sample_fn_list = os.listdir(input_sample_dp)
         if len(sample_fn_list) <= 2:
             return result_list
-        sample_fn_list.sort(key=self.natural_keys)
+        sample_fn_list.sort(key=CommonUtil.natural_keys)
         for sample_index in range(0, len(sample_fn_list)):
             sample_fp = os.path.join(input_sample_dp, sample_fn_list[sample_index])
             if sample_index == 1:

@@ -9,6 +9,7 @@ pyssim==0.3
 APScheduler==3.0.3
 argparse==1.2.1
 watchdog==0.8.3
+peakutils==1.0.3
 
 python-dateutil
 keyring
