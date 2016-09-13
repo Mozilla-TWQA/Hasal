@@ -3,6 +3,8 @@ import sys
 import time
 import subprocess
 from base import BaseProfiler
+from ..common.logConfig import get_logger
+logger = get_logger(__name__)
 
 
 class MitmDumpProfiler(BaseProfiler):
@@ -30,7 +32,7 @@ class MitmDumpProfiler(BaseProfiler):
                 if len(recording_prompt) > 0 and recording_prompt[0].lower() == "y":
                     self.process = subprocess.Popen(default_dump_flow_cmd)
                 else:
-                    print "According to your answer, we will not record the packet during this test!"
+                    logger.warning("According to your answer, we will not record the packet during this test!")
         else:
             if sys.platform == "linux2":
                 replay_cmd_list = ["mitmdump", "-S", flow_file_fp, "--no-pop", "--norefresh"]

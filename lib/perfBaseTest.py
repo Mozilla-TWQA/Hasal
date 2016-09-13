@@ -9,6 +9,9 @@ import lib.sikuli as sikuli
 import lib.helper.videoHelper as videoHelper
 from common.environment import Environment
 from helper.profilerHelper import Profilers
+from common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class PerfBaseTest(unittest.TestCase):
@@ -204,4 +207,4 @@ class PerfBaseTest(unittest.TestCase):
             else:
                 resultHelper.result_calculation(self.env, self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")))
         else:
-            print "[WARNING] This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status)
+            logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status))

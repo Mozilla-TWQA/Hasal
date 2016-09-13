@@ -8,6 +8,10 @@ import matplotlib.pyplot as plt
 from imageTool import ImageTool
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
+from logConfig import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class VideoFluency(object):
@@ -359,7 +363,7 @@ def main():
     golden_img_dp = args.golden_img_dp
 
     if not args.input_img_dp or not args.golden_img_dp:
-        print "Please specify golden image dir path and input image dir path."
+        logger.error("Please specify golden image dir path and input image dir path.")
     else:
         input_data, input_img_list = video_fluency_obj.frame_difference(input_img_dp)
         golden_data, golden_img_list = video_fluency_obj.frame_difference(golden_img_dp)
@@ -381,11 +385,11 @@ def main():
                 v_duration = video_fluency_obj.cluster_duration(v_sequence)
                 if sim_score < threshold:
                     video_list = video_fluency_obj.cluster_video_out(golden_img_list, input_img_list, v_duration, args.output_video_dp)
-                    print video_list
+                    logger.info(video_list)
                 else:
-                    print "Similarity score of input data sequence greater than or equal to threshold"
+                    logger.info("Similarity score of input data sequence greater than or equal to threshold")
             else:
-                print "Please specify output video dir path."
+                logger.error("Please specify output video dir path.")
 
 if __name__ == '__main__':
     main()

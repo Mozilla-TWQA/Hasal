@@ -10,11 +10,14 @@ from datetime import date
 from ..common.pyDriveUtil import PyDriveUtil
 from desktopHelper import DEFAULT_BROWSER_TYPE_FIREFOX
 from desktopHelper import DEFAULT_BROWSER_TYPE_CHROME
+from ..common.logConfig import get_logger
 
 DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
 DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
 DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
 DEFAULT_CONVERT_VIDEO_RESOLUTION = "320x240"
+
+logger = get_logger(__name__)
 
 
 class UploadAgent(object):
@@ -52,7 +55,7 @@ class UploadAgent(object):
         with open(input_result_fp) as json_fh:
             result_data = json.load(json_fh)
         if len(result_data.keys()) != 1:
-            print "[ERROR] current result file consist over 1 test case result!"
+            logger.error("current result file consist over 1 test case result!")
             return None
         else:
             # init test data
@@ -62,7 +65,7 @@ class UploadAgent(object):
             test_video_fp = result_data[test_name]['video_fp']
             web_app_name = result_data[test_name]['web_app_name']
             if len(test_time_list) != 1:
-                print "[ERROR] current time list is not equal to 1, current: %d!" % len(test_time_list)
+                logger.error("current time list is not equal to 1, current: %d!" % len(test_time_list))
                 return None
             else:
                 test_value = test_time_list[0]
@@ -81,10 +84,10 @@ class UploadAgent(object):
                          "comment": self.test_comment_str}
 
             # print post data
-            print self.current_browser_version
-            print "===== Upload result post data ====="
-            print json_data
-            print "===== Upload result post data ====="
+            logger.debug(self.current_browser_version)
+            logger.info("===== Upload result post data =====")
+            logger.info(json_data)
+            logger.info("===== Upload result post data =====")
             return json.loads(self.send_post_data(json_data, url_str).read())
 
     def send_post_data(self, post_data, url_str):
@@ -97,7 +100,7 @@ class UploadAgent(object):
         if response_obj.getcode() == 200:
             return response_obj
         else:
-            print "[ERROR] response status code is [%d]" % response_obj.getcode()
+            logger.error("response status code is [%d]" % response_obj.getcode())
             return None
 
     def upload_videos(self, input_upload_list):
@@ -119,8 +122,8 @@ class UploadAgent(object):
                              "video_path": video_preview_url,
                              "comment": self.test_comment_str}
                 url_str = self.generate_url_str(upload_data['test_name'], api_root="video_profile")
-                print "===== Upload video post data ====="
-                print url_str
-                print json_data
-                print "===== Upload video post data ====="
+                logger.info("===== Upload video post data =====")
+                logger.debug(url_str)
+                logger.info(json_data)
+                logger.info("===== Upload video post data =====")
                 self.send_post_data(json_data, url_str)

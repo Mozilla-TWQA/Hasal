@@ -38,6 +38,8 @@ from argparse import ArgumentDefaultsHelpFormatter
 import re
 import gc
 import math
+from ..common.logConfig import get_logger
+logger = get_logger(__name__)
 
 DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
 DEFAULT_SAMPLE_DIR_PATH = os.path.join(os.getcwd(), "sample")
@@ -62,9 +64,9 @@ class ImageTool(object):
                 self.current_fps = vidcap.get(cv2.CAP_PROP_FPS)
             else:
                 self.current_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
-            print '============== FPS from video header: ' + str(self.current_fps) + '==================='
+            logger.info('==== FPS from video header: ' + str(self.current_fps) + '====')
         else:
-            print '============== FPS from log file: ' + str(self.current_fps) + '==================='
+            logger.info('==== FPS from log file: ' + str(self.current_fps) + '====')
         result, image = vidcap.read()
         if exec_timestamp_list:
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
@@ -102,12 +104,12 @@ class ImageTool(object):
             self.search_range[2] = 0
         if self.search_range[3] > len(self.image_list):
             self.search_range[3] = len(self.image_list)
-        print "Image Comparison search range: " + str(self.search_range)
+        logger.info("Image Comparison search range: " + str(self.search_range))
         return self.image_list
 
     def compare_with_sample_image(self, input_sample_dp):
         result_list = []
-        print "Comparing sample file start %s" % time.strftime("%c")
+        logger.info("Comparing sample file start %s" % time.strftime("%c"))
         sample_fn_list = os.listdir(input_sample_dp)
         if len(sample_fn_list) != 2:
             return result_list
@@ -124,7 +126,7 @@ class ImageTool(object):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    print "Comparing sample file end %s" % time.strftime("%c")
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     breaking = True
                     found_1 = True
@@ -137,12 +139,12 @@ class ImageTool(object):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    print "Comparing sample file end %s" % time.strftime("%c")
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     breaking = True
                     found_2 = True
                     break
-        print result_list
+        logger.info(result_list)
         return result_list
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
@@ -175,7 +177,7 @@ class ImageTool(object):
     def compare_with_sample_object(self, input_sample_dp):
         result_list = []
         m_start_index = 0
-        print "Comparing sample file start %s" % time.strftime("%c")
+        logger.info("Comparing sample file start %s" % time.strftime("%c"))
         sample_fn_list = os.listdir(input_sample_dp)
         if len(sample_fn_list) <= 2:
             return result_list
@@ -183,14 +185,14 @@ class ImageTool(object):
         for sample_index in range(0, len(sample_fn_list)):
             sample_fp = os.path.join(input_sample_dp, sample_fn_list[sample_index])
             if sample_index == 1:
-                print "Template matching will skip the second sample's comparison"
+                logger.info("Template matching will skip the second sample's comparison")
             elif sample_index == 0:
                 sample_dct = self.convert_to_dct(sample_fp)
                 for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
                     image_data = self.image_list[img_index]
                     comparing_dct = self.convert_to_dct(image_data['image_fp'])
                     if self.compare_two_images(sample_dct, comparing_dct):
-                        print "Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c"))
+                        logger.info("Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c")))
                         result_list.append(image_data)
                         m_start_index = img_index
                         break
@@ -202,8 +204,8 @@ class ImageTool(object):
                     if match_val < threshold:
                         result_list.append(image_data)
                         break
-                print "Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c"))
-        print result_list
+                logger.info("Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c")))
+        logger.info(result_list)
         return result_list
 
     def template_match(self, base_img_fp, template_fp):
@@ -236,7 +238,7 @@ class ImageTool(object):
                 type(coord[0]) is not tuple or len(coord[0]) != 2 or
                 type(coord[1]) is not tuple or len(coord[1]) != 2):
             coord = [(0, 0), (w, h)]
-            print "WARNING: Incorrect coordinates, using fully image crop"
+            logger.warning("Incorrect coordinates, using fully image crop")
         else:
             for i in range(2):
                 for j in range(2):
@@ -253,9 +255,9 @@ class ImageTool(object):
                         new_xy[list_index] = coord[i][list_index]
                         new_xy[j] = new_val
                         coord[i] = tuple(new_xy)
-                        print "WARNING: Incorrect coordinates, set %s %s coordinate to %s" % (
-                            ["origin", "target"][i], str(unichr(120 + j)), str(new_val))
-        print "Crop image range: " + str(coord)
+                        logger.warning("Incorrect coordinates, set %s %s coordinate to %s" % (
+                            ["origin", "target"][i], str(unichr(120 + j)), str(new_val)))
+        logger.info("Crop image range: " + str(coord))
         if coord[0][0] < coord[1][0] and coord[0][1] < coord[1][1]:
             crop_img = img[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]]
         elif coord[0][0] > coord[1][0] and coord[0][1] > coord[1][1]:
@@ -307,14 +309,14 @@ class ImageTool(object):
         per_si = float(progress[1]['time'])
         last_ms = progress[1]['time']
         # Full Path of the Target Frame
-        print "Target image for perSI is %s" % target_frame
+        logger.info("Target image for perSI is %s" % target_frame)
         ssim = ssim_1
         for p in progress[1:]:
             elapsed = p['time'] - last_ms
             # print '*******elapsed %f'%elapsed
             # Full Path of the Current Frame
             current_frame = p['image_fp']
-            print "Current Image is %s" % current_frame
+            logger.info("Current Image is %s" % current_frame)
             # Takes full path of PNG frames to compute SSIM value
             per_si += elapsed * (1.0 - ssim)
             ssim = compute_ssim(current_frame, target_frame)
@@ -351,7 +353,7 @@ class ImageTool(object):
         return math.floor(progress * 100)
 
     def calculate_image_histogram(self, file):
-        print 'Calculating histogram for ' + file
+        logger.info('Calculating histogram for ' + file)
         try:
             from PIL import Image
 
@@ -374,7 +376,7 @@ class ImageTool(object):
                         pass
         except:
             histogram = None
-            print 'Error calculating histogram for ' + file
+            logger.error('Calculating histogram for ' + file)
         return histogram
 
 
@@ -412,27 +414,27 @@ def main():
                 os.mkdir(output_img_dp)
             img_tool_obj.crop_image(input_video_fp, os.path.join(output_img_dp, output_img_name))
         else:
-            print "Please specify the sample image file path, output image dir path, and output image name."
+            logger.error("Please specify the sample image file path, output image dir path, and output image name.")
     elif args.convert_video_flag is False and args.compare_img_flag is False:
         # default is compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
             img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
         else:
-            print "Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path."
+            logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
     elif args.convert_video_flag:
         # convert video to images
         if input_video_fp and output_img_dp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
         else:
-            print "Please specify the input video dir path, output image dir path and output image name."
+            logger.error("Please specify the input video dir path, output image dir path and output image name.")
     else:
         # compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
             img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
         else:
-            print "Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path."
+            logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
 
 if __name__ == '__main__':
     main()

@@ -1,6 +1,8 @@
 import os
 import time
 from base import BaseProfiler
+from ..common.logConfig import get_logger
+logger = get_logger(__name__)
 
 
 class HarProfiler(BaseProfiler):
@@ -18,10 +20,10 @@ class HarProfiler(BaseProfiler):
                     os.rename(har_file_path, self.env.profile_har_file_fp)
                     break
                 elif len(har_file_list) == 0:
-                    print "[ERROR] can't find any har file in log folder %s" % har_dir_path
+                    logger.error("can't find any har file in log folder %s" % har_dir_path)
                 else:
-                    print "[ERROR] find more than one har file in log folder %s" % har_dir_path
+                    logger.error("find more than one har file in log folder %s" % har_dir_path)
             else:
-                print "[ERROR] har log folder is not exist %s " % har_dir_path
+                logger.error("har log folder is not exist %s " % har_dir_path)
 
             time.sleep(1)
