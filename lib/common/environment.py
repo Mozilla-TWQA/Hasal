@@ -1,7 +1,6 @@
 import os
 import time
 import platform
-from ..helper.desktopHelper import DEFAULT_BROWSER_TYPE_FIREFOX
 
 
 class Environment(object):
@@ -27,8 +26,6 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
     DEFAULT_VIDEO_RECORDING_HEIGHT = 768
-
-    DEFAULT_OUTLIER_CHECK_POINT = int(os.getenv("MAX_RUN"))
 
     DEFAULT_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOTHhJNEhTN1pqYm8"
 
@@ -80,6 +77,7 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
     def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
+        self.DEFAULT_OUTLIER_CHECK_POINT = int(os.getenv("MAX_RUN"))
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
         self.test_method_doc = test_method_doc
@@ -126,7 +124,7 @@ class Environment(object):
                 os.mkdir(chk_dir)
 
     def get_browser_type(self):
-        result = DEFAULT_BROWSER_TYPE_FIREFOX
+        result = "firefox"
         test_name_list = self.test_name.split("_")
         if len(test_name_list) > 2:
             result = test_name_list[1].lower()
