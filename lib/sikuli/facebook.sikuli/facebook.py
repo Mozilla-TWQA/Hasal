@@ -43,7 +43,7 @@ class facebook():
         self.save_button = Pattern("pics/facebook_save_button.png").similar(0.70)
         self.club_post_menu_delete = Pattern("pics/facebook_club_post_menu_delete.png").similar(0.70)
 
-        self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content/sample_1.jpg")
+        self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()

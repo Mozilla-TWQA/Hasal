@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 For Checking environment recording fps capability
 """
@@ -26,6 +25,7 @@ class FPSChecker(object):
         print('[INFO] Recording fps should match default setting: ' + str(self.default_fps))
         time.sleep(10)
         self.stop_recording()
+        time.sleep(3)  # wait for process killed
         fps = self.fps_cal()
         assert fps == self.default_fps, "[Error] Your recording fps is: " + str(fps)
 
@@ -36,7 +36,7 @@ class FPSChecker(object):
         if platform.system().lower() == "windows":
             with open(self.recording_log, 'w') as self.fh:
                 self.process = subprocess.Popen(
-                    "ffmpeg -f gdigrab -draw_mouse 0 -framerate 90 -video_size 1024*768 -i desktop -c:v libx264 -r 90 -preset veryfast -g 15 -crf 0 " + self.env.video_output_fp,
+                    "ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(self.default_fps) + " -video_size 1024*768 -i desktop -c:v libx264 -r " + str(self.default_fps) + " -preset veryfast -g 15 -crf 0 " + self.video_fn,
                     stdout=self.fh, stderr=self.fh)
         else:
             vline = video_capture_line(Environment.DEFAULT_VIDEO_RECORDING_FPS,
