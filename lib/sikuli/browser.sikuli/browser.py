@@ -1,10 +1,12 @@
+import re
+import subprocess
 from sikuli import *  # NOQA
 
 
 class GeneralBrowser():
     def __init__(self):
-        self.os = str(Settings.getOS())
-        self.os_version = str(Settings.getOSVersion())
+        self.os = str(Env.getOS())  # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
+        self.os_version = str(Env.getOSVersion())
 
         if self.os.startswith("M"):
             self.control = Key.CMD
@@ -20,6 +22,19 @@ class Chrome(GeneralBrowser):
     def __init__(self):
         GeneralBrowser.__init__(self)
         self._chrome = App("Chrome")
+        self.get_version_cmd = []
+        if self.os.lower() == 'windows':
+            self.get_version_cmd = ["reg", "query", "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome", "/v", "DisplayVersion"]
+        elif self.os.lower() == 'linux':
+            self.get_version_cmd = ["google-chrome", "--version"]
+        elif self.os.lower() == 'mac':
+            self.get_version_cmd = ["/Application/Google\\", "Chrome.app/Contents/MacOS/Google\\", "Chrome", "--version"]
+        self.current_version = self.get_chrome_version()
+
+    def get_chrome_version(self):
+        version = subprocess.check_output(self.get_version_cmd)
+        version_major = int(re.findall(r'\b\d+\b', version)[0])
+        return version_major
 
     # Need further permission in Mac OS X and might not be available in windows
     def launchBrowser(self):
@@ -33,8 +48,12 @@ class Chrome(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        wait(Pattern("pics/chrome_urlbar.png").similar(0.70))
-        click(Pattern("pics/chrome_urlbar.png").similar(0.70).targetOffset(-40, 0))
+        if self.current_version >= 53:
+            wait(Pattern("pics/chrome_urlbar_53.png").similar(0.70))
+            click(Pattern("pics/chrome_urlbar_53.png").similar(0.70).targetOffset(-40, 0))
+        else:
+            wait(Pattern("pics/chrome_urlbar.png").similar(0.70))
+            click(Pattern("pics/chrome_urlbar.png").similar(0.70).targetOffset(-40, 0))
 
     # Launch or close web console for developer
     def triggerConsole(self):
