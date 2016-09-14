@@ -121,7 +121,8 @@ class Environment(object):
     def init_output_dir(self):
         # Init output folder
         for chk_dir in [self.DEFAULT_OUTPUT_DIR, self.DEFAULT_VIDEO_OUTPUT_DIR, self.DEFAULT_PROFILE_OUTPUT_DIR,
-                        self.DEFAULT_IMAGE_DIR, self.DEFAULT_IMAGE_OUTPUT_DIR, self.DEFAULT_IMAGE_SAMPLE_DIR]:
+                        self.DEFAULT_IMAGE_DIR, self.DEFAULT_IMAGE_OUTPUT_DIR, self.DEFAULT_IMAGE_SAMPLE_DIR,
+                        self.DEFAULT_WAVEFORM_OUTPUT_DIR]:
             if not os.path.exists(chk_dir):
                 os.mkdir(chk_dir)
 

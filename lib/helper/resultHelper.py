@@ -111,7 +111,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 
 
 def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
-    waveform_info = {}
+    waveform_info = dict()
     waveform_info['video'] = video_fp
     current_run_result = result_data['running_time_result']
     if len(current_run_result) == 2:
@@ -128,7 +128,7 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
                 os.remove(img_list[img_index])
         waveform_info['data'], waveform_info['img_list'] = video_fluency_obj.frame_difference(img_dp)
         with open(waveform_fp, "wb") as fh:
-            json.dumps(waveform_info, fh, indent=2)
+            json.dump(waveform_info, fh, indent=2)
 
 
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0):
