@@ -145,30 +145,32 @@ class RunTest(object):
         response_result_data = []
         with open(input_suite_fp) as input_suite_fh:
             for tmp_line in input_suite_fh.read().splitlines():
-                case_data = self.suite_content_parser(tmp_line)
-                self.logger.info("======= case_data  ========")
-                self.logger.info(case_data)
-                self.logger.info("======= case_data  ========")
-                test_case = case_data.keys()[0]
-                case_data[test_case]["MAX_RUN"] = self.max_run
+                if tmp_line:
+                    case_data = self.suite_content_parser(tmp_line)
+                    self.logger.info("======= case_data  ========")
+                    self.logger.info(case_data)
+                    self.logger.info("======= case_data  ========")
+                    test_case = case_data.keys()[0]
+                    case_data[test_case]["MAX_RUN"] = self.max_run
 
-                if type == "pt":
-                    test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
-                    case_data[test_case]["SIKULI_SCRIPT_PATH"] = test_case
-                    case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case_module_name.split(".")[:-1])
-                    test_env = self.get_test_env(**case_data[test_case])
-                    if test_case.endswith(os.sep):
-                        test_name = test_case.split(os.sep)[-2].split(".")[0]
-                    else:
-                        test_name = test_case.split(os.sep)[-1].split(".")[0]
-                else:
-                    test_case_fp = test_case.replace(".", os.sep) + ".py"
-                    test_name = test_case.split(".")[-1]
-                    case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case.split(".")[:-1])
-                    if os.path.exists(test_case_fp):
-                        test_case_module_name = test_case
+                    test_case_module_name = ""
+                    if type == "pt":
+                        test_case_module_name = DEFAULT_TEST_FOLDER + "." + "test_pilot_run"
+                        case_data[test_case]["SIKULI_SCRIPT_PATH"] = test_case
+                        case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case_module_name.split(".")[:-1])
                         test_env = self.get_test_env(**case_data[test_case])
-                response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
+                        if test_case.endswith(os.sep):
+                            test_name = test_case.split(os.sep)[-2].split(".")[0]
+                        else:
+                            test_name = test_case.split(os.sep)[-1].split(".")[0]
+                    else:
+                        test_case_fp = test_case.replace(".", os.sep) + ".py"
+                        test_name = test_case.split(".")[-1]
+                        case_data[test_case]["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case.split(".")[:-1])
+                        if os.path.exists(test_case_fp):
+                            test_case_module_name = test_case
+                            test_env = self.get_test_env(**case_data[test_case])
+                    response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:
                 self.upload_agent_obj.upload_videos(response_result_data)
 
