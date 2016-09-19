@@ -70,7 +70,7 @@ class facebook():
         if location == 'home':
             if content_type == 'text':
                 self.click_post_area_home(type='center')
-                self.action_post_text(input_string)
+                self.action_post_text(location, input_string)
             elif content_type == 'photo_video':
                 self.click_post_area_home(type='photo_video')
                 self.action_post_upload(input_string)
@@ -80,7 +80,7 @@ class facebook():
         elif location == 'club':
             if content_type == 'text':
                 self.click_post_area_club(type='center')
-                self.action_post_text(input_string)
+                self.action_post_text(location, input_string)
             elif content_type == 'photo_video':
                 self.click_post_area_club(type='photo_video')
                 self.action_post_upload(input_string)
@@ -90,7 +90,7 @@ class facebook():
         elif location == 'personal':
             if content_type == 'text':
                 self.click_post_area_personal()
-                self.action_post_text(input_string)
+                self.action_post_text(location, input_string)
             elif content_type == 'photo_video':
                 print "=== Currently doesn't support post photo/video to personal page. ==="
                 return -1
@@ -113,9 +113,10 @@ class facebook():
         print('[Facebook] del_post_top() done.')
 
     # paste string then post
-    def action_post_text(self, string):
+    def action_post_text(self, location, string):
         paste(ucode(string))
-        sleep(1)
+        self.wait_post_area_vanish(location)
+        sleep(2)
         click(self.post_button)
 
     # paste file path to file browser, wait for upload finished then post
@@ -132,7 +133,7 @@ class facebook():
     def action_post_url(self, location, url):
         paste(url)
         self.wait_post_area_vanish(location)
-        sleep(1)
+        sleep(2)
         click(self.post_button)
 
     # invoke menu of top post from club then delete post
