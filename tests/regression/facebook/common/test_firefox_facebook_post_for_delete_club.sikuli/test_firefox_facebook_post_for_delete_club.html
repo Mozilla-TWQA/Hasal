@@ -1,0 +1,92 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>test_firefox_facebook_post_for_delete_club.sikuli</h2> <a href="test_firefox_facebook_post_for_delete_club.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="skw">wait</span>(<img src="ff_urlbar.png" />)
+<span class="skw">click</span>(Pattern(<img src="ff_urlbar.png" />).targetOffset(-<span class="dig">100</span>, <span class="dig">0</span>))
+paste(<span class="str">"https://www.facebook.com/groups/testmoztext/"</span>)
+<span class="skw">type</span>(Key.ENTER)
+setAutoWaitTimeout(<span class="dig">10</span>)
+<span class="skw">wait</span>(<img src="facebook_logo.png" />)
+<span class="skw">wait</span>(<img src="facebook_club_post_area.png" />)
+<span class="skw">click</span>(Pattern(<img src="facebook_club_post_area.png" />).targetOffset(<span class="dig">0</span>, <span class="dig">15</span>))
+paste(<span class="str">"Post for delete test!"</span>)
+<span class="skw">click</span>(<img src="facebook_post_button.png" />)
+waitVanish(<img src="facebook_post_area_focused.png" />)
+<span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"t"</span>, Key.CTRL)
+<span class="skw">sleep</span>(<span class="dig">0.5</span>)
+<span class="skw">type</span>(Key.TAB, Key.CTRL)
+<span class="skw">sleep</span>(<span class="dig">0.5</span>)
+<span class="skw">type</span>(<span class="str">"w"</span>, Key.CTRL)
+</pre>
+</body>
+</html>

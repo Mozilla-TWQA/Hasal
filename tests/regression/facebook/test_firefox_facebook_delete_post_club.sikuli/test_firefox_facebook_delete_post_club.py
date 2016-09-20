@@ -9,9 +9,6 @@ com = common.General()
 ff = browser.Firefox()
 fb = facebook.facebook()
 
-ff.clickBar()
-ff.enterLink(sys.argv[3])
-
 sleep(2)
 setAutoWaitTimeout(10)
 fb.wait_for_loaded()
