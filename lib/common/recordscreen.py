@@ -194,6 +194,19 @@ def get_desktop_resolution():
                 return (int(wh[0]), int(wh[1]))
 
 
+def get_mac_os_display_channel():
+    if platform.system().lower() == "darwin":
+        proc = subprocess.Popen([DEFAULT_RECORDING_CMD, '-f', DEFAULT_FORCE_FORMAT, '-list_devices', 'true', '-i', '""'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout = proc.stdout.read()
+        if "Capture screen" in stdout:
+            display_channel = stdout[stdout.index('Capture screen') - 3]
+            if display_channel in [str(i) for i in range(10)]:
+                return display_channel
+        return "0"
+    else:
+        return ":0.0"
+
+
 def get_window_position_and_size():
     """ Prompts the user to click on a window, and returns the window's
         position and size.
