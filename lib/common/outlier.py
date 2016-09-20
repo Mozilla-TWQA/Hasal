@@ -27,7 +27,7 @@ class outlier(object):
             median = 0
             sigma = 0
             si = 0
-            psi =0
+            psi = 0
         elif len(seq) % 2:
             median = float(seq[(len(seq) - 1) / 2]['run_time'])
             mean = np.mean(seq_value)

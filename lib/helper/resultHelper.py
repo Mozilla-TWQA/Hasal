@@ -108,14 +108,13 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.seek(0)
         fh.write(json.dumps(stat_data))
 
+
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
     if os.path.exists(env.video_output_fp):
         fps = fps_cal(env.recording_log_fp)
         if fps != env.DEFAULT_VIDEO_RECORDING_FPS:
             result_data = None
-            logger.warning(
-                'Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (
-                str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
+            logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
             result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
     else:
