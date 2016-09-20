@@ -68,7 +68,7 @@ class UploadAgent(object):
                 logger.error("current time list is not equal to 1, current: %d!" % len(test_time_list))
                 return None
             else:
-                test_value = test_time_list[0]
+                test_value = test_time_list[0]['run_time']
             url_str = self.generate_url_str(test_name)
 
             # compose post data

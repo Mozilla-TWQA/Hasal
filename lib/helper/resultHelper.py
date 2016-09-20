@@ -5,6 +5,9 @@ from ..common.imageTool import ImageTool
 from ..common.outlier import outlier
 import numpy as np
 import re
+from ..common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0):
@@ -45,13 +48,21 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 
     calc_obj = outlier()
 
+    if "speed_index" in result_data:
+        si_value = result_data['speed_index']
+        psi_value = result_data['perceptual_speed_index']
+    else:
+        si_value = 0
+        psi_value = 0
+    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value}
+
     if test_method_name in result:
         result[test_method_name]['total_run_no'] += 1
         result[test_method_name]['total_time'] += run_time
         if run_time == 0:
             result[test_method_name]['error_no'] += 1
         else:
-            result[test_method_name]['time_list'].append(run_time)
+            result[test_method_name]['time_list'].append(run_time_dict)
         if run_time > result[test_method_name]['max_time']:
             result[test_method_name]['max_time'] = run_time
         if run_time < result[test_method_name]['min_time']:
@@ -60,7 +71,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         if len(result[test_method_name]['time_list']) >= outlier_check_point:
             result[test_method_name]['avg_time'], result[test_method_name]['med_time'],\
                 result[test_method_name]['std_dev'], result[test_method_name]['time_list'],\
-                tmp_outlier = calc_obj.detect(result[test_method_name]['time_list'])
+                tmp_outlier, si_value, psi_value = calc_obj.detect(result[test_method_name]['time_list'])
             result[test_method_name]['outlier'].extend(tmp_outlier)
     else:
         result[test_method_name] = {}
@@ -76,16 +87,16 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         else:
             result[test_method_name]['error_no'] = 0
             result[test_method_name]['avg_time'] = run_time
+            result[test_method_name]['med_time'] = run_time
             result[test_method_name]['max_time'] = run_time
             result[test_method_name]['min_time'] = run_time
-            result[test_method_name]['time_list'].append(run_time)
+            result[test_method_name]['time_list'].append(run_time_dict)
         result[test_method_name]['detail'] = current_run_result
 
     result[test_method_name]['video_fp'] = video_fp
     result[test_method_name]['web_app_name'] = web_app_name
-    if "speed_index" in result_data:
-        result[test_method_name]['speed_index'] = result_data['speed_index']
-        result[test_method_name]['perceptual_speed_index'] = result_data['perceptual_speed_index']
+    result[test_method_name]['speed_index'] = si_value
+    result[test_method_name]['perceptual_speed_index'] = psi_value
 
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
@@ -97,13 +108,14 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.seek(0)
         fh.write(json.dumps(stat_data))
 
-
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0):
     if os.path.exists(env.video_output_fp):
         fps = fps_cal(env.recording_log_fp)
         if fps != env.DEFAULT_VIDEO_RECORDING_FPS:
             result_data = None
-            print('[WARN] Real FPS cannot reach default setting, ignore current result!')
+            logger.warning(
+                'Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (
+                str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
             result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
     else:

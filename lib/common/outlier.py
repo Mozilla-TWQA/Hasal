@@ -2,8 +2,9 @@ import numpy as np
 
 
 class outlier(object):
-    def detect(self, seq, method=1):
-        seq.sort()
+    def detect(self, input_seq, method=1):
+        seq = sorted(input_seq, key=lambda k: k['run_time'])
+        seq_value = [d['run_time'] for d in input_seq]
         outliers = []
         if len(seq) >= 3:
             # Default using Moore and McCabe method to calculate quartile value
@@ -13,28 +14,33 @@ class outlier(object):
                 '3': self.Q_FreundPerles,
                 '4': self.Q_Minitab
             }
-            [Q1, Q3] = Q_Calculation.setdefault(str(method), self.Q_MooreMcCabe)(seq)
+            [Q1, Q3] = Q_Calculation.setdefault(str(method), self.Q_MooreMcCabe)(seq_value)
             IQR = Q3 - Q1
             lower = Q1 - 1.5 * IQR
             upper = Q3 + 1.5 * IQR
             for data in seq:
-                if data < lower or data > upper:
+                if data['run_time'] < lower or data['run_time'] > upper:
                     outliers.append(data)
-
             self.drop(seq, outliers)
         if len(seq) == 0:
             mean = 0
             median = 0
             sigma = 0
+            si = 0
+            psi =0
         elif len(seq) % 2:
-            median = float(seq[(len(seq) - 1) / 2])
-            mean = np.mean(seq)
-            sigma = np.std(seq)
+            median = float(seq[(len(seq) - 1) / 2]['run_time'])
+            mean = np.mean(seq_value)
+            sigma = np.std(seq_value)
+            si = float(seq[(len(seq) - 1) / 2]['si'])
+            psi = float(seq[(len(seq) - 1) / 2]['psi'])
         else:
-            median = float(seq[len(seq) / 2 - 1] + seq[len(seq) / 2]) / 2
-            mean = np.mean(seq)
-            sigma = np.std(seq)
-        return mean, median, sigma, seq, outliers
+            median = float(seq[len(seq) / 2 - 1]['run_time'] + seq[len(seq) / 2]['run_time']) / 2
+            mean = np.mean(seq_value)
+            sigma = np.std(seq_value)
+            si = float(seq[len(seq) / 2 - 1]['si'] + seq[len(seq) / 2]['si']) / 2
+            psi = float(seq[len(seq) / 2 - 1]['psi'] + seq[len(seq) / 2]['psi']) / 2
+        return mean, median, sigma, seq, outliers, si, psi
 
     def Q_MooreMcCabe(self, seq):
         seq_len = len(seq)
