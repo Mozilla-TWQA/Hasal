@@ -2,7 +2,11 @@
 browser_name = sys.argv[1]
 sys.path.append(sys.argv[2])
 
-browser = App(browser_name)
+
+if browser_name == "chrome":
+    browser = App("Google Chrome")
+else:
+    browser = App(browser_name)
 browser.focus()
 
 # Do 10 times before final forced shut down App
