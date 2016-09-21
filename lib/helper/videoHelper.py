@@ -1,6 +1,7 @@
 import os
 import sys
 from ..common.recordscreen import screenshot_capture_line
+from ..common.recordscreen import get_mac_os_display_channel
 from ..common.imageTool import ImageTool
 
 
@@ -11,7 +12,7 @@ def capture_screen(env, output_video_fp, output_img_dp, output_img_name):
         os.system(" ".join(screenshot_capture_line(env.DEFAULT_VIDEO_RECORDING_FPS, env.DEFAULT_VIDEO_RECORDING_POS_X,
                                                    env.DEFAULT_VIDEO_RECORDING_POS_Y, env.DEFAULT_VIDEO_RECORDING_WIDTH,
                                                    env.DEFAULT_VIDEO_RECORDING_HEIGHT,
-                                                   env.DEFAULT_VIDEO_RECORDING_DISPLAY, env.DEFAULT_VIDEO_RECORDING_CODEC,
+                                                   get_mac_os_display_channel(), env.DEFAULT_VIDEO_RECORDING_CODEC,
                                                    output_video_fp)))
 
     img_tool_obj = ImageTool()
