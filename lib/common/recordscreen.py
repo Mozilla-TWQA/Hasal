@@ -202,7 +202,7 @@ def get_mac_os_display_channel():
             display_channel = stdout[stdout.index('Capture screen') - 3]
             if display_channel in [str(i) for i in range(10)]:
                 return display_channel
-        return "0"
+        return "1"
     else:
         return ":0.0"
 
