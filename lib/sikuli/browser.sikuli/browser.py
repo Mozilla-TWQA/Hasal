@@ -21,13 +21,16 @@ class GeneralBrowser():
 class Chrome(GeneralBrowser):
     def __init__(self):
         GeneralBrowser.__init__(self)
-        self._chrome = App("Chrome")
+
         self.get_version_cmd = []
         if self.os.lower() == 'windows':
+            self._chrome = App("Chrome")
             self.get_version_cmd = ["reg", "query", "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome", "/v", "DisplayVersion"]
         elif self.os.lower() == 'linux':
+            self._chrome = App("Chrome")
             self.get_version_cmd = ["google-chrome", "--version"]
         elif self.os.lower() == 'mac':
+            self._chrome = App("Google Chrome")
             self.get_version_cmd = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version']
         self.current_version = self.get_chrome_version()
 
