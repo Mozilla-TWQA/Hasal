@@ -28,7 +28,7 @@ class Chrome(GeneralBrowser):
         elif self.os.lower() == 'linux':
             self.get_version_cmd = ["google-chrome", "--version"]
         elif self.os.lower() == 'mac':
-            self.get_version_cmd = ["/Application/Google\\", "Chrome.app/Contents/MacOS/Google\\", "Chrome", "--version"]
+            self.get_version_cmd = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version']
         self.current_version = self.get_chrome_version()
 
     def get_chrome_version(self):
