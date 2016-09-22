@@ -11,6 +11,7 @@ from ..common.videoFluency import VideoFluency
 
 logger = get_logger(__name__)
 
+
 def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0, waveform=0):
     return_result = {}
     if os.path.exists(output_img_dp) is False:
