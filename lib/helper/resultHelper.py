@@ -158,12 +158,9 @@ def fps_cal(file_path, default_fps):
             count = Counter(fps)
         fh.close()
         all_fps = count.most_common()
-        print all_fps
         total_record = sum([item[1] for item in all_fps])
         default_fps_element = [item for item in all_fps if item[0] == default_fps]
-        print default_fps_element
         mode_fps = count.most_common()[0]
-        print mode_fps
         if not default_fps_element and \
                 (float(mode_fps[1]) / total_record) >= 0.9 and \
                 round(default_fps * (1 - tolerance)) <= mode_fps[1] <= round(default_fps * (1 + tolerance)):
