@@ -10,7 +10,7 @@ APScheduler==3.0.3
 argparse==1.2.1
 watchdog==0.8.3
 peakutils==1.0.3
-matplotlib==1.5.3
+matplotlib>=1.5.1
 
 python-dateutil
 keyring
