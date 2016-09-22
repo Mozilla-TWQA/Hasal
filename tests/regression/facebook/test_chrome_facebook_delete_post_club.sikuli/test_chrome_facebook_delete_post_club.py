@@ -9,6 +9,9 @@ com = common.General()
 chrome = browser.Chrome()
 fb = facebook.facebook()
 
+chrome.clickBar()
+chrome.enterLink(sys.argv[3])
+
 sleep(2)
 setAutoWaitTimeout(10)
 fb.wait_for_loaded()
