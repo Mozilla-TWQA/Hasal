@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform]
   runtest.py (-h | --help)
 
 Options:
@@ -16,6 +16,7 @@ Options:
   --online-config=<str>     Online server config [default: svrConfig.json]
   --comment=<str>           Tag the comment on this test [default: <today>]
   --advance                 Only for expert user
+  --waveform                Waveform generated after case finished
 
 """
 import os
@@ -65,6 +66,7 @@ class RunTest(object):
         result['ONLINE_CONFIG'] = self.online_config
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
+        result['ENABLE_WAVEFORM'] = str(int(self.waveform))
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -187,7 +189,8 @@ def main():
                            max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
-                           test_comment=arguments['--comment'], calc_si=arguments['--calc-si'])
+                           test_comment=arguments['--comment'], calc_si=arguments['--calc-si'],
+                           waveform=arguments['--waveform'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:

@@ -28,7 +28,7 @@ class VideoFluency(object):
         '''
         difference = []
         img_list = os.listdir(input_image_dir_path)
-        img_list.sort(key=CommonUtil().natural_keys)
+        img_list.sort(key=CommonUtil.natural_keys)
         for img_index in range(len(img_list)):
             img_list[img_index] = os.path.join(input_image_dir_path, img_list[img_index])
             if img_index:

@@ -2,8 +2,10 @@ import re
 
 
 class CommonUtil(object):
-    def atoi(self, text):
+    @staticmethod
+    def atoi(text):
         return int(text) if text.isdigit() else text
 
-    def natural_keys(self, text):
-        return [self.atoi(c) for c in re.split('(\d+)', text)]
+    @classmethod
+    def natural_keys(cls, text):
+        return [cls.atoi(c) for c in re.split('(\d+)', text)]
