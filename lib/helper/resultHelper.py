@@ -134,8 +134,8 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
 
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0):
     if os.path.exists(env.video_output_fp):
-        fps = fps_cal(env.recording_log_fp)
-        if fps != env.DEFAULT_VIDEO_RECORDING_FPS:
+        fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
+        if not fps:
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
@@ -148,13 +148,36 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
 
-def fps_cal(file_path):
+def fps_cal(file_path, default_fps):
+    fps_return = 0
+    tolerance = 0.03  # recording fps tolerance is set to 3%
     if os.path.exists(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
             fps = map(int, re.findall('fps=(\s\d+\s)', data))
             count = Counter(fps)
         fh.close()
-        return count.most_common()[0][0]
-    else:
-        return 0
+        all_fps = count.most_common()
+        print all_fps
+        total_record = sum([item[1] for item in all_fps])
+        default_fps_element = [item for item in all_fps if item[0] == default_fps]
+        print default_fps_element
+        mode_fps = count.most_common()[0]
+        print mode_fps
+        if not default_fps_element and \
+                (float(mode_fps[1]) / total_record) >= 0.9 and \
+                round(default_fps * (1 - tolerance)) <= mode_fps[1] <= round(default_fps * (1 + tolerance)):
+            fps_return = mode_fps[0]
+        elif mode_fps[0] == default_fps:
+            if (float(mode_fps[1]) / total_record) >= 0.9:
+                fps_return = mode_fps[0]
+            else:
+                if len(all_fps) > 1 and \
+                        float(mode_fps[1] + all_fps[1][1]) / total_record >= 0.9 and \
+                        round(default_fps * (1 - tolerance)) <= all_fps[1][0] <= round(default_fps * (1 + tolerance)):
+                    fps_return = round(mode_fps[0] - float(mode_fps[0] - all_fps[1][0]) *
+                                       mode_fps[1] / total_record)
+        elif round(default_fps * (1 - tolerance)) <= mode_fps[0] <= round(default_fps * (1 + tolerance)) and \
+                float(default_fps_element[0][1] + mode_fps[1]) / total_record >= 0.9:
+            fps_return = round(default_fps_element[0][0] - float(default_fps_element[0][0] - mode_fps[0]) * default_fps_element[0][1] / total_record)
+    return int(round(fps_return))
