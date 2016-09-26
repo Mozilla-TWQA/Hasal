@@ -4,7 +4,6 @@ import math
 import argparse
 import peakutils
 import numpy as np
-import matplotlib.pyplot as plt
 from imageTool import ImageTool
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
@@ -171,26 +170,6 @@ class VideoFluency(object):
         for [map_s, map_f] in path:
             cost = cost + dist[map_s, map_f]
         return cost
-
-    def dist_plot(self, dist, path=None):
-        """
-        Description: plot distance matrix and minimum cost path
-        Input:
-            - a distance matrix from Dynamic Time Warping(DTW)
-            - path from Dynamic Time Warping(DTW), default won't plot path
-        Output: generate a window to plot result
-        """
-        plt.imshow(dist, interpolation='nearest', cmap='Greens')
-        plt.gca().invert_yaxis()
-        plt.xlabel("X")
-        plt.ylabel("Y")
-        plt.grid()
-        plt.colorbar()
-        if path:
-            path_x = [point[0] for point in path]
-            path_y = [point[1] for point in path]
-            plt.plot(path_y, path_x, 'r')
-        plt.show()
 
     def find_peaks(self, data):
         """
