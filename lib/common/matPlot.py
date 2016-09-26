@@ -51,6 +51,28 @@ class MatPlot(object):
         plt.plot(self.s_data, 'g^-', label='s_data')
         plt.show()
 
+    def plot_dist(self):
+        """
+        Description: plot distance matrix and minimum cost path
+        Input:
+            - a distance matrix from Dynamic Time Warping(DTW)
+            - path from Dynamic Time Warping(DTW), default won't plot path
+        Output: generate a window to plot result
+        """
+        dtw, distance = self.video_obj.dtw(self.data_norm[0], self.data_norm[1])
+        path = self.video_obj.warp_path(dtw)
+        plt.imshow(dtw, interpolation='nearest', cmap='Greens')
+        plt.gca().invert_yaxis()
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.grid()
+        plt.colorbar()
+        if path:
+            path_x = [point[0] for point in path]
+            path_y = [point[1] for point in path]
+            plt.plot(path_y, path_x, 'r')
+        plt.show()
+
     @staticmethod
     def plot_waveform(waveform):
         plt.plot(waveform)
