@@ -61,7 +61,7 @@ class GetBuild(object):
                             if "mac" in f_name and ".dmg" in f_name:
                                 return href_link
                         elif platform.find("win") >= 0:
-                            if "win" in f_name and ".zip" in f_name:
+                            if "win32.zip" in f_name:
                                 return href_link
         return None
 
@@ -74,11 +74,15 @@ class GetBuild(object):
             job = self.get_job(resultset, platform)
             if job:
                 if job['result'].lower() == "success":
+                    if platform[:3].lower() == "win":
+                        download_platform = "win32"
+                    else:
+                        download_platform = platform
                     # generate url for build folder
                     build_folder_url_template = "%s/pub/firefox/%s-builds/%s-%s/%s-%s/"
                     build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
                                                                     self.project, self.user_email, build_hash,
-                                                                    self.project, platform)
+                                                                    self.project, download_platform)
                     print "Build folder url [%s]" % build_folder_url
                     build_link = self.get_build_link(platform, build_folder_url)
                     download_fn = build_link.split("/")[-1]
