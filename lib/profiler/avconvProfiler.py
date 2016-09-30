@@ -16,7 +16,8 @@ class AvconvProfiler(BaseProfiler):
             os.remove(self.env.video_output_fp)
 
         if platform.system().lower() == "windows":
-            self.process = subprocess.Popen("ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(self.env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size 1024*768 -i desktop -c:v libx264 -r " + str(self.env.DEFAULT_VIDEO_RECORDING_FPS) + " -preset veryfast -g 15 -crf 0 " + self.env.video_output_fp, bufsize=-1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            with open(self.env.recording_log_fp, 'w') as self.fh:
+                self.process = subprocess.Popen("ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(self.env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size 1024*768 -i desktop -c:v libx264 -r " + str(self.env.DEFAULT_VIDEO_RECORDING_FPS) + " -preset veryfast -g 15 -crf 0 " + self.env.video_output_fp, bufsize=-1, stdout=self.fh, stderr=self.fh)
         else:
             vline = video_capture_line(self.env.DEFAULT_VIDEO_RECORDING_FPS, self.env.DEFAULT_VIDEO_RECORDING_POS_X,
                                        self.env.DEFAULT_VIDEO_RECORDING_POS_Y,
@@ -30,7 +31,7 @@ class AvconvProfiler(BaseProfiler):
             subprocess.Popen("taskkill /IM ffmpeg.exe /T /F", shell=True) 
         else:
             self.process.send_signal(3)
-        out, err = self.process.communicate()
-        with open(self.env.recording_log_fp, 'w') as self.fh:
-            self.fh.write(err)
+            out, err = self.process.communicate()
+            with open(self.env.recording_log_fp, 'w') as self.fh:
+                self.fh.write(err)
         self.fh.close()

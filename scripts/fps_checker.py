@@ -34,9 +34,10 @@ class FPSChecker(object):
             os.remove(self.video_fn)
 
         if platform.system().lower() == "windows":
-            self.process = subprocess.Popen(
-                "ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(self.default_fps) + " -video_size 1024*768 -i desktop -c:v libx264 -r " + str(self.default_fps) + " -preset veryfast -g 15 -crf 0 " + self.video_fn,
-                bufsize=-1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            with open(self.recording_log, 'w') as self.fh:
+                self.process = subprocess.Popen(
+                    "ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(self.default_fps) + " -video_size 1024*768 -i desktop -c:v libx264 -r " + str(self.default_fps) + " -preset veryfast -g 15 -crf 0 " + self.video_fn,
+                    bufsize=-1, stdout=self.fh, stderr=self.fh)
         else:
             vline = video_capture_line(Environment.DEFAULT_VIDEO_RECORDING_FPS,
                                        Environment.DEFAULT_VIDEO_RECORDING_POS_X,
@@ -52,9 +53,9 @@ class FPSChecker(object):
             subprocess.Popen("taskkill /IM ffmpeg.exe /T /F", shell=True)
         else:
             self.process.send_signal(3)
-        out, err = self.process.communicate()
-        with open(self.recording_log, 'w') as self.fh:
-            self.fh.write(err)
+            out, err = self.process.communicate()
+            with open(self.recording_log, 'w') as self.fh:
+                self.fh.write(err)
         self.fh.close()
 
     def fps_cal(self):
