@@ -34,6 +34,12 @@ else
     exit 1
 fi
 
+# Checking Homebrew first
+func_log "[INFO] Checking Homebrew ..."
+which brew || (func_log "[INFO] Installing Homebrew ..."; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)")
+which brew || (func_log "[FAIL] Installing Homebrew failed."; exit 1)
+func_log "[Info] Checking Homebrew passed."
+
 # Checking requirements
 func_install_requirement () {
     echo "[EXEC] $@"
@@ -45,12 +51,10 @@ func_install_requirement () {
 }
 
 declare -a REQUIREMENTS=(
-    "brew"
     "python"
     "pip"
     "virtualenv")
 declare -a REQUIREMENTS_INSTALL=(
-    '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
     "brew install python"
     "sudo easy_install pip"
     "sudo pip install virtualenv")
