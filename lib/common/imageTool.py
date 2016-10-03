@@ -423,33 +423,46 @@ class ImageTool(object):
 
         return self.test_ori2('/Users/MikeL/workspace/Hasal/output/image/sample', img_list)
 
-    def test_ori2(self, input_sample_dp, img_list):
-        sample1 = 'sample1.jpg'
-        sample2 = 'sample2.jpg'
-        logger.info("Comparing sample file start %s" % time.strftime("%c"))
-
-        sample1 = os.path.join(input_sample_dp, sample1)
-        sample2 = os.path.join(input_sample_dp, sample2)
-
-        sample1_dct = self.convert_to_dct(sample1)
-        sample2_dct = self.convert_to_dct(sample2)
-        cv2.setNumThreads(0)
-        start = time.time()
+    def test_ori2(self, input_sample_dp):
         manager = Manager()
         result_list = manager.list()
-        args1 = [img_list, 1, sample1_dct, result_list]
-        args2 = [img_list, 0, sample2_dct, result_list]
-        result1 = Process(target=self.test_func, args=args1)
-        result2 = Process(target=self.test_func, args=args2)
-        result1.start()
-        result2.start()
-        result1.join()
-        result2.join()
+        sample_fn_list = os.listdir(input_sample_dp)
+        if len(sample_fn_list) != 2:
+            return map(dict, result_list)
+        sample_fn_list.sort()
+        logger.info("Comparing sample file start %s" % time.strftime("%c"))
+
+        sample_fn_list = [os.path.join(input_sample_dp, item) for item in sample_fn_list]
+        # sample1 = os.path.join(input_sample_dp, sample1)
+        # sample2 = os.path.join(input_sample_dp, sample2)
+
+        sample_dct_list = [self.convert_to_dct(item) for item in sample_fn_list]
+        # sample1_dct = self.convert_to_dct(sample1)
+        # sample2_dct = self.convert_to_dct(sample2)
+        cv2.setNumThreads(0)
+        start = time.time()
+
+        p_list = []
+        for index in range(len(sample_dct_list)):
+            args = [self.img_list, 1, sample_dct_list[index], result_list]
+            p_list.append(Process(target=self.test_func, args=args))
+            p_list.start()
+        # args1 = [self.img_list, 1, sample1_dct, result_list]
+        # args2 = [self.img_list, 0, sample2_dct, result_list]
+        # result1 = Process(target=self.test_func, args=args1)
+        # result2 = Process(target=self.test_func, args=args2)
+        for index in range(len(p)):
+            p_list.join()
+        # result1.start()
+        # result2.start()
+        # result1.join()
+        # result2.join()
 
         end = time.time()
         elapsed = end - start
         logger.info("Elapsed Time: %s" % str(elapsed))
         result_list.sort()
+        # return map(dict, result_list)
         return elapsed
 
     def test_func(self, img_list, asc, sample_dct, result_list):
