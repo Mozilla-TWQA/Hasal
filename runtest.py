@@ -94,7 +94,7 @@ class RunTest(object):
                 os.remove(DEFAULT_RESULT_FP)
             run_result = self.run_test(test_case_module_name, test_env)
             if run_result:
-                if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0:
+                if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0 and "fps_stat" in run_result and int(run_result['fps_stat']) == 0:
                     if self.online:
                         # Online mode handling
                         upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)

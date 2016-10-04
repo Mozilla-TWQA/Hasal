@@ -133,15 +133,25 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
 
 
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0):
+    fps_stat = "1"
     if os.path.exists(env.video_output_fp):
         fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
         if not fps:
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
+            fps_stat = "0"
             result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si, waveform)
     else:
         result_data = None
+
+    # output sikuli status to static file
+    with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
+        stat_data = json.load(fh)
+        stat_data['fps_stat'] = fps_stat
+        fh.seek(0)
+        fh.write(json.dumps(stat_data))
+
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name)
         if waveform == 1:
