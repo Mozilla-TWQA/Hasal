@@ -152,9 +152,9 @@ class ImageTool(object):
         end = time.time()
         elapsed = end - start
         logger.debug("Elapsed Time: %s" % str(elapsed))
-        result_list.sort()
-        logger.info(result_list)
-        return map(dict, result_list)
+        map_result_list = sorted(map(dict, result_list), key=lambda k: k['time_seq'])
+        logger.info(map_result_list)
+        return map_result_list
 
     def parallel_compare_image(self, img_list, asc, sample_dct, result_list):
         image_data = {}
