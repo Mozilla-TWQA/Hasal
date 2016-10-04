@@ -440,7 +440,7 @@ def main():
         # default is compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
-            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image_multi_process(sample_img_dp), result_fp)
         else:
             logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
     elif args.convert_video_flag:
@@ -453,7 +453,7 @@ def main():
         # compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
-            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image_multi_process(sample_img_dp), result_fp)
         else:
             logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
 
