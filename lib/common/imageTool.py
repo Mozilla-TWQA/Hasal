@@ -91,9 +91,9 @@ class ImageTool(object):
             os.mkdir(output_image_dir_path)
             while result:
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                if (comp_mode and img_cnt >= self.search_range[0] and img_cnt <= self.search_range[3]) or \
-                        (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or \
-                        (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]) or \
+                if (comp_mode and self.search_range[0] <= img_cnt <= self.search_range[3]) or \
+                        (self.search_range[0] <= img_cnt <= self.search_range[1]) or \
+                        (self.search_range[2] <= img_cnt <= self.search_range[3]) or \
                         not exec_timestamp_list:
                     cv2.imwrite(str_image_fp, image)
                 self.image_list.append({"time_seq": vidcap.get(0) * real_time_shift, "image_fp": str_image_fp})
@@ -110,45 +110,69 @@ class ImageTool(object):
         logger.info("Image Comparison search range: " + str(self.search_range))
         return self.image_list
 
-    def compare_with_sample_image(self, input_sample_dp):
-        result_list = []
-        logger.info("Comparing sample file start %s" % time.strftime("%c"))
+    def compare_with_sample_image_multi_process(self, input_sample_dp):
+        manager = Manager()
+        result_list = manager.list()
         sample_fn_list = os.listdir(input_sample_dp)
         if len(sample_fn_list) != 2:
-            return result_list
+            return map(dict, result_list)
         sample_fn_list.sort()
-        found_1 = False
-        found_2 = False
-        for sample_fn in sample_fn_list:
-            breaking = False
-            sample_fp = os.path.join(input_sample_dp, sample_fn)
-            sample_dct = self.convert_to_dct(sample_fp)
+        sample_fp_list = [os.path.join(input_sample_dp, item) for item in sample_fn_list]
+        sample_dct_list = [self.convert_to_dct(item) for item in sample_fp_list]
+        logger.info("Comparing sample file start %s" % time.strftime("%c"))
+        start = time.time()
+
+        # Execution will be blocked while converting color base if without cv2's setNumThreads attribute
+        if hasattr(cv2, 'setNumThreads'):
+            logger.debug("Image comparison from multiprocessing")
+            cv2.setNumThreads(0)
+            p_list = []
+            for index in range(len(sample_dct_list)):
+                args = [self.image_list, not index, sample_dct_list[index], result_list]
+                p_list.append(Process(target=self.parallel_compare_image, args=args))
+                p_list[index].start()
+            for index in range(len(p_list)):
+                p_list[index].join()
+        else:
+            logger.debug("Image comparison from single process")
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
-                if found_1:
-                    break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct, comparing_dct):
+                if self.compare_two_images(sample_dct_list[0], comparing_dct):
                     logger.info("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
-                    breaking = True
-                    found_1 = True
                     break
             for img_index in range(self.search_range[2] - 1, self.search_range[3]):
-                if breaking:
-                    break
-                if found_2:
-                    break
                 image_data = self.image_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct_list[1], comparing_dct):
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
+                    break
+        end = time.time()
+        elapsed = end - start
+        logger.debug("Elapsed Time: %s" % str(elapsed))
+        result_list.sort()
+        logger.info(result_list)
+        return map(dict, result_list)
+
+    def parallel_compare_image(self, img_list, asc, sample_dct, result_list):
+        image_data = {}
+        if asc:
+            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+                image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
-                    breaking = True
-                    found_2 = True
                     break
-        logger.info(result_list)
-        return result_list
+        else:
+            for img_index in range(self.search_range[2] - 1, self.search_range[3]):
+                image_data = img_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct, comparing_dct):
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    break
+        result_list.append(image_data)
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
@@ -376,113 +400,6 @@ class ImageTool(object):
             logger.error('Calculating histogram for ' + file)
         return histogram
 
-    def multiproc(self, img_dp):
-        img_list = os.listdir(img_dp)
-        img_list = [item for item in img_list if 'jpg' in item]
-        img_list.sort(key=CommonUtil.natural_keys)
-        img_list = [os.path.join(img_dp, item) for item in img_list]
-
-        return self.test_ori('/Users/MikeL/workspace/Hasal/output/image/sample', img_list)
-
-    def test_ori(self, input_sample_dp, img_list):
-        result_list = []
-        sample1 = 'sample1.jpg'
-        sample2 = 'sample2.jpg'
-        logger.info("Comparing sample file start %s" % time.strftime("%c"))
-
-        sample1 = os.path.join(input_sample_dp, sample1)
-        sample2 = os.path.join(input_sample_dp, sample2)
-
-        sample1_dct = self.convert_to_dct(sample1)
-        sample2_dct = self.convert_to_dct(sample2)
-        start = time.time()
-        for img_index in range(len(img_list)-1, -1, -1):
-            image_data = img_list[img_index]
-            comparing_dct = self.convert_to_dct(image_data)
-            if self.compare_two_images(sample1_dct, comparing_dct):
-                logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                result_list.append(image_data)
-                break
-        for img_index in range(len(img_list)):
-            image_data = img_list[img_index]
-            comparing_dct = self.convert_to_dct(image_data)
-            if self.compare_two_images(sample2_dct, comparing_dct):
-                logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                result_list.append(image_data)
-                break
-        end = time.time()
-        elapsed = end - start
-        logger.info("Elapsed Time: %s" % str(elapsed))
-        return elapsed
-
-    def multiproc2(self, img_dp):
-        img_list = os.listdir(img_dp)
-        img_list = [item for item in img_list if 'jpg' in item]
-        img_list.sort(key=CommonUtil.natural_keys)
-        img_list = [os.path.join(img_dp, item) for item in img_list]
-
-        return self.test_ori2('/Users/MikeL/workspace/Hasal/output/image/sample', img_list)
-
-    def test_ori2(self, input_sample_dp):
-        manager = Manager()
-        result_list = manager.list()
-        sample_fn_list = os.listdir(input_sample_dp)
-        if len(sample_fn_list) != 2:
-            return map(dict, result_list)
-        sample_fn_list.sort()
-        logger.info("Comparing sample file start %s" % time.strftime("%c"))
-
-        sample_fn_list = [os.path.join(input_sample_dp, item) for item in sample_fn_list]
-        # sample1 = os.path.join(input_sample_dp, sample1)
-        # sample2 = os.path.join(input_sample_dp, sample2)
-
-        sample_dct_list = [self.convert_to_dct(item) for item in sample_fn_list]
-        # sample1_dct = self.convert_to_dct(sample1)
-        # sample2_dct = self.convert_to_dct(sample2)
-        cv2.setNumThreads(0)
-        start = time.time()
-
-        p_list = []
-        for index in range(len(sample_dct_list)):
-            args = [self.img_list, 1, sample_dct_list[index], result_list]
-            p_list.append(Process(target=self.test_func, args=args))
-            p_list.start()
-        # args1 = [self.img_list, 1, sample1_dct, result_list]
-        # args2 = [self.img_list, 0, sample2_dct, result_list]
-        # result1 = Process(target=self.test_func, args=args1)
-        # result2 = Process(target=self.test_func, args=args2)
-        for index in range(len(p)):
-            p_list.join()
-        # result1.start()
-        # result2.start()
-        # result1.join()
-        # result2.join()
-
-        end = time.time()
-        elapsed = end - start
-        logger.info("Elapsed Time: %s" % str(elapsed))
-        result_list.sort()
-        # return map(dict, result_list)
-        return elapsed
-
-    def test_func(self, img_list, asc, sample_dct, result_list):
-        image_data = []
-        if asc:
-            for img_index in range(len(img_list)-1, -1, -1):
-                image_data = img_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data)
-                if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                    break
-        else:
-            for img_index in range(len(img_list)):
-                image_data = img_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data)
-                if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                    break
-        result_list.append(image_data)
-
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Image tool',
@@ -493,8 +410,6 @@ def main():
                             help='compare images.', required=False)
     arg_parser.add_argument('--cropimg', action='store_true', dest='crop_img_flag', default=False,
                             help='crop image', required=False)
-    arg_parser.add_argument('--t', action='store_true', dest='test_flag', default=False,
-                            help='for test', required=False)
     arg_parser.add_argument('-i', '--input', action='store', dest='input_video_fp', default=None,
                             help='Specify the file path.', required=False)
     arg_parser.add_argument('-o', '--outputdir', action='store', dest='output_img_dp', default=None,
@@ -521,8 +436,6 @@ def main():
             img_tool_obj.crop_image(input_video_fp, os.path.join(output_img_dp, output_img_name))
         else:
             logger.error("Please specify the sample image file path, output image dir path, and output image name.")
-    elif args.test_flag:
-        time2 = img_tool_obj.multiproc2(output_img_dp)
     elif args.convert_video_flag is False and args.compare_img_flag is False:
         # default is compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
