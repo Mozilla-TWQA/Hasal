@@ -39,6 +39,7 @@ import math
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
 from ..common.logConfig import get_logger
+from multiprocessing import Process, Manager
 logger = get_logger(__name__)
 
 DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
@@ -90,9 +91,9 @@ class ImageTool(object):
             os.mkdir(output_image_dir_path)
             while result:
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                if (comp_mode and img_cnt >= self.search_range[0] and img_cnt <= self.search_range[3]) or \
-                        (img_cnt >= self.search_range[0] and img_cnt <= self.search_range[1]) or \
-                        (img_cnt >= self.search_range[2] and img_cnt <= self.search_range[3]) or \
+                if (comp_mode and self.search_range[0] <= img_cnt <= self.search_range[3]) or \
+                        (self.search_range[0] <= img_cnt <= self.search_range[1]) or \
+                        (self.search_range[2] <= img_cnt <= self.search_range[3]) or \
                         not exec_timestamp_list:
                     cv2.imwrite(str_image_fp, image)
                 self.image_list.append({"time_seq": vidcap.get(0) * real_time_shift, "image_fp": str_image_fp})
@@ -109,45 +110,69 @@ class ImageTool(object):
         logger.info("Image Comparison search range: " + str(self.search_range))
         return self.image_list
 
-    def compare_with_sample_image(self, input_sample_dp):
-        result_list = []
-        logger.info("Comparing sample file start %s" % time.strftime("%c"))
+    def compare_with_sample_image_multi_process(self, input_sample_dp):
+        manager = Manager()
+        result_list = manager.list()
         sample_fn_list = os.listdir(input_sample_dp)
         if len(sample_fn_list) != 2:
-            return result_list
+            return map(dict, result_list)
         sample_fn_list.sort()
-        found_1 = False
-        found_2 = False
-        for sample_fn in sample_fn_list:
-            breaking = False
-            sample_fp = os.path.join(input_sample_dp, sample_fn)
-            sample_dct = self.convert_to_dct(sample_fp)
+        sample_fp_list = [os.path.join(input_sample_dp, item) for item in sample_fn_list]
+        sample_dct_list = [self.convert_to_dct(item) for item in sample_fp_list]
+        logger.info("Comparing sample file start %s" % time.strftime("%c"))
+        start = time.time()
+
+        # Execution will be blocked while converting color base if without cv2's setNumThreads attribute
+        if hasattr(cv2, 'setNumThreads'):
+            logger.debug("Image comparison from multiprocessing")
+            cv2.setNumThreads(0)
+            p_list = []
+            for index in range(len(sample_dct_list)):
+                args = [self.image_list, not index, sample_dct_list[index], result_list]
+                p_list.append(Process(target=self.parallel_compare_image, args=args))
+                p_list[index].start()
+            for index in range(len(p_list)):
+                p_list[index].join()
+        else:
+            logger.debug("Image comparison from single process")
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
-                if found_1:
-                    break
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct, comparing_dct):
+                if self.compare_two_images(sample_dct_list[0], comparing_dct):
                     logger.info("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
-                    breaking = True
-                    found_1 = True
                     break
             for img_index in range(self.search_range[2] - 1, self.search_range[3]):
-                if breaking:
-                    break
-                if found_2:
-                    break
                 image_data = self.image_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct_list[1], comparing_dct):
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
+                    break
+        end = time.time()
+        elapsed = end - start
+        logger.debug("Elapsed Time: %s" % str(elapsed))
+        result_list.sort()
+        logger.info(result_list)
+        return map(dict, result_list)
+
+    def parallel_compare_image(self, img_list, asc, sample_dct, result_list):
+        image_data = {}
+        if asc:
+            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+                image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.info("Comparing sample file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
-                    breaking = True
-                    found_2 = True
                     break
-        logger.info(result_list)
-        return result_list
+        else:
+            for img_index in range(self.search_range[2] - 1, self.search_range[3]):
+                image_data = img_list[img_index]
+                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                if self.compare_two_images(sample_dct, comparing_dct):
+                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    break
+        result_list.append(image_data)
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
@@ -415,7 +440,7 @@ def main():
         # default is compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
-            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image_multi_process(sample_img_dp), result_fp)
         else:
             logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
     elif args.convert_video_flag:
@@ -428,7 +453,7 @@ def main():
         # compare images
         if input_video_fp and output_img_dp and sample_img_dp and result_fp:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, output_img_name)
-            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image(sample_img_dp), result_fp)
+            img_tool_obj.dump_result_to_json(img_tool_obj.compare_with_sample_image_multi_process(sample_img_dp), result_fp)
         else:
             logger.error("Please specify the input video dir path, output image dir path, output image name, sample image dir path and result file path.")
 

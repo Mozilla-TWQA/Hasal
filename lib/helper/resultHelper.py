@@ -26,7 +26,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
         else:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
-        return_result['running_time_result'] = img_tool_obj.compare_with_sample_image(input_sample_dp)
+        return_result['running_time_result'] = img_tool_obj.compare_with_sample_image_multi_process(input_sample_dp)
     if calc_si == 1:
         si_progress = img_tool_obj.calculate_progress_for_si(return_result['running_time_result'])
         return_result['speed_index'] = img_tool_obj.calculate_speed_index(si_progress)
