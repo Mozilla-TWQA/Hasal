@@ -1,13 +1,13 @@
 """
 
 Usage:
-  get_build.py <user_email> <platform> [--build-hash=<str>]
+  get_build.py <user_email> <platform> [--build-hash=<str>] [--no-status-check]
   get_build.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
   --build-hash=<str>        Specify the build has want to retrieve.
-
+  --no-status-check         Skip job status check
 """
 import re
 import urllib2
@@ -18,11 +18,12 @@ from docopt import docopt
 class GetBuild(object):
     ARCHIVE_URL = "https://archive.mozilla.org"
 
-    def __init__(self, user_email):
+    def __init__(self, user_email, status_check):
         self.project = 'try'
         self.platform_option = 'opt'
         self.resultsets = []
         self.user_email = user_email
+        self.status_check = status_check
         self.thclient = TreeherderClient()
 
     def fetch_resultset(self, build_hash, default_count=500):
@@ -65,40 +66,46 @@ class GetBuild(object):
                                 return href_link
         return None
 
+    def download_build(self, build_hash, platform):
+        if platform[:3].lower() == "win":
+            download_platform = "win32"
+        else:
+            download_platform = platform
+        # generate url for build folder
+        build_folder_url_template = "%s/pub/firefox/%s-builds/%s-%s/%s-%s/"
+        build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
+                                                        self.project, self.user_email, build_hash,
+                                                        self.project, download_platform)
+        print "Build folder url [%s]" % build_folder_url
+        build_link = self.get_build_link(platform, build_folder_url)
+        download_fn = build_link.split("/")[-1]
+        download_link = self.ARCHIVE_URL + build_link
+        print "Prepare to download the build from link [%s]" % download_link
+        response = urllib2.urlopen(download_link)
+        with open(download_fn, 'wb') as fh:
+            fh.write(response.read())
+
     def get_build(self, build_hash, platform):
         resultset = self.fetch_resultset(build_hash)
         if resultset:
             if build_hash is None:
                 build_hash = resultset['revision']
             print "Resultset is found, and build hash is [%s]" % build_hash
-            job = self.get_job(resultset, platform)
-            if job:
-                if job['result'].lower() == "success":
-                    if platform[:3].lower() == "win":
-                        download_platform = "win32"
+            if self.status_check:
+                job = self.get_job(resultset, platform)
+                if job:
+                    if job['result'].lower() == "success":
+                        self.download_build(build_hash, platform)
                     else:
-                        download_platform = platform
-                    # generate url for build folder
-                    build_folder_url_template = "%s/pub/firefox/%s-builds/%s-%s/%s-%s/"
-                    build_folder_url = build_folder_url_template % (self.ARCHIVE_URL,
-                                                                    self.project, self.user_email, build_hash,
-                                                                    self.project, download_platform)
-                    print "Build folder url [%s]" % build_folder_url
-                    build_link = self.get_build_link(platform, build_folder_url)
-                    download_fn = build_link.split("/")[-1]
-                    download_link = self.ARCHIVE_URL + build_link
-                    print "Prepare to download the build from link [%s]" % download_link
-                    response = urllib2.urlopen(download_link)
-                    with open(download_fn, 'wb') as fh:
-                        fh.write(response.read())
-                else:
-                    "Current job status is [%s] !!" % job['result'].lower()
-                    return None
+                        "Current job status is [%s] !!" % job['result'].lower()
+                        return None
+            else:
+                self.download_build(build_hash, platform)
 
 
 def main():
     arguments = docopt(__doc__)
-    get_build_obj = GetBuild(arguments['<user_email>'])
+    get_build_obj = GetBuild(arguments['<user_email>'], arguments['--no-status-check'])
     get_build_obj.get_build(arguments['--build-hash'], arguments['<platform>'])
 
 if __name__ == '__main__':
