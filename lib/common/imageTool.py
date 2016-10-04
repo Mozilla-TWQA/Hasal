@@ -70,7 +70,6 @@ class ImageTool(object):
         else:
             logger.info('==== FPS from log file: ' + str(self.current_fps) + '====')
         real_time_shift = float(header_fps) / self.current_fps
-        result, image = vidcap.read()
         if exec_timestamp_list:
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
             ref_end_point = exec_timestamp_list[2] - exec_timestamp_list[0]
@@ -83,22 +82,27 @@ class ImageTool(object):
             if os.path.exists(output_image_dir_path) is False:
                 os.mkdir(output_image_dir_path)
             str_image_fp = os.path.join(output_image_dir_path, output_image_name)
+            result, image = vidcap.read()
             cv2.imwrite(str_image_fp, image)
         else:
-            img_cnt = 1
+            img_cnt = 0
             if os.path.exists(output_image_dir_path):
                 shutil.rmtree(output_image_dir_path)
             os.mkdir(output_image_dir_path)
-            while result:
+            while True:
+                img_cnt += 1
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
                 if (comp_mode and self.search_range[0] <= img_cnt <= self.search_range[3]) or \
                         (self.search_range[0] <= img_cnt <= self.search_range[1]) or \
                         (self.search_range[2] <= img_cnt <= self.search_range[3]) or \
                         not exec_timestamp_list:
+                    result, image = vidcap.read()
                     cv2.imwrite(str_image_fp, image)
+                else:
+                    result = vidcap.grab()
                 self.image_list.append({"time_seq": vidcap.get(0) * real_time_shift, "image_fp": str_image_fp})
-                result, image = vidcap.read()
-                img_cnt += 1
+                if not result:
+                    break
         if self.search_range[0] < 0:
             self.search_range[0] = 0
         if self.search_range[1] > len(self.image_list):
