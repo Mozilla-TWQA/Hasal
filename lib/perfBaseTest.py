@@ -115,7 +115,7 @@ class PerfBaseTest(unittest.TestCase):
         self.profile_zip_path = self.profilers.get_profile_path()
 
         # Record timestamp t1
-        self.exec_timestamp_list.append(time.time())
+        self.exec_timestamp_list.append(self.profilers.get_t1_time())
 
         # minimize all windows
         desktopHelper.minimize_window()

@@ -1,4 +1,5 @@
 import os
+import time
 import platform
 import subprocess
 from ..common.recordscreen import video_capture_line
@@ -10,6 +11,7 @@ class AvconvProfiler(BaseProfiler):
 
     process = None
     fh = None
+    t1_time = None
 
     def start_recording(self):
         if os.path.exists(self.env.video_output_fp):
@@ -25,6 +27,13 @@ class AvconvProfiler(BaseProfiler):
                                        get_mac_os_display_channel(),
                                        self.env.DEFAULT_VIDEO_RECORDING_CODEC, self.env.video_output_fp)
             self.process = subprocess.Popen(vline, bufsize=-1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        for counter in range(10):
+            if os.path.exists(self.env.video_output_fp):
+                self.t1_time = time.time()
+                break
+            else:
+                time.sleep(0.3)
 
     def stop_recording(self, **kwargs):
         if platform.system().lower() == "windows":
