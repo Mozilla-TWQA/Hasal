@@ -135,12 +135,11 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
 def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0):
     fps_stat = "1"
     if os.path.exists(env.video_output_fp):
-        fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
-        if not fps:
+        fps_stat, fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
+        if fps_stat:
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
-            fps_stat = "0"
             result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si, waveform)
     else:
         result_data = None
@@ -159,6 +158,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
 
 
 def fps_cal(file_path, default_fps):
+    fps_stat = "0"
     fps_return = 0
     tolerance = 0.03  # recording fps tolerance is set to 3%
     if os.path.exists(file_path):
@@ -189,6 +189,8 @@ def fps_cal(file_path, default_fps):
             fps_return = round(default_fps_element[0][0] - float(default_fps_element[0][0] - mode_fps[0]) * default_fps_element[0][1] / total_record)
         else:
             fps_return = mode_fps[0]
+            fps_stat = "1"
     else:
         logger.warning("Recording log doesn't exist.")
-    return int(round(fps_return))
+        fps_stat = "1"
+    return fps_stat, int(round(fps_return))
