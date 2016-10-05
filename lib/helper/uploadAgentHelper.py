@@ -69,6 +69,8 @@ class UploadAgent(object):
                 return None
             else:
                 test_value = test_time_list[0]['run_time']
+                si_value = test_time_list[0]['si']
+                psi_value = test_time_list[0]['psi']
             url_str = self.generate_url_str(test_name)
 
             # compose post data
@@ -80,6 +82,8 @@ class UploadAgent(object):
                          "platform": platform.machine(),
                          "webappname": web_app_name,
                          "value": test_value,
+                         "si": si_value,
+                         "psi": psi_value,
                          "video": test_video_fp,
                          "comment": self.test_comment_str}
 

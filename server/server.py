@@ -113,6 +113,8 @@ class AllResult:
                             comments_dict[comment].append('    * Median: {}'.format(data.get('median_value')))
                             comments_dict[comment].append('    * Sigma: {}'.format(data.get('sigma_value')))
                             comments_dict[comment].append('    * Mean: {}'.format(data.get('median_value')))
+                            comments_dict[comment].append('    * SI: {}'.format(data.get('si')))
+                            comments_dict[comment].append('    * PSI: {}'.format(data.get('psi')))
                             if data.get('webappname', '') != '':
                                 comments_dict[comment].append('    * Web App: {}'.format(data.get('webappname')))
                             if data.get('video_path', '') != '':
@@ -152,6 +154,8 @@ class HasalServer:
         'median_value': -1,
         'mean_value': -1,
         'sigma_value': -1,
+        'si': -1,
+        'psi': -1,
         'origin_values': [],  # the list of (value, video, ip)
         'video_path': '',
         'profile_path': '',
@@ -200,7 +204,7 @@ class HasalServer:
         info['platform'] = json_obj.get('platform')
         info['comment'] = json_obj.get('comment')
         info['origin_values'] = []  # TODO, add new value into it
-        info['origin_values'].append([json_obj.get('value'), json_obj.get('video'), ip])
+        info['origin_values'].append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
         return info
 
     @staticmethod
@@ -214,7 +218,7 @@ class HasalServer:
         timestamp = current_test_obj['timestamp']
         datestring = Formater.timestamp_to_date_string(timestamp) if timestamp else ''
 
-        _, video, ip = HasalServer.find_video_ip_by_median(values_list, median_value)
+        _, _, _, video, ip = HasalServer.find_video_ip_by_median(values_list, median_value)
 
         ret = {
             'median_value': median_value,
@@ -263,6 +267,8 @@ class HasalServer:
             "version": "36.0.1",
             "platform": "x86_64",
             "value": 500,
+            "si": 1000,
+            "psi": 1000,
             "video": "20160701_001.avi",
             "comment": "first test"
             }
@@ -324,7 +330,7 @@ class HasalServer:
                         return HasalServer.return_json(current_test_obj)
                     else:
                         # add new value into values list
-                        values_list.append([json_obj.get('value'), json_obj.get('video'), ip])
+                        values_list.append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
                         if len(values_list) >= HasalServer._config_test_times:
                             # more than 30 times, no median, cal the median and outliers
                             origin_seq = [item[0] for item in values_list]
@@ -339,6 +345,10 @@ class HasalServer:
                                 current_test_obj['median_value'] = median
                                 current_test_obj['mean_value'] = mean
                                 current_test_obj['sigma_value'] = sigma
+                                # update SI and PSI
+                                _, si, psi, _, _ = HasalServer.find_video_ip_by_median(values_list, median)
+                                current_test_obj['si'] = si
+                                current_test_obj['psi'] = psi
                                 # add timestamp
                                 current_test_obj['timestamp'] = time.time()
                                 # return the client
