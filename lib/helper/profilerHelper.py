@@ -44,6 +44,6 @@ class Profilers(object):
     def get_t1_time(self):
         t1_time = time.time()
         for profiler_obj in self.profiler_obj_list:
-            if profiler_obj.__class__.__name__ == self.env.PROFILER_FLAG_AVCONV:
+            if self.env.PROFILER_FLAG_AVCONV.lower() in profiler_obj.__class__.__name__.lower():
                 t1_time = profiler_obj.t1_time
         return t1_time
