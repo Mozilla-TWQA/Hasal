@@ -28,6 +28,8 @@ matrix:
         - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe"
         - sudo apt-get update
         - ./mach
+        # for sikulix installation over 10min issue
+        - wget -P ${HOME}/.Sikulix/SikulixDownloads https://repo1.maven.org/maven2/org/python/jython-standalone/2.7.0/jython-standalone-2.7.0.jar
       script:
         - ./bootstrap-linux.sh
         - cat bootstrap.log
