@@ -187,4 +187,8 @@ def fps_cal(file_path, default_fps):
         elif round(default_fps * (1 - tolerance)) <= mode_fps[0] <= round(default_fps * (1 + tolerance)) and \
                 float(default_fps_element[0][1] + mode_fps[1]) / total_record >= 0.9:
             fps_return = round(default_fps_element[0][0] - float(default_fps_element[0][0] - mode_fps[0]) * default_fps_element[0][1] / total_record)
+        else:
+            fps_return = mode_fps
+    else:
+        logger.warning("Recording log doesn't exist.")
     return int(round(fps_return))
