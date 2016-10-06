@@ -366,9 +366,7 @@ class HasalServer:
                 comment_obj = {
                     json_obj.get('browser'): current_test
                 }
-                HasalServer.storage[os_name][target_browser][test] = {
-                    comment_name: comment_obj
-                }
+                HasalServer.storage[os_name][target_browser][test][comment_name] = comment_obj
                 return HasalServer.return_json(current_test)
 
         except AssertionError as e:
