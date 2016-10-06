@@ -136,7 +136,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
     fps_stat = "1"
     if os.path.exists(env.video_output_fp):
         fps_stat, fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
-        if fps_stat:
+        if int(fps_stat):
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
