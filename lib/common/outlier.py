@@ -4,7 +4,7 @@ import numpy as np
 class outlier(object):
     def detect(self, input_seq, method=1):
         seq = sorted(input_seq, key=lambda k: k['run_time'])
-        seq_value = [d['run_time'] for d in input_seq]
+        seq_value = [d['run_time'] for d in seq]
         outliers = []
         outliers_value = []
         if len(seq) >= 3:
