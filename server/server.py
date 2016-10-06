@@ -333,10 +333,10 @@ class HasalServer:
                         values_list.append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
                         if len(values_list) >= HasalServer._config_test_times:
                             # more than 30 times, no median, cal the median and outliers
-                            origin_seq = [item[0] for item in values_list]
+                            origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in values_list]
 
-                            # mean, median, sigma, seq, outliers = outlier().detect(seq)
-                            mean, median, sigma, _, outliers = HasalServer._calculator.detect(origin_seq)
+                            # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
+                            mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
                             current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(values_list, outliers)
                             values_list = current_test_obj['origin_values']
 
@@ -346,7 +346,6 @@ class HasalServer:
                                 current_test_obj['mean_value'] = mean
                                 current_test_obj['sigma_value'] = sigma
                                 # update SI and PSI
-                                _, si, psi, _, _ = HasalServer.find_video_ip_by_median(values_list, median)
                                 current_test_obj['si'] = si
                                 current_test_obj['psi'] = psi
                                 # add timestamp
