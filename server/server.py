@@ -270,7 +270,7 @@ class HasalServer:
     def remove_tuple_from_values(list_obj, removed_values_list):
         tmp = list_obj[:]
         for v in removed_values_list:
-            tmp = [item for item in tmp if tmp != v]
+            tmp = [item for item in tmp if item.get('run_time') != v.get('run_time')]
         return tmp
 
     @staticmethod
@@ -416,7 +416,7 @@ class HasalServer:
                     values_list = current_test_obj['origin_values']
                     median_value = current_test_obj['median_value']
 
-                    if median_value >= 0:
+                    if median_value > 0:
                         # already have median value, just return to the client
                         return HasalServer.return_json(current_test_obj)
                     else:
@@ -428,7 +428,6 @@ class HasalServer:
 
                             # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
                             mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
-                            print('##### Mean {}, Median {}, Sigma {}, SI {}, PSI {}'.format(mean, median, sigma, si, psi))
                             current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(values_list, outliers)
                             values_list = current_test_obj['origin_values']
 
