@@ -51,10 +51,10 @@ class GetBuild(object):
     def get_job(self, resultset, platform_keyword_list):
         jobs = self.thclient.get_jobs(self.repo, result_set_id=resultset['id'])
         for job in jobs:
-            cnt=0
+            cnt = 0
             for platform_keyword in platform_keyword_list:
                 if platform_keyword in job['platform']:
-                    cnt+=1
+                    cnt += 1
             if job['platform_option'] == self.platform_option and cnt == len(platform_keyword_list):
                 return job
         print "Can't find the specify platform [%s] and platform_options [%s] in jobs!!!" % (self.platform, self.platform_option)
