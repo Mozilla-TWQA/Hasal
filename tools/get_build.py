@@ -1,12 +1,13 @@
 """
 
 Usage:
-  get_build.py <user_email> <platform> [--build-hash=<str>] [--no-status-check]
+  get_build.py <repo> <platform> [--user-email=<str>] [--build-hash=<str>] [--no-status-check]
   get_build.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
-  --build-hash=<str>        Specify the build has want to retrieve.
+  --build-hash=<str>        Specify the build want to retrieve.
+  --user-email=<str>        Specify the user email of build want to retrieve
   --no-status-check         Skip job status check
 """
 import re
@@ -17,6 +18,12 @@ from docopt import docopt
 
 class GetBuild(object):
     ARCHIVE_URL = "https://archive.mozilla.org"
+    NIGHTLY_LATEST_URL_FOLDER = "/pub/firefox/nightly/latest-mozilla-central/"
+    PLATFORM_FN_MAPPING = {'linux32':{'key':'linux-i686','ext':'tar.bz2'},
+                           'linux64':{'key':'linux-x86_64','ext':'tar.bz2'},
+                           'mac':{'key':'mac','ext':'dmg'},
+                           'win32':{'key':'win32','ext':'zip'},
+                           'win64':{'key':'win64','ext':'zip'}}
 
     def __init__(self, user_email, status_check):
         self.project = 'try'
@@ -85,7 +92,11 @@ class GetBuild(object):
         with open(download_fn, 'wb') as fh:
             fh.write(response.read())
 
-    def get_build(self, build_hash, platform):
+    def get_build(self):
+        pass
+
+
+    def get_try(self, user_email, build_hash, platform):
         resultset = self.fetch_resultset(build_hash)
         if resultset:
             if build_hash is None:
@@ -102,6 +113,26 @@ class GetBuild(object):
             else:
                 self.download_build(build_hash, platform)
 
+    def get_files_from_remote_url_folder(self, remote_url_str):
+        pass
+
+    def get_nightly(self, platform):
+        remote_url_str = self.ARCHIVE_URL + self.NIGHTLY_LATEST_URL_FOLDER
+
+        # get latest nightly build list from remote url folder
+        remote_file_list = self.get_files_from_remote_url_folder(remote_url_str)
+
+        # filter with platform, and return file name with extension
+        if platform not in self.PLATFORM_FN_MAPPING:
+            print "ERROR: we are currently not support the platform[%s] you specified!" % platform
+        else:
+
+
+        # combine file name with json
+
+        # download files
+
+        pass
 
 def main():
     arguments = docopt(__doc__)
