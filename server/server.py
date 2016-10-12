@@ -140,17 +140,19 @@ class HasalServer:
     _config = storage_handler.load_config()
     _config_test_times = _config.get('test_times', 30)
     _keys = ['os', 'target_browser', 'test', 'browser']
-    _checks = ['os', 'target', 'test', 'webappname', 'browser', 'version', 'platform', 'value', 'video', 'comment']
+    # The "value" is "run_time" from agent, the "si", "psi", and "revision" are optional.
+    _checks = ['os', 'target', 'test', 'comment', 'webappname', 'browser', 'version', 'platform', 'value', 'video']
     _count = 0
     _template = {
         'os': '',
         'target': '',
         'test': '',
+        'comment': '',
         'webappname': '',
         'browser': '',
         'version': '',
+        'revision': '',
         'platform': '',
-        'comment': '',
         'median_value': -1,
         'mean_value': -1,
         'sigma_value': -1,
@@ -194,15 +196,17 @@ class HasalServer:
 
     @staticmethod
     def _generate_current_test_obj(json_obj, ip):
+        # "si", "psi", and "revision" are optional
         info = HasalServer._template.copy()
         info['os'] = json_obj.get('os')
         info['target'] = json_obj.get('target')
         info['test'] = json_obj.get('test')
+        info['comment'] = json_obj.get('comment')
         info['webappname'] = json_obj.get('webappname')
         info['browser'] = json_obj.get('browser')
         info['version'] = json_obj.get('version')
+        info['revision'] = json_obj.get('revision', '')
         info['platform'] = json_obj.get('platform')
-        info['comment'] = json_obj.get('comment')
         info['origin_values'] = []  # TODO, add new value into it
         info['origin_values'].append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
         return info
@@ -385,8 +389,6 @@ class VideoProfileUpdater:
 
     @staticmethod
     def check_input_json(json_obj):
-        print('# check:')
-        print(VideoProfileUpdater._checks)
         for item in VideoProfileUpdater._checks:
             assert item in json_obj, 'The json should have "{}" value.'.format(item)
 
