@@ -15,6 +15,7 @@ urls = (
     '/reset/(.*)', 'Reset',
     '/all_result/', 'AllResult',
     '/hasal/(.*)/(.*)/(.*)', 'HasalServer',
+    '/hasal_perf_reg/(.*)/(.*)/(.*)', 'HasalServerPerfherderRegister',
     '/video_profile/(.*)/(.*)/(.*)', 'VideoProfileUpdater'
 )
 
@@ -34,13 +35,15 @@ class StorageHandler:
         {"test_times": 30}
     If there is no config file, the default value will be 30 times.
     """
-    def __init__(self):
-        pass
-
     _storage_mutex = Lock()
     _storage_dir = os.path.expanduser('~/.hasal_server/')
     _storage_path = os.path.join(_storage_dir, 'dump.json')
     _config_path = os.path.join(_storage_dir, 'config.json')
+    _register_mutex = Lock()
+    _register_path = os.path.join(_storage_dir, 'register.json')
+
+    def __init__(self):
+        pass
 
     def load_config(self):
         """
@@ -51,6 +54,28 @@ class StorageHandler:
             with open(self._config_path, 'r') as f:
                 return json.load(f)
         return {"test_times": 30}
+
+    def load_register(self):
+        """
+        Return the info from dump.json from '~/.hasal_server/'
+        :return: json if file exists, or {}
+        """
+        if os.path.isfile(self._register_path):
+            with open(self._register_path, 'r') as f:
+                return json.load(f)
+        return {}
+
+    def save_register(self, json_obj):
+        StorageHandler._register_mutex.acquire()
+        try:
+            if os.path.isdir(self._register_path):
+                shutil.rmtree(self._register_path)
+            if not os.path.exists(self._register_path):
+                os.makedirs(self._register_path)
+            with open(self._register_path, 'w') as f:
+                json.dump(json_obj, f)
+        finally:
+            StorageHandler._register_mutex.release()
 
     def load(self):
         """
@@ -130,6 +155,72 @@ class AllResult:
         return self.render.all_result(markdown=markdown_str)
 
 
+class HasalServerPerfherderRegister:
+    """
+    Hasal Server Register.
+    For storing the "os/target/comment" -> tests list [test_foo, test_bar, ...]
+    """
+    RET_OK = 0
+    RET_DROP = 1
+
+    storage_handler = StorageHandler()
+    register = {}
+
+    def __init__(self):
+        HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
+
+    def return_ret(self, status):
+        return {'status': status}
+
+    def save_register(self):
+        HasalServerPerfherderRegister.storage_handler.save_register(HasalServerPerfherderRegister.register)
+
+    def POST(self, os_name, target_browser, comment):
+        """
+        The input json example:
+            json=["test_foo", "test_bar", ...]
+        :param os_name: os. ex: 'linux'
+        :param target_browser: target. ex: 'firefox 36'
+        :param comment: comment. ex: '2016-01-01'
+        :return: status. 0 is okay. 1 is drop.
+            ex: {
+                "status": 0
+                }
+        """
+        try:
+            # check the url, server/hasal_perf_reg/<os>/<target_browser>/<comment>
+            assert os_name is not None and os_name != '', '[os] is empty.'
+            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
+            assert comment is not None and comment != '', '[comment] is empty.'
+
+            # get the POST data
+            data = web.data()
+            parameters = urlparse.parse_qs(data)
+            # check the POST data contain 'json'
+            assert 'json' in parameters, 'Can not get "json" parameter from POST data.'
+
+            # check the input json object
+            json_obj = json.loads(parameters['json'][0])
+            if isinstance(json_obj, list):
+                HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
+                # if there is already value in "os_name/target/comment", drop it and return status 1
+                if HasalServerPerfherderRegister.register.get(os_name, {}).get(target_browser, {}).get(comment, {}):
+                    self.return_ret(self.RET_DROP)
+                else:
+                    if os_name not in HasalServerPerfherderRegister.register:
+                        HasalServerPerfherderRegister.register[os_name] = {}
+                    if target_browser not in HasalServerPerfherderRegister.register[os_name]:
+                        HasalServerPerfherderRegister.register[os_name][target_browser] = {}
+                    if comment not in HasalServerPerfherderRegister.register[os_name][target_browser]:
+                        HasalServerPerfherderRegister.register[os_name][target_browser][comment] = json_obj
+                    self.save_register()
+                    self.return_ret(self.RET_OK)
+            else:
+                raise Exception('The parameter is not tests list: {}'.format(parameters['json'][0]))
+        except AssertionError as e:
+            raise web.badrequest(e.message)
+
+
 class HasalServer:
     """
     Hasal Server handler.
@@ -179,7 +270,7 @@ class HasalServer:
     def remove_tuple_from_values(list_obj, removed_values_list):
         tmp = list_obj[:]
         for v in removed_values_list:
-            tmp = [item for item in tmp if tmp != v]
+            tmp = [item for item in tmp if item.get('run_time') != v.get('run_time')]
         return tmp
 
     @staticmethod
@@ -325,7 +416,7 @@ class HasalServer:
                     values_list = current_test_obj['origin_values']
                     median_value = current_test_obj['median_value']
 
-                    if median_value >= 0:
+                    if median_value > 0:
                         # already have median value, just return to the client
                         return HasalServer.return_json(current_test_obj)
                     else:
