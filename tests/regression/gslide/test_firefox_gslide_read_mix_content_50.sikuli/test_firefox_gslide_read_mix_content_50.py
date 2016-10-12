@@ -6,11 +6,11 @@ import common
 import gslide
 
 com = common.General()
-chrome = browser.Chrome()
+ff = browser.Firefox()
 gs = gslide.gSlide()
 
-chrome.clickBar()
-chrome.enterLink(sys.argv[3])
+ff.clickBar()
+ff.enterLink(sys.argv[3])
 
 sleep(2)
 gs.wait_for_loaded()

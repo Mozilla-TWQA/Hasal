@@ -14,4 +14,3 @@ chrome.enterLink(sys.argv[3])
 
 sleep(2)
 gs.wait_for_loaded()
-
