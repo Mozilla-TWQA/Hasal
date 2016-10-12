@@ -17,7 +17,7 @@ import urllib2
 import requests
 from thclient import TreeherderClient
 from docopt import docopt
-
+from tqdm import tqdm
 
 class GetBuild(object):
     ARCHIVE_URL = "https://archive.mozilla.org"
@@ -85,8 +85,13 @@ class GetBuild(object):
             os.makedirs(output_dp)
         download_fp = os.path.join(output_dp, download_fn)
         try:
+            try:
+                total_len = int(response.headers['content-length'])
+            except:
+                total_len = None
             with open(download_fp, 'wb') as fh:
-                fh.write(response.content)
+                for data in tqdm(response.iter_content(), total=total_len):
+                    fh.write(data)
             return download_fp
         except Exception as e:
             print "ERROR: [%s]" % e.message
