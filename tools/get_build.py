@@ -189,9 +189,13 @@ def main():
     if arguments['<repo>'] == "nightly":
         return get_build_obj.get_nightly_build(arguments['--output-dp'])
     elif arguments['<repo>'] == "try":
-        return get_build_obj.get_try_build(arguments['--user-email'], arguments['--build-hash'], arguments['--output-dp'])
+        if arguments['--user-email']:
+            return get_build_obj.get_try_build(arguments['--user-email'], arguments['--build-hash'], arguments['--output-dp'])
+        else:
+            print "ERROR: please specify the user email with --user-email argument!"
+            return False
     else:
-        print "ERROR: we are currently not support the repo[%s] you specified!" % arguments['<repo>']
+        print "ERROR: we are currently not support the repo[%s] you specified! currently support [nightly, try]" % arguments['<repo>']
         return False
 
 if __name__ == '__main__':
