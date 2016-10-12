@@ -19,6 +19,7 @@ from thclient import TreeherderClient
 from docopt import docopt
 from tqdm import tqdm
 
+
 class GetBuild(object):
     ARCHIVE_URL = "https://archive.mozilla.org"
     NIGHTLY_LATEST_URL_FOLDER = "/pub/firefox/nightly/latest-mozilla-central/"
