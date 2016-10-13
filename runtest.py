@@ -1,22 +1,23 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>]
   runtest.py (-h | --help)
 
 Options:
-  -h --help                 Show this screen.
-  --max-run=<int>           Test run max no [default: 30].
-  --max-retry=<int>         Test failed retry max no [default: 15].
-  --keep-browser            Keep the browser open after test script executed
-  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --online                  Result will be transfer to server, calculated by server
-  --online-config=<str>     Online server config [default: svrConfig.json]
-  --comment=<str>           Tag the comment on this test [default: <today>]
-  --advance                 Only for expert user
-  --waveform                Waveform generated after case finished
+  -h --help                       Show this screen.
+  --max-run=<int>                 Test run max no [default: 30].
+  --max-retry=<int>               Test failed retry max no [default: 15].
+  --keep-browser                  Keep the browser open after test script executed
+  --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
+  --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
+  --online                        Result will be transfer to server, calculated by server
+  --online-config=<str>           Online server config [default: svrConfig.json]
+  --comment=<str>                 Tag the comment on this test [default: <today>]
+  --advance                       Only for expert user
+  --waveform                      Waveform generated after case finished
+  --perfherder-revision=<str>     Revision for upload to perfherder
 
 """
 import os
@@ -67,6 +68,10 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
+        if self.perfherder_revision:
+            result['PERFHERDER_REVISION'] = self.perfherder_revision
+        else:
+            result['PERFHERDER_REVISION'] = ""
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -172,6 +177,11 @@ class RunTest(object):
                         if os.path.exists(test_case_fp):
                             test_case_module_name = test_case
                             test_env = self.get_test_env(**case_data[test_case])
+                        else:
+                            self.logger.error("Test script [%s] is not exist!" % test_case_fp)
+                            test_env = None
+                    if self.online:
+                        self.upload_agent_obj.upload_register_data(input_suite_fp, type)
                     response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:
                 self.upload_agent_obj.upload_videos(response_result_data)
@@ -190,7 +200,7 @@ def main():
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'], calc_si=arguments['--calc-si'],
-                           waveform=arguments['--waveform'])
+                           waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:

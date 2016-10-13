@@ -51,6 +51,36 @@ class UploadAgent(object):
         path_str = "/".join([api_root, sys.platform, self.test_target, input_test_name])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
+    def upload_register_data(self, input_suite_fp, test_type):
+        # Sample data
+        # hasal_perf_reg/os/target/comment
+        # dict {'name':'', 'subtests': {'firefox':[], 'chrome':[]}}
+        with open(input_suite_fp) as input_suite_fh:
+            upload_data = {}
+            for tmp_line in input_suite_fh.read().splitlines():
+                case_full_path = tmp_line.split(",")[0]
+                if test_type == "pt":
+                    tmp_list = case_full_path.split(os.sep)
+                else:
+                    tmp_list = case_full_path.split(".")
+                if tmp_list[2].lower() == "t15":
+                    suite_name = "t15_summary_" + tmp_list[3].split("_")[1]
+                else:
+                    suite_name = tmp_list[1] + "_" + tmp_list[2] + "_" + tmp_list[3].split("_")[1]
+                if suite_name not in upload_data:
+                    upload_data[suite_name] = []
+                if tmp_list[3].split("_")[1] == "firefox":
+                    upload_data[suite_name].append(tmp_list[3])
+                else:
+                    upload_data[suite_name].append(tmp_list[3])
+            path_str = "/".join(["hasal_perf_reg", sys.platform, self.test_target, self.test_comment_str])
+            url_str = "http://%s:%s/%s" % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
+            logger.info("===== Upload register suite data =====")
+            logger.debug(url_str)
+            logger.info(upload_data)
+            logger.info("===== Upload register suite data =====")
+            self.send_post_data(upload_data, url_str)
+
     def upload_result(self, input_result_fp):
         with open(input_result_fp) as json_fh:
             result_data = json.load(json_fh)
@@ -64,6 +94,7 @@ class UploadAgent(object):
             test_time_list = result_data[test_name]['time_list']
             test_video_fp = result_data[test_name]['video_fp']
             web_app_name = result_data[test_name]['web_app_name']
+            revision = result_data[test_name]['revision']
             if len(test_time_list) != 1:
                 logger.error("current time list is not equal to 1, current: %d!" % len(test_time_list))
                 return None
@@ -79,6 +110,7 @@ class UploadAgent(object):
                          "test": test_name,
                          "browser": test_browser_type,
                          "version": self.current_browser_version[test_browser_type],
+                         "revision": revision,
                          "platform": platform.machine(),
                          "webappname": web_app_name,
                          "value": test_value,

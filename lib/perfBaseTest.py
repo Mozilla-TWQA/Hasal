@@ -203,8 +203,8 @@ class PerfBaseTest(unittest.TestCase):
         # output result
         if self.sikuli_status == 0:
             if hasattr(self, "crop_data"):
-                resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data, int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")))
+                resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data, int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM"), os.getenv("PERFHERDER_REVISION")))
             else:
-                resultHelper.result_calculation(self.env, self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")), waveform=int(os.getenv("ENABLE_WAVEFORM")))
+                resultHelper.result_calculation(self.env, self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")), waveform=int(os.getenv("ENABLE_WAVEFORM")), revision=os.getenv("PERFHERDER_REVISION"))
         else:
             logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.sikuli_status))
