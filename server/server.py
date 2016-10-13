@@ -68,10 +68,10 @@ class StorageHandler:
     def save_register(self, json_obj):
         StorageHandler._register_mutex.acquire()
         try:
+            if not os.path.exists(self._storage_dir):
+                os.makedirs(self._storage_dir)
             if os.path.isdir(self._register_path):
                 shutil.rmtree(self._register_path)
-            if not os.path.exists(self._register_path):
-                os.makedirs(self._register_path)
             with open(self._register_path, 'w') as f:
                 json.dump(json_obj, f)
         finally:
@@ -90,10 +90,10 @@ class StorageHandler:
     def save(self, json_obj):
         StorageHandler._storage_mutex.acquire()
         try:
-            if os.path.isdir(self._storage_path):
-                shutil.rmtree(self._storage_path)
             if not os.path.exists(self._storage_dir):
                 os.makedirs(self._storage_dir)
+            if os.path.isdir(self._storage_path):
+                shutil.rmtree(self._storage_path)
             with open(self._storage_path, 'w') as f:
                 json.dump(json_obj, f)
         finally:
@@ -175,12 +175,15 @@ class HasalServerPerfherderRegister:
     def save_register(self):
         HasalServerPerfherderRegister.storage_handler.save_register(HasalServerPerfherderRegister.register)
 
-    def POST(self, os_name, target_browser, comment):
+    def POST(self, os_name, target, comment):
         """
         The input json example:
-            json=["test_foo", "test_bar", ...]
+            json={"foo_bar_f": ["test_1", "test_2", ...], "foo_bar_c": ["test_1", "test_2", ...]}
+        It will convert to two entries:
+            os/target/comment/foo_Bar_f: {"name": "foo_bar_f": ["test_1", "test_2", ...]}
+            os/target/comment/foo_Bar_c: {"name": "foo_bar_c": ["test_1", "test_2", ...]}
         :param os_name: os. ex: 'linux'
-        :param target_browser: target. ex: 'firefox 36'
+        :param target: target. ex: 'firefox 36'
         :param comment: comment. ex: '2016-01-01'
         :return: status. 0 is okay. 1 is drop.
             ex: {
@@ -190,7 +193,7 @@ class HasalServerPerfherderRegister:
         try:
             # check the url, server/hasal_perf_reg/<os>/<target_browser>/<comment>
             assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
+            assert target is not None and target != '', '[target] is empty.'
             assert comment is not None and comment != '', '[comment] is empty.'
 
             # get the POST data
@@ -201,22 +204,29 @@ class HasalServerPerfherderRegister:
 
             # check the input json object
             json_obj = json.loads(parameters['json'][0])
-            if isinstance(json_obj, list):
-                HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
-                # if there is already value in "os_name/target/comment", drop it and return status 1
-                if HasalServerPerfherderRegister.register.get(os_name, {}).get(target_browser, {}).get(comment, {}):
-                    self.return_ret(self.RET_DROP)
-                else:
-                    if os_name not in HasalServerPerfherderRegister.register:
-                        HasalServerPerfherderRegister.register[os_name] = {}
-                    if target_browser not in HasalServerPerfherderRegister.register[os_name]:
-                        HasalServerPerfherderRegister.register[os_name][target_browser] = {}
-                    if comment not in HasalServerPerfherderRegister.register[os_name][target_browser]:
-                        HasalServerPerfherderRegister.register[os_name][target_browser][comment] = json_obj
+
+            if isinstance(json_obj, dict):
+                for suite_name, suite_tests in json_obj.items():
+                    if not isinstance(suite_tests, list):
+                        raise Exception('The value of "{}" is not list: {}'.format(suite_name, suite_tests))
+
+                    HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
+                    # if there is already value in "os_name/target/comment", drop it and return status 1
+                    if HasalServerPerfherderRegister.register.get(os_name, {}).get(target, {}).get(comment, {}).get(suite_name, {}):
+                        self.return_ret(self.RET_DROP)
+                    else:
+                        if os_name not in HasalServerPerfherderRegister.register:
+                            HasalServerPerfherderRegister.register[os_name] = {}
+                        if target not in HasalServerPerfherderRegister.register[os_name]:
+                            HasalServerPerfherderRegister.register[os_name][target] = {}
+                        if comment not in HasalServerPerfherderRegister.register[os_name][target]:
+                            HasalServerPerfherderRegister.register[os_name][target][comment] = {}
+                        if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
+                            HasalServerPerfherderRegister.register[os_name][target][comment][suite_name] = suite_tests
                     self.save_register()
-                    self.return_ret(self.RET_OK)
+                self.return_ret(self.RET_OK)
             else:
-                raise Exception('The parameter is not tests list: {}'.format(parameters['json'][0]))
+                raise Exception('The parameter is not JSON object: {}'.format(parameters['json'][0]))
         except AssertionError as e:
             raise web.badrequest(e.message)
 
