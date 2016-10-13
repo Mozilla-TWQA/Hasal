@@ -336,6 +336,26 @@ class HasalServer:
         }
         return json.dumps(ret)
 
+    def calculate_result(self, current_test_obj):
+        origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in current_test_obj['origin_values']]
+
+        # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
+        mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
+        current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(current_test_obj['origin_values'], outliers)
+        values_list = current_test_obj['origin_values']
+
+        if len(values_list) >= HasalServer._config_test_times:
+            # update the median, mean, and sigma
+            current_test_obj['median_value'] = median
+            current_test_obj['mean_value'] = mean
+            current_test_obj['sigma_value'] = sigma
+            # update SI and PSI
+            current_test_obj['si'] = si
+            current_test_obj['psi'] = psi
+            # add timestamp
+            current_test_obj['timestamp'] = time.time()
+        return current_test_obj
+
     def GET(self, os_name, target_browser, test):
         # TODO: this it for checking the result of Hasal Server.
         try:
@@ -422,9 +442,13 @@ class HasalServer:
             if browser_name not in HasalServer.storage[os_name][target][comment_name][test]:
                 HasalServer.storage[os_name][target][comment_name][test][browser_name] = {}
 
-                # update the os/target/test result
+                # new data
                 current_obj = HasalServer._generate_current_test_obj(json_obj, ip)
                 HasalServer.storage[os_name][target][comment_name][test][browser_name] = current_obj
+
+                # if the server config test times is 1, calculate result
+                if HasalServer._config_test_times == 1:
+                    self.calculate_result(current_obj)
                 return HasalServer.return_json(current_obj)
             else:
                 current_test_obj = HasalServer.storage[os_name][target][comment_name][test][browser_name]
@@ -439,28 +463,9 @@ class HasalServer:
                 else:
                     # add new value into values list
                     values_list.append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
+                    # if reach the server config test times, calculate result
                     if len(values_list) >= HasalServer._config_test_times:
-                        # more than 30 times, no median, cal the median and outliers
-                        origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in values_list]
-
-                        # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
-                        mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
-                        current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(values_list, outliers)
-                        values_list = current_test_obj['origin_values']
-
-                        if len(values_list) >= HasalServer._config_test_times:
-                            # update the median, mean, and sigma
-                            current_test_obj['median_value'] = median
-                            current_test_obj['mean_value'] = mean
-                            current_test_obj['sigma_value'] = sigma
-                            # update SI and PSI
-                            current_test_obj['si'] = si
-                            current_test_obj['psi'] = psi
-                            # add timestamp
-                            current_test_obj['timestamp'] = time.time()
-                            # return the client
-                            return HasalServer.return_json(current_test_obj)
-                # Keep going and return the client
+                        self.calculate_result(current_test_obj)
                 return HasalServer.return_json(current_test_obj)
 
         except AssertionError as e:
