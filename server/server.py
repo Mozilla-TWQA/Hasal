@@ -68,10 +68,10 @@ class StorageHandler:
     def save_register(self, json_obj):
         StorageHandler._register_mutex.acquire()
         try:
+            if not os.path.exists(self._storage_dir):
+                os.makedirs(self._storage_dir)
             if os.path.isdir(self._register_path):
                 shutil.rmtree(self._register_path)
-            if not os.path.exists(self._register_path):
-                os.makedirs(self._register_path)
             with open(self._register_path, 'w') as f:
                 json.dump(json_obj, f)
         finally:
@@ -90,10 +90,10 @@ class StorageHandler:
     def save(self, json_obj):
         StorageHandler._storage_mutex.acquire()
         try:
-            if os.path.isdir(self._storage_path):
-                shutil.rmtree(self._storage_path)
             if not os.path.exists(self._storage_dir):
                 os.makedirs(self._storage_dir)
+            if os.path.isdir(self._storage_path):
+                shutil.rmtree(self._storage_path)
             with open(self._storage_path, 'w') as f:
                 json.dump(json_obj, f)
         finally:
@@ -212,7 +212,7 @@ class HasalServerPerfherderRegister:
 
                     HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
                     # if there is already value in "os_name/target/comment", drop it and return status 1
-                    if HasalServerPerfherderRegister.register.get(os_name, {}).get(target, {}).get(comment, {}):
+                    if HasalServerPerfherderRegister.register.get(os_name, {}).get(target, {}).get(comment, {}).get(suite_name, {}):
                         self.return_ret(self.RET_DROP)
                     else:
                         if os_name not in HasalServerPerfherderRegister.register:
@@ -224,7 +224,7 @@ class HasalServerPerfherderRegister:
                         if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
                             HasalServerPerfherderRegister.register[os_name][target][comment][suite_name] = suite_tests
                     self.save_register()
-                    self.return_ret(self.RET_OK)
+                self.return_ret(self.RET_OK)
             else:
                 raise Exception('The parameter is not JSON object: {}'.format(parameters['json'][0]))
         except AssertionError as e:
