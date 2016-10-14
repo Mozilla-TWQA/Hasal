@@ -6,11 +6,11 @@ import common
 import gslide
 
 com = common.General()
-ff = browser.Firefox()
+chrome = browser.Chrome()
 gs = gslide.gSlide()
 
-ff.clickBar()
-ff.enterLink(sys.argv[3])
+chrome.clickBar()
+chrome.enterLink(sys.argv[3])
 setAutoWaitTimeout(10)
 
 sleep(2)
@@ -40,6 +40,6 @@ wait(gs.page_8)
 type(Key.PAGE_DOWN)
 sleep(1)
 wait(gs.page_9)
-type(Key.END)
+type(Key.PAGE_DOWN)
 sleep(1)
 wait(gs.page_end)
