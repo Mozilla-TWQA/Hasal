@@ -160,9 +160,8 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
 def fps_cal(file_path, default_fps):
     fps_stat = "0"
     fps_return = 0
-    default_fps_record = 0
     tolerance = 0.03  # recording fps tolerance is set to 3%
-    probability = 0.9
+    fps_frequency_threshold = 0.9  # fps frequency should be more than 90%
     if os.path.exists(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
@@ -171,48 +170,17 @@ def fps_cal(file_path, default_fps):
         fh.close()
         all_fps_tuple = count.most_common()
         if not all_fps_tuple:
-            logger.error("Cannot get fps information from log")
+            logger.error("Cannot get fps information from log.")
             fps_stat = "1"
-            return fps_stat, int(round(fps_return))
         else:
             total_record = sum([item[1] for item in all_fps_tuple])
-            default_fps_element = [item for item in all_fps_tuple if item[0] == default_fps]
-            if default_fps_element:
-                default_fps_record = default_fps_element[0][1]
-            mode_fps = all_fps_tuple[0][0]
-            mode_fps_record = all_fps_tuple[0][1]
-
-        if len(all_fps_tuple) > 1:
-            second_mode_fps = all_fps_tuple[1][0]
-            second_mode_fps_record = all_fps_tuple[1][1]
-            if mode_fps == default_fps:
-                if float(default_fps_record + second_mode_fps_record) / total_record >= probability and \
-                        round(default_fps * (1 - tolerance)) <= second_mode_fps <= round(default_fps * (1 + tolerance)):
-                    fps_return = round(default_fps - float(default_fps - second_mode_fps) *
-                                       second_mode_fps / total_record)
-                else:
-                    logger.warning(
-                        "Either second mode of fps out of tolerance or the sum of default fps and second mode of fps "
-                        "don't greater than %d" % probability)
-                    fps_return = mode_fps
-                    fps_stat = "1"
+            tolerance_fps_element = [item for item in all_fps_tuple if round(default_fps * (1 - tolerance)) <= item[0] <= round(default_fps * (1 + tolerance))]
+            tolerance_fps_total_record = sum([item[1] for item in tolerance_fps_element])
+            if float(tolerance_fps_total_record) / total_record >= fps_frequency_threshold:
+                fps_return = sum([item[0] * item[1] for item in tolerance_fps_element]) / tolerance_fps_total_record
             else:
-                if float(default_fps_record + mode_fps_record) / total_record >= probability and \
-                        round(default_fps * (1 - tolerance)) <= mode_fps <= round(default_fps * (1 + tolerance)):
-                    fps_return = round(default_fps - float(default_fps - mode_fps) *
-                                       mode_fps / total_record)
-                else:
-                    logger.warning(
-                        "Either mode of fps out of tolerance or the sum of default fps and mode of fps "
-                        "don't greater than %d" % probability)
-                    fps_return = mode_fps
-                    fps_stat = "1"
-        elif round(default_fps * (1 - tolerance)) <= mode_fps <= round(default_fps * (1 + tolerance)) and \
-                (float(mode_fps_record) / total_record) >= probability:
-            fps_return = mode_fps
-        else:
-            fps_return = mode_fps
-            fps_stat = "1"
+                fps_return = sum([item[0] * item[1] for item in all_fps_tuple]) / total_record
+                fps_stat = "1"
     else:
         logger.warning("Recording log doesn't exist.")
         fps_stat = "1"
