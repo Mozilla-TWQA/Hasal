@@ -151,7 +151,15 @@ class PerfBaseTest(unittest.TestCase):
 
         # clone test target
         if hasattr(self, "test_target"):
-            self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target, self.env.output_name)
+            if hasattr(self, "target_folder"):
+                self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target,
+                                                                                  self.env.output_name,
+                                                                                  self.target_folder)
+                logger.info("The test url after cloned is : [%s]" % self.test_url)
+            else:
+                self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target,
+                                                                                  self.env.output_name)
+                logger.info("The test url after cloned is : [%s]" % self.test_url)
 
         # capture 1st snapshot
         time.sleep(5)

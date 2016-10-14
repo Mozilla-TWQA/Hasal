@@ -14,6 +14,7 @@ class gSheet():
             self.alt = Key.ALT
 
         self.gsheet_tab_icon = Pattern("pics/gsheet.png").similar(0.70)
+        self.gsheet_highlight_cell = Pattern("pics/highlight_cell.png").similar(0.70)
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
@@ -21,3 +22,13 @@ class gSheet():
         wait(self.gsheet_tab_icon)
         setAutoWaitTimeout(default_timeout)
 
+    def modify_highlight_cell(self, input_txt):
+        click(self.gsheet_highlight_cell)
+        paste(input_txt)
+
+    def delete_highlight_cell(self):
+        click(self.gsheet_highlight_cell)
+        type(Key.DELETE)
+
+    def click_highlight_tab(self):
+        click(self.gsheet_highlight_cell)
