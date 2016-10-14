@@ -180,7 +180,7 @@ class RunTest(object):
                         else:
                             self.logger.error("Test script [%s] is not exist!" % test_case_fp)
                             test_env = None
-                    if self.online:
+                    if self.online and self.perfherder_revision:
                         self.upload_agent_obj.upload_register_data(input_suite_fp, type)
                     response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:

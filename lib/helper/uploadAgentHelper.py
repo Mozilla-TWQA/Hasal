@@ -44,11 +44,11 @@ class UploadAgent(object):
         else:
             self.test_comment_str = self.test_comment
 
-    def generate_url_str(self, input_test_name, api_root=None):
+    def generate_url_str(self, api_root=None):
         url_format = "http://%s:%s/%s"
         if api_root is None:
             api_root = self.svr_config["project_name"]
-        path_str = "/".join([api_root, sys.platform, self.test_target, input_test_name])
+        path_str = "/".join([api_root, sys.platform, self.test_target, self.test_comment_str])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
     def upload_register_data(self, input_suite_fp, test_type):
@@ -73,8 +73,7 @@ class UploadAgent(object):
                     upload_data[suite_name].append(tmp_list[3])
                 else:
                     upload_data[suite_name].append(tmp_list[3])
-            path_str = "/".join(["hasal_perf_reg", sys.platform, self.test_target, self.test_comment_str])
-            url_str = "http://%s:%s/%s" % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
+            url_str = self.generate_url_str("hasal_perf_reg")
             logger.info("===== Upload register suite data =====")
             logger.debug(url_str)
             logger.info(upload_data)
@@ -102,7 +101,7 @@ class UploadAgent(object):
                 test_value = test_time_list[0]['run_time']
                 si_value = test_time_list[0]['si']
                 psi_value = test_time_list[0]['psi']
-            url_str = self.generate_url_str(test_name)
+            url_str = self.generate_url_str()
 
             # compose post data
             json_data = {"os": sys.platform,
@@ -157,7 +156,7 @@ class UploadAgent(object):
                              "version": self.current_browser_version[test_browser_type],
                              "video_path": video_preview_url,
                              "comment": self.test_comment_str}
-                url_str = self.generate_url_str(upload_data['test_name'], api_root="video_profile")
+                url_str = self.generate_url_str("video_profile")
                 logger.info("===== Upload video post data =====")
                 logger.debug(url_str)
                 logger.info(json_data)
