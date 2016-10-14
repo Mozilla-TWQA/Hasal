@@ -487,7 +487,7 @@ class VideoProfileUpdater:
         for item in VideoProfileUpdater._checks:
             assert item in json_obj, 'The json should have "{}" value.'.format(item)
 
-    def POST(self, os_name, target_browser, test):
+    def POST(self, os_name, target_browser, comment_name):
         """
         The input json example:
             json={
@@ -502,7 +502,7 @@ class VideoProfileUpdater:
             }
         :param os_name: os. ex: 'linux'
         :param target_browser: target. ex: 'firefox 36'
-        :param test: test name. ex: 'test_foo'
+        :param comment_name: comment. ex: 'first test'
         :return: OK with 200 code.
         """
         HasalServer.storage = HasalServer.storage_handler.load()
@@ -510,7 +510,7 @@ class VideoProfileUpdater:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
             assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
-            assert test is not None and test != '', '[test] is empty.'
+            assert comment_name is not None and comment_name != '', '[comment] is empty.'
 
             # get the POST data
             # ip = web.ctx.ip
@@ -523,7 +523,7 @@ class VideoProfileUpdater:
             json_obj = json.loads(parameters['json'][0])
             VideoProfileUpdater.check_input_json(json_obj)
 
-            comment_name = json_obj.get('comment')
+            test = json_obj.get('test')
             browser_name = json_obj.get('browser')
 
             # check the storage
