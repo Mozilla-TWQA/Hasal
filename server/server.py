@@ -356,29 +356,29 @@ class HasalServer:
             current_test_obj['timestamp'] = time.time()
         return current_test_obj
 
-    def GET(self, os_name, target_browser, test):
+    def GET(self, os_name, target, comment_name):
         # TODO: this it for checking the result of Hasal Server.
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
+            assert target is not None and target != '', '[target] is empty.'
 
-            if test is None or test == '':
+            if comment_name is None or comment_name == '':
                 # return all test result of provided target
-                return json.dumps(HasalServer.storage[os_name][target_browser], indent=4)
+                return json.dumps(HasalServer.storage[os_name][target], indent=4)
 
             if os_name not in HasalServer.storage:
                 return 'No os: {}'.format(os_name)
-            elif target_browser not in HasalServer.storage[os_name]:
-                return 'No target: {}'.format(target_browser)
-            elif test not in HasalServer.storage[os_name][target_browser]:
-                return 'No test: {}'.format(test)
+            elif target not in HasalServer.storage[os_name]:
+                return 'No target: {}'.format(target)
+            elif comment_name not in HasalServer.storage[os_name][target]:
+                return 'No comment: {}'.format(comment_name)
             else:
-                return json.dumps(HasalServer.storage[os_name][target_browser][test], indent=4)
+                return json.dumps(HasalServer.storage[os_name][target][comment_name], indent=4)
         except AssertionError as e:
             raise web.badrequest(e.message)
 
-    def POST(self, os_name, target, test):
+    def POST(self, os_name, target, comment_name):
         """
         The input json example:
             json={
@@ -397,7 +397,7 @@ class HasalServer:
             }
         :param os_name: os. ex: 'linux'
         :param target: target. ex: 'firefox 36'
-        :param test: test name. ex: 'test_foo'
+        :param comment_name: comment. ex: 'first test'
         :return: the json format string.
             ex: {
                 "current_test_times": 3,
@@ -413,7 +413,7 @@ class HasalServer:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
             assert target is not None and target != '', '[target] is empty.'
-            assert test is not None and test != '', '[test] is empty.'
+            assert comment_name is not None and comment_name != '', '[comment] is empty.'
 
             # get the POST data
             ip = web.ctx.ip
@@ -426,7 +426,7 @@ class HasalServer:
             json_obj = json.loads(parameters['json'][0])
             HasalServer.check_input_json(json_obj)
 
-            comment_name = json_obj.get('comment')
+            test = json_obj.get('test')
             browser_name = json_obj.get('browser')
 
             # add the os/target/test into storage
