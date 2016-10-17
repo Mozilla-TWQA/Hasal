@@ -114,43 +114,41 @@ class AllResult:
 
     def GET(self):
         md = []
-        comments_dict = {}
+
         for os_name in HasalServer.storage.keys():
             md.append('# {}'.format(os_name))
+
             targets = HasalServer.storage[os_name]
             for target in targets.keys():
                 md.append('## {}'.format(target))
 
-                tests = targets[target]
-                for test in sorted(tests.keys(), key=lambda k: re.sub(r'test_[\w]+_', '', k)):
-                    comments = tests[test]
-                    for comment in comments.keys():
-                        if comment not in comments_dict:
-                            comments_dict[comment] = []
+                comments = HasalServer.storage[os_name][target]
+                for comment in comments.keys():
+                    md.append('### {}'.format(comment))
 
-                        comments_dict[comment].append('* {}'.format(test))
+                    tests = HasalServer.storage[os_name][target][comment]
+                    for test in sorted(tests.keys(), key=lambda k: re.sub(r'test_[\w]+_', '', k)):
+                        md.append('#### {}'.format(test))
 
-                        browsers = comments[comment]
+                        browsers = HasalServer.storage[os_name][target][comment][test]
                         for browser in browsers.keys():
                             if len(browsers) > 1:
-                                comments_dict[comment].append('  * {}'.format(browser))
+                                md.append('  * {}'.format(browser))
                             data = browsers[browser]
-                            comments_dict[comment].append('    * Median: {}'.format(data.get('median_value')))
-                            comments_dict[comment].append('    * Sigma: {}'.format(data.get('sigma_value')))
-                            comments_dict[comment].append('    * Mean: {}'.format(data.get('median_value')))
-                            comments_dict[comment].append('    * SI: {}'.format(data.get('si')))
-                            comments_dict[comment].append('    * PSI: {}'.format(data.get('psi')))
+                            if data.get('revision', '') != '':
+                                md.append('    * Revision: {}'.format(data.get('revision')))
+                            md.append('    * Median: {}'.format(data.get('median_value')))
+                            md.append('    * Sigma: {}'.format(data.get('sigma_value')))
+                            md.append('    * Mean: {}'.format(data.get('median_value')))
+                            md.append('    * SI: {}'.format(data.get('si')))
+                            md.append('    * PSI: {}'.format(data.get('psi')))
                             if data.get('webappname', '') != '':
-                                comments_dict[comment].append('    * Web App: {}'.format(data.get('webappname')))
+                                md.append('    * Web App: {}'.format(data.get('webappname')))
                             if data.get('video_path', '') != '':
-                                comments_dict[comment].append('    * Video: {}'.format(data.get('video_path')))
+                                md.append('    * Video: {}'.format(data.get('video_path')))
                             if data.get('profile_path', '') != '':
-                                comments_dict[comment].append('    * Profile: {}'.format(data.get('profile_path')))
-                        comments_dict[comment].append('\n')
-
-        for comment_md_str in sorted(comments_dict.keys()):
-            md.append('### {}'.format(comment_md_str))
-            md.append('\n'.join(comments_dict[comment_md_str]))
+                                md.append('    * Profile: {}'.format(data.get('profile_path')))
+                            md.append('\n')
         markdown_str = '\n'.join(md)
         return self.render.all_result(markdown=markdown_str)
 
@@ -338,29 +336,49 @@ class HasalServer:
         }
         return json.dumps(ret)
 
-    def GET(self, os_name, target_browser, test):
+    def calculate_result(self, current_test_obj):
+        origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in current_test_obj['origin_values']]
+
+        # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
+        mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
+        current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(current_test_obj['origin_values'], outliers)
+        values_list = current_test_obj['origin_values']
+
+        if len(values_list) >= HasalServer._config_test_times:
+            # update the median, mean, and sigma
+            current_test_obj['median_value'] = median
+            current_test_obj['mean_value'] = mean
+            current_test_obj['sigma_value'] = sigma
+            # update SI and PSI
+            current_test_obj['si'] = si
+            current_test_obj['psi'] = psi
+            # add timestamp
+            current_test_obj['timestamp'] = time.time()
+        return current_test_obj
+
+    def GET(self, os_name, target, comment_name):
         # TODO: this it for checking the result of Hasal Server.
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
+            assert target is not None and target != '', '[target] is empty.'
 
-            if test is None or test == '':
+            if comment_name is None or comment_name == '':
                 # return all test result of provided target
-                return json.dumps(HasalServer.storage[os_name][target_browser], indent=4)
+                return json.dumps(HasalServer.storage[os_name][target], indent=4)
 
             if os_name not in HasalServer.storage:
                 return 'No os: {}'.format(os_name)
-            elif target_browser not in HasalServer.storage[os_name]:
-                return 'No target: {}'.format(target_browser)
-            elif test not in HasalServer.storage[os_name][target_browser]:
-                return 'No test: {}'.format(test)
+            elif target not in HasalServer.storage[os_name]:
+                return 'No target: {}'.format(target)
+            elif comment_name not in HasalServer.storage[os_name][target]:
+                return 'No comment: {}'.format(comment_name)
             else:
-                return json.dumps(HasalServer.storage[os_name][target_browser][test], indent=4)
+                return json.dumps(HasalServer.storage[os_name][target][comment_name], indent=4)
         except AssertionError as e:
             raise web.badrequest(e.message)
 
-    def POST(self, os_name, target_browser, test):
+    def POST(self, os_name, target, comment_name):
         """
         The input json example:
             json={
@@ -378,8 +396,8 @@ class HasalServer:
             "comment": "first test"
             }
         :param os_name: os. ex: 'linux'
-        :param target_browser: target. ex: 'firefox 36'
-        :param test: test name. ex: 'test_foo'
+        :param target: target. ex: 'firefox 36'
+        :param comment_name: comment. ex: 'first test'
         :return: the json format string.
             ex: {
                 "current_test_times": 3,
@@ -394,8 +412,8 @@ class HasalServer:
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
-            assert test is not None and test != '', '[test] is empty.'
+            assert target is not None and target != '', '[target] is empty.'
+            assert comment_name is not None and comment_name != '', '[comment] is empty.'
 
             # get the POST data
             ip = web.ctx.ip
@@ -408,71 +426,47 @@ class HasalServer:
             json_obj = json.loads(parameters['json'][0])
             HasalServer.check_input_json(json_obj)
 
+            test = json_obj.get('test')
+            browser_name = json_obj.get('browser')
+
             # add the os/target/test into storage
             if os_name not in HasalServer.storage:
                 HasalServer.storage[os_name] = {}
-            if target_browser not in HasalServer.storage[os_name]:
-                HasalServer.storage[os_name][target_browser] = {}
-            if test not in HasalServer.storage[os_name][target_browser]:
-                HasalServer.storage[os_name][target_browser][test] = {}
+            if target not in HasalServer.storage[os_name]:
+                HasalServer.storage[os_name][target] = {}
+            if comment_name not in HasalServer.storage[os_name][target]:
+                HasalServer.storage[os_name][target][comment_name] = {}
+            if test not in HasalServer.storage[os_name][target][comment_name]:
+                HasalServer.storage[os_name][target][comment_name][test] = {}
 
-            comment_name = json_obj.get('comment')
-            # if there is /os/target/test/comment exists, then do following code
-            if comment_name in HasalServer.storage[os_name][target_browser][test]:
-                comment_obj = HasalServer.storage[os_name][target_browser][test][comment_name]
+            if browser_name not in HasalServer.storage[os_name][target][comment_name][test]:
+                HasalServer.storage[os_name][target][comment_name][test][browser_name] = {}
 
-                browser_name = json_obj.get('browser')
-                # if there is /os/target/test/comment/browser exists, then do following code
-                if browser_name in comment_obj:
-                    current_test_obj = comment_obj[browser_name]
+                # new data
+                current_obj = HasalServer._generate_current_test_obj(json_obj, ip)
+                HasalServer.storage[os_name][target][comment_name][test][browser_name] = current_obj
 
-                    # check the test times
-                    values_list = current_test_obj['origin_values']
-                    median_value = current_test_obj['median_value']
-
-                    if median_value > 0:
-                        # already have median value, just return to the client
-                        return HasalServer.return_json(current_test_obj)
-                    else:
-                        # add new value into values list
-                        values_list.append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
-                        if len(values_list) >= HasalServer._config_test_times:
-                            # more than 30 times, no median, cal the median and outliers
-                            origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in values_list]
-
-                            # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
-                            mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
-                            current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(values_list, outliers)
-                            values_list = current_test_obj['origin_values']
-
-                            if len(values_list) >= HasalServer._config_test_times:
-                                # update the median, mean, and sigma
-                                current_test_obj['median_value'] = median
-                                current_test_obj['mean_value'] = mean
-                                current_test_obj['sigma_value'] = sigma
-                                # update SI and PSI
-                                current_test_obj['si'] = si
-                                current_test_obj['psi'] = psi
-                                # add timestamp
-                                current_test_obj['timestamp'] = time.time()
-                                # return the client
-                                return HasalServer.return_json(current_test_obj)
-                    # Keep going and return the client
-                    return HasalServer.return_json(current_test_obj)
-                # if no /os/target/test/comment/browser , then create browser obj.
-                else:
-                    current_test = HasalServer._generate_current_test_obj(json_obj, ip)
-                    comment_obj[browser_name] = current_test
-                    return HasalServer.return_json(current_test)
-            # if there is no /os/target/test/comment , then create comment obj.
+                # if the server config test times is 1, calculate result
+                if HasalServer._config_test_times == 1:
+                    self.calculate_result(current_obj)
+                return HasalServer.return_json(current_obj)
             else:
-                # update the os/target/test result
-                current_test = HasalServer._generate_current_test_obj(json_obj, ip)
-                comment_obj = {
-                    json_obj.get('browser'): current_test
-                }
-                HasalServer.storage[os_name][target_browser][test][comment_name] = comment_obj
-                return HasalServer.return_json(current_test)
+                current_test_obj = HasalServer.storage[os_name][target][comment_name][test][browser_name]
+
+                # check the test times
+                values_list = current_test_obj['origin_values']
+                median_value = current_test_obj['median_value']
+
+                if median_value > 0:
+                    # already have median value, just return to the client
+                    return HasalServer.return_json(current_test_obj)
+                else:
+                    # add new value into values list
+                    values_list.append([json_obj.get('value'), json_obj.get('si', -1), json_obj.get('psi', -1), json_obj.get('video'), ip])
+                    # if reach the server config test times, calculate result
+                    if len(values_list) >= HasalServer._config_test_times:
+                        self.calculate_result(current_test_obj)
+                return HasalServer.return_json(current_test_obj)
 
         except AssertionError as e:
             raise web.badrequest(e.message)
@@ -493,22 +487,22 @@ class VideoProfileUpdater:
         for item in VideoProfileUpdater._checks:
             assert item in json_obj, 'The json should have "{}" value.'.format(item)
 
-    def POST(self, os_name, target_browser, test):
+    def POST(self, os_name, target_browser, comment_name):
         """
         The input json example:
             json={
             "os": "mac",
             "target": "firefox-36.0.1",
             "test": "test_foo",
+            "comment": "first test",
             "browser": "firefox",
             "version": "36.0.1",
-            "comment": "first test",
             "video_path": "http://foo.bar/video",
             "profile_path": "http://foo.bar/profile"
             }
         :param os_name: os. ex: 'linux'
         :param target_browser: target. ex: 'firefox 36'
-        :param test: test name. ex: 'test_foo'
+        :param comment_name: comment. ex: 'first test'
         :return: OK with 200 code.
         """
         HasalServer.storage = HasalServer.storage_handler.load()
@@ -516,7 +510,7 @@ class VideoProfileUpdater:
             # check the url, server/hasal/<os>/<target_browser>/<test>
             assert os_name is not None and os_name != '', '[os] is empty.'
             assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
-            assert test is not None and test != '', '[test] is empty.'
+            assert comment_name is not None and comment_name != '', '[comment] is empty.'
 
             # get the POST data
             # ip = web.ctx.ip
@@ -529,7 +523,7 @@ class VideoProfileUpdater:
             json_obj = json.loads(parameters['json'][0])
             VideoProfileUpdater.check_input_json(json_obj)
 
-            comment_name = json_obj.get('comment')
+            test = json_obj.get('test')
             browser_name = json_obj.get('browser')
 
             # check the storage
@@ -537,19 +531,19 @@ class VideoProfileUpdater:
                 'No os [{}] in storage'.format(os_name)
             assert target_browser in HasalServer.storage[os_name], \
                 'No target [{}] under os [{}]'.format(target_browser, os_name)
-            assert test in HasalServer.storage[os_name][target_browser], \
-                'No test [{}] under os [{}], target [{}]'.format(test, os_name, target_browser)
-            assert comment_name in HasalServer.storage[os_name][target_browser][test], \
-                'No comment [{}] under os [{}], target [{}], test [{}]'.format(comment_name, os_name, target_browser, test)
-            assert browser_name in HasalServer.storage[os_name][target_browser][test][comment_name], \
-                'No browser [{}] under os [{}], target [{}], test [{}], comment[{}]'.format(
-                    browser_name, os_name, target_browser, test, comment_name)
+            assert comment_name in HasalServer.storage[os_name][target_browser], \
+                'No comment_name [{}] under os [{}], target [{}]'.format(comment_name, os_name, target_browser)
+            assert test in HasalServer.storage[os_name][target_browser][comment_name], \
+                'No test [{}] under os [{}], target [{}], comment [{}]'.format(test, os_name, target_browser, comment_name)
+            assert browser_name in HasalServer.storage[os_name][target_browser][comment_name][test], \
+                'No browser [{}] under os [{}], target [{}], comment [{}], test [{}]'.format(
+                    browser_name, os_name, target_browser, comment_name, test)
 
             # Update Video and Profile
             for key in VideoProfileUpdater._keys:
                 value = json_obj.get(key, None)
                 if value:
-                    HasalServer.storage[os_name][target_browser][test][comment_name][browser_name][key] = value
+                    HasalServer.storage[os_name][target_browser][comment_name][test][browser_name][key] = value
 
             # Save
             HasalServer.storage_handler.save(HasalServer.storage)
