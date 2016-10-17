@@ -27,7 +27,7 @@ class WindowObject(object):
     def pywin32_callback_func(self, hwnd, extra):
         window_title = win32gui.GetWindowText(hwnd)
         if self.window_name in window_title:
-            win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, self.pos_x, self.pos_y, self.window_width,
+            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, self.pos_x, self.pos_y, self.window_width,
                                   self.window_height, 0)
 
     def pywin32_move_window(self):
