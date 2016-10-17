@@ -18,6 +18,7 @@ class gSlide():
         setAutoWaitTimeout(self.wait_time)
 
         self.gslide_logo = Pattern("pics/gslide.png").similar(0.70)
+        self.gslide_icon = Pattern("pics/gslide_icon.png").similar(0.70)
         self.presentation_mode = Pattern("pics/presentation_mode.png").similar(0.70)
         self.presentation_blank_end = Pattern("pics/presentation_blank_end.png").similar(0.70)
         self.page_2 = Pattern("pics/page_2.png").similar(0.70)
@@ -38,6 +39,10 @@ class gSlide():
         self.presentation_page_8 = Pattern("pics/presentation_page_8.png").similar(0.70)
         self.presentation_page_9 = Pattern("pics/presentation_page_9.png").similar(0.70)
         self.presentation_page_end = Pattern("pics/presentation_page_end.png").similar(0.70)
+        self.blank_list_original = Pattern("pics/blank_list_original.png").similar(0.70)
+        self.blank_theme = Pattern("pics/blank_theme.png").similar(0.70)
+        self.theme_mozilla_tag = Pattern("pics/theme_mozilla_tag.png").similar(0.70)
+        self.theme_mozilla_tag_red = Pattern("pics/theme_mozilla_tag_red.png").similar(0.70)
 
     def wait_for_loaded(self):
         wait(self.gslide_logo)
@@ -60,3 +65,26 @@ class gSlide():
 
     def italic(self):
         type("i", self.control)
+
+    def select_all(self):
+        type("a", self.control)
+
+    def invoke_theme_list(self):
+        theme_index = 6
+        wait(self.gslide_icon)
+        sleep(1)
+        click(self.gslide_icon.targetOffset(220, 15))
+        for i in range(theme_index):
+            sleep(0.5)
+            type(Key.DOWN)
+        type(Key.ENTER)
+
+    def invoke_layout_list(self):
+        theme_index = 5
+        wait(self.gslide_icon)
+        sleep(1)
+        click(self.gslide_icon.targetOffset(220, 15))
+        for i in range(theme_index):
+            sleep(0.5)
+            type(Key.DOWN)
+        type(Key.RIGHT)
