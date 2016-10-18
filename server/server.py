@@ -278,9 +278,14 @@ class HasalServer:
 
     @staticmethod
     def remove_tuple_from_values(list_obj, removed_values_list):
+        """
+        :param list_obj: [ [run_time, si, psi, video, ip], [...], ...]
+        :param removed_values_list: [ {"run_time": 0, "si": 0, "psi": 0}, {...}, ...]
+        :return: list after remove items
+        """
         tmp = list_obj[:]
         for v in removed_values_list:
-            tmp = [item for item in tmp if item.get('run_time') != v.get('run_time')]
+            tmp = [item for item in tmp if item[0] != v.get('run_time')]
         return tmp
 
     @staticmethod
