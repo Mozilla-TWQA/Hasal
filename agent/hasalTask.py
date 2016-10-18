@@ -118,6 +118,8 @@ class HasalTask(object):
         return True
 
     def run(self):
+        print "deploy fx pkg"
+        self.deploy_fx_pkg()
         print "run"
         cmd_list = self.generate_command_list()
         print " ".join(cmd_list)
