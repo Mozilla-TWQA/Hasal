@@ -267,11 +267,11 @@ class HasalServerPerfherderRegister:
 
                     if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment][browser_name]:
                         HasalServerPerfherderRegister.register[os_name][target][comment][browser_name][suite_name] = suite_tests_list
+                        self.save_register()
                         result_dict[browser_name] = self.gen_result_status(self.RET_OK)
                     else:
                         # if there is already value in "os_name/target/comment", drop it and return status 1
                         result_dict[browser_name] = self.gen_result_status(self.RET_DROP)
-                    self.save_register()
             return result_dict
         except AssertionError as e:
             raise web.badrequest(e.message)
