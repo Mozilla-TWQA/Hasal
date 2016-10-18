@@ -1,6 +1,9 @@
 __author__ = 'shako'
 import os
+import sys
 import json
+import tarfile
+import zipfile
 import subprocess
 
 
@@ -8,6 +11,8 @@ class HasalTask(object):
 
     configurations = {}
     cmd_parameter_keys = []
+    FIREFOX_BIN_LIUNX_FP = "/usr/bin/firefox"
+    FIREFOX_BIN_WIN_FP   = "C:\\Program Files (x86)\\Mozilla Firefox"
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -73,6 +78,44 @@ class HasalTask(object):
                 elif self.configurations[key] != 'false':
                     result_list.append(key.lower() + "=" + self.configurations[key])
         return result_list
+
+    def deploy_fx_pkg(self):
+        if "FX-DL-PACKAGE-PATH" in self.configurations:
+            if self.extract_fx_pkg(self.configurations['FX-DL-PACKAGE-PATH']):
+                self.link_fx_pkg()
+        else:
+            print "Use current firefox browser instead of deploying a new firefox package"
+
+    def link_fx_pkg(self):
+        # Create and check backup
+        backup_path = self.FIREFOX_BIN_LIUNX_FP + ".bak"
+        if os.path.exists(backup_path):
+            os.remove(self.FIREFOX_BIN_LIUNX_FP)
+        else:
+            os.rename(self.FIREFOX_BIN_LIUNX_FP, backup_path)
+
+        if sys.platform == "linux2":
+            src_link = os.path.join(os.getcwd(), "firefox", "firefox")
+            os.symlink(src_link, self.FIREFOX_BIN_LIUNX_FP)
+        elif sys.platform == "darwin":
+            print "We are currently not support link firefox package on MAC OS!"
+        else:
+            src_path = os.path.join(os.getcwd(), "firefox")
+            os.rename(src_path, self.FIREFOX_BIN_WIN_FP)
+
+    def extract_fx_pkg(self, input_fx_pkg_fp):
+        if input_fx_pkg_fp.endswith(".tar.bz2"):
+            target_file = tarfile.open(input_fx_pkg_fp, "r:bz2")
+            target_file.extractall()
+            target_file.close()
+        elif input_fx_pkg_fp.endswith(".zip"):
+            target_file = zipfile.ZipFile(input_fx_pkg_fp, "r")
+            target_file.extractall()
+            target_file.close()
+        else:
+            print "WARNING!! We are not support extract dmg file right now!"
+            return False
+        return True
 
     def run(self):
         print "run"
