@@ -158,40 +158,39 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
 
+def is_number_in_tolerance(number, default_fps, tolerance):
+    return round(default_fps * (1 - tolerance)) <= number <= round(default_fps * (1 + tolerance))
+
+
 def fps_cal(file_path, default_fps):
-    fps_stat = "0"
+    status_success = '0'
+    status_fail = '1'
+    fps_stat = status_success
     fps_return = 0
     tolerance = 0.03  # recording fps tolerance is set to 3%
+    fps_frequency_threshold = 0.9  # fps frequency should be more than 90%
     if os.path.exists(file_path):
         with open(file_path, 'r') as fh:
             data = ''.join([line.replace('\n', '') for line in fh.readlines()])
             fps = map(int, re.findall('fps=(\s\d+\s)', data))
             count = Counter(fps)
         fh.close()
-        all_fps = count.most_common()
-        total_record = sum([item[1] for item in all_fps])
-        default_fps_element = [item for item in all_fps if item[0] == default_fps]
-        mode_fps = count.most_common()[0]
-        if not default_fps_element and \
-                (float(mode_fps[1]) / total_record) >= 0.9 and \
-                round(default_fps * (1 - tolerance)) <= mode_fps[1] <= round(default_fps * (1 + tolerance)):
-            fps_return = mode_fps[0]
-        elif mode_fps[0] == default_fps:
-            if (float(mode_fps[1]) / total_record) >= 0.9:
-                fps_return = mode_fps[0]
-            else:
-                if len(all_fps) > 1 and \
-                        float(mode_fps[1] + all_fps[1][1]) / total_record >= 0.9 and \
-                        round(default_fps * (1 - tolerance)) <= all_fps[1][0] <= round(default_fps * (1 + tolerance)):
-                    fps_return = round(mode_fps[0] - float(mode_fps[0] - all_fps[1][0]) *
-                                       mode_fps[1] / total_record)
-        elif round(default_fps * (1 - tolerance)) <= mode_fps[0] <= round(default_fps * (1 + tolerance)) and \
-                float(default_fps_element[0][1] + mode_fps[1]) / total_record >= 0.9:
-            fps_return = round(default_fps_element[0][0] - float(default_fps_element[0][0] - mode_fps[0]) * default_fps_element[0][1] / total_record)
+        all_fps_tuple = count.most_common()
+        if not all_fps_tuple:
+            logger.error("Cannot get fps information from log.")
+            fps_stat = status_fail
         else:
-            fps_return = mode_fps[0]
-            fps_stat = "1"
+            # item[0]: fps
+            # item[1]: counter
+            total_record = sum([item[1] for item in all_fps_tuple])
+            tolerance_fps_element = [item for item in all_fps_tuple if is_number_in_tolerance(item[0], default_fps, tolerance)]
+            tolerance_fps_total_record = sum([item[1] for item in tolerance_fps_element])
+            if float(tolerance_fps_total_record) / total_record >= fps_frequency_threshold:
+                fps_return = sum([item[0] * item[1] for item in tolerance_fps_element]) / tolerance_fps_total_record
+            else:
+                fps_return = sum([item[0] * item[1] for item in all_fps_tuple]) / total_record
+                fps_stat = status_fail
     else:
         logger.warning("Recording log doesn't exist.")
-        fps_stat = "1"
+        fps_stat = status_fail
     return fps_stat, int(round(fps_return))
