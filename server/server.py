@@ -156,8 +156,8 @@ class AllResult:
 class HasalServerPerfherderRegister:
     """
     Hasal Server Register.
-    For storing the "os/target/comment" -> tests list [test_foo, test_bar, ...]
     """
+    RET_FAIL = -1
     RET_OK = 0
     RET_DROP = 1
 
@@ -167,8 +167,8 @@ class HasalServerPerfherderRegister:
     def __init__(self):
         HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
 
-    def return_ret(self, status):
-        return {'status': status}
+    def gen_result_status(self, status, message=""):
+        return {'status': status, 'message': message}
 
     def save_register(self):
         HasalServerPerfherderRegister.storage_handler.save_register(HasalServerPerfherderRegister.register)
@@ -176,17 +176,52 @@ class HasalServerPerfherderRegister:
     def POST(self, os_name, target, comment):
         """
         The input json example:
-            json={"foo_bar_f": ["test_1", "test_2", ...], "foo_bar_c": ["test_1", "test_2", ...]}
-        It will convert to two entries:
-            os/target/comment/foo_Bar_f: {"name": "foo_bar_f": ["test_1", "test_2", ...]}
-            os/target/comment/foo_Bar_c: {"name": "foo_bar_c": ["test_1", "test_2", ...]}
+            URL: hasal_perf_reg/ darwin/firefox_47.0/2016-10-13
+            json=
+            {
+                "firefox": {
+                    "regression_gsheet": [
+                        "test_firefox_gsheet_1000r_number_chars_deleteallcell"
+                    ]
+                },
+                "chrome": {
+                    "regression_gsheet": [
+                        "test_chrome_gsheet_1000r_number_chars_deleteallcell"
+                    ]
+                }
+            }
+        It will convert to following entries:
+            {
+                "darwin": {
+                    "firefox_47.0": {
+                        "2016-10-13": {
+                            "firefox": {
+                                "regression_gsheet": [
+                                    "test_firefox_gsheet_1000r_number_chars_deleteallcell"
+                                ]
+                            },
+                            "chrome": {
+                                "regression_gsheet": [
+                                    "test_chrome_gsheet_1000r_number_chars_deleteallcell"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
         :param os_name: os. ex: 'linux'
         :param target: target. ex: 'firefox 36'
         :param comment: comment. ex: '2016-01-01'
-        :return: status. 0 is okay. 1 is drop.
-            ex: {
-                "status": 0
+        :return: status. 0 is okay. 1 is drop. -1 is fail.
+            ex:
+            {
+                "firefox": {
+                    "status": 0
+                },
+                "chrome": {
+                    "status": 0
                 }
+            }
         """
         try:
             # check the url, server/hasal_perf_reg/<os>/<target_browser>/<comment>
@@ -203,28 +238,41 @@ class HasalServerPerfherderRegister:
             # check the input json object
             json_obj = json.loads(parameters['json'][0])
 
-            if isinstance(json_obj, dict):
-                for suite_name, suite_tests in json_obj.items():
-                    if not isinstance(suite_tests, list):
-                        raise Exception('The value of "{}" is not list: {}'.format(suite_name, suite_tests))
+            if not isinstance(json_obj, dict):
+                raise Exception('The parameter is not JSON object: {}'.format(parameters['json'][0]))
+
+            result_dict = {}
+            for browser_name, suite_obj in json_obj.items():
+                if not isinstance(suite_obj, dict):
+                    result_dict[browser_name] = self.gen_result_status(self.RET_FAIL,
+                                                                       'The value under "{}" is not JSON object: {}'.format(
+                                                                           browser_name, suite_obj))
+
+                for suite_name, suite_tests_list in suite_obj.items():
+                    if not isinstance(suite_tests_list, list):
+                        result_dict[browser_name] = self.gen_result_status(self.RET_FAIL,
+                                                                           'The value under "{}" is not list: {}'.format(
+                                                                               suite_name, suite_tests_list))
 
                     HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
-                    # if there is already value in "os_name/target/comment", drop it and return status 1
-                    if HasalServerPerfherderRegister.register.get(os_name, {}).get(target, {}).get(comment, {}).get(suite_name, {}):
-                        self.return_ret(self.RET_DROP)
+
+                    if os_name not in HasalServerPerfherderRegister.register:
+                        HasalServerPerfherderRegister.register[os_name] = {}
+                    if target not in HasalServerPerfherderRegister.register[os_name]:
+                        HasalServerPerfherderRegister.register[os_name][target] = {}
+                    if comment not in HasalServerPerfherderRegister.register[os_name][target]:
+                        HasalServerPerfherderRegister.register[os_name][target][comment] = {}
+                    if browser_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
+                        HasalServerPerfherderRegister.register[os_name][target][comment][browser_name] = {}
+
+                    if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment][browser_name]:
+                        HasalServerPerfherderRegister.register[os_name][target][comment][browser_name][suite_name] = suite_tests_list
+                        self.save_register()
+                        result_dict[browser_name] = self.gen_result_status(self.RET_OK)
                     else:
-                        if os_name not in HasalServerPerfherderRegister.register:
-                            HasalServerPerfherderRegister.register[os_name] = {}
-                        if target not in HasalServerPerfherderRegister.register[os_name]:
-                            HasalServerPerfherderRegister.register[os_name][target] = {}
-                        if comment not in HasalServerPerfherderRegister.register[os_name][target]:
-                            HasalServerPerfherderRegister.register[os_name][target][comment] = {}
-                        if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
-                            HasalServerPerfherderRegister.register[os_name][target][comment][suite_name] = suite_tests
-                    self.save_register()
-                self.return_ret(self.RET_OK)
-            else:
-                raise Exception('The parameter is not JSON object: {}'.format(parameters['json'][0]))
+                        # if there is already value in "os_name/target/comment", drop it and return status 1
+                        result_dict[browser_name] = self.gen_result_status(self.RET_DROP)
+            return result_dict
         except AssertionError as e:
             raise web.badrequest(e.message)
 
