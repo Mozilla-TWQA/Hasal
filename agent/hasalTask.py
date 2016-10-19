@@ -11,7 +11,7 @@ class HasalTask(object):
 
     configurations = {}
     cmd_parameter_keys = []
-    FIREFOX_BIN_LIUNX_FP = "/usr/bin/firefox"
+    FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
     FIREFOX_BIN_WIN_FP   = "C:\\Program Files (x86)\\Mozilla Firefox"
 
     def __init__(self, name, **kwargs):
@@ -88,16 +88,16 @@ class HasalTask(object):
 
     def link_fx_pkg(self):
         # Create and check backup
-        backup_path = self.FIREFOX_BIN_LIUNX_FP + ".bak"
+        backup_path = self.FIREFOX_BIN_LINUX_FP + ".bak"
         if os.path.exists(backup_path):
-            if os.path.exists(self.FIREFOX_BIN_LIUNX_FP):
-                os.remove(self.FIREFOX_BIN_LIUNX_FP)
+            if os.path.exists(self.FIREFOX_BIN_LINUX_FP):
+                os.remove(self.FIREFOX_BIN_LINUX_FP)
         else:
-            os.rename(self.FIREFOX_BIN_LIUNX_FP, backup_path)
+            os.rename(self.FIREFOX_BIN_LINUX_FP, backup_path)
 
         if sys.platform == "linux2":
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
-            os.symlink(src_link, self.FIREFOX_BIN_LIUNX_FP)
+            os.symlink(src_link, self.FIREFOX_BIN_LINUX_FP)
         elif sys.platform == "darwin":
             print "We are currently not support link firefox package on MAC OS!"
         else:
