@@ -90,7 +90,8 @@ class HasalTask(object):
         # Create and check backup
         backup_path = self.FIREFOX_BIN_LIUNX_FP + ".bak"
         if os.path.exists(backup_path):
-            os.remove(self.FIREFOX_BIN_LIUNX_FP)
+            if os.path.exists(self.FIREFOX_BIN_LIUNX_FP):
+                os.remove(self.FIREFOX_BIN_LIUNX_FP)
         else:
             os.rename(self.FIREFOX_BIN_LIUNX_FP, backup_path)
 
