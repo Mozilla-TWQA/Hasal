@@ -77,7 +77,7 @@ class UploadAgent(object):
                 if suite_name in upload_data[browser_type]:
                     upload_data[browser_type][suite_name].append(c_name)
                 else:
-                    upload_data[browser_type] = {suite_name: [c_name]}
+                    upload_data[browser_type][suite_name] = [c_name]
             url_str = self.generate_url_str("hasal_perf_reg")
             logger.info("===== Upload register suite data =====")
             logger.debug(url_str)
