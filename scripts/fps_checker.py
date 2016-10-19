@@ -2,13 +2,13 @@
 For Checking environment recording fps capability
 """
 import os
-import re
 import time
 import platform
 import subprocess
-from collections import Counter
 from lib.common.environment import Environment
 from lib.common.recordscreen import video_capture_line
+from lib.common.recordscreen import get_mac_os_display_channel
+from lib.helper.resultHelper import fps_cal
 
 
 class FPSChecker(object):
@@ -26,8 +26,8 @@ class FPSChecker(object):
         time.sleep(10)
         self.stop_recording()
         time.sleep(3)  # wait for process killed
-        fps = self.fps_cal()
-        assert fps == self.default_fps, "[Error] Your recording fps is: " + str(fps)
+        status, fps = fps_cal(self.recording_log, self.default_fps)
+        assert not int(status), "[Error] Your recording fps is: " + str(fps)
 
     def start_recording(self):
         if os.path.exists(self.video_fn):
@@ -44,7 +44,7 @@ class FPSChecker(object):
                                        Environment.DEFAULT_VIDEO_RECORDING_POS_Y,
                                        Environment.DEFAULT_VIDEO_RECORDING_WIDTH,
                                        Environment.DEFAULT_VIDEO_RECORDING_HEIGHT,
-                                       Environment.DEFAULT_VIDEO_RECORDING_DISPLAY,
+                                       get_mac_os_display_channel(),
                                        Environment.DEFAULT_VIDEO_RECORDING_CODEC, self.video_fn)
             self.process = subprocess.Popen(vline, bufsize=-1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -57,22 +57,6 @@ class FPSChecker(object):
             with open(self.recording_log, 'w') as self.fh:
                 self.fh.write(err)
         self.fh.close()
-
-    def fps_cal(self):
-        try:
-            if os.path.exists(self.recording_log):
-                    with open(self.recording_log, 'r') as fh:
-                        data = ''.join([line.replace('\n', '') for line in fh.readlines()])
-                        fps = map(int, re.findall('fps=(\s\d+\s)', data))
-                        count = Counter(fps)
-                    fh.close()
-                    return count.most_common()[0][0]
-            else:
-                print("[Error] Recording.log doesn't exist.")
-                raise Exception
-        except Exception:
-            print('[Error] Parsing recording log failed.')
-            return None
 
     def teardown(self):
         if os.path.exists(self.video_fn):
