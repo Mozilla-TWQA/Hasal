@@ -54,7 +54,8 @@ class UploadAgent(object):
     def upload_register_data(self, input_suite_fp, test_type):
         # Sample data
         # hasal_perf_reg/os/target/comment
-        # dict {'name':'', 'subtests': {'firefox':[], 'chrome':[]}}
+        # sampe output {'firefox':{'regression_gsheet':['test_firefox_gsheet_1000r_number_chars_deleteallcell']},
+        #               'chrome': {'regression_gsheet':['test_chrome_gsheet_1000r_number_chars_deleteallcell']}}
         with open(input_suite_fp) as input_suite_fh:
             upload_data = {}
             for tmp_line in input_suite_fh.read().splitlines():
@@ -63,16 +64,20 @@ class UploadAgent(object):
                     tmp_list = case_full_path.split(os.sep)
                 else:
                     tmp_list = case_full_path.split(".")
-                if tmp_list[2].lower() == "t15":
-                    suite_name = "t15_summary_" + tmp_list[3].split("_")[1]
+                browser_type = tmp_list[3].split("_")[1].lower()
+                app_name = tmp_list[2].lower()
+                t_type = tmp_list[1].lower()
+                c_name = tmp_list[3].lower()
+                if browser_type not in upload_data:
+                    upload_data[browser_type] = {}
+                if app_name == "t15":
+                    suite_name = "t15_summary"
                 else:
-                    suite_name = tmp_list[1] + "_" + tmp_list[2] + "_" + tmp_list[3].split("_")[1]
-                if suite_name not in upload_data:
-                    upload_data[suite_name] = []
-                if tmp_list[3].split("_")[1] == "firefox":
-                    upload_data[suite_name].append(tmp_list[3])
+                    suite_name = t_type + "_" + app_name
+                if suite_name in upload_data[browser_type]:
+                    upload_data[browser_type][suite_name].append(c_name)
                 else:
-                    upload_data[suite_name].append(tmp_list[3])
+                    upload_data[browser_type][suite_name] = [c_name]
             url_str = self.generate_url_str("hasal_perf_reg")
             logger.info("===== Upload register suite data =====")
             logger.debug(url_str)
@@ -133,6 +138,7 @@ class UploadAgent(object):
         encoded_args = urllib.urlencode(query_args)
         response_obj = urllib2.urlopen(url_str, encoded_args)
         if response_obj.getcode() == 200:
+            logger.info('response object data : [%s]' % response_obj.read())
             return response_obj
         else:
             logger.error("response status code is [%d]" % response_obj.getcode())
