@@ -13,33 +13,38 @@ class ResultMetricGenerator(object):
         with open(self.result_fp) as fh:
             obj_json = json.load(fh)
             print(
-                '{s1:<45} {s2:<18} {s3:<18} {s4:<18}'.format(s1="Case Name",
-                                                             s2="Median time",
-                                                             s3="Average Time",
-                                                             s4="Standard deviation"
-                                                             ))
-            print('{s1:{c}^{n1}}'.format(s1="", c="=", n1=99))
+                '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1="Case Name",
+                                                                               s2="Median time",
+                                                                               s3="Average Time",
+                                                                               s4="Standard deviation",
+                                                                               s5="Speed Index",
+                                                                               s6="Perceptual Speed Index"))
+            print('{s1:{c}^{n1}}'.format(s1="", c="=", n1=150))
             key_list = copy.deepcopy(obj_json.keys())
             key_list.sort()
 
             for case_name in key_list:
                 key_count = 0
-                for key_name in ['med_time', 'avg_time', 'std_dev']:
+                for key_name in ['med_time', 'avg_time', 'std_dev', 'speed_index', 'perceptual_speed_index']:
                     if key_name in obj_json[case_name]:
                         key_count += 1
 
-                if key_count == len(['med_time', 'avg_time', 'std_dev']):
+                if key_count == len(['med_time', 'avg_time', 'std_dev', 'speed_index', 'perceptual_speed_index']):
                     print(
-                        '{s1:<45} {s2:<18} {s3:<18} {s4:<18}'.format(s1=case_name,
-                                                                     s2=obj_json[case_name]['med_time'],
-                                                                     s3=obj_json[case_name]['avg_time'],
-                                                                     s4=obj_json[case_name]['std_dev']))
+                        '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1=case_name,
+                                                                                       s2=obj_json[case_name]['med_time'],
+                                                                                       s3=obj_json[case_name]['avg_time'],
+                                                                                       s4=obj_json[case_name]['std_dev'],
+                                                                                       s5=obj_json[case_name]['speed_index'],
+                                                                                       s6=obj_json[case_name]['perceptual_speed_index']))
                 else:
                     print(
-                        '{s1:<45} {s2:<18} {s3:<18} {s4:<18}'.format(s1=case_name,
-                                                                     s2="Something wrong",
-                                                                     s3="Something wrong",
-                                                                     s4="Something wrong"))
+                        '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1=case_name,
+                                                                                       s2="Something wrong",
+                                                                                       s3="Something wrong",
+                                                                                       s4="Something wrong",
+                                                                                       s5="Something wrong",
+                                                                                       s6="Something wrong"))
 
     def run(self):
         self.generate_metric()
