@@ -1,17 +1,36 @@
 import os
 import re
+import sys
 import web
 import json
 import time
 from datetime import datetime
 import shutil
 import logging
+from logging import handlers
 import urlparse
 from threading import Lock
 
 from lib.common.outlier import outlier
 
-logger = logging.getLogger('HasalServer')
+
+def get_logger(logger_name, log_level="info"):
+    inner_logger = None
+    inner_logger = logging.getLogger()
+    if log_level == "debug":
+        inner_logger.setLevel(logging.DEBUG)
+    else:
+        inner_logger.setLevel(logging.INFO)
+    console_handler = logging.StreamHandler()
+    file_handler = logging.handlers.RotatingFileHandler('{}.log'.format(logger_name), 'a', 10 * 1024 * 1024, 5)
+    format_string = "[%(asctime)s] %(filename)s:%(lineno)d(%(funcName)s): [%(levelname)s] %(message)s"
+    format_object = logging.Formatter(format_string)
+    file_handler.setFormatter(format_object)
+    inner_logger.addHandler(console_handler)
+    inner_logger.addHandler(file_handler)
+    return inner_logger
+
+logger_hasal = get_logger("HasalServer", "info")
 
 urls = (
     '/', 'Index',
@@ -400,12 +419,12 @@ class HasalServer:
 
     def update_dashboard(self):
         # TODO update dashboard by SSH deployment key
-        logger.info('[Dashboard] starting update to dashboard ...')
+        logger_hasal.info('[Dashboard] starting update to dashboard ...')
         pass
 
     def update_perfherder(self):
         # TODO update Perfherder
-        logger.info('[Perfherder] starting update to Perfherder ...')
+        logger_hasal.info('[Perfherder] starting update to Perfherder ...')
         pass
 
     def update_all(self):
