@@ -1,26 +1,27 @@
 """
 
 Usage:
-  get_build.py <repo> <platform> [--user-email=<str>] [--build-hash=<str>] [--no-status-check] [--output-dp=<str>]
-  get_build.py (-h | --help)
+  trigger_build.py [--input-json=<str>]
+  trigger_build.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
-  --build-hash=<str>        Specify the build want to retrieve.
-  --user-email=<str>        Specify the user email of build want to retrieve
-  --no-status-check         Skip job status check
-  --output-dp=<str>         Specify the build download path [default: .]
+  --input-json=<str>        Specify the parsing json for testing
 """
 import re
 import os
+import sys
+import json
+import copy
 import urllib2
 import requests
+
 from thclient import TreeherderClient
 from docopt import docopt
 from tqdm import tqdm
 
 
-class GetBuild(object):
+class TriggerBuild(object):
     ARCHIVE_URL = "https://archive.mozilla.org"
     NIGHTLY_LATEST_URL_FOLDER = "/pub/firefox/nightly/latest-mozilla-central/"
     PLATFORM_FN_MAPPING = {'linux32': {'key': 'linux-i686', 'ext': 'tar.bz2', 'trydl': 'linux', 'job': ['linux32']},
@@ -28,14 +29,87 @@ class GetBuild(object):
                            'mac': {'key': 'mac', 'ext': 'dmg', 'trydl': 'macosx64', 'job': ['osx']},
                            'win32': {'key': 'win32', 'ext': 'zip', 'trydl': 'win32', 'job': ['windows', '32']},
                            'win64': {'key': 'win64', 'ext': 'zip', 'trydl': 'win64', 'job': ['windows', '64']}}
+    ENV_KEY_TRY_REPO_USER_EMAIL = "EMAIL"
+    ENV_KEY_ENABLE_WIN32 = "WIN32_FLAG"
+    ENV_KEY_SKIP_STATUS_CHECK = "--SKIP_STATUS_CHECK"
+    ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
+    ENV_KEY_BUILD_HASH = "BUILD_HASH"
+    REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
+    HASAL_JSON_FN = "hasal.json"
+    DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
+    DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
+    DEFAULT_AGENT_CONF_DIR_WIN = "C:\\Users\\user\\Hasal\\agent"
 
-    def __init__(self, repo, platform, status_check):
-        self.repo = repo
-        self.platform = platform
+    def __init__(self, input_env_data):
         self.platform_option = 'opt'
-        self.resultsets = []
-        self.skip_status_check = status_check
         self.thclient = TreeherderClient()
+        self.resultsets = []
+        self.env_data = {key.upper(): value for key, value in input_env_data.items()}
+        self.dispatch_variables(self.env_data)
+
+    def dispatch_variables(self, input_env_data):
+        # if user email not in environment data, repo will be the nightly
+        if self.ENV_KEY_TRY_REPO_USER_EMAIL in input_env_data.keys():
+            self.user_email = input_env_data[self.ENV_KEY_TRY_REPO_USER_EMAIL]
+            self.repo = self.REPO_NAME['TRY']
+        else:
+            self.repo = self.REPO_NAME['NIGHTLY']
+
+        # check current platform, widnows will double check the --win32 flag enabled or not
+        if sys.platform == "linux2":
+            self.platform = "linux64"
+        elif sys.platform == "darwin":
+            self.platform = "mac"
+        else:
+            if self.ENV_KEY_ENABLE_WIN32 in input_env_data.keys() and input_env_data[self.ENV_KEY_ENABLE_WIN32] == 'true':
+                self.platform = "win32"
+            else:
+                self.platform = "win64"
+
+        # assign skip status check to variable
+        if self.ENV_KEY_SKIP_STATUS_CHECK in input_env_data.keys() and input_env_data[self.ENV_KEY_SKIP_STATUS_CHECK] == 'true':
+            self.skip_status_check = True
+        else:
+            self.skip_status_check = False
+
+        # assign build hash to variable
+        if self.ENV_KEY_BUILD_HASH in input_env_data.keys():
+            self.build_hash = input_env_data[self.ENV_KEY_BUILD_HASH]
+        else:
+            self.build_hash = None
+
+        # assign output dp to variable
+        if self.ENV_KEY_OUTPUT_DP in input_env_data.keys():
+            self.output_dp = input_env_data[self.ENV_KEY_OUTPUT_DP]
+        else:
+            self.output_dp = os.getcwd()
+
+    def trigger(self):
+        # download build
+        if self.repo == self.REPO_NAME['TRY']:
+            download_fx_fp, download_json_fp = self.get_try_build(self.user_email, self.build_hash, self.output_dp)
+        else:
+            download_fx_fp, download_json_fp = self.get_nightly_build(self.output_dp)
+
+        # generate hasal.json data
+        with open(download_json_fp) as dl_json_fh:
+            dl_json_data = json.load(dl_json_fh)
+            perfherder_revision = dl_json_data['moz_source_stamp']
+            with open(self.HASAL_JSON_FN, "w") as write_fh:
+                write_data = copy.deepcopy(self.env_data)
+                write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
+                write_data['FX-DL-JSON-PATH'] = download_json_fp
+                write_data['--PERFHERDER-REVISION'] = perfherder_revision
+                json.dump(write_data, write_fh)
+
+        # move to agent config folder
+        if sys.platform == "linux2":
+            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_LINUX, self.HASAL_JSON_FN)
+        elif sys.platform == "darwin":
+            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_MAC, self.HASAL_JSON_FN)
+        else:
+            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_WIN, self.HASAL_JSON_FN)
+        os.rename(self.HASAL_JSON_FN, new_hasal_json_fp)
 
     def fetch_resultset(self, user_email, build_hash, default_count=500):
         tmp_resultsets = self.thclient.get_resultsets(self.repo, count=default_count)
@@ -138,10 +212,10 @@ class GetBuild(object):
         # check download status
         if download_fx_fp and download_json_fp:
             print "SUCCESS: build files download in [%s], [%s] " % (download_fx_fp, download_json_fp)
-            return True
+            return (download_fx_fp, download_json_fp)
         else:
             print "ERROR: build files download in [%s,%s] " % (download_fx_fp, download_json_fp)
-            return False
+            return None
 
     def get_try_build(self, user_email, build_hash, output_dp):
         resultset = self.fetch_resultset(user_email, build_hash)
@@ -186,18 +260,18 @@ class GetBuild(object):
 
 def main():
     arguments = docopt(__doc__)
-    get_build_obj = GetBuild(arguments['<repo>'], arguments['<platform>'], arguments['--no-status-check'])
-    if arguments['<repo>'] == "nightly":
-        return get_build_obj.get_nightly_build(arguments['--output-dp'])
-    elif arguments['<repo>'] == "try":
-        if arguments['--user-email']:
-            return get_build_obj.get_try_build(arguments['--user-email'], arguments['--build-hash'], arguments['--output-dp'])
+    if arguments['--input-json']:
+        if os.path.exists(arguments['--input-json']):
+            with open(arguments['--input-json']) as fh:
+                input_env_data = json.load(fh)
         else:
-            print "ERROR: please specify the user email with --user-email argument!"
+            print "ERROR: can not find the specify input json file! [%s]" % arguments['--input-json']
             return False
     else:
-        print "ERROR: we are currently not support the repo[%s] you specified! currently support [nightly, try]" % arguments['<repo>']
-        return False
+        input_env_data = os.environ.copy()
+
+    trigger_build_obj = TriggerBuild(input_env_data)
+    trigger_build_obj.trigger()
 
 if __name__ == '__main__':
     main()
