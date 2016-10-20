@@ -11,6 +11,7 @@ Options:
 import os
 from docopt import docopt
 
+
 class GenerateSuiteFile(object):
     TEST_TYPE_PT = 'pilot'
     TEST_TYPE_RE = 'regression'
@@ -24,7 +25,7 @@ class GenerateSuiteFile(object):
         scan_file_list = [scan_name for scan_name in os.listdir(suite_path) if scan_name in self.FOLDER_CHECK_LIST]
         if len(scan_file_list) == len(self.FOLDER_CHECK_LIST):
             for test_type in scan_file_list:
-                self.generate_suite_file(test_type,scan_path, suite_path)
+                self.generate_suite_file(test_type, scan_path, suite_path)
         else:
             print "ERROR: the path you specify didn't contain the required folder list [%s]" % self.FOLDER_CHECK_LIST
 
@@ -49,6 +50,7 @@ class GenerateSuiteFile(object):
                             write_fh.write(case_name + os.linesep)
                     else:
                         print "ERROR: unknown test type [%s]" % type
+
 
 def main():
     arguments = docopt(__doc__)
