@@ -87,13 +87,19 @@ class HasalTask(object):
             print "Use current firefox browser instead of deploying a new firefox package"
 
     def link_fx_pkg(self):
-        # Create and check backup
-        backup_path = self.FIREFOX_BIN_LINUX_FP + ".bak"
-        if os.path.exists(backup_path):
-            if os.path.exists(self.FIREFOX_BIN_LINUX_FP):
-                os.remove(self.FIREFOX_BIN_LINUX_FP)
+        if sys.platform == "linux2":
+            firefox_fp = self.FIREFOX_BIN_LINUX_FP
+        elif sys.platform == "win32":
+            firefox_fp = self.FIREFOX_BIN_WIN_FP
         else:
-            os.rename(self.FIREFOX_BIN_LINUX_FP, backup_path)
+            print "We are currently not support link firefox package on MAC OS!"
+        # Create and check backup
+        backup_path = firefox_fp + ".bak"
+        if os.path.exists(backup_path):
+            if os.path.exists(firefox_fp):
+                os.remove(firefox_fp)
+        else:
+            os.rename(firefox_fp, backup_path)
 
         if sys.platform == "linux2":
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
