@@ -71,7 +71,6 @@ class Environment(object):
     TEST_FB_VIDEO_POST = "http://goo.gl/z3iwyh"
     TEST_FB_URL_POST = "http://goo.gl/fxja5z"
 
-
     GSHEET_TEST_URL_SPEC = "https://docs.google.com/spreadsheets/d/%s"
     TEST_TARGET_ID_100R_NUMBER_ENCHAR = "1_vIBHZgVLdEPbo8DrJwbSKNVTCcyfDehOzv9yAXHJ2k"
     TEST_TARGET_ID_100R_NUMBER_UTF8CHAR = "1vOKw5Z_-NDo88UzkWL4e0Rq2bHzs5COCF_VcmjYsABU"

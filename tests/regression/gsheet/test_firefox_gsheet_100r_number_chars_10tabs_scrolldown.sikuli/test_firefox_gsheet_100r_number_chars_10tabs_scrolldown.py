@@ -14,4 +14,4 @@ ff.enterLink(sys.argv[3])
 
 sleep(2)
 gs.wait_for_loaded()
-gs.move_to_highlight_scroll(WHEEL_DOWN,20)
+gs.move_to_highlight_scroll(WHEEL_DOWN, 20)
