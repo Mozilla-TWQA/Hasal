@@ -91,7 +91,7 @@ class GetBuild(object):
             except:
                 total_len = None
             with open(download_fp, 'wb') as fh:
-                for data in tqdm(response.iter_content(), total=total_len):
+                for data in tqdm(response.iter_content(chunk_size=512 * 1024), total=total_len / (512 * 1024)):
                     fh.write(data)
             return download_fp
         except Exception as e:
