@@ -5,10 +5,13 @@ import json
 import time
 from datetime import datetime
 import shutil
+import logging
 import urlparse
 from threading import Lock
 
 from lib.common.outlier import outlier
+
+logger = logging.getLogger('HasalServer')
 
 urls = (
     '/', 'Index',
@@ -50,10 +53,21 @@ class StorageHandler:
         Return the config from config.json of '~/.hasal_server/'
         :return: The config json. ex: {"test_times": 30}
         """
+        DEFAULT_CONFIG = {
+            "test_times": 30,
+            "perfherder_host": "local.treeherder.mozilla.org",
+            "perfherder_client_id": "",
+            "perfherder_secret": "",
+            "dashboard_host": "",
+            "dashboard_ssh": ""
+        }
         if os.path.isfile(self._config_path):
             with open(self._config_path, 'r') as f:
                 return json.load(f)
-        return {"test_times": 30}
+        else:
+            with open(self._config_path, 'w') as f:
+                f.write(json.dumps(DEFAULT_CONFIG))
+        return DEFAULT_CONFIG
 
     def load_register(self):
         """
@@ -342,11 +356,6 @@ class HasalServer:
         return [item for item in list_obj if index in item][0]
 
     @staticmethod
-    def save_to_database(os_name, target, test, comment, json_obj):
-        # TODO: store the json_obj under /os/target/test/comment/ path.
-        pass
-
-    @staticmethod
     def _generate_current_test_obj(json_obj, ip):
         # "si", "psi", and "revision" are optional
         info = HasalServer._template.copy()
@@ -389,6 +398,21 @@ class HasalServer:
         }
         return json.dumps(ret)
 
+    def update_dashboard(self):
+        # TODO update dashboard by SSH deployment key
+        logger.info('[Dashboard] starting update to dashboard ...')
+        pass
+
+    def update_perfherder(self):
+        # TODO update Perfherder
+        logger.info('[Perfherder] starting update to Perfherder ...')
+        pass
+
+    def update_all(self):
+        HasalServer.storage_handler.save(HasalServer.storage)
+        self.update_dashboard()
+        self.update_perfherder()
+
     def calculate_result(self, current_test_obj):
         origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in current_test_obj['origin_values']]
 
@@ -407,6 +431,7 @@ class HasalServer:
             current_test_obj['psi'] = psi
             # add timestamp
             current_test_obj['timestamp'] = time.time()
+            self.update_all()
         return current_test_obj
 
     def GET(self, os_name, target, comment_name):
