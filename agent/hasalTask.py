@@ -12,7 +12,7 @@ class HasalTask(object):
     configurations = {}
     cmd_parameter_keys = []
     FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
-    FIREFOX_BIN_WIN_FP   = "C:\\Program Files (x86)\\Mozilla Firefox"
+    FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
 
     def __init__(self, name, **kwargs):
         self.name = name

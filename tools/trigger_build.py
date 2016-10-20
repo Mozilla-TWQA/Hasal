@@ -44,7 +44,7 @@ class TriggerBuild(object):
         self.platform_option = 'opt'
         self.thclient = TreeherderClient()
         self.resultsets = []
-        self.env_data = {key.upper():value for key, value in input_env_data.items()}
+        self.env_data = {key.upper(): value for key, value in input_env_data.items()}
         self.dispatch_variables(self.env_data)
 
     def dispatch_variables(self, input_env_data):
@@ -103,14 +103,13 @@ class TriggerBuild(object):
                 json.dump(write_data, write_fh)
 
         # move to agent config folder
-        if sys.platform == "linux2" :
+        if sys.platform == "linux2":
             new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_LINUX, self.HASAL_JSON_FN)
         elif sys.platform == "darwin":
             new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_MAC, self.HASAL_JSON_FN)
         else:
             new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_WIN, self.HASAL_JSON_FN)
         os.rename(self.HASAL_JSON_FN, new_hasal_json_fp)
-
 
     def fetch_resultset(self, user_email, build_hash, default_count=500):
         tmp_resultsets = self.thclient.get_resultsets(self.repo, count=default_count)
