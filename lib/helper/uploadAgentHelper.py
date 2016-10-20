@@ -58,7 +58,7 @@ class UploadAgent(object):
         #               'chrome': {'regression_gsheet':['test_chrome_gsheet_1000r_number_chars_deleteallcell']}}
         with open(input_suite_fp) as input_suite_fh:
             upload_data = {}
-            for tmp_line in input_suite_fh.read().splitlines():
+            for tmp_line in input_suite_fh.read().strip().splitlines():
                 case_full_path = tmp_line.split(",")[0]
                 if test_type == "pt":
                     tmp_list = case_full_path.split(os.sep)
@@ -128,7 +128,9 @@ class UploadAgent(object):
             logger.info("===== Upload result post data =====")
             logger.info(json_data)
             logger.info("===== Upload result post data =====")
-            return json.loads(self.send_post_data(json_data, url_str).read())
+            r_data = self.send_post_data(json_data, url_str).read()
+            logger.info('response object data : [%s]' % r_data)
+            return json.loads(r_data)
 
     def send_post_data(self, post_data, url_str):
         query_args = {}
@@ -138,7 +140,6 @@ class UploadAgent(object):
         encoded_args = urllib.urlencode(query_args)
         response_obj = urllib2.urlopen(url_str, encoded_args)
         if response_obj.getcode() == 200:
-            logger.info('response object data : [%s]' % response_obj.read())
             return response_obj
         else:
             logger.error("response status code is [%d]" % response_obj.getcode())
