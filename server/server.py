@@ -439,7 +439,6 @@ class HasalServer:
         # TODO update Perfherder
         if not self.perfherder_mode:
             return
-        perf_data_suites = []
         date_result = HasalServer.storage_handler.load()
         data_register = HasalServer.storage_handler.load_register()
         # check if there are all tests in suite have the result (median vaule large than 0), then prepare uploading to perfherder
@@ -449,6 +448,8 @@ class HasalServer:
                 for comment_name in data_register[os_name][target_name]:
                     for browser_name in data_register[os_name][target_name][comment_name]:
                         for suite_name in data_register[os_name][target_name][comment_name][browser_name]:
+                            perf_data_suites = []
+
                             suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
                             perf_data_suite_median = {
                                 'name': '{} {}'.format(suite_name, browser_name),
@@ -465,12 +466,14 @@ class HasalServer:
                                 'value': 0,
                                 'subtests': []
                             }
-                            print('### check register: {} {} {} {} {} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
-                            print(suite)
+                            logger_hasal.info('### check register: {} {} {} {} {} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                            logger_hasal.info(suite)
+
                             for test_name in suite:
-                                median = date_result[os_name][target_name][comment_name][test_name][browser_name].get('median_value')
-                                si = date_result[os_name][target_name][comment_name][test_name][browser_name].get('si')
-                                psi = date_result[os_name][target_name][comment_name][test_name][browser_name].get('psi')
+                                test_result = date_result.get(os_name, {}).get(target_name, {}).get(comment_name, {}).get(test_name, {}).get(browser_name, {})
+                                median = test_result.get('median_value', -1)
+                                si = test_result.get('si', -1)
+                                psi = test_result.get('psi', -1)
                                 if median > 0:
                                     perf_data_suite_median['subtests'].append({
                                         'name': test_name,
@@ -494,6 +497,8 @@ class HasalServer:
                             if len(perf_data_suites) > 0:
                                 logger_hasal.info('### perf_data_suites ###')
                                 logger_hasal.info(json.dumps(perf_data_suites, indent=4))
+                            else:
+                                logger_hasal.info('### not finished ###')
 
     def update_all(self):
         HasalServer.storage_handler.save(HasalServer.storage)
