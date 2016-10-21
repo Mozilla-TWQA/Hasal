@@ -4,6 +4,7 @@ import sys
 import json
 import tarfile
 import zipfile
+import shutil
 import subprocess
 
 
@@ -97,7 +98,7 @@ class HasalTask(object):
         backup_path = firefox_fp + ".bak"
         if os.path.exists(backup_path):
             if os.path.exists(firefox_fp):
-                os.remove(firefox_fp)
+                shutil.rmtree(firefox_fp)
         else:
             os.rename(firefox_fp, backup_path)
 
