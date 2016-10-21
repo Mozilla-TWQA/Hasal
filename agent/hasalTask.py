@@ -131,16 +131,16 @@ class HasalTask(object):
         return True
 
     def run(self):
-        print "deploy fx pkg"
-        self.deploy_fx_pkg()
-        print "run"
-        cmd_list = self.generate_command_list()
-        print " ".join(cmd_list)
-        self.update_svr_config()
-        with open("job.log", "w") as log_fh:
-            p = subprocess.Popen(cmd_list, stdout=log_fh, stderr=log_fh, env=os.environ.copy())
-            p.wait()
-            log_fh.flush()
+        with open("job.log", "w+") as log_fh:
+            sys.stdout = log_fh
+            sys.stderr = log_fh
+            print "deploy fx pkg"
+            self.deploy_fx_pkg()
+            print "run"
+            cmd_list = self.generate_command_list()
+            print " ".join(cmd_list)
+            self.update_svr_config()
+            subprocess.call(cmd_list, stdout=log_fh, stderr=log_fh, env=os.environ.copy())
         os.remove(self.src_conf_path)
 
     def onstop(self):
