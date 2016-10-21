@@ -8,10 +8,16 @@ from datetime import datetime
 import shutil
 import logging
 from logging import handlers
+import operator
 import urlparse
 from threading import Lock
 
 from lib.common.outlier import outlier
+
+
+def geometric_mean(iterable):
+    filtered = list(filter(lambda x: x > 0, iterable))
+    return (reduce(operator.mul, filtered)) ** (1.0 / len(filtered))
 
 
 def get_logger(logger_name, log_level="info"):
@@ -433,18 +439,61 @@ class HasalServer:
         # TODO update Perfherder
         if not self.perfherder_mode:
             return
+        perf_data_suites = []
         date_result = HasalServer.storage_handler.load()
         data_register = HasalServer.storage_handler.load_register()
         # check if there are all tests in suite have the result (median vaule large than 0), then prepare uploading to perfherder
+
         for os_name in data_register:
             for target_name in data_register[os_name]:
                 for comment_name in data_register[os_name][target_name]:
                     for browser_name in data_register[os_name][target_name][comment_name]:
                         for suite_name in data_register[os_name][target_name][comment_name][browser_name]:
                             suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
-                            print('{} {} {} {} {} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                            perf_data_suite_median = {
+                                'name': '{} {}'.format(suite_name, browser_name),
+                                'value': 0,
+                                'subtests': []
+                            }
+                            perf_data_suite_si = {
+                                'name': '{} {}'.format(suite_name, browser_name),
+                                'value': 0,
+                                'subtests': []
+                            }
+                            perf_data_suite_psi = {
+                                'name': '{} {}'.format(suite_name, browser_name),
+                                'value': 0,
+                                'subtests': []
+                            }
+                            print('### check register: {} {} {} {} {} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
                             print(suite)
-        pass
+                            for test_name in suite:
+                                median = date_result[os_name][target_name][comment_name][test_name][browser_name].get('median_value')
+                                si = date_result[os_name][target_name][comment_name][test_name][browser_name].get('si')
+                                psi = date_result[os_name][target_name][comment_name][test_name][browser_name].get('psi')
+                                if median > 0:
+                                    perf_data_suite_median['subtests'].append({
+                                        'name': test_name,
+                                        'value': median
+                                    })
+                                if si > 0:
+                                    perf_data_suite_si['subtests'].append({
+                                        'name': test_name,
+                                        'value': si
+                                    })
+                                if psi > 0:
+                                    perf_data_suite_psi['subtests'].append({
+                                        'name': test_name,
+                                        'value': psi
+                                    })
+                            # if the suite tests and the median result number are the same, that means the suite is finished.
+                            for perf_suite in [perf_data_suite_median, perf_data_suite_si, perf_data_suite_psi]:
+                                if len(suite) > 0 and len(suite) == len(perf_suite['subtests']):
+                                    perf_suite['value'] = geometric_mean([item.get('value') for item in perf_suite['subtests']])
+                                    perf_data_suites.append(perf_suite)
+                            if len(perf_data_suites) > 0:
+                                logger_hasal.info('### perf_data_suites ###')
+                                logger_hasal.info(json.dumps(perf_data_suites, indent=4))
 
     def update_all(self):
         HasalServer.storage_handler.save(HasalServer.storage)
