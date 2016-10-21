@@ -438,6 +438,7 @@ class HasalServer:
     def update_perfherder(self):
         # TODO update Perfherder
         if not self.perfherder_mode:
+            logger_hasal.info('### Skip Perfherder ###')
             return
         date_result = HasalServer.storage_handler.load()
         data_register = HasalServer.storage_handler.load_register()
