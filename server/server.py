@@ -453,17 +453,17 @@ class HasalServer:
 
                             suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
                             perf_data_suite_median = {
-                                'name': '{} {}'.format(suite_name, browser_name),
+                                'name': '{} Median {}'.format(suite_name, browser_name),
                                 'value': 0,
                                 'subtests': []
                             }
                             perf_data_suite_si = {
-                                'name': '{} {}'.format(suite_name, browser_name),
+                                'name': '{} SI {}'.format(suite_name, browser_name),
                                 'value': 0,
                                 'subtests': []
                             }
                             perf_data_suite_psi = {
-                                'name': '{} {}'.format(suite_name, browser_name),
+                                'name': '{} PSI {}'.format(suite_name, browser_name),
                                 'value': 0,
                                 'subtests': []
                             }
