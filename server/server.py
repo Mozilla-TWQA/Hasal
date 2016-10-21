@@ -15,26 +15,25 @@ from lib.common.outlier import outlier
 
 
 def get_logger(logger_name, log_level="info"):
-    inner_logger = None
-    inner_logger = logging.getLogger()
+    inner_logger = logging.getLogger(logger_name)
     if log_level == "debug":
         inner_logger.setLevel(logging.DEBUG)
     else:
         inner_logger.setLevel(logging.INFO)
-    console_handler = logging.StreamHandler()
-    file_handler = logging.handlers.RotatingFileHandler('{}.log'.format(logger_name), 'a', 10 * 1024 * 1024, 5)
-    format_string = "[%(asctime)s] %(filename)s:%(lineno)d(%(funcName)s): [%(levelname)s] %(message)s"
-    format_object = logging.Formatter(format_string)
-    file_handler.setFormatter(format_object)
-    inner_logger.addHandler(console_handler)
-    inner_logger.addHandler(file_handler)
+    if len(inner_logger.handlers) == 0:
+        console_handler = logging.StreamHandler()
+        file_handler = logging.handlers.RotatingFileHandler('{}.log'.format(logger_name), 'a', 10 * 1024 * 1024, 5)
+        format_string = "[%(asctime)s] %(filename)s:%(lineno)d(%(funcName)s): [%(levelname)s] %(message)s"
+        format_object = logging.Formatter(format_string)
+        file_handler.setFormatter(format_object)
+        inner_logger.addHandler(console_handler)
+        inner_logger.addHandler(file_handler)
     return inner_logger
 
 logger_hasal = get_logger("HasalServer", "info")
 
 urls = (
     '/', 'Index',
-    '/reset/(.*)', 'Reset',
     '/all_result/', 'AllResult',
     '/hasal/(.*)/(.*)/(.*)', 'HasalServer',
     '/hasal_perf_reg/(.*)/(.*)/(.*)', 'HasalServerPerfherderRegister',
@@ -319,6 +318,12 @@ class HasalServer:
     _calculator = outlier()
     _config = storage_handler.load_config()
     _config_test_times = _config.get('test_times', 30)
+    _config_perfherder_host = _config.get('perfherder_host', 'local.treeherder.mozilla.org')
+    _config_perfherder_client_id = _config.get('perfherder_client_id', '')
+    _config_perfherder_secret = _config.get('perfherder_secret', '')
+    _config_dashboard_host = _config.get('dashboard_host', '')
+    _config_dashboard_ssh = _config.get('dashboard_ssh', '')
+
     _keys = ['os', 'target_browser', 'test', 'browser']
     # The "value" is "run_time" from agent, the "si", "psi", and "revision" are optional.
     _checks = ['os', 'target', 'test', 'comment', 'webappname', 'browser', 'version', 'platform', 'value', 'video']
@@ -346,11 +351,13 @@ class HasalServer:
 
     def __init__(self):
         HasalServer.storage = HasalServer.storage_handler.load()
-
-    """
-    def __del__(self):
-        HasalServer._storage_handler.remove()
-    """
+        self.perfherder_mode = False
+        if HasalServer._config_perfherder_client_id and HasalServer._config_perfherder_secret:
+            logger_hasal.info('[Perfherder] There are no "Client ID" and "Secret" of Perfherder ...')
+            self.perfherder_mode = False
+        else:
+            logger_hasal.info('[Perfherder] The "Client ID" and "Secret" of Perfherder are ready ...')
+            self.perfherder_mode = True
 
     @staticmethod
     def check_input_json(json_obj):
@@ -419,12 +426,24 @@ class HasalServer:
 
     def update_dashboard(self):
         # TODO update dashboard by SSH deployment key
-        logger_hasal.info('[Dashboard] starting update to dashboard ...')
+        # logger_hasal.info('[Dashboard] starting update to dashboard ...')
         pass
 
     def update_perfherder(self):
         # TODO update Perfherder
-        logger_hasal.info('[Perfherder] starting update to Perfherder ...')
+        if not self.perfherder_mode:
+            return
+        date_result = HasalServer.storage_handler.load()
+        data_register = HasalServer.storage_handler.load_register()
+        # check if there are all tests in suite have the result (median vaule large than 0), then prepare uploading to perfherder
+        for os_name in data_register:
+            for target_name in data_register[os_name]:
+                for comment_name in data_register[os_name][target_name]:
+                    for browser_name in data_register[os_name][target_name][comment_name]:
+                        for suite_name in data_register[os_name][target_name][comment_name][browser_name]:
+                            suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
+                            print('{} {} {} {} {} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                            print(suite)
         pass
 
     def update_all(self):
@@ -655,12 +674,6 @@ class Index:
 
     def GET(self):
         return self.render.readme()
-
-
-class Reset:
-    def GET(self, id):
-        StorageHandler().remove()
-        return 'Done.'
 
 
 if __name__ == '__main__':
