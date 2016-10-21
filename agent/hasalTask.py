@@ -98,7 +98,12 @@ class HasalTask(object):
         backup_path = firefox_fp + ".bak"
         if os.path.exists(backup_path):
             if os.path.exists(firefox_fp):
-                shutil.rmtree(firefox_fp)
+                if sys.platform == "win32":
+                    shutil.rmtree(firefox_fp)
+                elif sys.platform == "linux2":
+                    os.remove(firefox_fp)
+                else:
+                    print "We are currently not support link firefox package on MAC OS!"
         else:
             os.rename(firefox_fp, backup_path)
 
