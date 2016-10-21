@@ -1,0 +1,45 @@
+import os
+import sys
+import time
+import shutil
+
+
+if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE" in os.environ:
+    full_path = os.environ["OUTPUTLOC"]
+    conf_path = os.path.join(os.environ["HASAL_WORKSPACE"], "agent", "hasal.json")
+    jenkins_conf_path = os.path.join(os.environ["WORKSPACE"], "hasal.json")
+    jenkins_job_log_path = os.path.join(os.environ["WORKSPACE"], os.path.basename(os.environ["OUTPUTLOC"]))
+
+    lines = 0
+    copy_flag = False
+    # wait for test started
+    while True:
+        if os.path.exists(full_path):
+            break
+        if not os.path.exists(conf_path):
+            print "Detection of job finished."
+            sys.exit(0)
+        time.sleep(1)
+
+    # wait for test finished
+    while True:
+        if not os.path.exists(conf_path):
+            print "Detection of job finished."
+            break
+        elif not copy_flag and os.path.exists(conf_path):
+                if os.path.exists(jenkins_conf_path):
+                    os.remove(jenkins_conf_path)
+                shutil.copy(conf_path, jenkins_conf_path)
+                copy_flag = True
+        else:
+            with open(full_path, "r") as f:
+                current_file = f.readlines()
+                current_lines = len(current_file)
+                if current_lines > lines:
+                    for i in range(lines, current_lines):
+                        print current_file[i].strip()
+                    lines = current_lines
+            time.sleep(2)
+    if os.path.exists(jenkins_job_log_path):
+        os.remove(jenkins_job_log_path)
+    shutil.move(os.environ["OUTPUTLOC"], jenkins_job_log_path)
