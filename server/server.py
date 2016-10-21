@@ -353,11 +353,11 @@ class HasalServer:
         HasalServer.storage = HasalServer.storage_handler.load()
         self.perfherder_mode = False
         if HasalServer._config_perfherder_client_id and HasalServer._config_perfherder_secret:
-            logger_hasal.info('[Perfherder] There are no "Client ID" and "Secret" of Perfherder ...')
-            self.perfherder_mode = False
-        else:
             logger_hasal.info('[Perfherder] The "Client ID" and "Secret" of Perfherder are ready ...')
             self.perfherder_mode = True
+        else:
+            logger_hasal.info('[Perfherder] There are no "Client ID" and "Secret" of Perfherder ...')
+            self.perfherder_mode = False
 
     @staticmethod
     def check_input_json(json_obj):
