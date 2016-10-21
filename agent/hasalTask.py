@@ -112,7 +112,7 @@ class HasalTask(object):
         elif sys.platform == "darwin":
             DEFAULT_NIGHLTY_ATTACTED_PATH = "/Volumes/Nightly"
             if os.path.exists(DEFAULT_NIGHLTY_ATTACTED_PATH):
-                shutil.copytree(os.path.join(DEFAULT_NIGHLTY_ATTACTED_PATH,"FirefoxNightly.app"), self.FIREFOX_BIN_MAC_FP)
+                shutil.copytree(os.path.join(DEFAULT_NIGHLTY_ATTACTED_PATH, "FirefoxNightly.app"), self.FIREFOX_BIN_MAC_FP)
                 detach_cmd_format = "hdiutil detach %s"
                 detach_cmd_str = detach_cmd_format % DEFAULT_NIGHLTY_ATTACTED_PATH
                 if os.system(detach_cmd_str) != 0:
