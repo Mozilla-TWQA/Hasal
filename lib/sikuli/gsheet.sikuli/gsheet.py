@@ -15,7 +15,8 @@ class gSheet():
             self.alt = Key.ALT
 
         self.gsheet_tab_icon = Pattern("pics/gsheet.png").similar(0.70)
-        self.gsheet_highlight_cell = Pattern("pics/highlight_cell.png").similar(0.70)
+        self.gsheet_modify_highlight_cell = Pattern("pics/column_header.png").similar(0.70).targetOffset(450, 180)
+        self.gsheet_delete_highlight_cell = Pattern("pics/column_header.png").similar(0.70).targetOffset(450, 180)
         self.gsheet_highlight_tab = Pattern("pics/highlight_tab.png").similar(0.70).targetOffset(160, 0)
         self.gsheet_column_header = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 60)
 
@@ -26,11 +27,11 @@ class gSheet():
         setAutoWaitTimeout(default_timeout)
 
     def modify_highlight_cell(self, input_txt):
-        click(self.gsheet_highlight_cell)
+        click(self.gsheet_modify_highlight_cell)
         paste(input_txt)
 
     def delete_highlight_cell(self):
-        click(self.gsheet_highlight_cell)
+        click(self.gsheet_delete_highlight_cell)
         type(Key.DELETE)
 
     def delete_all_cell(self):

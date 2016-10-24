@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_1000R_NUMBER_ENCHAR)
+        self.set_variable(test_target=self.env.TEST_TARGET_ID_1000R_NUMBER_ENCHAR_1000FORMULA)
         self.set_variable(target_folder=self.env.GSHEET_TEST_TARGET_FOLDER_URI)
         super(TestSikuli, self).setUp()
 
