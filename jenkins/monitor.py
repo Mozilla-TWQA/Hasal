@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 import shutil
 
 
@@ -20,6 +21,10 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
             print "Detection of job finished."
             sys.exit(0)
         time.sleep(1)
+    with open(conf_path) as fh:
+        conf = json.load(fh)
+        for key, value in conf.items():
+            print key + ": " + value
 
     f = open(full_path, "r")
     # wait for test finished
