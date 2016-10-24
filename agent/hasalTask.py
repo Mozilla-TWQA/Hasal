@@ -14,6 +14,7 @@ class HasalTask(object):
     cmd_parameter_keys = []
     FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
     FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
+    FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -93,17 +94,15 @@ class HasalTask(object):
         elif sys.platform == "win32":
             firefox_fp = self.FIREFOX_BIN_WIN_FP
         else:
-            print "We are currently not support link firefox package on MAC OS!"
+            firefox_fp = self.FIREFOX_BIN_MAC_FP
         # Create and check backup
         backup_path = firefox_fp + ".bak"
         if os.path.exists(backup_path):
             if os.path.exists(firefox_fp):
-                if sys.platform == "win32":
-                    shutil.rmtree(firefox_fp)
-                elif sys.platform == "linux2":
+                if sys.platform == "linux2":
                     os.remove(firefox_fp)
                 else:
-                    print "We are currently not support link firefox package on MAC OS!"
+                    shutil.rmtree(firefox_fp)
         else:
             os.rename(firefox_fp, backup_path)
 
@@ -111,7 +110,15 @@ class HasalTask(object):
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
             os.symlink(src_link, self.FIREFOX_BIN_LINUX_FP)
         elif sys.platform == "darwin":
-            print "We are currently not support link firefox package on MAC OS!"
+            DEFAULT_NIGHLTY_ATTACTED_PATH = "/Volumes/Nightly"
+            if os.path.exists(DEFAULT_NIGHLTY_ATTACTED_PATH):
+                shutil.copytree(os.path.join(DEFAULT_NIGHLTY_ATTACTED_PATH, "FirefoxNightly.app"), self.FIREFOX_BIN_MAC_FP)
+                detach_cmd_format = "hdiutil detach %s"
+                detach_cmd_str = detach_cmd_format % DEFAULT_NIGHLTY_ATTACTED_PATH
+                if os.system(detach_cmd_str) != 0:
+                    print "ERROR: detach dmg file[%s] failed! cmd string: [%s]" % (DEFAULT_NIGHLTY_ATTACTED_PATH, detach_cmd_str)
+            else:
+                print "ERROR: can't find the nightly attached path [%s]" % DEFAULT_NIGHLTY_ATTACTED_PATH
         else:
             src_path = os.path.join(os.getcwd(), "firefox")
             os.rename(src_path, self.FIREFOX_BIN_WIN_FP)
@@ -126,8 +133,13 @@ class HasalTask(object):
             target_file.extractall()
             target_file.close()
         else:
-            print "WARNING!! We are not support extract dmg file right now!"
-            return False
+            attach_cmd_format = "hdiutil attach -noautoopen -quiet %s"
+            attach_cmd_str = attach_cmd_format % input_fx_pkg_fp
+            if os.system(attach_cmd_str) != 0:
+                print "ERROR: attach dmg file[%s] failed! cmd string: [%s]" % (input_fx_pkg_fp, attach_cmd_str)
+                return False
+            else:
+                print "INFO: attach dmg file[%s] sucessfully!" % input_fx_pkg_fp
         return True
 
     def run(self):
