@@ -45,5 +45,7 @@ class gSheet():
                 direction = WHEEL_UP
             else:
                 direction = WHEEL_DOWN
+        else:
+            direction = input_direction
         mouseMove(self.gsheet_column_header)
         wheel(self.gsheet_column_header, direction, scroll_down_size)
