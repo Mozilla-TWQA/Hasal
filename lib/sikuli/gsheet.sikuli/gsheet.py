@@ -16,6 +16,7 @@ class gSheet():
 
         self.gsheet_tab_icon = Pattern("pics/gsheet.png").similar(0.70)
         self.gsheet_highlight_cell = Pattern("pics/highlight_cell.png").similar(0.70)
+        self.gsheet_highlight_tab = Pattern("pics/highlight_tab.png").similar(0.70).targetOffset(160, 0)
         self.gsheet_column_header = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 60)
 
     def wait_for_loaded(self):
@@ -37,7 +38,7 @@ class gSheet():
         type(Key.DELETE)
 
     def click_highlight_tab(self):
-        click(self.gsheet_highlight_cell)
+        click(self.gsheet_highlight_tab)
 
     def move_to_highlight_scroll(self, input_direction, scroll_down_size):
         if self.os.lower() == 'mac':
