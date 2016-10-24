@@ -16,7 +16,7 @@ class gSheet():
 
         self.gsheet_tab_icon = Pattern("pics/gsheet.png").similar(0.70)
         self.gsheet_highlight_cell = Pattern("pics/highlight_cell.png").similar(0.70)
-        self.gsheet_column_header = Pattern("pics/column_header.png").similar(0.70)
+        self.gsheet_column_header = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 60)
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
