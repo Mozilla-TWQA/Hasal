@@ -54,13 +54,12 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
             time.sleep(2)
 
     # avoid race condition and loss log in jenkins
-    if not lines:
-        current_file = f.readlines()
-        current_lines = len(current_file)
-        if current_lines > lines:
-            for i in range(lines, current_lines):
-                print current_file[i].strip()
-            lines = current_lines
+    current_file = f.readlines()
+    current_lines = len(current_file)
+    if current_lines > lines:
+        for i in range(lines, current_lines):
+            print current_file[i].strip()
+        lines = current_lines
     f.close()
 
     if os.path.exists(jenkins_job_log_path):
