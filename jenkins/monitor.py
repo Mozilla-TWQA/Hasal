@@ -11,8 +11,14 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
     jenkins_conf_path = os.path.join(os.environ["WORKSPACE"], "hasal.json")
     jenkins_job_log_path = os.path.join(os.environ["WORKSPACE"], os.path.basename(os.environ["OUTPUTLOC"]))
 
+    # clean archived files from former build
+    if os.path.exists(jenkins_job_log_path):
+        os.remove(jenkins_job_log_path)
+    if os.path.exists(jenkins_conf_path):
+        os.remove(jenkins_conf_path)
     lines = 0
     copy_flag = False
+
     # wait for test started
     while True:
         if os.path.exists(full_path):
@@ -60,3 +66,6 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
     if os.path.exists(jenkins_job_log_path):
         os.remove(jenkins_job_log_path)
     shutil.move(os.environ["OUTPUTLOC"], jenkins_job_log_path)
+else:
+    print "Cannot get environments 'OUTPUTLOC', 'HASAL_WORKSPACE', or 'WORKSPACE'"
+    sys.exit(1)
