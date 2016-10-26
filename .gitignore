@@ -10,6 +10,7 @@ result.json
 _virtualenv
 *~
 *.log
+HasalServer.log.*
 
 # 3rd party files
 thirdParty/*
