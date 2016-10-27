@@ -2,6 +2,7 @@ __author__ = 'shako'
 import os
 import sys
 import json
+import time
 import tarfile
 import zipfile
 import shutil
@@ -15,6 +16,9 @@ class HasalTask(object):
     FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
     FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
     FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
+    DEFAULT_JOB_LOG_FN = "job.log"
+    DEFAULT_FX_EXTRACT_DIR = "firefox"
+    DEFAULT_DATA_EXPIRE_DAY = 14
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -125,10 +129,14 @@ class HasalTask(object):
 
     def extract_fx_pkg(self, input_fx_pkg_fp):
         if input_fx_pkg_fp.endswith(".tar.bz2"):
+            if os.path.exists(self.DEFAULT_FX_EXTRACT_DIR):
+                shutil.rmtree(self.DEFAULT_FX_EXTRACT_DIR)
             target_file = tarfile.open(input_fx_pkg_fp, "r:bz2")
             target_file.extractall()
             target_file.close()
         elif input_fx_pkg_fp.endswith(".zip"):
+            if os.path.exists(self.DEFAULT_FX_EXTRACT_DIR):
+                shutil.rmtree(self.DEFAULT_FX_EXTRACT_DIR)
             target_file = zipfile.ZipFile(input_fx_pkg_fp, "r")
             target_file.extractall()
             target_file.close()
@@ -142,8 +150,48 @@ class HasalTask(object):
                 print "INFO: attach dmg file[%s] sucessfully!" % input_fx_pkg_fp
         return True
 
+    def init_environment(self):
+        # kill legacy process
+        if sys.platform == "linux2":
+            DEFAULT_TASK_KILL_LIST = ["avconv", "firefox", "chrome"]
+            DEFAULT_TASK_KILL_CMD = "pkill "
+        elif sys.platform == "win32":
+            DEFAULT_TASK_KILL_CMD = "taskkill /f /t /im "
+            DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe"]
+        else:
+            DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
+            DEFAULT_TASK_KILL_CMD = "pkill "
+        for process_name in DEFAULT_TASK_KILL_LIST:
+            cmd_str = DEFAULT_TASK_KILL_CMD + process_name
+            os.system(cmd_str)
+
+        # remove created log
+        if os.path.exists(self.DEFAULT_JOB_LOG_FN):
+            os.remove(self.DEFAULT_JOB_LOG_FN)
+
+        # clean output folder
+        output_dir_list = []
+        output_dir = os.path.join(os.getcwd(), 'output')
+        output_dir_list.append(os.path.join(output_dir, 'images', 'output'))
+        output_dir_list.append(os.path.join(output_dir, 'images', 'sample'))
+        output_dir_list.append(os.path.join(output_dir, 'profiles'))
+        output_dir_list.append(os.path.join(output_dir, 'videos'))
+        for output_dir in output_dir_list:
+            for target_name in os.listdir(output_dir):
+                check_target = os.path.join(output_dir, target_name)
+                if (time.time() - os.path.getmtime(check_target)) > (60 * 60 * 24 * self.DEFAULT_DATA_EXPIRE_DAY):
+                    print "INFO: housekeeping the exisitng output dir/file [%s]" % check_target
+                    if os.path.isdir(check_target):
+                        shutil.rmtree(check_target)
+                    else:
+                        os.remove(check_target)
+
     def run(self):
-        with open("job.log", "w+") as log_fh:
+        # clean up the environment
+        self.init_environment()
+
+        # start running
+        with open(self.DEFAULT_JOB_LOG_FN, "w+") as log_fh:
             sys.stdout = log_fh
             sys.stderr = log_fh
             print "deploy fx pkg"
@@ -153,6 +201,8 @@ class HasalTask(object):
             print " ".join(cmd_list)
             self.update_svr_config()
             subprocess.call(cmd_list, stdout=log_fh, stderr=log_fh, env=os.environ.copy())
+
+        # remove json file
         os.remove(self.src_conf_path)
 
     def onstop(self):
