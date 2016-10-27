@@ -11,6 +11,7 @@ gs = gslide.gSlide()
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
+setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
