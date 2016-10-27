@@ -32,15 +32,15 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
         for key, value in conf.items():
             print key + ": " + value
 
-    f = open(full_path, "r")
     # wait for test finished
     while True:
-        current_file = f.readlines()
-        current_lines = len(current_file)
-        if current_lines > lines:
-            for i in range(lines, current_lines):
-                print current_file[i].strip()
-            lines = current_lines
+        with open(full_path, "r") as f:
+            current_file = f.readlines()
+            current_lines = len(current_file)
+            if current_lines > lines:
+                for i in range(lines, current_lines):
+                    print current_file[i].strip()
+                lines = current_lines
 
         if not os.path.exists(conf_path):
             print "Detection of job finished."
@@ -54,13 +54,13 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
             time.sleep(2)
 
     # avoid race condition and loss log in jenkins
-    current_file = f.readlines()
-    current_lines = len(current_file)
-    if current_lines > lines:
-        for i in range(lines, current_lines):
-            print current_file[i].strip()
-        lines = current_lines
-    f.close()
+    with open(full_path, "r") as f:
+        current_file = f.readlines()
+        current_lines = len(current_file)
+        if current_lines > lines:
+            for i in range(lines, current_lines):
+                print current_file[i].strip()
+            lines = current_lines
 
     if os.path.exists(jenkins_job_log_path):
         os.remove(jenkins_job_log_path)
