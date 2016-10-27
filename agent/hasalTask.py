@@ -17,6 +17,7 @@ class HasalTask(object):
     FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
     FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
     DEFAULT_JOB_LOG_FN = "job.log"
+    DEFAULT_FX_EXTRACT_DIR = "firefox"
     DEFAULT_DATA_EXPIRE_DAY = 14
 
     def __init__(self, name, **kwargs):
@@ -128,12 +129,14 @@ class HasalTask(object):
 
     def extract_fx_pkg(self, input_fx_pkg_fp):
         if input_fx_pkg_fp.endswith(".tar.bz2"):
-            shutil.rmtree("firefox")
+            if os.path.exists(self.DEFAULT_FX_EXTRACT_DIR):
+                shutil.rmtree(self.DEFAULT_FX_EXTRACT_DIR)
             target_file = tarfile.open(input_fx_pkg_fp, "r:bz2")
             target_file.extractall()
             target_file.close()
         elif input_fx_pkg_fp.endswith(".zip"):
-            shutil.rmtree("firefox")
+            if os.path.exists(self.DEFAULT_FX_EXTRACT_DIR):
+                shutil.rmtree(self.DEFAULT_FX_EXTRACT_DIR)
             target_file = zipfile.ZipFile(input_fx_pkg_fp, "r")
             target_file.extractall()
             target_file.close()
