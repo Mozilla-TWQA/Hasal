@@ -1,0 +1,67 @@
+version: 1.0.{build}
+branches:
+  only:
+  - master
+skip_tags: true
+skip_commits:
+  message: /SkipCI.*/
+
+cache:
+  - opencv_python-2.4.13-cp27-cp27m-win32.whl
+  - ffmpeg-20160527-git-d970f7b-win32-static.7z
+  - sikulixsetup-1.1.0.jar
+  - cv2_checker.py
+  - sys_pkg_checker.py
+build: false
+
+environment:
+  matrix:
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda
+
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
+
+install:
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - set PATH="C:\Program Files\7-Zip";%PATH%
+  - set PATH="C:\Program Files\Java\jdk1.7.0\bin";%PATH%
+  - curl -kLO https://raw.githubusercontent.com/Mozilla-TWQA/Hasal/master/scripts/cv2_checker.py
+  - curl -kLO https://raw.githubusercontent.com/Mozilla-TWQA/Hasal/master/scripts/sys_pkg_checker.py
+  - mkdir media
+  - copy 168_frame.mp4 media
+
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - "conda create -q -n test-environment python=%PYTHON_VERSION% numpy scipy nose"
+  - activate test-environment
+  
+  - conda install pywin32
+  - pip install coverage mitmproxy
+  - pip install opencv_python-2.4.13-cp27-cp27m-win32.whl
+  
+  - curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+  - 7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
+  - set PATH="%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\";%PATH%
+  
+  - git clone https://github.com/Mozilla-TWQA/Hasal.git
+  - java -jar sikulixsetup-1.1.0.jar options 1.1 2
+  - cp runsikuli* Hasal\thirdParty\
+  - cp sikuli*.jar Hasal\thirdParty\
+  
+  - cd Hasal
+  - python setup.py install
+  - cd ..
+
+test_script:
+  - activate test-environment
+  - python cv2_checker.py
+  - cd Hasal
+  - python runtest.py -h
+  - cd ..
+
+on_success:
+- cmd: echo Build successfully!
+on_failure:
+- cmd: echo Build Failed!
