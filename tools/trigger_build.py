@@ -31,7 +31,7 @@ class TriggerBuild(object):
                            'win64': {'key': 'win64', 'ext': 'zip', 'trydl': 'win64', 'job': ['windows', '64']}}
     ENV_KEY_TRY_REPO_USER_EMAIL = "EMAIL"
     ENV_KEY_ENABLE_WIN32 = "WIN32_FLAG"
-    ENV_KEY_SKIP_STATUS_CHECK = "--SKIP_STATUS_CHECK"
+    ENV_KEY_SKIP_STATUS_CHECK = "SKIP_STATUS_CHECK"
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
