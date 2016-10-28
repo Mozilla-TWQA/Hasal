@@ -6,6 +6,9 @@ skip_tags: true
 skip_commits:
   message: /SkipCI.*/
 
+cache:
+  - 7z1604.exe
+  - ffmpeg-20160527-git-d970f7b-win32-static.7z
 build: false
 
 environment:
