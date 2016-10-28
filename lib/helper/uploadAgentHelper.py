@@ -66,7 +66,7 @@ class UploadAgent(object):
                     tmp_list = case_full_path.split(".")
                 browser_type = tmp_list[3].split("_")[1].lower()
                 app_name = tmp_list[2].lower()
-                t_type = tmp_list[1].lower()
+                t_type = tmp_list[1].lower()[:2]
                 c_name = tmp_list[3].lower()
                 if browser_type not in upload_data:
                     upload_data[browser_type] = {}
