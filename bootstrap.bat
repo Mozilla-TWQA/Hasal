@@ -12,7 +12,12 @@ echo [INFO] Current date and time [%ldt%]
 ::  Prerequisite  ::
 ::::::::::::::::::::
 
+SET PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
+
 REM Checking Administrator Privilege
+
+REM If in appveyor, skip download and installation.
+IF "%APPVEYOR%"=="True" goto NoAdmin_CI
 
 AT > NUL
 IF %ERRORLEVEL% EQU 0 (
@@ -23,29 +28,21 @@ IF %ERRORLEVEL% EQU 0 (
     EXIT /B 1
 )
 
+:NoAdmin_CI
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping checking of Administrator privilege in CI
+)
+
 ::::::::::::::::::::
 ::  Installation  ::
 ::::::::::::::::::::
 
-REM Checking Java
-
-FOR /f %%j IN ("java.exe") DO (
-    SET JAVA_HOME=%%~dp$PATH:j
-)
-
-IF %JAVA_HOME%.==. (
-    ECHO [INFO] Downloading Java JDK 7u79.
-    thirdParty\curl -L -O -H "Cookie:oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe"
-    ECHO [INFO] Installing Java JDK 7u79.
-    jdk-7u79-windows-i586.exe /s
-) ELSE (
-    ECHO [INFO] Java JDK exists in the environment.
-    ECHO JAVA_HOME = %JAVA_HOME%
-)
-
-
 REM Checking and Installing 7zip
 
+REM If in appveyor, skip download and installation.
+IF "%APPVEYOR%"=="True" goto 7zip_CI
+
+REM Trying to download and install 7zip
 where 7z.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have 7Zip in windows system.
@@ -58,14 +55,25 @@ IF %ERRORLEVEL% EQU 0 (
     SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"
 )
 
+:7zip_CI
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping checking of 7zip in CI
+    SET "PATH=C:\Program Files\7-Zip;%PATH%"
+)
+
+
 REM Installing ffmpeg
 
 ECHO [INFO] Downloading FFMPEG.
 thirdParty\curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
 7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
+move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
 ECHO [INFO] Installing FFMPEG.
-SETX PATH "%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\;%PATH%" /m
-PATH=%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\;%PATH%
+IF NOT "%APPVEYOR%"=="True" (
+    SETX PATH "%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\;%PATH%" /m
+)
+SET PATH=%CD%\ffmpeg\bin\;%PATH%
+
 
 REM Installing Sikuli
 ECHO [INFO] Downloading SikuliX 1.1.0
@@ -76,7 +84,11 @@ copy runsikuli* thirdParty\
 copy sikuli*.jar thirdParty\
 @echo on
 
+
 REM Installing Miniconda
+
+IF "%APPVEYOR%"=="True" GOTO SkipConda
+
 where conda.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have conda in windows system.
@@ -89,6 +101,11 @@ IF %ERRORLEVEL% EQU 0 (
     SET "PATH=C:\Miniconda2\Scripts\;C:\Miniconda2\;%PATH%"
 )
 
+:SkipConda
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping checking of conda in CI
+)
+
 REM Configuring Miniconda and Virtualenv
 conda config --set always_yes yes --set changeps1 no
 conda install psutil
@@ -99,28 +116,39 @@ conda create -q -n hasal-env python=2.7 numpy scipy nose pywin32 pip
 ::    Browsers    ::
 ::::::::::::::::::::
 
-REM Installing firefox
-ECHO [INFO] Downloading Firefox.
-thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/zh-TW/Firefox%%20Setup%%2049.0.1.exe
-ECHO [INFO] Installing Firefox.
-"Firefox%%20Setup%%2049.0.1.exe" -ms -ma
-SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
-SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
-    
-REM Installing chrome
-ECHO [INFO] Downloading Chrome.
-curl -kLO http://dl.google.com/chrome/install/googlechromestandaloneenterprise.msi
-ECHO [INFO] Installing Chrome.
-msiexec /i "googlechromestandaloneenterprise.msi" /qn /quiet /norestart
-SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%" /m
-SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%"
+REM If in appveyor, skip download and installation
+IF NOT "%APPVEYOR%"=="True" (
+    REM Installing firefox
+    ECHO [INFO] Downloading Firefox.
+    thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/zh-TW/Firefox%%20Setup%%2049.0.1.exe
+    ECHO [INFO] Installing Firefox.
+    "Firefox%%20Setup%%2049.0.1.exe" -ms -ma
+    SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
+    SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
+
+    REM Installing chrome
+    ECHO [INFO] Downloading Chrome.
+    curl -kLO http://dl.google.com/chrome/install/googlechromestandaloneenterprise.msi
+    ECHO [INFO] Installing Chrome.
+    msiexec /i "googlechromestandaloneenterprise.msi" /qn /quiet /norestart
+    SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%" /m
+    SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%"
+)
 
 ::::::::::::::::::::
 ::  Hasal  Setup  ::
 ::::::::::::::::::::
 
-REM Installing mitmproxy & opencv2 & Hasal
-activate hasal-env & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Setup in virtualenv
+    activate hasal-env
+    pip install coverage mitmproxy
+    pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
+    python setup.py install
+) ELSE (
+    REM Installing mitmproxy & opencv2 & Hasal
+    activate hasal-env & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+)
 
 ::::::::::::::::::::
 ::    Finished    ::
