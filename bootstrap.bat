@@ -104,7 +104,6 @@ IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
 ECHO [INFO] Installing FFMPEG.
 7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
 move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
-ECHO [INFO] Installing FFMPEG.
 IF NOT "%APPVEYOR%"=="True" (
     SETX PATH "%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\;%PATH%" /m
 )
@@ -112,8 +111,12 @@ SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
 
 REM Installing Sikuli
-ECHO [INFO] Downloading SikuliX 1.1.0
-thirdParty\curl -kLO https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
+IF EXIST sikulixsetup-1.1.0.jar (
+    ECHO [INFO] Found cached sikulixsetup-1.1.0.jar
+) ELSE (
+    ECHO [INFO] Downloading SikuliX 1.1.0
+    thirdParty\curl -kLO https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
+)
 ECHO [INFO] Installing SikuliX 1.1.0
 java -jar sikulixsetup-1.1.0.jar options 1.1 2
 copy runsikuli* thirdParty\
