@@ -16,17 +16,21 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
         os.remove(jenkins_job_log_path)
     if os.path.exists(jenkins_conf_path):
         os.remove(jenkins_conf_path)
+    time.sleep(10)  # wait for task begin and files generated
+    begin_time = time.time()
     lines = 0
     copy_flag = False
 
     # wait for test started
     while True:
-        if os.path.exists(full_path):
+        if os.path.exists(full_path) and os.path.exists(conf_path):
             break
-        if not os.path.exists(conf_path):
-            print "Detection of job finished."
-            sys.exit(0)
         time.sleep(1)
+        check_time = time.time()
+        if check_time - begin_time > 60:  # wait log file and json file generated for 1 minute
+            print "Either %s or %s doesn't exist, raise exception!" % (full_path, conf_path)
+            sys.exit(1)
+
     with open(conf_path) as fh:
         conf = json.load(fh)
         for key, value in conf.items():
@@ -64,7 +68,8 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
 
     if os.path.exists(jenkins_job_log_path):
         os.remove(jenkins_job_log_path)
-    shutil.move(os.environ["OUTPUTLOC"], jenkins_job_log_path)
+    shutil.move(full_path, jenkins_job_log_path)
+    os.remove(full_path)
 else:
     print "Cannot get environments 'OUTPUTLOC', 'HASAL_WORKSPACE', or 'WORKSPACE'"
     sys.exit(1)
