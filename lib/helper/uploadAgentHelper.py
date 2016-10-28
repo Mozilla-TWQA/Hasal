@@ -16,6 +16,7 @@ DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
 DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
 DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
 DEFAULT_CONVERT_VIDEO_RESOLUTION = "320x240"
+DEFAULT_BUILD_RESULT_URL_FOR_JENKINS_DESC = "build_result_for_jenkins_desc.txt"
 
 logger = get_logger(__name__)
 
@@ -130,6 +131,11 @@ class UploadAgent(object):
             logger.info("===== Upload result post data =====")
             r_data = self.send_post_data(json_data, url_str).read()
             logger.info('response object data : [%s]' % r_data)
+
+            # write result link to physical file for jenkins
+            with open(DEFAULT_BUILD_RESULT_URL_FOR_JENKINS_DESC, 'w') as write_fh:
+                write_str = "TestResult\t%s\t/userContent/result.png" % url_str
+                write_fh.write(write_str)
             return json.loads(r_data)
 
     def send_post_data(self, post_data, url_str):
