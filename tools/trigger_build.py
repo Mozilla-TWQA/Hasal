@@ -31,7 +31,7 @@ class TriggerBuild(object):
                            'win64': {'key': 'win64', 'ext': 'zip', 'trydl': 'win64', 'job': ['windows', '64']}}
     ENV_KEY_TRY_REPO_USER_EMAIL = "EMAIL"
     ENV_KEY_ENABLE_WIN32 = "WIN32_FLAG"
-    ENV_KEY_SKIP_STATUS_CHECK = "--SKIP_STATUS_CHECK"
+    ENV_KEY_SKIP_STATUS_CHECK = "SKIP_STATUS_CHECK"
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
@@ -91,25 +91,30 @@ class TriggerBuild(object):
         else:
             download_fx_fp, download_json_fp = self.get_nightly_build(self.output_dp)
 
-        # generate hasal.json data
-        with open(download_json_fp) as dl_json_fh:
-            dl_json_data = json.load(dl_json_fh)
-            perfherder_revision = dl_json_data['moz_source_stamp']
-            with open(self.HASAL_JSON_FN, "w") as write_fh:
-                write_data = copy.deepcopy(self.env_data)
-                write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
-                write_data['FX-DL-JSON-PATH'] = download_json_fp
-                write_data['--PERFHERDER-REVISION'] = perfherder_revision
-                json.dump(write_data, write_fh)
-
-        # move to agent config folder
-        if sys.platform == "linux2":
-            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_LINUX, self.HASAL_JSON_FN)
-        elif sys.platform == "darwin":
-            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_MAC, self.HASAL_JSON_FN)
+        if download_fx_fp is None or download_json_fp is None:
+            print "ERROR: something wrong with your build download process, please check the setting and job status."
+            sys.exit(1)
         else:
-            new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_WIN, self.HASAL_JSON_FN)
-        os.rename(self.HASAL_JSON_FN, new_hasal_json_fp)
+            # generate hasal.json data
+            with open(download_json_fp) as dl_json_fh:
+                dl_json_data = json.load(dl_json_fh)
+                perfherder_revision = dl_json_data['moz_source_stamp']
+                with open(self.HASAL_JSON_FN, "w") as write_fh:
+                    write_data = copy.deepcopy(self.env_data)
+                    write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
+                    write_data['FX-DL-JSON-PATH'] = download_json_fp
+                    write_data['--PERFHERDER-REVISION'] = perfherder_revision
+                    json.dump(write_data, write_fh)
+
+            # move to agent config folder
+            if sys.platform == "linux2":
+                new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_LINUX, self.HASAL_JSON_FN)
+            elif sys.platform == "darwin":
+                new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_MAC, self.HASAL_JSON_FN)
+            else:
+                new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_WIN, self.HASAL_JSON_FN)
+            os.rename(self.HASAL_JSON_FN, new_hasal_json_fp)
+            sys.exit(0)
 
     def fetch_resultset(self, user_email, build_hash, default_count=500):
         tmp_resultsets = self.thclient.get_resultsets(self.repo, count=default_count)
@@ -244,14 +249,15 @@ class TriggerBuild(object):
                     if job['result'].lower() == "success":
                         return self.download_from_remote_url_folder(build_folder_url, output_dp)
                     else:
-                        "Current job status is [%s] !!" % job['result'].lower()
-                        return False
+                        print "WARNING: Current job status is [%s] !! Your build will download when job status is success" % job[
+                            'result'].lower()
+                        return (None, None)
                 else:
                     print "ERROR: can't find the job!"
-                    return False
+                    return (None, None)
         else:
             print "ERROR: can't get result set! skip download build from try server, [%s, %s]" % (user_email, build_hash)
-            return False
+            return (None, None)
 
     def get_nightly_build(self, output_dp):
         remote_url_str = self.ARCHIVE_URL + self.NIGHTLY_LATEST_URL_FOLDER
@@ -266,7 +272,7 @@ def main():
                 input_env_data = json.load(fh)
         else:
             print "ERROR: can not find the specify input json file! [%s]" % arguments['--input-json']
-            return False
+            sys.exit(1)
     else:
         input_env_data = os.environ.copy()
 
