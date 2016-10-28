@@ -203,7 +203,8 @@ class HasalTask(object):
             subprocess.call(cmd_list, stdout=log_fh, stderr=log_fh, env=os.environ.copy())
 
         # remove json file
-        os.remove(self.src_conf_path)
+        if os.path.exists(self.src_conf_path):
+            os.remove(self.src_conf_path)
 
     def onstop(self):
         print "===== onstop ====="
