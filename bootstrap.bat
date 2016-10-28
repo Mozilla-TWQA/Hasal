@@ -33,9 +33,6 @@ IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of Administrator privilege in CI
 )
 
-::::::::::::::::::::
-::  Installation  ::
-::::::::::::::::::::
 
 REM Checking Java
 
@@ -62,6 +59,9 @@ IF "%APPVEYOR%"=="True" (
 )
 
 
+::::::::::::::::::::
+::  Installation  ::
+::::::::::::::::::::
 
 REM Checking and Installing 7zip
 
@@ -73,12 +73,16 @@ where 7z.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have 7Zip in windows system.
 ) ELSE (
-    ECHO [INFO] Downloading 7Zip.
-    thirdParty\curl -kLO http://www.7-zip.org/a/7z1604.exe
-    ECHO [INFO] Installing 7Zip.
-    7z1604.exe /S
-    SETX PATH "C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%" /m
-    SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"
+    IF EXIST 7z1604.exe (
+        ECHO [INFO] Found cached 7z1604.exe
+    ) ELSE (
+        ECHO [INFO] Downloading 7Zip.
+        thirdParty\curl -kLO http://www.7-zip.org/a/7z1604.exe
+        ECHO [INFO] Installing 7Zip.
+        7z1604.exe /S
+        SETX PATH "C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%" /m
+        SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"    
+    )
 )
 
 :7zip_CI
@@ -91,7 +95,13 @@ IF "%APPVEYOR%"=="True" (
 REM Installing ffmpeg
 
 ECHO [INFO] Downloading FFMPEG.
-thirdParty\curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
+    ECHO [INFO] Found cached ffmpeg-20160527-git-d970f7b-win32-static.7z
+) ELSE (
+    ECHO [INFO] Downloading FFMPEG.
+    thirdParty\curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+)
+ECHO [INFO] Installing FFMPEG.
 7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
 move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
 ECHO [INFO] Installing FFMPEG.
