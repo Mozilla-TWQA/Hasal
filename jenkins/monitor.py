@@ -69,7 +69,8 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
     if os.path.exists(jenkins_job_log_path):
         os.remove(jenkins_job_log_path)
     shutil.move(full_path, jenkins_job_log_path)
-    os.remove(full_path)
+    if os.path.exists(full_path):
+        os.remove(full_path)
 else:
     print "Cannot get environments 'OUTPUTLOC', 'HASAL_WORKSPACE', or 'WORKSPACE'"
     sys.exit(1)
