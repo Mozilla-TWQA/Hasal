@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 import shutil
 import logging
-from logging import handlers
+from logging import handlers  # NOQA
 import operator
 import urlparse
 from threading import Lock
@@ -481,8 +481,9 @@ class HasalServer:
                                 'extraOptions': [browser_name],
                                 'subtests': []
                             }
-                            logger_hasal.info('### check register: {}/{}/{}/{}/{} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
-                            logger_hasal.info(suite)
+                            if suite:
+                                logger_hasal.info('### check register: {}/{}/{}/{}/{} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                                logger_hasal.info(suite)
 
                             test_result = {}
                             video_links = {}
