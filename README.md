@@ -1,6 +1,6 @@
 # Hasal Performance Test
 
-[![Linux Build Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
+[![Linux Build Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/ypwalter/hasal/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/ypwalter/hasal/branch/master)
 
 "**Hasal**" */ha'sɑlu/* this word is came from Indigenous Taiwanese "**Bunun**", and it means hail. Why we choose this word is because we expect our testing could like the hail, fast and weighty. And through our testing could bring more improvement on our performance or quality.
