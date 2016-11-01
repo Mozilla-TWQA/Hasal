@@ -2,7 +2,6 @@ __author__ = 'shako'
 import os
 import sys
 import json
-import time
 import tarfile
 import zipfile
 import shutil
@@ -18,7 +17,6 @@ class HasalTask(object):
     FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
     DEFAULT_JOB_LOG_FN = "job.log"
     DEFAULT_FX_EXTRACT_DIR = "firefox"
-    DEFAULT_DATA_EXPIRE_DAY = 14
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -168,23 +166,6 @@ class HasalTask(object):
         # remove created log
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
-
-        # clean output folder
-        output_dir_list = []
-        output_dir = os.path.join(os.getcwd(), 'output')
-        output_dir_list.append(os.path.join(output_dir, 'images', 'output'))
-        output_dir_list.append(os.path.join(output_dir, 'images', 'sample'))
-        output_dir_list.append(os.path.join(output_dir, 'profiles'))
-        output_dir_list.append(os.path.join(output_dir, 'videos'))
-        for output_dir in output_dir_list:
-            for target_name in os.listdir(output_dir):
-                check_target = os.path.join(output_dir, target_name)
-                if (time.time() - os.path.getmtime(check_target)) > (60 * 60 * 24 * self.DEFAULT_DATA_EXPIRE_DAY):
-                    print "INFO: housekeeping the exisitng output dir/file [%s]" % check_target
-                    if os.path.isdir(check_target):
-                        shutil.rmtree(check_target)
-                    else:
-                        os.remove(check_target)
 
     def run(self):
         # clean up the environment
