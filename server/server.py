@@ -481,9 +481,6 @@ class HasalServer:
                                 'extraOptions': [browser_name],
                                 'subtests': []
                             }
-                            if suite:
-                                logger_hasal.info('### check register: {}/{}/{}/{}/{} =>'.format(os_name, target_name, comment_name, browser_name, suite_name))
-                                logger_hasal.info(suite)
 
                             test_result = {}
                             video_links = {}
@@ -558,11 +555,12 @@ class HasalServer:
 
                                     # Remove from Register
                                     data_register[os_name][target_name][comment_name][browser_name][suite_name] = []
-                                    logger_hasal.info('### Remove register: {}/{}/{}/{}/{}'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                                    logger_hasal.info('### Finished, remove register: {}/{}/{}/{}/{}'.format(os_name, target_name, comment_name, browser_name, suite_name))
                                 except Exception as e:
                                     logger_hasal.error(e)
                             else:
-                                logger_hasal.info('### not finished ###')
+                                # logger_hasal.info('### not finished ###')
+                                pass
         HasalServer.storage_handler.save_register(data_register)
         pub_register_mutex.release()
 
