@@ -62,7 +62,9 @@ class RunTest(object):
 
     def clean_up_output_data(self):
         # clean output folder
-        shutil.rmtree(os.path.join(os.getcwd(), 'output'))
+        output_dir = os.path.join(os.getcwd(), 'output')
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
