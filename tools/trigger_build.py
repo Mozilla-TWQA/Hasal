@@ -99,11 +99,13 @@ class TriggerBuild(object):
             with open(download_json_fp) as dl_json_fh:
                 dl_json_data = json.load(dl_json_fh)
                 perfherder_revision = dl_json_data['moz_source_stamp']
+                build_pkg_platform = dl_json_data['moz_pkg_platform']
                 with open(self.HASAL_JSON_FN, "w") as write_fh:
                     write_data = copy.deepcopy(self.env_data)
                     write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
                     write_data['FX-DL-JSON-PATH'] = download_json_fp
                     write_data['--PERFHERDER-REVISION'] = perfherder_revision
+                    write_data['--PERFHERDER-PKG-PLATFORM'] = build_pkg_platform
                     json.dump(write_data, write_fh)
 
             # move to agent config folder

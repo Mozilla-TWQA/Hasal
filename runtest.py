@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -18,6 +18,7 @@ Options:
   --advance                       Only for expert user
   --waveform                      Waveform generated after case finished
   --perfherder-revision=<str>     Revision for upload to perfherder
+  --perfherder-pkg-platform=<str> Package platform for upload to perfherder
 
 """
 import os
@@ -72,6 +73,10 @@ class RunTest(object):
             result['PERFHERDER_REVISION'] = self.perfherder_revision
         else:
             result['PERFHERDER_REVISION'] = ""
+        if self.perfherder_pkg_platform:
+            result['PERFHERDER_PKG_PLATFORM'] = self.perfherder_pkg_platform
+        else:
+            result['PERFHERDER_PKG_PLATFORM'] = ""
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -200,7 +205,8 @@ def main():
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'], calc_si=arguments['--calc-si'],
-                           waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'])
+                           waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'],
+                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
