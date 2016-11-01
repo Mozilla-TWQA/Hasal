@@ -22,6 +22,7 @@ Options:
 """
 import os
 import json
+import shutil
 import platform
 import subprocess
 from lib.helper.uploadAgentHelper import UploadAgent
@@ -58,6 +59,12 @@ class RunTest(object):
         for process_name in DEFAULT_TASK_KILL_LIST:
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
             os.system(cmd_str)
+
+    def clean_up_output_data(self):
+        # clean output folder
+        output_dir = os.path.join(os.getcwd(), 'output')
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
@@ -185,6 +192,7 @@ class RunTest(object):
                     response_result_data.append(self.loop_test(test_case_module_name, test_name, test_env))
             if self.online:
                 self.upload_agent_obj.upload_videos(response_result_data)
+                self.clean_up_output_data()
 
     def run(self, type, input_suite_fp):
         if self.online:
