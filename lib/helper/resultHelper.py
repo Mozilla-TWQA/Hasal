@@ -34,7 +34,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
     return return_result
 
 
-def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision):
+def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     run_time = 0
     if os.path.exists(output_fp):
@@ -100,6 +100,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     result[test_method_name]['speed_index'] = si_value
     result[test_method_name]['perceptual_speed_index'] = psi_value
     result[test_method_name]['revision'] = revision
+    result[test_method_name]['pkg_platform'] = pkg_platform
 
     with open(output_fp, "wb") as fh:
         json.dump(result, fh, indent=2)
@@ -133,7 +134,7 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
             json.dump(waveform_info, fh, indent=2)
 
 
-def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision=""):
+def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform=""):
     fps_stat = "1"
     if os.path.exists(env.video_output_fp):
         fps_stat, fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
@@ -153,7 +154,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
         fh.write(json.dumps(stat_data))
 
     if result_data is not None:
-        output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision)
+        output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform)
         if waveform == 1:
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 

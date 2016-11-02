@@ -100,6 +100,10 @@ class UploadAgent(object):
             test_video_fp = result_data[test_name]['video_fp']
             web_app_name = result_data[test_name]['web_app_name']
             revision = result_data[test_name]['revision']
+            if result_data[test_name]['pkg_platform']:
+                pkg_platform = result_data[test_name]['pkg_platform']
+            else:
+                pkg_platform = platform.machine()
             if len(test_time_list) != 1:
                 logger.error("current time list is not equal to 1, current: %d!" % len(test_time_list))
                 return None
@@ -116,7 +120,7 @@ class UploadAgent(object):
                          "browser": test_browser_type,
                          "version": self.current_browser_version[test_browser_type],
                          "revision": revision,
-                         "platform": platform.machine(),
+                         "platform": pkg_platform,
                          "webappname": web_app_name,
                          "value": test_value,
                          "si": si_value,
