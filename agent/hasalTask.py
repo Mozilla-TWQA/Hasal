@@ -190,7 +190,7 @@ class HasalTask(object):
             print "INFO: running test finished! Json configuration file [%s] removed!" % self.src_conf_path
 
         # move job.log to job.log.bak
-        job_log_bak = self.DEFAULT_JOB_LOG_FN +'.bak'
+        job_log_bak = self.DEFAULT_JOB_LOG_FN + '.bak'
         if os.path.exists(job_log_bak):
             print "WARNING: previous job.log.bak exist!!!"
             os.remove(job_log_bak)
@@ -198,7 +198,6 @@ class HasalTask(object):
             os.rename(self.DEFAULT_JOB_LOG_FN, job_log_bak)
         else:
             print "ERROR: job.log not exist!!"
-
 
     def onstop(self):
         print "===== onstop ====="
