@@ -166,6 +166,7 @@ class HasalTask(object):
         # remove created log
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
+            print "WARNING: job.log exist, removed right now!"
 
     def run(self):
         # clean up the environment
@@ -175,9 +176,9 @@ class HasalTask(object):
         with open(self.DEFAULT_JOB_LOG_FN, "w+") as log_fh:
             sys.stdout = log_fh
             sys.stderr = log_fh
-            print "deploy fx pkg"
+            print "INFO: start to deploy fx pkg"
             self.deploy_fx_pkg()
-            print "run"
+            print "INFO: start to trigger runtest.py"
             cmd_list = self.generate_command_list()
             print " ".join(cmd_list)
             self.update_svr_config()
@@ -186,15 +187,29 @@ class HasalTask(object):
         # remove json file
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
+            print "INFO: running test finished! Json configuration file [%s] removed!" % self.src_conf_path
+
+        # move job.log to job.log.bak
+        job_log_bak = self.DEFAULT_JOB_LOG_FN +'.bak'
+        if os.path.exists(job_log_bak):
+            print "WARNING: previous job.log.bak exist!!!"
+            os.remove(job_log_bak)
+        if os.path.exists(self.DEFAULT_JOB_LOG_FN):
+            os.rename(self.DEFAULT_JOB_LOG_FN, job_log_bak)
+        else:
+            print "ERROR: job.log not exist!!"
+
 
     def onstop(self):
         print "===== onstop ====="
         print self.src_conf_path
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
+            print "INFO: onstop event, json configuration file [%s] removed!" % self.src_conf_path
 
     def teardown(self):
         print "===== teardown ====="
         print self.src_conf_path
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
+            print "INFO: tear down event, json configuration file [%s] removed!" % self.src_conf_path
