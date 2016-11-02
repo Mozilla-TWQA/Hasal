@@ -107,37 +107,42 @@ class RunTest(object):
         return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.max_run:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
-            if self.online and os.path.exists(DEFAULT_RESULT_FP):
-                os.remove(DEFAULT_RESULT_FP)
-            run_result = self.run_test(test_case_module_name, test_env)
-            if run_result:
-                if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0 and "fps_stat" in run_result and int(run_result['fps_stat']) == 0:
-                    if self.online:
-                        # Online mode handling
-                        upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
-                        if upload_result:
-                            self.logger.info("===== upload success =====")
-                            self.logger.info(upload_result)
-                            return_result['ip'] = upload_result['ip']
-                            return_result['video_path'] = upload_result['video']
-                            return_result['test_name'] = test_name
-                            self.logger.info("===== upload success =====")
-                            if "current_test_times" in upload_result:
-                                current_run = upload_result["current_test_times"]
-                                self.max_run = upload_result['config_test_times']
+            try:
+                if self.online and os.path.exists(DEFAULT_RESULT_FP):
+                    os.remove(DEFAULT_RESULT_FP)
+                run_result = self.run_test(test_case_module_name, test_env)
+                if run_result:
+                    if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0 and "fps_stat" in run_result and int(run_result['fps_stat']) == 0:
+                        if self.online:
+                            # Online mode handling
+                            upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
+                            if upload_result:
+                                self.logger.info("===== upload success =====")
+                                self.logger.info(upload_result)
+                                return_result['ip'] = upload_result['ip']
+                                return_result['video_path'] = upload_result['video']
+                                return_result['test_name'] = test_name
+                                self.logger.info("===== upload success =====")
+                                if "current_test_times" in upload_result:
+                                    current_run = upload_result["current_test_times"]
+                                    self.max_run = upload_result['config_test_times']
+                                else:
+                                    current_run += 1
                             else:
+
                                 current_run += 1
                         else:
-
-                            current_run += 1
+                            if "time_list_counter" in run_result:
+                                current_run = int(run_result['time_list_counter'])
+                            else:
+                                current_run += 1
                     else:
-                        if "time_list_counter" in run_result:
-                            current_run = int(run_result['time_list_counter'])
-                        else:
-                            current_run += 1
+                        current_retry += 1
                 else:
                     current_retry += 1
-            else:
+            except Exception as e:
+                print "Exception happend during running test!"
+                print e.message, e.args
                 current_retry += 1
             if current_retry >= self.max_retry:
                 break
