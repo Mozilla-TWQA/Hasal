@@ -79,48 +79,47 @@ class MainRunner(object):
             except ValueError as e:
                 logger.warning(fp + " loaded failed: " + e.message)
                 return None
-            interval = 30
-            if 'interval' in data:
-                interval = int(data['interval'])
+        interval = 30
+        if 'interval' in data:
+            interval = int(data['interval'])
 
-            if 'output' in data:
-                if 'defaultOutputPath' in data['output']:
-                    self.defaultOutputPath = data['output']['defaultOutputPath']
-                if 'dirpath' in data['output']:
-                    data['output']['outputPath'] = os.path.join(self.defaultOutputPath, data['output']['dirpath'])
-            else:
-                data['output'] = {'outputPath': self.defaultOutputPath}
+        if 'output' in data:
+            if 'defaultOutputPath' in data['output']:
+                self.defaultOutputPath = data['output']['defaultOutputPath']
+            if 'dirpath' in data['output']:
+                data['output']['outputPath'] = os.path.join(self.defaultOutputPath, data['output']['dirpath'])
+        else:
+            data['output'] = {'outputPath': self.defaultOutputPath}
 
-            if fp in self.workers:  # existing runner found
-                logger.info("Update exisitng runner [%s]" % fp)
-                runner = self.workers[fp]
-                runner.update(**data)
-                # //memo: Interval can't be modified
-                self.scheduler.modify_job(job_id=fp,
-                                          func=runner.run,
-                                          name=runner.name
-                                          )
+        if fp in self.workers:  # existing runner found
+            logger.info("Update exisitng runner [%s]" % fp)
+            runner = self.workers[fp]
+            runner.update(**data)
+            # //memo: Interval can't be modified
+            self.scheduler.modify_job(job_id=fp,
+                                      func=runner.run,
+                                      name=runner.name
+                                      )
 
-            else:  # Create new
-                logger.info("Create new runner [%s]" % fp)
-                module_path = "hasalTask"
-                object_name = "HasalTask"
-                try:
-                    runner_module = getattr(importlib.import_module(
-                                            module_path), object_name)
-                except Exception as e:
-                    logger.exception(e)
-                    return None
+        else:  # Create new
+            logger.info("Create new runner [%s]" % fp)
+            module_path = "hasalTask"
+            object_name = "HasalTask"
+            try:
+                runner_module = getattr(importlib.import_module(
+                                        module_path), object_name)
+            except Exception as e:
+                logger.exception(e)
+                return None
 
-                runner = runner_module(**data)
-                self.workers[fp] = runner
-                self.scheduler.add_job(runner.run, 'interval',
-                                       id=fp,
-                                       name=runner.name,
-                                       seconds=interval
-                                       )
-            return runner
-        return None
+            runner = runner_module(**data)
+            self.workers[fp] = runner
+            self.scheduler.add_job(runner.run, 'interval',
+                                   id=fp,
+                                   name=runner.name,
+                                   seconds=interval
+                                   )
+        return runner
 
     def list(self):
         '''
