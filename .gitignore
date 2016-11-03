@@ -9,6 +9,8 @@ snapshot
 result.json
 _virtualenv
 *~
+.vagrant
+.ssh
 *.log
 HasalServer.log.*
 
@@ -17,6 +19,9 @@ thirdParty/*
 # creds files
 client_secrets.json
 mycreds.txt
+client_secret_mozhasalvideo.json
+mozhasalvideo.yaml
+mycreds_mozhasalvideo.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
