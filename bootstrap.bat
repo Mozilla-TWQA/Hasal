@@ -166,17 +166,18 @@ IF NOT "%APPVEYOR%"=="True" (
     thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/zh-TW/Firefox%%20Setup%%2049.0.1.exe
     ECHO [INFO] Installing Firefox.
     "Firefox%%20Setup%%2049.0.1.exe" -ms -ma
-    SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
-    SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
 
     @REM Installing chrome
     ECHO [INFO] Downloading Chrome.
     thirdParty\curl -kLO http://dl.google.com/chrome/install/googlechromestandaloneenterprise.msi
     ECHO [INFO] Installing Chrome.
     msiexec /i "googlechromestandaloneenterprise.msi" /qn /quiet /norestart
-    SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%" /m
-    SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%"
 )
+
+SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
+SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
+SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%" /m
+SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%"
 
 ::::::::::::::::::::
 ::  Hasal  Setup  ::
