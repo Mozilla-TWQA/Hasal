@@ -1,4 +1,4 @@
-https://www.google.com/#hl=en&q=barack+obama
+https://www.google.com/#q=barack+obama
 https://www.facebook.com/barackobama
 https://www.youtube.com/
 https://www.amazon.com/
@@ -8,8 +8,3 @@ https://mail.google.com/mail/
 https://www.yahoo.com/
 https://www.bing.com/search?q=flowers
 https://www.booking.com/
-http://techcrunch.com
-https://www.instagram.com/explore/tags/mozilla/
-http://www.ask.com/web?q=mozilla
-https://www.pinterest.com/explore/work-office-decorations/
-https://www.twitch.tv/

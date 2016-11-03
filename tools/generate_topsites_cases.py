@@ -11,17 +11,26 @@ from lib.browser.firefox import BrowserFirefox
 from lib.helper import desktopHelper
 
 
+MODE_LAUNCH = 'launch'
+MODE_SCROLL = 'scroll'
 BROWSER_FIREFOX = 'firefox'
 BROWSER_CHROME = 'chrome'
 DEFAULT_BROWSER_WIDTH = 1200
 DEFAULT_BROWSER_HEIGHT = 980
 
-links = [
-    'https://www.google.com/#hl=en&q=barack+obama',
-    'https://www.facebook.com/barackobama',
-    'https://en.wikipedia.org/wiki/Barack_Obama'
-]
 
+SIKULI_PYTHON_ENTRY = """
+from lib.perfBaseTest import PerfBaseTest
+
+
+class TestSikuli(PerfBaseTest):
+
+    def setUp(self):
+        super(TestSikuli, self).setUp()
+
+    def {0}(self):
+        self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{1}", script_dp=self.env.test_script_py_dp)
+"""
 BROWSER_FIREFOX_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
 import browser
@@ -34,7 +43,7 @@ ff.clickBar()
 ff.enterLink(sys.argv[3])
 
 sleep(2)
-wait(Pattern('{}.png').similar(0.80), 60)
+wait(Pattern('{0}.png').similar(0.80), 60)
 """
 BROWSER_CHROME_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -48,56 +57,122 @@ ch.clickBar()
 ch.enterLink(sys.argv[3])
 
 sleep(2)
-wait(Pattern('{}.png').similar(0.80), 60)
+wait(Pattern('{0}.png').similar(0.80), 60)
+"""
+BROWSER_FIREFOX_SCROLL_SCRIPT = """
+sys.path.append(sys.argv[2])
+import browser
+import common
+
+com = common.General()
+ff = browser.Firefox()
+
+ff.clickBar()
+ff.enterLink(sys.argv[3])
+
+sleep(2)
+wait(Pattern('{0}.png').similar(0.80), 60)
+
+icon_loc = wait(Pattern('{0}.png').similar(0.80), 60).getTarget()
+x_offset = 0
+y_offset = 150
+inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
+
+mouseMove(inside_window)
+wheel(WHEEL_DOWN, 100)
+wheel(WHEEL_UP, 100)
+"""
+BROWSER_CHROME_SCROLL_SCRIPT = """
+sys.path.append(sys.argv[2])
+import browser
+import common
+
+com = common.General()
+ch = browser.Chrome()
+
+ch.clickBar()
+ch.enterLink(sys.argv[3])
+
+sleep(2)
+wait(Pattern('{0}.png').similar(0.80), 60)
+
+icon_loc = wait(Pattern('{0}.png').similar(0.80), 60).getTarget()
+x_offset = 0
+y_offset = 150
+inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
+
+mouseMove(inside_window)
+wheel(WHEEL_DOWN, 100)
+wheel(WHEEL_UP, 100)
 """
 
 platform = sys.platform
 current_file_path = os.path.dirname(os.path.realpath(__file__))
 hasal_path = os.path.abspath(os.path.join(current_file_path, '..'))
-
-topsites_link_file = os.path.join(current_file_path, 'topsites.txt')
-
 sikuli_exec_path = os.path.abspath(os.path.join(current_file_path, '..', 'thirdParty', 'runsikulix'))
 top_sites_cases_path = os.path.join(hasal_path, 'tests', 'regression', 'topsites')
 
-print('##################################')
-print('#  Generate the Top Sites Cases  #')
-print('##################################\n\n')
+topsites_launch_link_file = os.path.join(current_file_path, 'topsites_launch.txt')
+topsites_scroll_link_file = os.path.join(current_file_path, 'topsites_scroll.txt')
 
-# Load Top Sites list from file
-if os.path.isfile(topsites_link_file):
-    print('### Loading Top Sites list from {}'.format(topsites_link_file))
-    with open(topsites_link_file, 'r') as f:
-        links = f.read().split()
-
-print('### There are {} sites:'.format(len(links)))
-if len(links) > 5:
-    for l in links[:2]:
-        print('    - {}'.format(l))
-    print('      ...')
-    for l in links[-2:]:
-        print('    - {}'.format(l))
-else:
-    for l in links:
-        print('    - {}'.format(l))
-raw_input('Press Enter to continue...\n')
+success_list = []
+failed_list = []
 
 
 # init Sikuli runner
 runner = Sikuli(sikuli_exec_path, hasal_path)
-success_list = []
-failed_list = []
+
+
+print('##################################')
+print('#  Generate Top the Sites Cases  #')
+print('##################################\n')
+
+
+def get_link_list(mode):
+    links = [
+        'https://www.google.com/#hl=en&q=barack+obama',
+        'https://www.facebook.com/barackobama',
+        'https://en.wikipedia.org/wiki/Barack_Obama'
+    ]
+
+    link_file = topsites_launch_link_file
+    if MODE_LAUNCH == mode:
+        link_file = topsites_launch_link_file
+    elif MODE_SCROLL == mode:
+        link_file = topsites_scroll_link_file
+
+    # Load Top Sites list from file
+    if os.path.isfile(link_file):
+        print('### [{}] Loading Top Sites list from {}'.format(mode, link_file))
+        with open(link_file, 'r') as f:
+            links = f.read().split()
+
+    print('### There are {} sites:'.format(len(links)))
+    if len(links) > 5:
+        for l in links[:2]:
+            print('    - {}'.format(l))
+        print('      ...')
+        for l in links[-2:]:
+            print('    - {}'.format(l))
+    else:
+        for l in links:
+            print('    - {}'.format(l))
+    raw_input('\nPress Enter to continue...\n')
+    return links
+
 
 def generate_topsites(browser):
     # Launch Firefox
     if BROWSER_FIREFOX == browser:
         browser_type = desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX
         browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-        launch_script_template = BROWSER_FIREFOX_LAUNCH_SCRIPT
+        launch_script = BROWSER_FIREFOX_LAUNCH_SCRIPT
+        scroll_script = BROWSER_FIREFOX_SCROLL_SCRIPT
     elif BROWSER_CHROME == browser:
         browser_type = desktopHelper.DEFAULT_BROWSER_TYPE_CHROME
         browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
-        launch_script_template = BROWSER_CHROME_LAUNCH_SCRIPT
+        launch_script = BROWSER_CHROME_LAUNCH_SCRIPT
+        scroll_script = BROWSER_CHROME_SCROLL_SCRIPT
     else:
         raise Exception('Unknown browser: {}'.format(browser))
     browser_obj.launch()
@@ -127,55 +202,54 @@ def generate_topsites(browser):
     os.remove(xy_json_file)
     print('### [{}] Loading the Tab location X: {} Y: {}'.format(browser, x, y))
 
-    # Generate the Firefox cases
-    script_path = os.path.join(current_file_path, 'topsites_get_cases_tabicon.sikuli')
-    for link in links:
-        print('### [{}] Generate for: {}'.format(browser, link))
+    for mode in [MODE_LAUNCH, MODE_SCROLL]:
+        print('### [{}] [{}]'.format(browser, mode))
 
-        link_domain = urlparse(link if link.startswith('http') else 'http://{}'.format(link)).netloc
-        link_domain_str = link_domain.replace('.', '_').replace(':', '_')
-        case_name = 'test_{}_topsites_{}_launch'.format(browser, link_domain_str)
-        case_py_file = os.path.join(top_sites_cases_path, '{}.py'.format(case_name))
-        case_sikuli_path = os.path.join(top_sites_cases_path, '{}.sikuli'.format(case_name))
-        case_sikuli_file = os.path.join(case_sikuli_path, '{}.py'.format(case_name))
+        if MODE_LAUNCH == mode:
+            script_template = launch_script
+        elif MODE_SCROLL == mode:
+            script_template = scroll_script
 
-        if not os.path.exists(case_sikuli_path):
-            os.makedirs(case_sikuli_path)
-        if not os.path.exists(case_sikuli_path):
-            os.makedirs(case_sikuli_path)
+        # Generate the cases
+        links = get_link_list(mode)
 
-        # Run script to get the tab pic
-        params = [current_file_path, link, browser, str(x), str(y), platform]
-        ret_code = runner.run_sikulix_cmd(script_path, args_list=params)
-        if ret_code == 0:
-            success_list.append('[{}] {}'.format(browser, link))
-        else:
-            failed_list.append('[{}] {}'.format(browser, link))
+        script_path = os.path.join(current_file_path, 'topsites_get_cases_tabicon.sikuli')
+        for link in links:
+            print('### [{}] Generate for: {}'.format(browser, link))
 
-        # Get the tab pic, from current_file_path to cases' folder
-        shutil.move(os.path.join(current_file_path, '{}.png'.format(link_domain_str)),
-                    os.path.join(case_sikuli_path, '{}.png'.format(link_domain_str)))
+            link_domain = urlparse(link if link.startswith('http') else 'http://{}'.format(link)).netloc
+            link_domain_str = link_domain.replace('.', '_').replace(':', '_')
+            case_name = 'test_{}_topsites_{}_{}'.format(browser, link_domain_str, mode)
+            case_py_file = os.path.join(top_sites_cases_path, '{}.py'.format(case_name))
+            case_sikuli_path = os.path.join(top_sites_cases_path, '{}.sikuli'.format(case_name))
+            case_sikuli_file = os.path.join(case_sikuli_path, '{}.py'.format(case_name))
 
-        with open(case_py_file, 'w') as pyf:
-            pyf.write("""
-from lib.perfBaseTest import PerfBaseTest
+            if not os.path.exists(case_sikuli_path):
+                os.makedirs(case_sikuli_path)
+            if not os.path.exists(case_sikuli_path):
+                os.makedirs(case_sikuli_path)
 
+            # Run script to get the tab pic
+            params = [current_file_path, link, browser, str(x), str(y), platform]
+            ret_code = runner.run_sikulix_cmd(script_path, args_list=params)
+            if ret_code == 0:
+                success_list.append('[{}] {}'.format(browser, link))
+            else:
+                failed_list.append('[{}] {}'.format(browser, link))
 
-class TestSikuli(PerfBaseTest):
+            # Get the tab pic, from current_file_path to cases' folder
+            shutil.move(os.path.join(current_file_path, '{}.png'.format(link_domain_str)),
+                        os.path.join(case_sikuli_path, '{}.png'.format(link_domain_str)))
 
-    def setUp(self):
-        super(TestSikuli, self).setUp()
+            with open(case_py_file, 'w') as pyf:
+                pyf.write(SIKULI_PYTHON_ENTRY.format(case_name, link))
 
-    def {}(self):
-        self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{}", script_dp=self.env.test_script_py_dp)
-""".format(case_name, link))
-
-        with open(case_sikuli_file, 'w') as spyf:
-            spyf.write(launch_script_template.format(link_domain_str))
+            with open(case_sikuli_file, 'w') as spyf:
+                spyf.write(script_template.format(link_domain_str))
 
     print('##############################')
     print('#  You can CLOSE {} now.'.format(browser))
-    print('##############################\n\n')
+    print('##############################\n')
 
 
 # Create top sites cases folder
@@ -184,16 +258,9 @@ if not os.path.exists(top_sites_cases_path):
 with open(os.path.join(top_sites_cases_path, '__init__.py'), 'w') as initf:
     initf.write('')
 
-"""
-Firefox Part
-"""
-generate_topsites(BROWSER_FIREFOX)
+for browser in [BROWSER_FIREFOX, BROWSER_CHROME]:
+    generate_topsites(browser)
 
-
-"""
-Chrome Part
-"""
-generate_topsites(BROWSER_CHROME)
 
 print('### Success:')
 for item in success_list:
