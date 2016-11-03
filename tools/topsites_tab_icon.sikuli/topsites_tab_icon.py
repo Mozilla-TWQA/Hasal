@@ -18,7 +18,7 @@ urlbar_pics = ['ff_urlbar.png']
 if 'firefox' == browser:
     urlbar_pics = ['ff_urlbar.png']
 elif 'chrome' == browser:
-    urlbar_pics = ['ch_urlbar_52.png', 'ch_urlbar.png']
+    urlbar_pics = ['ch_urlbar.png', 'ch_urlbar_52.png']
 
 tabicon_pic = 'tab_icon.png'
 

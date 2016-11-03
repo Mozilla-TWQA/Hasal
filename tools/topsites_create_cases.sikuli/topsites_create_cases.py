@@ -15,11 +15,12 @@ if 'darwin' == platform:
 elif 'win32' == platform or 'linux2' == platform:
     S_KEY == Key.CTRL
 
-urlbar_pic = 'ff_urlbar.png'
+# Set up URL bar pic
+urlbar_pics = ['ff_urlbar.png']
 if 'firefox' == browser:
-    urlbar_pic = 'ff_urlbar.png'
+    urlbar_pics = ['ff_urlbar.png']
 elif 'chrome' == browser:
-    urlbar_pic = 'ch_urlbar.png'
+    urlbar_pics = ['ch_urlbar.png', 'ch_urlbar_52.png']
 
 hasal_path = os.path.abspath(os.path.join(current_path, '..'))
 hasal_lib_path = os.path.abspath(os.path.join(hasal_path, 'lib', 'sikuli'))
@@ -33,10 +34,16 @@ import common
 
 com = common.General()
 
-wait(Pattern(urlbar_pic), 60)
-click(Pattern(urlbar_pic).targetOffset(-120,0))
-type("a", S_KEY)
-sleep(1)
+is_found = False
+for urlbar_pic in urlbar_pics:
+    if exists(Pattern(urlbar_pic), 60):
+        is_found = True
+        click(Pattern(urlbar_pic).targetOffset(-120,0))
+        type("a", S_KEY)
+        sleep(1)
+        break
+if not is_found:
+    raise Exception('Cannot found URL bar. Ref images: {}'.format(urlbar_pics))
 
 paste(link)
 type(Key.ENTER)
