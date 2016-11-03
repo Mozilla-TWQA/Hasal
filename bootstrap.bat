@@ -191,12 +191,12 @@ IF "%APPVEYOR%"=="True" (
     python setup.py install
 ) ELSE (
     @REM Installing mitmproxy & opencv2 & Hasal
-    activate hasal-env & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+    echo %PATH%
+    activate hasal-env & echo %PATH% & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
 )
 
 ::::::::::::::::::::
 ::    Finished    ::
 ::::::::::::::::::::
-echo %PATH%
 echo "Please download certificates for Hasal from google drive or ask whoever know about it."
 @REM Bootstrap done
