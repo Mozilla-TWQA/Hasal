@@ -108,7 +108,7 @@ ECHO [INFO] Installing FFMPEG.
 7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
 move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
 IF NOT "%APPVEYOR%"=="True" (
-    SETX PATH "%CD%\ffmpeg-20160527-git-d970f7b-win32-static\bin\;%PATH%" /m
+    SETX PATH "%CD%\ffmpeg\bin\;%PATH%" /m
 )
 SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
