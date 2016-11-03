@@ -16,9 +16,9 @@ elif 'win32' == platform or 'linux2' == platform:
     S_KEY == Key.CTRL
 
 # Set up URL bar pic
-urlbar_pics = ['ff_urlbar.png']
+urlbar_pics = ['ff_urlbar.png', 'ff_urlbar_add_search.png']
 if 'firefox' == browser:
-    urlbar_pics = ['ff_urlbar.png']
+    urlbar_pics = ['ff_urlbar.png', 'ff_urlbar_add_search.png']
 elif 'chrome' == browser:
     urlbar_pics = ['ch_urlbar.png', 'ch_urlbar_52.png']
 
