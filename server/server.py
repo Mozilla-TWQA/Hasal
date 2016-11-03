@@ -101,8 +101,14 @@ class StorageHandler:
         :return: json if file exists, or {}
         """
         if os.path.isfile(self._register_path):
-            with open(self._register_path, 'r') as f:
-                return json.load(f)
+            try:
+                with open(self._register_path, 'r') as f:
+                    return json.load(f)
+            except:
+                StorageHandler._register_mutex.acquire()
+                with open(self._register_path, 'r') as f:
+                    return json.load(f)
+                StorageHandler._register_mutex.release()
         return {}
 
     def save_register(self, json_obj):
@@ -123,8 +129,14 @@ class StorageHandler:
         :return: json if file exists, or {}
         """
         if os.path.isfile(self._storage_path):
-            with open(self._storage_path, 'r') as f:
-                return json.load(f)
+            try:
+                with open(self._storage_path, 'r') as f:
+                    return json.load(f)
+            except:
+                StorageHandler._storage_mutex.acquire()
+                with open(self._storage_path, 'r') as f:
+                    return json.load(f)
+                StorageHandler._storage_mutex.release()
         return {}
 
     def save(self, json_obj):
