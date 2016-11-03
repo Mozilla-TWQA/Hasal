@@ -33,7 +33,7 @@ ff.clickBar()
 ff.enterLink(sys.argv[3])
 
 sleep(2)
-wait(Pattern('{}.png'), 60)
+wait(Pattern('{}.png').similar(0.80), 60)
 """
 BROWSER_CHROME_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -47,7 +47,7 @@ ch.clickBar()
 ch.enterLink(sys.argv[3])
 
 sleep(2)
-wait(Pattern('{}.png'), 60)
+wait(Pattern('{}.png').similar(0.80), 60)
 """
 
 platform = sys.platform
@@ -58,7 +58,7 @@ top_sites_cases_path = os.path.join(hasal_path, 'tests', 'regression', 'topsites
 
 print('##################################')
 print('#  Generate the Top Sites Cases  #')
-print('##################################\n...')
+print('##################################\n\n')
 
 # Create top sites cases folder
 if not os.path.exists(top_sites_cases_path):
@@ -92,7 +92,7 @@ def generate_topsites(browser):
 
     # Get Tab location
     print('### [{}] Getting the Tab Icon Location ...'.format(browser))
-    script_path = os.path.join(current_file_path, 'topsites_tab_icon.sikuli')
+    script_path = os.path.join(current_file_path, 'topsites_tabicon_location.sikuli')
     params = [current_file_path, browser, platform]
     runner.run_sikulix_cmd(script_path, args_list=params)
 
@@ -107,7 +107,7 @@ def generate_topsites(browser):
     print('### [{}] Loading the Tab location X: {} Y: {}'.format(browser, x, y))
 
     # Generate the Firefox cases
-    script_path = os.path.join(current_file_path, 'topsites_create_cases.sikuli')
+    script_path = os.path.join(current_file_path, 'topsites_get_cases_tabicon.sikuli')
     for link in links:
         print('### [{}] Generate for: {}'.format(browser, link))
 
@@ -152,6 +152,7 @@ class TestSikuli(PerfBaseTest):
     print('#  You can CLOSE {} now.'.format(browser))
     print('##############################\n\n')
 
+
 """
 Firefox Part
 """
@@ -162,3 +163,9 @@ generate_topsites(BROWSER_FIREFOX)
 Chrome Part
 """
 generate_topsites(BROWSER_CHROME)
+
+print('##################################')
+print('#           .Finished.           #')
+print('# You can press ^C to kill all   #')
+print('# sub processes.                 #')
+print('##################################')
