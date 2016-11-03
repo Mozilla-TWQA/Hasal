@@ -1,8 +1,9 @@
-REM Author: Walter Chen
-REM Version: 0.0.1
+@REM Author: Walter Chen
+@REM Version: 0.1.0
+@REM 0.1.0 - Successfully running in virtual machines, appveyor, and real machines.
 
-REM Assuming that you already git pull all the files, we can use curl from the repository
-REM Print out the time we started this script.
+@REM Assuming that you already git pull all the files, we can use curl from the repository
+@REM Print out the time we started this script.
 @echo off
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j
 set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
@@ -14,9 +15,9 @@ echo [INFO] Current date and time [%ldt%]
 
 SET PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
 
-REM Checking Administrator Privilege
+@REM Checking Administrator Privilege
 
-REM If in appveyor, skip download and installation.
+@REM If in appveyor, skip download and installation.
 IF "%APPVEYOR%"=="True" goto NoAdmin_CI
 
 AT > NUL
@@ -34,9 +35,10 @@ IF "%APPVEYOR%"=="True" (
 )
 
 
-REM Checking Java
+@REM Checking Java
+ECHO [INFO] Checking Java
 
-REM If in appveyor, skip download and installation.
+@REM If in appveyor, skip download and installation.
 IF "%APPVEYOR%"=="True" goto Java_CI
 
 FOR /f %%j IN ("java.exe") DO (
@@ -63,12 +65,13 @@ IF "%APPVEYOR%"=="True" (
 ::  Installation  ::
 ::::::::::::::::::::
 
-REM Checking and Installing 7zip
+@REM Checking and Installing 7zip
+ECHO [INFO] Checking 7zip
 
-REM If in appveyor, skip download and installation.
+@REM If in appveyor, skip download and installation.
 IF "%APPVEYOR%"=="True" goto 7zip_CI
 
-REM Trying to download and install 7zip
+@REM Trying to download and install 7zip
 where 7z.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have 7Zip in windows system.
@@ -92,7 +95,7 @@ IF "%APPVEYOR%"=="True" (
 )
 
 
-REM Installing ffmpeg
+@REM Installing ffmpeg
 
 ECHO [INFO] Downloading FFMPEG.
 IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
@@ -110,7 +113,8 @@ IF NOT "%APPVEYOR%"=="True" (
 SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
 
-REM Installing Sikuli
+@REM Installing Sikuli
+
 IF EXIST sikulixsetup-1.1.0.jar (
     ECHO [INFO] Found cached sikulixsetup-1.1.0.jar
 ) ELSE (
@@ -124,7 +128,7 @@ copy sikuli*.jar thirdParty\
 @echo on
 
 
-REM Installing Miniconda
+@REM Installing Miniconda
 
 IF "%APPVEYOR%"=="True" GOTO SkipConda
 
@@ -145,7 +149,7 @@ IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of conda in CI
 )
 
-REM Configuring Miniconda and Virtualenv
+@REM Configuring Miniconda and Virtualenv
 conda config --set always_yes yes --set changeps1 no
 conda install psutil
 ECHO [INFO] Creating Miniconda virtualenv (It might take some time to finish.)
@@ -155,9 +159,9 @@ conda create -q -n hasal-env python=2.7 numpy scipy nose pywin32 pip
 ::    Browsers    ::
 ::::::::::::::::::::
 
-REM If in appveyor, skip download and installation
+@REM If in appveyor, skip download and installation
 IF NOT "%APPVEYOR%"=="True" (
-    REM Installing firefox
+    @REM Installing firefox
     ECHO [INFO] Downloading Firefox.
     thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/zh-TW/Firefox%%20Setup%%2049.0.1.exe
     ECHO [INFO] Installing Firefox.
@@ -165,7 +169,7 @@ IF NOT "%APPVEYOR%"=="True" (
     SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
     SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
 
-    REM Installing chrome
+    @REM Installing chrome
     ECHO [INFO] Downloading Chrome.
     thirdParty\curl -kLO http://dl.google.com/chrome/install/googlechromestandaloneenterprise.msi
     ECHO [INFO] Installing Chrome.
@@ -185,7 +189,7 @@ IF "%APPVEYOR%"=="True" (
     pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     python setup.py install
 ) ELSE (
-    REM Installing mitmproxy & opencv2 & Hasal
+    @REM Installing mitmproxy & opencv2 & Hasal
     activate hasal-env & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
 )
 
@@ -194,4 +198,4 @@ IF "%APPVEYOR%"=="True" (
 ::::::::::::::::::::
 
 echo "Please download certificates for Hasal from google drive or ask whoever know about it."
-REM Bootstrap done
+@REM Bootstrap done
