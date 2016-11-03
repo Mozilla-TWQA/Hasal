@@ -85,7 +85,8 @@ raw_input('Press Enter to continue...\n')
 
 # init Sikuli runner
 runner = Sikuli(sikuli_exec_path, hasal_path)
-
+success_list = []
+failed_list = []
 
 def generate_topsites(browser):
     # Launch Firefox
@@ -112,7 +113,9 @@ def generate_topsites(browser):
     print('### [{}] Getting the Tab Icon Location ...'.format(browser))
     script_path = os.path.join(current_file_path, 'topsites_tabicon_location.sikuli')
     params = [current_file_path, browser, platform]
-    runner.run_sikulix_cmd(script_path, args_list=params)
+    ret_code = runner.run_sikulix_cmd(script_path, args_list=params)
+    if ret_code != 0:
+        raise Exception('Can not get the Tab Icon Location!!')
 
     # Load Tab location from file
     xy_json_file = os.path.join(current_file_path, 'tab_xy.json')
@@ -143,7 +146,11 @@ def generate_topsites(browser):
 
         # Run script to get the tab pic
         params = [current_file_path, link, browser, str(x), str(y), platform]
-        runner.run_sikulix_cmd(script_path, args_list=params)
+        ret_code = runner.run_sikulix_cmd(script_path, args_list=params)
+        if ret_code == 0:
+            success_list.append('[{}] {}'.format(browser, link))
+        else:
+            failed_list.append('[{}] {}'.format(browser, link))
 
         # Get the tab pic, from current_file_path to cases' folder
         shutil.move(os.path.join(current_file_path, '{}.png'.format(link_domain_str)),
@@ -188,8 +195,15 @@ Chrome Part
 """
 generate_topsites(BROWSER_CHROME)
 
-print('##################################')
+print('### Success:')
+for item in success_list:
+    print('    - {}'.format(item))
+print('### Failed:')
+for item in failed_list:
+    print('    - {}'.format(item))
+
+print('\n##################################')
 print('#           .Finished.           #')
 print('# You can press ^C to kill all   #')
 print('# sub processes.                 #')
-print('##################################')
+print('##################################\n')
