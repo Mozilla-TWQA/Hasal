@@ -16,7 +16,7 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
         os.remove(jenkins_job_log_path)
     if os.path.exists(jenkins_conf_path):
         os.remove(jenkins_conf_path)
-    time.sleep(10)  # wait for task begin and files generated
+    time.sleep(120)  # wait for task begin and files generated
     begin_time = time.time()
     lines = 0
     copy_flag = False
@@ -68,9 +68,10 @@ if "OUTPUTLOC" in os.environ and "HASAL_WORKSPACE" in os.environ and "WORKSPACE"
 
     if os.path.exists(jenkins_job_log_path):
         os.remove(jenkins_job_log_path)
-    shutil.move(full_path, jenkins_job_log_path)
-    if os.path.exists(full_path):
-        os.remove(full_path)
+    time.sleep(60)  # wait one minute for agent tear down
+    full_path_bak = full_path + '.bak'
+    if os.path.exists(full_path_bak):
+        shutil.move(full_path_bak, jenkins_job_log_path)
 else:
     print "Cannot get environments 'OUTPUTLOC', 'HASAL_WORKSPACE', or 'WORKSPACE'"
     sys.exit(1)
