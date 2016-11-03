@@ -72,9 +72,11 @@ runner = Sikuli(sikuli_exec_path, hasal_path)
 def generate_topsites(browser):
     # Launch Firefox
     if BROWSER_FIREFOX == browser:
+        browser_type = desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX
         browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
         launch_script_template = BROWSER_FIREFOX_LAUNCH_SCRIPT
     elif BROWSER_CHROME == browser:
+        browser_type = desktopHelper.DEFAULT_BROWSER_TYPE_CHROME
         browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
         launch_script_template = BROWSER_CHROME_LAUNCH_SCRIPT
     else:
@@ -82,17 +84,15 @@ def generate_topsites(browser):
     browser_obj.launch()
 
     print('##############################')
-    print('#')
-    print('#  Please focus on {}'.format(browser))
-    print('#')
+    print('#  Please move {} to the top ...'.format(browser))
     print('##############################')
-    raw_input("Press Enter to continue...")
+    raw_input('Press Enter to continue...\n')
     time.sleep(5)
-    desktopHelper.lock_window_pos(desktopHelper.DEFAULT_BROWSER_TYPE_FIREFOX)
+    desktopHelper.lock_window_pos(browser_type)
 
     # Get Tab location
-    print('### Getting the Tab Icon Location ...')
-    script_path = os.path.join(current_file_path, 'get_tab_icon.sikuli')
+    print('### [{}] Getting the Tab Icon Location ...'.format(browser))
+    script_path = os.path.join(current_file_path, 'topsites_tab_icon.sikuli')
     params = [current_file_path, browser, platform]
     runner.run_sikulix_cmd(script_path, args_list=params)
 
@@ -104,12 +104,12 @@ def generate_topsites(browser):
     x = xy.get('x')
     y = xy.get('y')
     os.remove(xy_json_file)
-    print('### Loading the Tab location X: {} Y: {}'.format(x, y))
+    print('### [{}] Loading the Tab location X: {} Y: {}'.format(browser, x, y))
 
     # Generate the Firefox cases
-    script_path = os.path.join(current_file_path, 'create_top_sites_tests.sikuli')
+    script_path = os.path.join(current_file_path, 'topsites_create_cases.sikuli')
     for link in links:
-        print('### Generate for: {}'.format(link))
+        print('### [{}] Generate for: {}'.format(browser, link))
 
         link_domain = urlparse(link if link.startswith('http') else 'http://{}'.format(link)).netloc
         link_domain_str = link_domain.replace('.', '_').replace(':', '_')
@@ -133,28 +133,24 @@ def generate_topsites(browser):
 
         with open(case_py_file, 'w') as pyf:
             pyf.write("""
-    from lib.perfBaseTest import PerfBaseTest
+from lib.perfBaseTest import PerfBaseTest
 
 
-    class TestSikuli(PerfBaseTest):
+class TestSikuli(PerfBaseTest):
 
-        def setUp(self):
-            super(TestSikuli, self).setUp()
+    def setUp(self):
+        super(TestSikuli, self).setUp()
 
-        def {}(self):
-            self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{}", script_dp=self.env.test_script_py_dp)
-
-    """.format(case_name, link))
+    def {}(self):
+        self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{}", script_dp=self.env.test_script_py_dp)
+""".format(case_name, link))
 
         with open(case_sikuli_file, 'w') as spyf:
             spyf.write(launch_script_template.format(link_domain_str))
 
     print('##############################')
-    print('#')
-    print('#  Please CLOSE {}'.format(browser))
-    print('#')
-    print('##############################')
-    raw_input("Press Enter to continue...")
+    print('#  You can CLOSE {} now.'.format(browser))
+    print('##############################\n\n')
 
 """
 Firefox Part
