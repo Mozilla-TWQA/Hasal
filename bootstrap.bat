@@ -197,6 +197,6 @@ IF "%APPVEYOR%"=="True" (
 ::::::::::::::::::::
 ::    Finished    ::
 ::::::::::::::::::::
-
+echo %PATH%
 echo "Please download certificates for Hasal from google drive or ask whoever know about it."
 @REM Bootstrap done
