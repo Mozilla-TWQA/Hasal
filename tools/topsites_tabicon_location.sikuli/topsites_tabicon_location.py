@@ -26,7 +26,7 @@ is_found = False
 for urlbar_pic in urlbar_pics:
     if exists(Pattern(urlbar_pic).similar(0.70), 60):
         is_found = True
-        click(Pattern(urlbar_pic).similar(0.70).targetOffset(-120,0))
+        click(Pattern(urlbar_pic).similar(0.70).targetOffset(-120, 0))
         type("a", S_KEY)
         sleep(1)
         break
@@ -39,8 +39,8 @@ sleep(10)
 
 json_path = os.path.join(current_path, 'tab_xy.json')
 
-wait(Pattern(tabicon_pic).similar(0.90).targetOffset(-12,-10), 60)
-tab_icon = find(Pattern(tabicon_pic).similar(0.90).targetOffset(-12,-10))
+wait(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10), 60)
+tab_icon = find(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10))
 
 x = tab_icon.getTarget().getX()
 y = tab_icon.getTarget().getY()

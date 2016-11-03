@@ -17,8 +17,9 @@ DEFAULT_BROWSER_WIDTH = 1200
 DEFAULT_BROWSER_HEIGHT = 980
 
 links = [
-    'https://www.google.com/search?q=flowers',
-    'https://www.facebook.com/cnn'
+    'https://www.google.com/#hl=en&q=barack+obama',
+    'https://www.facebook.com/barackobama',
+    'https://en.wikipedia.org/wiki/Barack_Obama'
 ]
 
 BROWSER_FIREFOX_LAUNCH_SCRIPT = """
@@ -53,6 +54,9 @@ wait(Pattern('{}.png').similar(0.80), 60)
 platform = sys.platform
 current_file_path = os.path.dirname(os.path.realpath(__file__))
 hasal_path = os.path.abspath(os.path.join(current_file_path, '..'))
+
+topsites_link_file = os.path.join(current_file_path, 'topsites.txt')
+
 sikuli_exec_path = os.path.abspath(os.path.join(current_file_path, '..', 'thirdParty', 'runsikulix'))
 top_sites_cases_path = os.path.join(hasal_path, 'tests', 'regression', 'topsites')
 
@@ -60,14 +64,35 @@ print('##################################')
 print('#  Generate the Top Sites Cases  #')
 print('##################################\n\n')
 
+# Load Top Sites list from file
+if os.path.isfile(topsites_link_file):
+    print('### Loading Top Sites list from {}'.format(topsites_link_file))
+    with open(topsites_link_file, 'r') as f:
+        links = f.read().split()
+
+print('### There are {} sites:'.format(len(links)))
+if len(links) > 5:
+    for l in links[:2]:
+        print('    - {}'.format(l))
+    print('      ...')
+    for l in links[-2:]:
+        print('    - {}'.format(l))
+else:
+    for l in links:
+        print('    - {}'.format(l))
+raw_input('Press Enter to continue...\n')
+
+
 # Create top sites cases folder
 if not os.path.exists(top_sites_cases_path):
     os.makedirs(top_sites_cases_path)
 with open(os.path.join(top_sites_cases_path, '__init__.py'), 'w') as initf:
     initf.write('')
 
+
 # init Sikuli runner
 runner = Sikuli(sikuli_exec_path, hasal_path)
+
 
 def generate_topsites(browser):
     # Launch Firefox
