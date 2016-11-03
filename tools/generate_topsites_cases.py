@@ -83,13 +83,6 @@ else:
 raw_input('Press Enter to continue...\n')
 
 
-# Create top sites cases folder
-if not os.path.exists(top_sites_cases_path):
-    os.makedirs(top_sites_cases_path)
-with open(os.path.join(top_sites_cases_path, '__init__.py'), 'w') as initf:
-    initf.write('')
-
-
 # init Sikuli runner
 runner = Sikuli(sikuli_exec_path, hasal_path)
 
@@ -177,6 +170,12 @@ class TestSikuli(PerfBaseTest):
     print('#  You can CLOSE {} now.'.format(browser))
     print('##############################\n\n')
 
+
+# Create top sites cases folder
+if not os.path.exists(top_sites_cases_path):
+    os.makedirs(top_sites_cases_path)
+with open(os.path.join(top_sites_cases_path, '__init__.py'), 'w') as initf:
+    initf.write('')
 
 """
 Firefox Part
