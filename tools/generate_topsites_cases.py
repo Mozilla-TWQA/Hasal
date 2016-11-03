@@ -233,9 +233,9 @@ def generate_topsites(browser):
             params = [current_file_path, link, browser, str(x), str(y), platform]
             ret_code = runner.run_sikulix_cmd(script_path, args_list=params)
             if ret_code == 0:
-                success_list.append('[{}] {}'.format(browser, link))
+                success_list.append('[{}] [{}] {}'.format(browser, mode, link))
             else:
-                failed_list.append('[{}] {}'.format(browser, link))
+                failed_list.append('[{}] [{}] {}'.format(browser, mode, link))
 
             # Get the tab pic, from current_file_path to cases' folder
             shutil.move(os.path.join(current_file_path, '{}.png'.format(link_domain_str)),

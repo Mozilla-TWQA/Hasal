@@ -36,6 +36,7 @@ if not is_found:
 else:
     paste('firefox.com')
     type(Key.ENTER)
+    sleep(20)
 
     json_path = os.path.join(current_path, 'tab_xy.json')
 
