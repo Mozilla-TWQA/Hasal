@@ -42,12 +42,16 @@ for urlbar_pic in urlbar_pics:
         type("a", S_KEY)
         sleep(1)
         break
+
 if not is_found:
     raise Exception('Cannot found URL bar. Ref images: {}'.format(urlbar_pics))
+else:
+    paste(link)
+    type(Key.ENTER)
+    sleep(20)
 
-paste(link)
-type(Key.ENTER)
-sleep(20)
-
-pic_path = capture(x, y, 25, 25)
-shutil.move(pic_path, os.path.join(current_path, '{}.png'.format(link_domain_str)))
+    try:
+        pic_path = capture(x, y, 25, 25)
+        shutil.move(pic_path, os.path.join(current_path, '{}.png'.format(link_domain_str)))
+    except:
+        raise Exception('Failed.')

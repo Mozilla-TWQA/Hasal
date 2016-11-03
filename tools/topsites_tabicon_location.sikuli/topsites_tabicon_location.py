@@ -30,23 +30,25 @@ for urlbar_pic in urlbar_pics:
         type("a", S_KEY)
         sleep(1)
         break
+
 if not is_found:
     raise Exception('Cannot found URL bar. Ref images: {}'.format(urlbar_pics))
+else:
+    paste('firefox.com')
+    type(Key.ENTER)
 
-paste('firefox.com')
-type(Key.ENTER)
-sleep(10)
+    json_path = os.path.join(current_path, 'tab_xy.json')
 
-json_path = os.path.join(current_path, 'tab_xy.json')
+    wait(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10), 60)
+    tab_icon = find(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10))
 
-wait(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10), 60)
-tab_icon = find(Pattern(tabicon_pic).similar(0.90).targetOffset(-12, -10))
+    x = tab_icon.getTarget().getX()
+    y = tab_icon.getTarget().getY()
+    ret = {'x': x, 'y': y}
 
-x = tab_icon.getTarget().getX()
-y = tab_icon.getTarget().getY()
-
-ret = {'x': x, 'y': y}
-
-fs = open(json_path, "w")
-fs.write(json.dumps(ret))
-fs.close()
+    try:
+        fs = open(json_path, "w")
+        fs.write(json.dumps(ret))
+        fs.close()
+    except:
+        raise Exception('Failed.')
