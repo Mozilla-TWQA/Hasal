@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
   runtest.py (-h | --help)
 
 Options:
@@ -19,6 +19,7 @@ Options:
   --waveform                      Waveform generated after case finished
   --perfherder-revision=<str>     Revision for upload to perfherder
   --perfherder-pkg-platform=<str> Package platform for upload to perfherder
+  --jenkins-build-no=<int>        Jenkins build no [default: 0].
 
 """
 import os
@@ -103,6 +104,17 @@ class RunTest(object):
                 result[data_array[0]]["PRE_SCRIPT_PATH"] = data_array[1].strip()
         return result
 
+    def create_exception_file(self, message, args, current_retry):
+        if self.jenkins_build_no > 0:
+            exception_status_dir = os.path.join(os.getcwd(), "agent_status")
+            if os.path.exists(exception_status_dir) is False:
+                os.mkdir(exception_status_dir)
+            exception_status_file = os.path.join(exception_status_dir,
+                                                 str(self.jenkins_build_no) + ".exception" + str(current_retry))
+            with open(exception_status_file, "w") as write_fh:
+                write_fh.write(message)
+                write_fh.write(args)
+
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.max_run:
@@ -143,7 +155,9 @@ class RunTest(object):
             except Exception as e:
                 print "Exception happend during running test!"
                 print e.message, e.args
+                self.create_exception_file(e.message, e.args, current_retry)
                 current_retry += 1
+
             if current_retry >= self.max_retry:
                 break
         return return_result
@@ -219,7 +233,7 @@ def main():
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'], calc_si=arguments['--calc-si'],
                            waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'],
-                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'])
+                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'], jenkins_build_no=arguments['--jenkins-build-no'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
