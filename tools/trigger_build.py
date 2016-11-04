@@ -34,8 +34,8 @@ class TriggerBuild(object):
     ENV_KEY_SKIP_STATUS_CHECK = "SKIP_STATUS_CHECK"
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
+    ENV_KEY_BUILD_NO = "BUILD_NUMBER"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
-    HASAL_JSON_FN = "hasal.json"
     DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_WIN = "C:\\Users\\user\\Hasal\\agent"
@@ -83,6 +83,13 @@ class TriggerBuild(object):
             self.output_dp = input_env_data[self.ENV_KEY_OUTPUT_DP]
         else:
             self.output_dp = os.getcwd()
+
+        # assign build number to variable
+        if self.ENV_KEY_BUILD_NO in input_env_data.keys():
+            self.jenkins_build_no = input_env_data[self.ENV_KEY_BUILD_NO]
+        else:
+            self.jenkins_build_no = 0
+        self.HASAL_JSON_FN = str(self.jenkins_build_no) + ".json"
 
     def trigger(self):
         # download build
