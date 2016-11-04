@@ -174,7 +174,7 @@ conda create -q -n hasal-env python=2.7 numpy scipy nose pywin32 pip
 IF NOT "%APPVEYOR%"=="True" (
     @REM Installing firefox
     ECHO [INFO] Downloading Firefox.
-    thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/zh-TW/Firefox%%20Setup%%2049.0.1.exe
+    thirdParty\curl -kLO https://ftp.mozilla.org/pub/firefox/releases/49.0.1/win32/en-US/Firefox%%20Setup%%2049.0.1.exe
     ECHO [INFO] Installing Firefox.
     "Firefox%%20Setup%%2049.0.1.exe" -ms -ma
 
