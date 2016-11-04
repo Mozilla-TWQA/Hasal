@@ -145,7 +145,7 @@ def get_link_list(mode):
     if os.path.isfile(link_file):
         print('### [{}] Loading Top Sites list from {}'.format(mode, link_file))
         with open(link_file, 'r') as f:
-            links = f.read().split()
+            links = [line for line in f.read().split('\n') if line and not line.startswith('#')]
 
     print('### There are {} sites:'.format(len(links)))
     if len(links) > 5:

@@ -39,7 +39,7 @@ for urlbar_pic in urlbar_pics:
     if exists(Pattern(urlbar_pic).similar(0.70), 60):
         is_found = True
         click(Pattern(urlbar_pic).similar(0.70).targetOffset(-120, 0))
-        type("a", S_KEY)
+        type('a', S_KEY)
         sleep(1)
         break
 
