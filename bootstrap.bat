@@ -136,6 +136,7 @@ ECHO [INFO] Installing SikuliX 1.1.0
 java -jar sikulixsetup-1.1.0.jar options 1.1 2
 copy runsikuli* thirdParty\
 copy sikuli*.jar thirdParty\
+copy scripts\runsikuli* thirdParty\
 @echo on
 
 
