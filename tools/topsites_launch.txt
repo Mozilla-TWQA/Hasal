@@ -5,7 +5,7 @@ https://www.amazon.com/
 https://en.wikipedia.org/wiki/Barack_Obama
 https://twitter.com/hashtag/mozilla
 https://mail.google.com/mail/
-# Animation on landing page. https://www.yahoo.com/
+https://us.yahoo.com/
 https://www.bing.com/search?q=flowers
 https://www.booking.com/
 # Animation on landing page. http://techcrunch.com
