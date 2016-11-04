@@ -15,14 +15,23 @@ class HasalTask(object):
     FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
     FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
     FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
-    DEFAULT_JOB_LOG_FN = "job.log"
     DEFAULT_FX_EXTRACT_DIR = "firefox"
+    DEFAULT_AGENT_STATUS_DIR = os.path.join(os.getcwd(), "agent_status")
+    DEFAULT_AGENT_JOB_STATUS = {'BEGIN': 'begin', 'FINISH': 'finish', 'EXCEPTION': 'exception'}
 
     def __init__(self, name, **kwargs):
         self.name = name
         if "path" in kwargs:
             self.src_conf_path = kwargs['path']
         self.read_configuration(**kwargs)
+
+        # init variables
+        if 'BUILD_NUMBER' in self.configurations:
+            self.DEFAULT_JOB_LOG_FN = self.configurations['BUILD_NUMBER'] + ".log"
+            self.BUILD_NO = self.configurations['BUILD_NUMBER']
+        else:
+            self.DEFAULT_JOB_LOG_FN = "job.log"
+            self.BUILD_NO = self.configurations['BUILD_NUMBER']
 
     def update(self, **kwargs):
         if 'name' in kwargs:
@@ -163,14 +172,26 @@ class HasalTask(object):
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
             os.system(cmd_str)
 
+        # create agent status dir if not exist
+        if os.path.exists(self.DEFAULT_AGENT_STATUS_DIR) is False:
+            os.mkdir(self.DEFAULT_AGENT_STATUS_DIR)
+
         # remove created log
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
             print "WARNING: job.log exist, removed right now!"
 
+    def touch_status_file(self, status):
+        current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
+        with open(current_status_fp, 'w') as write_fh:
+            write_fh.write(" ")
+
     def run(self):
         # clean up the environment
         self.init_environment()
+
+        # touch begin status
+        self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['BEGIN'])
 
         # start running
         with open(self.DEFAULT_JOB_LOG_FN, "w+") as log_fh:
@@ -189,15 +210,8 @@ class HasalTask(object):
             os.remove(self.src_conf_path)
             print "INFO: running test finished! Json configuration file [%s] removed!" % self.src_conf_path
 
-        # move job.log to job.log.bak
-        job_log_bak = self.DEFAULT_JOB_LOG_FN + '.bak'
-        if os.path.exists(job_log_bak):
-            print "WARNING: previous job.log.bak exist!!!"
-            os.remove(job_log_bak)
-        if os.path.exists(self.DEFAULT_JOB_LOG_FN):
-            os.rename(self.DEFAULT_JOB_LOG_FN, job_log_bak)
-        else:
-            print "ERROR: job.log not exist!!"
+        # touch finish status
+        self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['FINISH'])
 
     def onstop(self):
         print "===== onstop ====="
@@ -205,6 +219,8 @@ class HasalTask(object):
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
             print "INFO: onstop event, json configuration file [%s] removed!" % self.src_conf_path
+        # touch finish status
+        self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['FINISH'])
 
     def teardown(self):
         print "===== teardown ====="
@@ -212,3 +228,5 @@ class HasalTask(object):
         if os.path.exists(self.src_conf_path):
             os.remove(self.src_conf_path)
             print "INFO: tear down event, json configuration file [%s] removed!" % self.src_conf_path
+        # touch finish status
+        self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['FINISH'])
