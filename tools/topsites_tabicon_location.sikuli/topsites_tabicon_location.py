@@ -34,7 +34,7 @@ for urlbar_pic in urlbar_pics:
 if not is_found:
     raise Exception('Cannot found URL bar. Ref images: {}'.format(urlbar_pics))
 else:
-    paste('firefox.com')
+    paste('https://www.mozilla.org/en-US/firefox/new/')
     type(Key.ENTER)
     sleep(20)
 
