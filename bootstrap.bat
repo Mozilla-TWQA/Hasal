@@ -20,7 +20,8 @@ SET PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
 @REM If in appveyor, skip download and installation.
 IF "%APPVEYOR%"=="True" goto NoAdmin_CI
 
-AT > NUL
+@REM This is to check if Administrator privileges are enabled.
+NET SESSION > NUL 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You are Administrator and able to run this script.
 ) ELSE (
