@@ -1,9 +1,19 @@
 @REM Author: Walter Chen
-@REM Version: 0.1.0
+@REM Version: 0.1.1
 @REM 0.1.0 - Successfully running in virtual machines, appveyor, and real machines.
+@REM 0.1.1 - Adding instruction and changed the command for detecting admin privileges.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                 *Instructions*                   ::
+:: 1. download windows version of git               ::
+:: 2. git clone the hassle project                  ::
+:: 3. run bootstrap                                 ::
+:: 4. reopen command prompt and activate hasal-env  ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 @REM Assuming that you already git pull all the files, we can use curl from the repository
 @REM Print out the time we started this script.
+
 @echo off
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j
 set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
