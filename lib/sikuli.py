@@ -29,7 +29,7 @@ class Sikuli():
         return self.run_sikulix_cmd(script_dir_path, args)
 
     def run_sikulix_cmd(self, script_dir_path, args_list=[]):
-        args_str = " ".join(args_list)
+        args_str = " ".join(['"{}"'.format(item) for item in args_list])
         cmd = self.run_sikulix_cmd_str + script_dir_path + " --args " + args_str
         return os.system(cmd)
 
