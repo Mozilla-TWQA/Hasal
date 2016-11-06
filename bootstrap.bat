@@ -6,7 +6,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                 *Instructions*                   ::
 :: 1. download windows version of git               ::
-:: 2. git clone the hassle project                  ::
+:: 2. git clone the Hasle project                  ::
 :: 3. run bootstrap                                 ::
 :: 4. reopen command prompt and activate hasal-env  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::
