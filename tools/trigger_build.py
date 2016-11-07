@@ -115,6 +115,8 @@ class TriggerBuild(object):
                     write_data['--PERFHERDER-PKG-PLATFORM'] = build_pkg_platform
                     json.dump(write_data, write_fh)
 
+            print "INFO: current json file created at [%s]" % os.path.join(os.getcwd(), self.HASAL_JSON_FN)
+
             # move to agent config folder
             if sys.platform == "linux2":
                 new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_LINUX, self.HASAL_JSON_FN)
@@ -123,6 +125,8 @@ class TriggerBuild(object):
             else:
                 new_hasal_json_fp = os.path.join(self.DEFAULT_AGENT_CONF_DIR_WIN, self.HASAL_JSON_FN)
             os.rename(self.HASAL_JSON_FN, new_hasal_json_fp)
+
+            print "INFO: hasal json file move to new location [%s]" % new_hasal_json_fp
             sys.exit(0)
 
     def fetch_resultset(self, user_email, build_hash, default_count=500):
