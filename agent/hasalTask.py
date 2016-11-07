@@ -179,7 +179,7 @@ class HasalTask(object):
         # remove created log
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
-            print "WARNING: job.log exist, removed right now!"
+            print "WARNING: job.log [%s] exist, removed right now!" % self.DEFAULT_JOB_LOG_FN
 
     def touch_status_file(self, status):
         current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
