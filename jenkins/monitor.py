@@ -65,6 +65,7 @@ while True:
             job_id_list.append(job_id)
     if current_build_no not in job_id_list:
         job_start_retry += 1
+        print "Can't find the job status file after %s seconds" % str(DEFAULT_SLEEP_TIME * DEFAULT_JOB_START_TIMEOUT)
         if job_start_retry > DEFAULT_JOB_START_TIMEOUT:
             print "ERROR: job status is not created after %s seconds!" % str(DEFAULT_SLEEP_TIME * DEFAULT_JOB_START_TIMEOUT)
             sys.exit(1)
