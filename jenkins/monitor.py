@@ -56,7 +56,9 @@ if os.path.exists(jenkins_conf_path):
 while True:
 
     # extract job id from agent_status dir
+    print "INFO: Monitor the agent status folder [%s]" % agent_status_dir_path
     agent_status_file_list = os.listdir(agent_status_dir_path)
+    print "DEBUG: current agent status file list [%s]" % agent_status_file_list
     job_id_list = []
     for job_id in [id.split(".")[0] for id in agent_status_file_list]:
         if job_id not in job_id_list:
