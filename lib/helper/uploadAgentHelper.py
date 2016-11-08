@@ -159,23 +159,24 @@ class UploadAgent(object):
         pyDriveObj = PyDriveUtil(settings={"settings_file": DEFAULT_UPLOAD_VIDEO_YAML_SETTING,
                                            "local_cred_file": DEFAULT_UPLOAD_VIDEO_MYCRED_TXT})
         for upload_data in input_upload_list:
-            if os.path.exists(upload_data['video_path']):
-                new_video_path = upload_data['video_path'].replace(".mkv", ".mp4")
-                videoHelper.convert_video_to_specify_size(upload_data['video_path'], new_video_path,
-                                                          DEFAULT_CONVERT_VIDEO_RESOLUTION)
-                upload_result = pyDriveObj.upload_file(DEFAULT_UPLOAD_FOLDER_URI, new_video_path)
-                video_preview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
-                test_browser_type = upload_data['test_name'].split("_")[1]
-                json_data = {"os": sys.platform,
-                             "target": self.test_target,
-                             "test": upload_data['test_name'],
-                             "browser": test_browser_type,
-                             "version": self.current_browser_version[test_browser_type],
-                             "video_path": video_preview_url,
-                             "comment": self.test_comment_str}
-                url_str = self.generate_url_str("video_profile")
-                logger.info("===== Upload video post data =====")
-                logger.debug(url_str)
-                logger.info(json_data)
-                logger.info("===== Upload video post data =====")
-                self.send_post_data(json_data, url_str)
+            if upload_data['video_path']:
+                if os.path.exists(upload_data['video_path']):
+                    new_video_path = upload_data['video_path'].replace(".mkv", ".mp4")
+                    videoHelper.convert_video_to_specify_size(upload_data['video_path'], new_video_path,
+                                                              DEFAULT_CONVERT_VIDEO_RESOLUTION)
+                    upload_result = pyDriveObj.upload_file(DEFAULT_UPLOAD_FOLDER_URI, new_video_path)
+                    video_preview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
+                    test_browser_type = upload_data['test_name'].split("_")[1]
+                    json_data = {"os": sys.platform,
+                                 "target": self.test_target,
+                                 "test": upload_data['test_name'],
+                                 "browser": test_browser_type,
+                                 "version": self.current_browser_version[test_browser_type],
+                                 "video_path": video_preview_url,
+                                 "comment": self.test_comment_str}
+                    url_str = self.generate_url_str("video_profile")
+                    logger.info("===== Upload video post data =====")
+                    logger.debug(url_str)
+                    logger.info(json_data)
+                    logger.info("===== Upload video post data =====")
+                    self.send_post_data(json_data, url_str)
