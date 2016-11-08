@@ -197,8 +197,6 @@ class HasalTask(object):
 
         # start running
         with open(self.DEFAULT_JOB_LOG_FN, "w+") as log_fh:
-            sys.stdout = log_fh
-            sys.stderr = log_fh
             print "INFO: start to deploy fx pkg"
             self.deploy_fx_pkg()
             print "INFO: start to trigger runtest.py"
