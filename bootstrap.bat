@@ -76,6 +76,17 @@ IF "%APPVEYOR%"=="True" (
 ::  Installation  ::
 ::::::::::::::::::::
 
+@REM Installing Microsoft VC++ for Python 2.7
+IF EXIST VCForPython27.msi (
+    ECHO [INFO] Found cached VCForPython27.msi
+) ELSE (
+    ECHO [INFO] Downloading VCForPython27.msi
+    thirdParty\curl -kLO https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
+    ECHO [INFO] Installing VCForPython27.msi
+    msiexec /i VCForPython27.msi /qn /quiet /norestart
+)
+
+
 @REM Checking and Installing 7zip
 ECHO [INFO] Checking 7zip
 
