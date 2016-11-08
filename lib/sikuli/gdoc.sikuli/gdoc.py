@@ -17,7 +17,7 @@ class gDoc():
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
-        wait(Pattern("pics/gdoc.png").similar(0.85))
+        wait(Pattern("pics/gdoc.png").similar(0.85), 60)
         wait(3)
         setAutoWaitTimeout(default_timeout)
         self.focus_content()
@@ -25,6 +25,7 @@ class gDoc():
     def focus_content(self):
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
+        wait(Pattern("pics/printer.png").similar(0.60), 60)
         click(Pattern("pics/printer.png").similar(0.60).targetOffset(50, 60))
         wait(3)
         setAutoWaitTimeout(default_timeout)
