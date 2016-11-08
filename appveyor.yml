@@ -12,6 +12,7 @@ skip_commits:
 cache:
   - sikulixsetup-1.1.0.jar
   - ffmpeg-20160527-git-d970f7b-win32-static.7z
+  - VCForPython27.msi
 build: false
 
 environment:
