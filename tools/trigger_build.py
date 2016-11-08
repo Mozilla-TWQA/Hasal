@@ -39,6 +39,7 @@ class TriggerBuild(object):
     DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_WIN = "C:\\Users\\user\\Hasal\\agent"
+    DEFAULT_AGENT_STATUS_DIR = "agent_status"
 
     def __init__(self, input_env_data):
         self.platform_option = 'opt'
@@ -119,6 +120,10 @@ class TriggerBuild(object):
                 print "INFO: current json file created at [%s]" % os.path.join(os.getcwd(), self.HASAL_JSON_FN)
             else:
                 print "ERROR: json file not exist in expected path [%s]" % os.path.join(os.getcwd(), self.HASAL_JSON_FN)
+
+            # create agent status folder
+            if os.path.exists(os.path.join(os.getcwd(), self.DEFAULT_AGENT_STATUS_DIR)) is False:
+                os.mkdir(os.path.join(os.getcwd(), self.DEFAULT_AGENT_STATUS_DIR))
 
             # move to agent config folder
             if sys.platform == "linux2":
