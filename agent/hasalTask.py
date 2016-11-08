@@ -2,6 +2,7 @@ __author__ = 'shako'
 import os
 import sys
 import json
+import time
 import tarfile
 import zipfile
 import shutil
@@ -18,6 +19,7 @@ class HasalTask(object):
     DEFAULT_FX_EXTRACT_DIR = "firefox"
     DEFAULT_AGENT_STATUS_DIR = os.path.join(os.getcwd(), "agent_status")
     DEFAULT_AGENT_JOB_STATUS = {'BEGIN': 'begin', 'FINISH': 'finish', 'EXCEPTION': 'exception'}
+    DEFAULT_DATA_EXPIRE_DAY = 7
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -181,13 +183,23 @@ class HasalTask(object):
             os.remove(self.DEFAULT_JOB_LOG_FN)
             print "WARNING: job.log [%s] exist, removed right now!" % self.DEFAULT_JOB_LOG_FN
 
+        # clean output folder
+        for target_name in os.listdir(self.DEFAULT_AGENT_STATUS_DIR):
+            check_target = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, target_name)
+            if (time.time() - os.path.getmtime(check_target)) > (60 * 60 * 24 * self.DEFAULT_DATA_EXPIRE_DAY):
+                print "INFO: housekeeping the existing agent status file [%s]" % check_target
+            if os.path.isdir(check_target):
+                shutil.rmtree(check_target)
+            else:
+                os.remove(check_target)
+
     def touch_status_file(self, status):
         current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
         with open(current_status_fp, 'w') as write_fh:
             write_fh.write(" ")
 
     def run(self):
-        print "INFO: Job [%s] start running" %  self.src_conf_path
+        print "INFO: Job [%s] start running" % self.src_conf_path
 
         # clean up the environment
         self.init_environment()
