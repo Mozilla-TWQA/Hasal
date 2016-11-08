@@ -3,8 +3,7 @@
 cd %HASAL_WORKSPACE%
 
 git checkout master
-pip install treeherder-client==3.0.0
-pip install docopt
+pip install -Ur tools/requirements.txt
 
 git pull
 python tools\trigger_build.py
