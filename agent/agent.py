@@ -71,6 +71,9 @@ class MainRunner(object):
         given a json file, load and create a task run regularly
         '''
         logger.info(fp + " was loaded!")
+        with open("agent.log", 'w+') as f:
+            f.write(fp + " was loaded!")
+        data = {}
         with open(fp) as in_data:
             try:
                 data = json.load(in_data)
