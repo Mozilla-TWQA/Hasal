@@ -4,7 +4,7 @@
 cd $HASAL_WORKSPACE
 
 git checkout master
-pip install -Ur tools\requirements.txt
-
 git pull
+pip install -Ur tools/requirements.txt
+
 python tools/trigger_build.py
