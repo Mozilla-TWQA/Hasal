@@ -187,6 +187,8 @@ class HasalTask(object):
             write_fh.write(" ")
 
     def run(self):
+        print "INFO: Job [%s] start running" %  self.src_conf_path
+
         # clean up the environment
         self.init_environment()
 
