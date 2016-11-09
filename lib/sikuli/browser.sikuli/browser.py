@@ -25,19 +25,26 @@ class Chrome(GeneralBrowser):
         self.get_version_cmd = []
         if self.os.lower() == 'windows':
             self._chrome = App("Chrome")
-            self.get_version_cmd = ["reg", "query", "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome", "/v", "DisplayVersion"]
+            self.get_version_cmd = [["reg", "query",
+                                     "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome",
+                                     "/v", "DisplayVersion"],
+                                    ['reg', 'query', 'HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon', '/v',
+                                     'version']]
         elif self.os.lower() == 'linux':
             self._chrome = App("Chrome")
-            self.get_version_cmd = ["google-chrome", "--version"]
+            self.get_version_cmd = [["google-chrome", "--version"]]
         elif self.os.lower() == 'mac':
             self._chrome = App("Google Chrome")
-            self.get_version_cmd = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version']
+            self.get_version_cmd = [['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version']]
         self.current_version = self.get_chrome_version()
 
     def get_chrome_version(self):
-        version = subprocess.check_output(self.get_version_cmd)
-        version_major = int(re.findall(r'\b\d+\b', version)[0])
-        return version_major
+        for version_cmd in self.get_version_cmd:
+            if subprocess.call(version_cmd) == 0:
+                version = subprocess.check_output(version_cmd)
+                version_major = int(re.findall(r'\b\d+\b', version)[0])
+                return version_major
+        return 0
 
     # Need further permission in Mac OS X and might not be available in windows
     def launchBrowser(self):
