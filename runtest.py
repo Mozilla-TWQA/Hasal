@@ -104,7 +104,7 @@ class RunTest(object):
                 result[data_array[0]]["PRE_SCRIPT_PATH"] = data_array[1].strip()
         return result
 
-    def create_exception_file(self, message, args, current_retry):
+    def create_exception_file(self, message, current_retry):
         if self.jenkins_build_no > 0:
             exception_status_dir = os.path.join(os.getcwd(), "agent_status")
             if os.path.exists(exception_status_dir) is False:
@@ -113,7 +113,6 @@ class RunTest(object):
                                                  str(self.jenkins_build_no) + ".exception" + str(current_retry))
             with open(exception_status_file, "w") as write_fh:
                 write_fh.write(message)
-                write_fh.write(args)
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         return_result = {"ip": None, "video_path": None, "test_name": None}
@@ -154,8 +153,8 @@ class RunTest(object):
                     current_retry += 1
             except Exception as e:
                 print "Exception happend during running test!"
-                print e.message, e.args
-                self.create_exception_file(e.message, e.args, current_retry)
+                print e.message
+                self.create_exception_file(e.message, current_retry)
                 current_retry += 1
 
             if current_retry >= self.max_retry:
