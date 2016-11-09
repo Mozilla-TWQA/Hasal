@@ -71,8 +71,8 @@ class UploadAgent(object):
                 c_name = tmp_list[3].lower()
                 if browser_type not in upload_data:
                     upload_data[browser_type] = {}
-                if app_name == "t15":
-                    suite_name = "t15_summary"
+                if app_name == "topsites":
+                    suite_name = "topsites"
                 else:
                     suite_name = t_type + "_" + app_name
                 if suite_name in upload_data[browser_type]:
