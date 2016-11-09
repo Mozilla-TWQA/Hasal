@@ -1,13 +1,15 @@
+# Base on https://goo.gl/1av33F
 https://www.google.com/#q=barack+obama
 https://www.facebook.com/barackobama
 # Animation on landing page. https://www.youtube.com/
 https://www.amazon.com/
 https://en.wikipedia.org/wiki/Barack_Obama
-https://twitter.com/hashtag/mozilla
-https://mail.google.com/mail/
+https://twitter.com/hashtag/news
+# Doesn't work without login. https://mail.google.com/mail/
 https://us.yahoo.com/
+# Doesn't work without login. https://www.linkedin.com/in/reidhoffman
 https://www.bing.com/search?q=flowers
 https://www.booking.com/
 # Animation on landing page. http://techcrunch.com
-https://www.instagram.com/explore/tags/mozilla/
+https://www.instagram.com/explore/tags/fashion/
 http://www.ask.com/web?q=mozilla
