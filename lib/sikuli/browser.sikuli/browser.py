@@ -58,12 +58,11 @@ class Chrome(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        if self.current_version >= 53:
-            wait(Pattern("pics/chrome_urlbar_53.png").similar(0.70))
-            click(Pattern("pics/chrome_urlbar_53.png").similar(0.70).targetOffset(-40, 0))
-        else:
-            wait(Pattern("pics/chrome_urlbar.png").similar(0.70))
-            click(Pattern("pics/chrome_urlbar.png").similar(0.70).targetOffset(-40, 0))
+        urlbar_pics = ['pics/chrome_urlbar_53.png', 'pics/chrome_urlbar.png']
+        for urlbar_pic in urlbar_pics:
+            if exists(Pattern(urlbar_pic).similar(0.70)):
+                click(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0))
+                break
 
     # Launch or close web console for developer
     def triggerConsole(self):
