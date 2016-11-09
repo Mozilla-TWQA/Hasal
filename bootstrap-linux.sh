@@ -164,6 +164,9 @@ echo ""
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip checking browsers."
 else
+    func_log "[INFO] Disable the Unity Web App Integration Prompt."
+    gsettings set com.canonical.unity.webapps integration-allowed false
+
     func_log "[INFO] Checking browsers ..."
 
     which firefox > /dev/null
