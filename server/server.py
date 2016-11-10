@@ -126,6 +126,8 @@ class StorageHandler:
                 shutil.rmtree(self._register_path)
             with open(self._register_path, 'w') as f:
                 json.dump(json_obj, f)
+        except Exception as e:
+            logger_hasal.error(e)
         finally:
             StorageHandler._register_mutex.release()
             logger_hasal.info('### Seed {} release! [StorageHandler.save_register]'.format(seed))
@@ -160,6 +162,8 @@ class StorageHandler:
                 shutil.rmtree(self._storage_path)
             with open(self._storage_path, 'w') as f:
                 json.dump(json_obj, f)
+        except Exception as e:
+            logger_hasal.error(e)
         finally:
             StorageHandler._storage_mutex.release()
             logger_hasal.info('### Seed {} release! [StorageHandler.save]'.format(seed))
