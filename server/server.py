@@ -4,6 +4,7 @@ import web
 import json
 import time
 from datetime import datetime
+import random
 import shutil
 import logging
 from logging import handlers  # NOQA
@@ -105,13 +106,18 @@ class StorageHandler:
                 with open(self._register_path, 'r') as f:
                     return json.load(f)
             except:
+                seed = random.random()
+                logger_hasal.info('### Seed {} acquire! [StorageHandler.load_register]'.format(seed))
                 StorageHandler._register_mutex.acquire()
                 with open(self._register_path, 'r') as f:
                     return json.load(f)
                 StorageHandler._register_mutex.release()
+                logger_hasal.info('### Seed {} release! [StorageHandler.load_register]'.format(seed))
         return {}
 
     def save_register(self, json_obj):
+        seed = random.random()
+        logger_hasal.info('### Seed {} acquire! [StorageHandler.save_register]'.format(seed))
         StorageHandler._register_mutex.acquire()
         try:
             if not os.path.exists(self._storage_dir):
@@ -122,6 +128,7 @@ class StorageHandler:
                 json.dump(json_obj, f)
         finally:
             StorageHandler._register_mutex.release()
+            logger_hasal.info('### Seed {} release! [StorageHandler.save_register]'.format(seed))
 
     def load(self):
         """
@@ -133,13 +140,18 @@ class StorageHandler:
                 with open(self._storage_path, 'r') as f:
                     return json.load(f)
             except:
+                seed = random.random()
+                logger_hasal.info('### Seed {} acquire! [StorageHandler.load]'.format(seed))
                 StorageHandler._storage_mutex.acquire()
                 with open(self._storage_path, 'r') as f:
                     return json.load(f)
                 StorageHandler._storage_mutex.release()
+                logger_hasal.info('### Seed {} release! [StorageHandler.load]'.format(seed))
         return {}
 
     def save(self, json_obj):
+        seed = random.random()
+        logger_hasal.info('### Seed {} acquire! [StorageHandler.save]'.format(seed))
         StorageHandler._storage_mutex.acquire()
         try:
             if not os.path.exists(self._storage_dir):
@@ -150,6 +162,7 @@ class StorageHandler:
                 json.dump(json_obj, f)
         finally:
             StorageHandler._storage_mutex.release()
+            logger_hasal.info('### Seed {} release! [StorageHandler.save]'.format(seed))
 
     def remove(self):
         if os.path.isdir(self._storage_path):
@@ -306,26 +319,31 @@ class HasalServerPerfherderRegister:
                                                                            'The value under "{}" is not list: {}'.format(
                                                                                suite_name, suite_tests_list))
 
-                    pub_register_mutex.acquire()
-                    HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
+                    try:
+                        seed = random.random()
+                        logger_hasal.info('### Seed {} acquire! [HasalServerPerfherderRegister.POST]'.format(seed))
+                        pub_register_mutex.acquire()
+                        HasalServerPerfherderRegister.register = HasalServerPerfherderRegister.storage_handler.load_register()
 
-                    if os_name not in HasalServerPerfherderRegister.register:
-                        HasalServerPerfherderRegister.register[os_name] = {}
-                    if target not in HasalServerPerfherderRegister.register[os_name]:
-                        HasalServerPerfherderRegister.register[os_name][target] = {}
-                    if comment not in HasalServerPerfherderRegister.register[os_name][target]:
-                        HasalServerPerfherderRegister.register[os_name][target][comment] = {}
-                    if browser_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
-                        HasalServerPerfherderRegister.register[os_name][target][comment][browser_name] = {}
+                        if os_name not in HasalServerPerfherderRegister.register:
+                            HasalServerPerfherderRegister.register[os_name] = {}
+                        if target not in HasalServerPerfherderRegister.register[os_name]:
+                            HasalServerPerfherderRegister.register[os_name][target] = {}
+                        if comment not in HasalServerPerfherderRegister.register[os_name][target]:
+                            HasalServerPerfherderRegister.register[os_name][target][comment] = {}
+                        if browser_name not in HasalServerPerfherderRegister.register[os_name][target][comment]:
+                            HasalServerPerfherderRegister.register[os_name][target][comment][browser_name] = {}
 
-                    if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment][browser_name]:
-                        HasalServerPerfherderRegister.register[os_name][target][comment][browser_name][suite_name] = suite_tests_list
-                        self.save_register()
-                        result_dict[browser_name] = self.gen_result_status(self.RET_OK)
-                    else:
-                        # if there is already value in "os_name/target/comment", drop it and return status 1
-                        result_dict[browser_name] = self.gen_result_status(self.RET_DROP)
-                    pub_register_mutex.release()
+                        if suite_name not in HasalServerPerfherderRegister.register[os_name][target][comment][browser_name]:
+                            HasalServerPerfherderRegister.register[os_name][target][comment][browser_name][suite_name] = suite_tests_list
+                            self.save_register()
+                            result_dict[browser_name] = self.gen_result_status(self.RET_OK)
+                        else:
+                            # if there is already value in "os_name/target/comment", drop it and return status 1
+                            result_dict[browser_name] = self.gen_result_status(self.RET_DROP)
+                    finally:
+                        pub_register_mutex.release()
+                        logger_hasal.info('### Seed {} release! [HasalServerPerfherderRegister.POST]'.format(seed))
             return result_dict
         except AssertionError as e:
             raise web.badrequest(e.message)
@@ -462,119 +480,124 @@ class HasalServer:
             logger_hasal.info('### Skip Perfherder ###')
             return
 
-        pub_register_mutex.acquire()
-        date_result = HasalServer.storage_handler.load()
-        data_register = HasalServer.storage_handler.load_register()
-        # check if there are all tests in suite have the result (median vaule large than 0), then prepare uploading to perfherder
+        try:
+            seed = random.random()
+            logger_hasal.info('### Seed {} acquire! [HasalServer.update_perfherder]'.format(seed))
+            pub_register_mutex.acquire()
+            date_result = HasalServer.storage_handler.load()
+            data_register = HasalServer.storage_handler.load_register()
+            # check if there are all tests in suite have the result (median vaule large than 0), then prepare uploading to perfherder
 
-        for os_name in data_register:
-            for target_name in data_register[os_name]:
-                for comment_name in data_register[os_name][target_name]:
-                    for browser_name in data_register[os_name][target_name][comment_name]:
-                        for suite_name in data_register[os_name][target_name][comment_name][browser_name]:
-                            perf_data_suites = []
+            for os_name in data_register:
+                for target_name in data_register[os_name]:
+                    for comment_name in data_register[os_name][target_name]:
+                        for browser_name in data_register[os_name][target_name][comment_name]:
+                            for suite_name in data_register[os_name][target_name][comment_name][browser_name]:
+                                perf_data_suites = []
 
-                            suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
-                            perf_data_suite_median = {
-                                'name': '{} Median'.format(suite_name),
-                                'value': 0,
-                                'extraOptions': [browser_name],
-                                'subtests': []
-                            }
-                            perf_data_suite_si = {
-                                'name': '{} SI'.format(suite_name),
-                                'value': 0,
-                                'extraOptions': [browser_name],
-                                'subtests': []
-                            }
-                            perf_data_suite_psi = {
-                                'name': '{} PSI'.format(suite_name),
-                                'value': 0,
-                                'extraOptions': [browser_name],
-                                'subtests': []
-                            }
-
-                            test_result = {}
-                            video_links = {}
-                            for test_name in suite:
-                                test_result = date_result.get(os_name, {}).get(target_name, {}).get(comment_name, {}).get(test_name, {}).get(browser_name, {})
-                                median = test_result.get('median_value', -1)
-                                si = test_result.get('si', -1)
-                                psi = test_result.get('psi', -1)
-                                if median > 0 and test_result.get('video_path'):
-                                    perf_data_suite_median['subtests'].append({
-                                        'name': test_name,
-                                        'value': median
-                                    })
-                                if si > 0 and test_result.get('video_path'):
-                                    perf_data_suite_si['subtests'].append({
-                                        'name': test_name,
-                                        'value': si
-                                    })
-                                if psi > 0 and test_result.get('video_path'):
-                                    perf_data_suite_psi['subtests'].append({
-                                        'name': test_name,
-                                        'value': psi
-                                    })
-                                if test_result.get('video_path'):
-                                    video_links[test_name] = test_result.get('video_path')
-
-                            # if the suite tests and the median result number are the same, that means the suite is finished.
-                            for perf_suite in [perf_data_suite_median, perf_data_suite_si, perf_data_suite_psi]:
-                                if len(suite) > 0 and len(suite) == len(perf_suite['subtests']):
-                                    perf_suite['value'] = geometric_mean([item.get('value') for item in perf_suite['subtests']])
-                                    perf_data_suites.append(perf_suite)
-                            if len(perf_data_suites) > 0:
-                                # Prepare
-                                link = '{}?os={}&target={}&comment={}'.format(HasalServer._config_dashboard_link,
-                                                                              os_name,
-                                                                              target_name,
-                                                                              comment_name)
-
-                                info_browser_type = browser_name
-                                info_browser_link = ''
-                                if info_browser_type.lower() == 'firefox':
-                                    info_browser_link = 'http://hg.mozilla.org/mozilla-central/rev/{}'.format(test_result.get('revision'))
-                                elif info_browser_type.lower() == 'chrome':
-                                    info_browser_link = 'https://chromium.googlesource.com/chromium/src.git/+/{}'.format(test_result.get('version'))
-
-                                perf_data = {
-                                    'performance_data': {
-                                        'framework': {
-                                            'name': 'hasal'
-                                        },
-                                        'suites': perf_data_suites
-                                    }
+                                suite = data_register[os_name][target_name][comment_name][browser_name][suite_name]
+                                perf_data_suite_median = {
+                                    'name': '{} Median'.format(suite_name),
+                                    'value': 0,
+                                    'extraOptions': [browser_name],
+                                    'subtests': []
                                 }
-                                # Upload to Perfherder
-                                try:
-                                    uploader = PerfherderUploader(HasalServer._config_perfherder_client_id,
-                                                                  HasalServer._config_perfherder_secret,
-                                                                  os_name=os_name,
-                                                                  platform=test_result.get('platform'),
-                                                                  machine_arch=test_result.get('platform'),
-                                                                  build_arch=test_result.get('platform'),
-                                                                  protocol=HasalServer._config_perfherder_protocol,
-                                                                  host=HasalServer._config_perfherder_host)
-                                    uploader.submit(revision=test_result.get('revision'),
-                                                    browser=browser_name,
-                                                    timestamp=test_result.get('timestamp'),
-                                                    perf_data=perf_data,
-                                                    link=link,
-                                                    version=test_result.get('version'),
-                                                    repo_link=info_browser_link,
-                                                    video_links=video_links)
+                                perf_data_suite_si = {
+                                    'name': '{} SI'.format(suite_name),
+                                    'value': 0,
+                                    'extraOptions': [browser_name],
+                                    'subtests': []
+                                }
+                                perf_data_suite_psi = {
+                                    'name': '{} PSI'.format(suite_name),
+                                    'value': 0,
+                                    'extraOptions': [browser_name],
+                                    'subtests': []
+                                }
 
-                                    # Remove from Register
-                                    data_register[os_name][target_name][comment_name][browser_name][suite_name] = []
-                                    logger_hasal.info('### Finished, remove register: {}/{}/{}/{}/{}'.format(os_name, target_name, comment_name, browser_name, suite_name))
-                                except Exception as e:
-                                    logger_hasal.error(e)
-                            else:
-                                # logger_hasal.info('### not finished ###')
-                                pass
-        HasalServer.storage_handler.save_register(data_register)
-        pub_register_mutex.release()
+                                test_result = {}
+                                video_links = {}
+                                for test_name in suite:
+                                    test_result = date_result.get(os_name, {}).get(target_name, {}).get(comment_name, {}).get(test_name, {}).get(browser_name, {})
+                                    median = test_result.get('median_value', -1)
+                                    si = test_result.get('si', -1)
+                                    psi = test_result.get('psi', -1)
+                                    if median > 0 and test_result.get('video_path'):
+                                        perf_data_suite_median['subtests'].append({
+                                            'name': test_name,
+                                            'value': median
+                                        })
+                                    if si > 0 and test_result.get('video_path'):
+                                        perf_data_suite_si['subtests'].append({
+                                            'name': test_name,
+                                            'value': si
+                                        })
+                                    if psi > 0 and test_result.get('video_path'):
+                                        perf_data_suite_psi['subtests'].append({
+                                            'name': test_name,
+                                            'value': psi
+                                        })
+                                    if test_result.get('video_path'):
+                                        video_links[test_name] = test_result.get('video_path')
+
+                                # if the suite tests and the median result number are the same, that means the suite is finished.
+                                for perf_suite in [perf_data_suite_median, perf_data_suite_si, perf_data_suite_psi]:
+                                    if len(suite) > 0 and len(suite) == len(perf_suite['subtests']):
+                                        perf_suite['value'] = geometric_mean([item.get('value') for item in perf_suite['subtests']])
+                                        perf_data_suites.append(perf_suite)
+                                if len(perf_data_suites) > 0:
+                                    # Prepare
+                                    link = '{}?os={}&target={}&comment={}'.format(HasalServer._config_dashboard_link,
+                                                                                  os_name,
+                                                                                  target_name,
+                                                                                  comment_name)
+
+                                    info_browser_type = browser_name
+                                    info_browser_link = ''
+                                    if info_browser_type.lower() == 'firefox':
+                                        info_browser_link = 'http://hg.mozilla.org/mozilla-central/rev/{}'.format(test_result.get('revision'))
+                                    elif info_browser_type.lower() == 'chrome':
+                                        info_browser_link = 'https://chromium.googlesource.com/chromium/src.git/+/{}'.format(test_result.get('version'))
+
+                                    perf_data = {
+                                        'performance_data': {
+                                            'framework': {
+                                                'name': 'hasal'
+                                            },
+                                            'suites': perf_data_suites
+                                        }
+                                    }
+                                    # Upload to Perfherder
+                                    try:
+                                        uploader = PerfherderUploader(HasalServer._config_perfherder_client_id,
+                                                                      HasalServer._config_perfherder_secret,
+                                                                      os_name=os_name,
+                                                                      platform=test_result.get('platform'),
+                                                                      machine_arch=test_result.get('platform'),
+                                                                      build_arch=test_result.get('platform'),
+                                                                      protocol=HasalServer._config_perfherder_protocol,
+                                                                      host=HasalServer._config_perfherder_host)
+                                        uploader.submit(revision=test_result.get('revision'),
+                                                        browser=browser_name,
+                                                        timestamp=test_result.get('timestamp'),
+                                                        perf_data=perf_data,
+                                                        link=link,
+                                                        version=test_result.get('version'),
+                                                        repo_link=info_browser_link,
+                                                        video_links=video_links)
+
+                                        # Remove from Register
+                                        data_register[os_name][target_name][comment_name][browser_name][suite_name] = []
+                                        logger_hasal.info('### Finished, remove register: {}/{}/{}/{}/{}'.format(os_name, target_name, comment_name, browser_name, suite_name))
+                                    except Exception as e:
+                                        logger_hasal.error(e)
+                                else:
+                                    # logger_hasal.info('### not finished ###')
+                                    pass
+            HasalServer.storage_handler.save_register(data_register)
+        finally:
+            pub_register_mutex.release()
+            logger_hasal.info('### Seed {} release! [HasalServer.update_perfherder]'.format(seed))
 
     @staticmethod
     def update_all():
