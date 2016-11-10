@@ -25,14 +25,23 @@ class BrowserChrome(BrowserBase):
 
     def get_version_command(self):
         if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
-            return [self.command, "--version"]
+            return [[self.command, "--version"]]
         else:
-            return ['reg', 'query', 'HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon', '/v', 'version']
+            return [['reg', 'query', 'HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon', '/v', 'version'],
+                    ["reg", "query",
+                     "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome",
+                     "/v", "DisplayVersion"]]
 
     def get_version(self):
-        cmd = self.get_version_command()
+        commands = self.get_version_command()
+        return_version = '0'
         if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
-            return_version = subprocess.check_output(cmd).splitlines()[0].split(" ")[2]
+            for cmd in commands:
+                if subprocess.call(cmd) == 0:
+                    return_version = subprocess.check_output(cmd).splitlines()[0].split(" ")[2]
+                    break
         else:
-            return_version = subprocess.check_output(cmd).splitlines()[2].split()[2]
+            for cmd in commands:
+                if subprocess.call(cmd) == 0:
+                    return_version = subprocess.check_output(cmd).splitlines()[2].split()[2]
         return return_version
