@@ -109,11 +109,14 @@ class StorageHandler:
                 seed = random.random()
                 logger_hasal.info('### Seed {} acquire! [StorageHandler.load_register]'.format(seed))
                 StorageHandler._register_mutex.acquire()
+                data = {}
                 with open(self._register_path, 'r') as f:
-                    return json.load(f)
-            finally:
-                StorageHandler._register_mutex.release()
-                logger_hasal.info('### Seed {} release! [StorageHandler.load_register]'.format(seed))
+                    try:
+                        data = json.load(f)
+                    finally:
+                        StorageHandler._register_mutex.release()
+                        logger_hasal.info('### Seed {} release! [StorageHandler.load_register]'.format(seed))
+                return data
         return {}
 
     def save_register(self, json_obj):
@@ -146,11 +149,14 @@ class StorageHandler:
                 seed = random.random()
                 logger_hasal.info('### Seed {} acquire! [StorageHandler.load]'.format(seed))
                 StorageHandler._storage_mutex.acquire()
+                data = {}
                 with open(self._storage_path, 'r') as f:
-                    return json.load(f)
-            finally:
-                StorageHandler._storage_mutex.release()
-                logger_hasal.info('### Seed {} release! [StorageHandler.load]'.format(seed))
+                    try:
+                        data = json.load(f)
+                    finally:
+                        StorageHandler._storage_mutex.release()
+                        logger_hasal.info('### Seed {} release! [StorageHandler.load]'.format(seed))
+                return data
         return {}
 
     def save(self, json_obj):
