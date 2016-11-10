@@ -183,16 +183,6 @@ class HasalTask(object):
             os.remove(self.DEFAULT_JOB_LOG_FN)
             print "WARNING: job.log [%s] exist, removed right now!" % self.DEFAULT_JOB_LOG_FN
 
-        # clean output folder
-        for target_name in os.listdir(self.DEFAULT_AGENT_STATUS_DIR):
-            check_target = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, target_name)
-            if (time.time() - os.path.getmtime(check_target)) > (60 * 60 * 24 * self.DEFAULT_DATA_EXPIRE_DAY):
-                print "INFO: housekeeping the existing agent status file [%s]" % check_target
-            if os.path.isdir(check_target):
-                shutil.rmtree(check_target)
-            else:
-                os.remove(check_target)
-
     def touch_status_file(self, status):
         current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
         with open(current_status_fp, 'w') as write_fh:
