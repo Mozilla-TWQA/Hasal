@@ -2,7 +2,6 @@ __author__ = 'shako'
 import os
 import sys
 import json
-import time
 import tarfile
 import zipfile
 import shutil
