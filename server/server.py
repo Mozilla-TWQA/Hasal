@@ -111,6 +111,7 @@ class StorageHandler:
                 StorageHandler._register_mutex.acquire()
                 with open(self._register_path, 'r') as f:
                     return json.load(f)
+            finally:
                 StorageHandler._register_mutex.release()
                 logger_hasal.info('### Seed {} release! [StorageHandler.load_register]'.format(seed))
         return {}
@@ -147,6 +148,7 @@ class StorageHandler:
                 StorageHandler._storage_mutex.acquire()
                 with open(self._storage_path, 'r') as f:
                     return json.load(f)
+            finally:
                 StorageHandler._storage_mutex.release()
                 logger_hasal.info('### Seed {} release! [StorageHandler.load]'.format(seed))
         return {}
