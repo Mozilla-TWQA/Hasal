@@ -140,7 +140,7 @@ func_log "[INFO] Upgrading pip itself ..."
 pip install -U pip
 
 func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
-CV2_SO_PATH=`find /usr/local/Cellar/opencv/ -name "cv2.so"`
+CV2_SO_PATH=`find /usr/local/Cellar/opencv/ -name "cv2.so" | tail -1`
 ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
 
 func_log "[INFO] Python Setup Install ..."
