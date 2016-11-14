@@ -109,6 +109,7 @@ class TriggerBuild(object):
             current_id = job_id_list[-1]
 
             # get latest agent status
+            # agent status will sort by alphabetical, so the last one will be the latest status
             job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_id]
             job_status_list.sort()
             current_job_status = job_status_list[-1]
