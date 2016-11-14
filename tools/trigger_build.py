@@ -11,6 +11,7 @@ Options:
 import re
 import os
 import sys
+import time
 import json
 import copy
 import urllib2
@@ -40,6 +41,8 @@ class TriggerBuild(object):
     DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_WIN = "C:\\Users\\user\\Hasal\\agent"
     DEFAULT_AGENT_STATUS_DIR = "agent_status"
+    DEFAULT_AGENT_JOB_STATUS = {'BEGIN': 'begin', 'FINISH': 'finish', 'EXCEPTION': 'exception'}
+    DEFAULT_AGENT_JOB_WACTH_TIMEOUT = 180
 
     def __init__(self, input_env_data):
         self.platform_option = 'opt'
@@ -92,7 +95,40 @@ class TriggerBuild(object):
             self.jenkins_build_no = 0
         self.HASAL_JSON_FN = str(self.jenkins_build_no) + ".json"
 
+    def check_agent_status(self):
+        for i in range(0, self.DEFAULT_AGENT_JOB_WACTH_TIMEOUT):
+            # extract job id from agent_status dir
+            agent_status_dir_path = os.path.join(os.getcwd(), self.DEFAULT_AGENT_STATUS_DIR)
+            print "INFO: housekeeping the agent status folder [%s]" % agent_status_dir_path
+            agent_status_file_list = os.listdir(agent_status_dir_path)
+            print "DEBUG: current agent status file list [%s]" % agent_status_file_list
+
+            # get latest agent id
+            job_id_list = [int(id.split(".")[0]) for id in agent_status_file_list]
+            job_id_list.sort()
+            current_id = job_id_list[-1]
+
+            # get latest agent status
+            # agent status will sort by alphabetical, so the last one will be the latest status
+            job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_id]
+            job_status_list.sort()
+            current_job_status = job_status_list[-1]
+
+            if current_job_status == self.DEFAULT_AGENT_JOB_STATUS['FINISH']:
+                for target_name in agent_status_file_list:
+                    check_target = os.path.join(agent_status_dir_path, target_name)
+                    os.remove(check_target)
+                return True
+            else:
+                time.sleep(10)
+        return False
+
     def trigger(self):
+
+        # check agent status folder
+        if self.check_agent_status() is False:
+            sys.exit(1)
+
         # download build
         if self.repo == self.REPO_NAME['TRY']:
             download_fx_fp, download_json_fp = self.get_try_build(self.user_email, self.build_hash, self.output_dp)
