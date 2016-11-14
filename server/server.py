@@ -529,8 +529,13 @@ class HasalServer:
 
                                 test_result = {}
                                 video_links = {}
+                                start_timestamp = time.time()
                                 for test_name in suite:
                                     test_result = date_result.get(os_name, {}).get(target_name, {}).get(comment_name, {}).get(test_name, {}).get(browser_name, {})
+
+                                    if test_result.get('timestamp') > 0:
+                                        start_timestamp = min(start_timestamp, test_result.get('timestamp'))
+
                                     median = test_result.get('median_value', -1)
                                     si = test_result.get('si', -1)
                                     psi = test_result.get('psi', -1)
@@ -591,7 +596,7 @@ class HasalServer:
                                                                       host=HasalServer._config_perfherder_host)
                                         uploader.submit(revision=test_result.get('revision'),
                                                         browser=browser_name,
-                                                        timestamp=test_result.get('timestamp'),
+                                                        timestamp=start_timestamp,
                                                         perf_data=perf_data,
                                                         link=link,
                                                         version=test_result.get('version'),
