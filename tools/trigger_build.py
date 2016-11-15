@@ -260,8 +260,11 @@ class TriggerBuild(object):
                 matched_keyword = self.PLATFORM_FN_MAPPING[self.platform]['key'] + "." + self.PLATFORM_FN_MAPPING[self.platform]['ext']
                 matched_file_list = [fn for fn in remote_file_dict.keys() if matched_keyword in fn and "firefox" in fn]
                 if len(matched_file_list) != 1:
-                    print "ERROR: the possible match file list is not equal 1, list as below: [%s]" % matched_file_list
-                    return False
+                    print "WARN: the possible match file list is not equal 1, list as below: [%s]" % matched_file_list
+                    if len(matched_file_list) < 1:
+                        return False
+                    matched_file_list = sorted(matched_file_list)[-1:]
+                    print "WARN: select following file [%s]" % matched_file_list
 
         # combine file name with json
         matched_file_name = matched_file_list[0]
