@@ -28,6 +28,7 @@ install:
 
 test_script:
   - activate hasal-env
+  - dir
   - python scripts\cv2_checker.py
   - python runtest.py -h
   - ffmpeg -h
