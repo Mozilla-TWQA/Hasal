@@ -17,6 +17,8 @@ DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
 DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
 DEFAULT_CONVERT_VIDEO_RESOLUTION = "320x240"
 DEFAULT_BUILD_RESULT_URL_FOR_JENKINS_DESC = "build_result_for_jenkins_desc.txt"
+DEFAULT_UPLOAD_VIDEO_QUEUE_JSON = "upload_video_queue.json"
+DEFAULT_UPLOAD_VIDEO_STATUS = ['INIT', 'VIDEO_CONVERTED', 'PYDRIVE_UPLOADED', 'SERVER_UPLOADED']
 
 logger = get_logger(__name__)
 
@@ -148,35 +150,98 @@ class UploadAgent(object):
         json_data_str = json.dumps(post_data)
         query_args['json'] = json_data_str
         encoded_args = urllib.urlencode(query_args)
-        response_obj = urllib2.urlopen(url_str, encoded_args)
+        try:
+            response_obj = urllib2.urlopen(url_str, encoded_args)
+        except Exception as e:
+            logger.error("Send post data failed, error message [%s]" % e.message)
+            return None
         if response_obj.getcode() == 200:
             return response_obj
         else:
             logger.error("response status code is [%d]" % response_obj.getcode())
             return None
 
-    def upload_videos(self, input_upload_list):
+    def upload_videos(self, input_upload_data):
+
+        # load previous upload video queue data
+        upload_video_queue_fp = os.path.join(os.getcwd(), DEFAULT_UPLOAD_VIDEO_QUEUE_JSON)
+        if os.path.exists(upload_video_queue_fp):
+            with open(upload_video_queue_fp) as read_fh:
+                upload_video_queue = json.load(read_fh)
+        else:
+            upload_video_queue = []
+
+        # init pydrive object
         pyDriveObj = PyDriveUtil(settings={"settings_file": DEFAULT_UPLOAD_VIDEO_YAML_SETTING,
                                            "local_cred_file": DEFAULT_UPLOAD_VIDEO_MYCRED_TXT})
-        for upload_data in input_upload_list:
-            if upload_data['video_path']:
-                if os.path.exists(upload_data['video_path']):
-                    new_video_path = upload_data['video_path'].replace(".mkv", ".mp4")
-                    videoHelper.convert_video_to_specify_size(upload_data['video_path'], new_video_path,
-                                                              DEFAULT_CONVERT_VIDEO_RESOLUTION)
-                    upload_result = pyDriveObj.upload_file(DEFAULT_UPLOAD_FOLDER_URI, new_video_path)
-                    video_preview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
-                    test_browser_type = upload_data['test_name'].split("_")[1]
-                    json_data = {"os": sys.platform,
-                                 "target": self.test_target,
-                                 "test": upload_data['test_name'],
-                                 "browser": test_browser_type,
-                                 "version": self.current_browser_version[test_browser_type],
-                                 "video_path": video_preview_url,
-                                 "comment": self.test_comment_str}
-                    url_str = self.generate_url_str("video_profile")
-                    logger.info("===== Upload video post data =====")
-                    logger.debug(url_str)
-                    logger.info(json_data)
-                    logger.info("===== Upload video post data =====")
-                    self.send_post_data(json_data, url_str)
+
+        # check the key value, and converting the video to small size
+        if input_upload_data['video_path'] and os.path.exists(input_upload_data['video_path']):
+            # init current data variable
+            new_video_path = input_upload_data['video_path'].replace(".mkv", ".mp4")
+            upload_video_data = {'video_fp': new_video_path, 'upload_data': input_upload_data, 'video_preview_url': None,
+                                 'status': DEFAULT_UPLOAD_VIDEO_STATUS[0]}
+            # add to current video queue
+            if upload_video_data not in upload_video_queue:
+                upload_video_queue.insert(0, upload_video_data)
+        else:
+            logger.info("No upload video action need to follow, due the current input upload data is [%s]" % input_upload_data)
+
+        for upload_data in upload_video_queue:
+            # clean up upload data with no-existing video file
+            if os.path.exists(input_upload_data['video_path']) is False:
+                logger.info(
+                    "Converting video source file not exist, remove the data [%s]!" % upload_data)
+                upload_video_queue.remove(upload_data)
+                continue
+
+            if os.path.exists(upload_data['video_fp']) is False:
+                logger.info("Converted video file not exist, remove the data [%s]!" % upload_data)
+                upload_video_queue.remove(upload_data)
+                continue
+
+            # converting video
+            if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[0]:
+                videoHelper.convert_video_to_specify_size(input_upload_data['video_path'], new_video_path,
+                                                          DEFAULT_CONVERT_VIDEO_RESOLUTION)
+                if os.path.exists(new_video_path):
+                    upload_data['status'] = DEFAULT_UPLOAD_VIDEO_STATUS[1]
+                    logger.info("Converting video success! The converted video path: [%s]" % new_video_path)
+                else:
+                    logger.error(
+                        "Converted video file[%s] not exist, something could be wrong during converting!" % new_video_path)
+
+            # upload to pydrive
+            if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[1]:
+                upload_result = pyDriveObj.upload_file(DEFAULT_UPLOAD_FOLDER_URI, upload_data['video_fp'])
+                if upload_result:
+                    upload_data['status'] = DEFAULT_UPLOAD_VIDEO_STATUS[2]
+                    upload_data['video_preview_url'] = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
+                else:
+                    logger.error("Upload video file to google drive failed, skip the video file upload to server!")
+
+            # upload to server
+            if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[2]:
+                test_browser_type = upload_data['test_name'].split("_")[1]
+                json_data = {"os": sys.platform, "target": self.test_target, "test": upload_data['test_name'],
+                             "browser": test_browser_type, "version": self.current_browser_version[test_browser_type],
+                             "video_path": upload_data['video_preview_url'], "comment": self.test_comment_str}
+                url_str = self.generate_url_str("video_profile")
+                logger.info("===== Upload video post data =====")
+                logger.debug(url_str)
+                logger.info(json_data)
+                logger.info("===== Upload video post data =====")
+                if self.send_post_data(json_data, url_str):
+                    upload_data['status'] = DEFAULT_UPLOAD_VIDEO_STATUS[3]
+                    logger.info("Upload video file success, upload data: [%s]" % upload_data)
+                else:
+                    logger.error("Upload video to server failed, upload data: [%s]" % upload_data)
+
+            # remove from queue
+            if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[3]:
+                logger.info("Remove successful upload data: [%s]" % upload_data)
+                upload_video_queue.remove(upload_data)
+
+        # rewrite all the upload_video_queue to local json file
+        with open(upload_video_queue_fp, 'w+') as write_fh:
+            json.dump(upload_video_queue, write_fh)
