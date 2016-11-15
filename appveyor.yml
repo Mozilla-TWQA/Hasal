@@ -31,7 +31,7 @@ test_script:
   - python scripts\cv2_checker.py
   - python runtest.py -h
   - ffmpeg -h
-  - python runtest.py re suite.txt --max-run=1 --max-retry=1
+  - python runtest.py pt suite.txt --max-run=1 --max-retry=1
 
 on_success:
   - cmd: echo Build successfully!
