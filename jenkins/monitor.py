@@ -73,7 +73,10 @@ while True:
     else:
         job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_build_no]
         job_status_list.sort()
-        current_job_status = job_status_list[-1]
+        if len(job_status_list) > 0:
+            current_job_status = job_status_list[-1]
+        else:
+            current_job_status = None
         if current_job_status == DEFAULT_AGENT_JOB_STATUS['BEGIN']:
             if job_start_flag == 0:
                 # init steps after job status is begin
