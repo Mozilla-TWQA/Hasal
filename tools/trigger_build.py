@@ -113,12 +113,12 @@ class TriggerBuild(object):
 
             # get latest agent status
             # agent status will sort by alphabetical, so the last one will be the latest status
-            job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_id]
+            job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == str(current_id)]
             job_status_list.sort()
             if len(job_status_list) > 0:
                 current_job_status = job_status_list[-1]
             else:
-                current_job_status = None
+                return True
 
             if current_job_status == self.DEFAULT_AGENT_JOB_STATUS['FINISH']:
                 for target_name in agent_status_file_list:
