@@ -167,6 +167,7 @@ class RunTest(object):
         self.logger.debug("========== Environment data ======")
         self.logger.debug(test_env)
         self.logger.debug("========== Environment data ======")
+        self.logger.info("Current Location: " + os.getcwd())
         self.logger.info(" ".join(["python", "-m", "unittest", test_case_module_name]))
         subprocess.call(["python", "-m", "unittest", test_case_module_name], env=test_env)
 
