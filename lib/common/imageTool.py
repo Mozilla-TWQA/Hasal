@@ -85,10 +85,12 @@ class ImageTool(object):
             result, image = vidcap.read()
             cv2.imwrite(str_image_fp, image)
         else:
+            io_times = 0
             img_cnt = 0
             if os.path.exists(output_image_dir_path):
                 shutil.rmtree(output_image_dir_path)
             os.mkdir(output_image_dir_path)
+            start_time = time.time()
             while True:
                 img_cnt += 1
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
@@ -98,11 +100,15 @@ class ImageTool(object):
                         not exec_timestamp_list:
                     result, image = vidcap.read()
                     cv2.imwrite(str_image_fp, image)
+                    io_times += 1
                 else:
                     result = vidcap.grab()
                 self.image_list.append({"time_seq": vidcap.get(0) * real_time_shift, "image_fp": str_image_fp})
                 if not result:
                     break
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            logger.debug("Actual %s Images IO Time Elapsed: [%s]" % (str(io_times), elapsed_time))
         if self.search_range[0] < 0:
             self.search_range[0] = 0
         if self.search_range[1] > len(self.image_list):

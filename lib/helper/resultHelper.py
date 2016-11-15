@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 import numpy as np
 from collections import Counter
 from ..common.outlier import outlier
@@ -25,12 +26,32 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
         if calc_si == 0 and waveform == 0:
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
         else:
+            start_time = time.time()
             img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
+        start_time = time.time()
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_image_multi_process(input_sample_dp)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        logger.debug("Compare Image Time Elapsed: [%s]" % elapsed_time)
     if calc_si == 1:
+        start_time = time.time()
         si_progress = img_tool_obj.calculate_progress_for_si(return_result['running_time_result'])
+        progress_end_time = time.time()
+        elapsed_time = progress_end_time - start_time
+        logger.debug("Calc Histogram Time Elapsed: [%s]" % elapsed_time)
+
         return_result['speed_index'] = img_tool_obj.calculate_speed_index(si_progress)
+        calc_si_end_time = time.time()
+        elapsed_time = calc_si_end_time - progress_end_time
+        logger.debug("SI Integration Time Elapsed: [%s]" % elapsed_time)
+
         return_result['perceptual_speed_index'] = img_tool_obj.calculate_perceptual_speed_index(si_progress)
+        end_time = time.time()
+        elapsed_time = end_time - calc_si_end_time
+        logger.debug("PSI Integration Time Elapsed: [%s]" % elapsed_time)
     return return_result
 
 

@@ -24,6 +24,7 @@ Options:
 """
 import os
 import json
+import time
 import shutil
 import platform
 import subprocess
@@ -225,6 +226,7 @@ class RunTest(object):
 
 
 def main():
+    start_time = time.time()
     arguments = docopt(__doc__)
     run_test_obj = RunTest(profiler=arguments['--profiler'], keep_browser=arguments['--keep-browser'],
                            max_run=int(arguments['--max-run']),
@@ -239,6 +241,10 @@ def main():
         run_test_obj.run("re", arguments['<suite.txt>'])
     else:
         run_test_obj.run("re", arguments['<suite.txt>'])
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    logger = get_logger(__file__, arguments['--advance'])
+    logger.debug("Total Execution Time: [%s]" % elapsed_time)
 
 if __name__ == '__main__':
     main()
