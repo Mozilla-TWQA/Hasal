@@ -18,5 +18,5 @@ y_offset = 150
 inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
-wheel(WHEEL_DOWN, 100)
-wheel(WHEEL_UP, 100)
+ch.scroll_down(100)
+mouseMove(Location(0, 0))
