@@ -26,7 +26,7 @@ matrix:
       install:
         # enable universe repository
         - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe"
-        - sudo apt-get update
+        - sudo apt-get -yq update || echo "Skip apt-get update fail."
         - ./mach
       script:
         - ./bootstrap-linux.sh

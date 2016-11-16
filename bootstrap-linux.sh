@@ -74,7 +74,7 @@ func_log "[PASS] Checking finished."
 ################
 
 func_log "[INFO] Running apt-get update ..."
-sudo apt-get update
+sudo apt-get -yq update
 
 func_log "[INFO] Install Requirements ..."
 
