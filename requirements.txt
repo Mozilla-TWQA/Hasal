@@ -6,7 +6,7 @@ google-api-python-client==1.5.3
 PyDrive==1.0.1
 pyperclip>=1.5.27
 web.py>=0.38
-docopt>=0.6.2
+docopt==0.6.2
 pyssim==0.3
 APScheduler==3.0.3
 argparse==1.2.1
