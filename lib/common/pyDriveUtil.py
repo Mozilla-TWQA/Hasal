@@ -57,10 +57,15 @@ class PyDriveUtil(object):
         self.drive.auth.service.files().delete(fileId=file_id).execute()
 
     def upload_file(self, folder_uri, upload_fp):
-        file_obj = self.drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_uri}]})
-        file_obj.SetContentFile(upload_fp)
-        file_obj.Upload()
-        return file_obj
+        try:
+            file_obj = self.drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_uri}]})
+            file_obj.SetContentFile(upload_fp)
+            file_obj.Upload()
+            return file_obj
+        except Exception as e:
+            logger.error("Exception happened during PyDrive upload video file!")
+            logger.error(e.message)
+            return None
 
 
 def main():
