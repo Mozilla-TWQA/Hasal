@@ -17,6 +17,20 @@ class GeneralBrowser():
         paste(link)
         type(Key.ENTER)
 
+    def scroll_down(self, step):
+        if self.os.lower() == 'mac':
+            wheel(WHEEL_UP, step)
+        else:
+            # 'windows' and 'linux'
+            wheel(WHEEL_DOWN, step)
+
+    def scroll_up(self, step):
+        if self.os.lower() == 'mac':
+            wheel(WHEEL_DOWN, step)
+        else:
+            # 'windows' and 'linux'
+            wheel(WHEEL_UP, step)
+
 
 class Chrome(GeneralBrowser):
     def __init__(self):
