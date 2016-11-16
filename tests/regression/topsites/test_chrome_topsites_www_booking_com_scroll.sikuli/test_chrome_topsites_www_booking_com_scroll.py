@@ -19,3 +19,4 @@ inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
 ch.scroll_down(100)
+mouseMove(Location(0, 0))

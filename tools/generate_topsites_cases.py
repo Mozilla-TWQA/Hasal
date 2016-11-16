@@ -44,6 +44,7 @@ ff.enterLink(sys.argv[3])
 
 sleep(2)
 wait(Pattern('{0}.png').similar(0.80), 60)
+mouseMove(Location(0, 0))
 """
 BROWSER_CHROME_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -58,6 +59,7 @@ ch.enterLink(sys.argv[3])
 
 sleep(2)
 wait(Pattern('{0}.png').similar(0.80), 60)
+mouseMove(Location(0, 0))
 """
 BROWSER_FIREFOX_SCROLL_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -80,6 +82,7 @@ inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
 ff.scroll_down(100)
+mouseMove(Location(0, 0))
 """
 BROWSER_CHROME_SCROLL_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -102,6 +105,7 @@ inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
 ch.scroll_down(100)
+mouseMove(Location(0, 0))
 """
 
 platform = sys.platform
