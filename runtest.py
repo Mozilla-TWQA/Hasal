@@ -214,6 +214,8 @@ class RunTest(object):
                         if self.perfherder_revision:
                             self.upload_agent_obj.upload_register_data(input_suite_fp, type)
                         self.upload_agent_obj.upload_videos(self.loop_test(test_case_module_name, test_name, test_env))
+                    else:
+                        self.loop_test(test_case_module_name, test_name, test_env)
 
             if self.online:
                 self.clean_up_output_data()
