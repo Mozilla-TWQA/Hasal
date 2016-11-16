@@ -79,8 +79,7 @@ y_offset = 150
 inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
-wheel(WHEEL_DOWN, 100)
-wheel(WHEEL_UP, 100)
+ff.scroll_down(100)
 """
 BROWSER_CHROME_SCROLL_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -102,8 +101,7 @@ y_offset = 150
 inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
 
 mouseMove(inside_window)
-wheel(WHEEL_DOWN, 100)
-wheel(WHEEL_UP, 100)
+ch.scroll_down(100)
 """
 
 platform = sys.platform
