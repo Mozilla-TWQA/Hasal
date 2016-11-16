@@ -104,8 +104,11 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        wait(Pattern("pics/ff_urlbar.png").similar(0.70))
-        click(Pattern("pics/ff_urlbar.png").similar(0.70).targetOffset(-100, 0))
+        urlbar_pics = ['pics/ff_urlbar_black.png', 'pics/ff_urlbar_gray.png']
+        for urlbar_pic in urlbar_pics:
+            if exists(Pattern(urlbar_pic).similar(0.70)):
+                click(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0))
+                break
 
     # Launch web console for developer
     def triggerConsole(self):
