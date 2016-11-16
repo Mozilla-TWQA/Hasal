@@ -531,6 +531,7 @@ class HasalServer:
                                 video_links = {}
                                 start_timestamp = time.time()
                                 for test_name in suite:
+                                    testname_without_browser = test_name.split('_', 2)[-1]
                                     test_result = date_result.get(os_name, {}).get(target_name, {}).get(comment_name, {}).get(test_name, {}).get(browser_name, {})
 
                                     if test_result.get('timestamp') > 0:
@@ -541,21 +542,21 @@ class HasalServer:
                                     psi = test_result.get('psi', -1)
                                     if median > 0 and test_result.get('video_path'):
                                         perf_data_suite_median['subtests'].append({
-                                            'name': test_name,
+                                            'name': testname_without_browser,
                                             'value': median
                                         })
                                     if si > 0 and test_result.get('video_path'):
                                         perf_data_suite_si['subtests'].append({
-                                            'name': test_name,
+                                            'name': testname_without_browser,
                                             'value': si
                                         })
                                     if psi > 0 and test_result.get('video_path'):
                                         perf_data_suite_psi['subtests'].append({
-                                            'name': test_name,
+                                            'name': testname_without_browser,
                                             'value': psi
                                         })
                                     if test_result.get('video_path'):
-                                        video_links[test_name] = test_result.get('video_path')
+                                        video_links[testname_without_browser] = test_result.get('video_path')
 
                                 # if the suite tests and the median result number are the same, that means the suite is finished.
                                 for perf_suite in [perf_data_suite_median, perf_data_suite_si, perf_data_suite_psi]:
