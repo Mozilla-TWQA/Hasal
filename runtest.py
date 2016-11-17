@@ -234,7 +234,7 @@ def main():
                            max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
-                           test_comment=arguments['--comment'], calc_si=arguments['--calc-si'],
+                           test_comment=arguments['--comment'].strip(), calc_si=arguments['--calc-si'],
                            waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'],
                            perfherder_pkg_platform=arguments['--perfherder-pkg-platform'], jenkins_build_no=arguments['--jenkins-build-no'])
     if arguments['pt']:

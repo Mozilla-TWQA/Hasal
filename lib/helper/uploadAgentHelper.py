@@ -45,7 +45,7 @@ class UploadAgent(object):
         if self.test_comment == "<today>":
             self.test_comment_str = date.today().strftime("%Y-%m-%d")
         else:
-            self.test_comment_str = self.test_comment
+            self.test_comment_str = self.test_comment.strip()
 
     def generate_url_str(self, api_root=None):
         url_format = "http://%s:%s/%s"
