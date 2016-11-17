@@ -302,9 +302,12 @@ class HasalServerPerfherderRegister:
         """
         try:
             # check the url, server/hasal_perf_reg/<os>/<target_browser>/<comment>
-            assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target is not None and target != '', '[target] is empty.'
-            assert comment is not None and comment != '', '[comment] is empty.'
+            assert os_name is not None and os_name.strip() != '', '[os] is empty.'
+            assert target is not None and target.strip() != '', '[target] is empty.'
+            assert comment is not None and comment.strip() != '', '[comment] is empty.'
+            os_name = os_name.strip()
+            target = target.strip()
+            comment = comment.strip()
 
             # get the POST data
             data = web.data()
@@ -649,12 +652,16 @@ class HasalServer:
         # TODO: this it for checking the result of Hasal Server.
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
-            assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target is not None and target != '', '[target] is empty.'
+            assert os_name is not None and os_name.strip() != '', '[os] is empty.'
+            assert target is not None and target.strip() != '', '[target] is empty.'
+            os_name = os_name.strip()
+            target = target.strip()
 
-            if comment_name is None or comment_name == '':
+            if comment_name is None or comment_name.strip() == '':
                 # return all test result of provided target
                 return json.dumps(HasalServer.storage[os_name][target], indent=4)
+            else:
+                comment_name = comment_name.strip()
 
             if os_name not in HasalServer.storage:
                 return 'No os: {}'.format(os_name)
@@ -700,9 +707,12 @@ class HasalServer:
         """
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
-            assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target is not None and target != '', '[target] is empty.'
-            assert comment_name is not None and comment_name != '', '[comment] is empty.'
+            assert os_name is not None and os_name.strip() != '', '[os] is empty.'
+            assert target is not None and target.strip() != '', '[target] is empty.'
+            assert comment_name is not None and comment_name.strip() != '', '[comment] is empty.'
+            os_name = os_name.strip()
+            target = target.strip()
+            comment_name = comment_name.strip()
 
             # get the POST data
             ip = web.ctx.ip
@@ -797,9 +807,12 @@ class VideoProfileUpdater:
         HasalServer.storage = HasalServer.storage_handler.load()
         try:
             # check the url, server/hasal/<os>/<target_browser>/<test>
-            assert os_name is not None and os_name != '', '[os] is empty.'
-            assert target_browser is not None and target_browser != '', '[target_browser] is empty.'
-            assert comment_name is not None and comment_name != '', '[comment] is empty.'
+            assert os_name is not None and os_name.strip() != '', '[os] is empty.'
+            assert target_browser is not None and target_browser.strip() != '', '[target_browser] is empty.'
+            assert comment_name is not None and comment_name.strip() != '', '[comment] is empty.'
+            os_name = os_name.strip()
+            target_browser = target_browser.strip()
+            comment_name = comment_name.strip()
 
             # get the POST data
             # ip = web.ctx.ip
