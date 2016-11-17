@@ -96,6 +96,9 @@ sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev 
 # OpenCV
 func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
+# ffmpeg
+func_log "[INFO] Installing ffmpeg ..."
+sudo apt-get install -y --force-yes ffmpeg
 # avconv
 func_log "[INFO] Installing avconv ..."
 sudo apt-get install -y --force-yes libav-tools
