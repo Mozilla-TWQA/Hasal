@@ -179,7 +179,7 @@ class UploadAgent(object):
         if input_upload_data['video_path'] and os.path.exists(input_upload_data['video_path']):
             # init current data variable
             new_video_path = input_upload_data['video_path'].replace(".mkv", ".mp4")
-            upload_video_data = {'video_fp': new_video_path, 'upload_data': input_upload_data, 'video_preview_url': None,
+            upload_video_data = {'video_fp': new_video_path, 'input_data': input_upload_data, 'video_preview_url': None,
                                  'status': DEFAULT_UPLOAD_VIDEO_STATUS[0]}
             # add to current video queue
             if upload_video_data not in upload_video_queue:
@@ -189,20 +189,20 @@ class UploadAgent(object):
 
         for upload_data in upload_video_queue:
             # clean up upload data with no-existing video file
-            if os.path.exists(input_upload_data['video_path']) is False:
+            if not os.path.exists(upload_data['input_data']['video_path']):
                 logger.info(
                     "Converting video source file not exist, remove the data [%s]!" % upload_data)
                 upload_video_queue.remove(upload_data)
                 continue
 
-            if os.path.exists(upload_data['video_fp']) is False:
+            if not os.path.exists(upload_data['video_fp']) and (upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[1] or upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[3]):
                 logger.info("Converted video file not exist, remove the data [%s]!" % upload_data)
                 upload_video_queue.remove(upload_data)
                 continue
 
             # converting video
             if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[0]:
-                videoHelper.convert_video_to_specify_size(input_upload_data['video_path'], new_video_path,
+                videoHelper.convert_video_to_specify_size(upload_data['input_data']['video_path'], new_video_path,
                                                           DEFAULT_CONVERT_VIDEO_RESOLUTION)
                 if os.path.exists(new_video_path):
                     upload_data['status'] = DEFAULT_UPLOAD_VIDEO_STATUS[1]
@@ -222,8 +222,8 @@ class UploadAgent(object):
 
             # upload to server
             if upload_data['status'] == DEFAULT_UPLOAD_VIDEO_STATUS[2]:
-                test_browser_type = upload_data['test_name'].split("_")[1]
-                json_data = {"os": sys.platform, "target": self.test_target, "test": upload_data['test_name'],
+                test_browser_type = upload_data['input_data']['test_name'].split("_")[1]
+                json_data = {"os": sys.platform, "target": self.test_target, "test": upload_data['input_data']['test_name'],
                              "browser": test_browser_type, "version": self.current_browser_version[test_browser_type],
                              "video_path": upload_data['video_preview_url'], "comment": self.test_comment_str}
                 url_str = self.generate_url_str("video_profile")
