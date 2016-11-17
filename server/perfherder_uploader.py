@@ -71,7 +71,7 @@ class PerfherderUploader(object):
             trsc.add(trs)
         return trsc
 
-    def create_job_dataset(self, revision, browser, timestamp, perf_data, link='', version='', repo_link='', video_links=''):
+    def create_job_dataset(self, revision, browser, timestamp, perf_data, link='', version='', repo_link='', video_links='', extra_info_obj={}):
         job_guid = PerfherderUploader.gen_guid(len(revision))
 
         if browser.lower() == 'firefox':
@@ -132,6 +132,12 @@ class PerfherderUploader(object):
                 'url': link,
                 'title': title,
                 'value': 'Video'
+            })
+        for title, text in extra_info_obj.items():
+            job_details.append({
+                'content_type': 'raw_html',
+                'title': title,
+                'value': text
             })
 
         return [
@@ -268,11 +274,9 @@ class PerfherderUploader(object):
             tjc.add(tj)
         return tjc
 
-    def submit(self, revision, browser, timestamp, perf_data, link='', version='', repo_link='', video_links=''):
+    def submit(self, revision, browser, timestamp, perf_data, link='', version='', repo_link='', video_links='', extra_info_obj={}):
         rs_dataset = self.create_resultset_dataset(revision=revision,
                                                    timestamp=timestamp)
-        print('### Result Set ###')
-        print(rs_dataset)
         trsc = self.create_resultset_collection(rs_dataset)
 
         j_dataset = self.create_job_dataset(revision=revision,
@@ -282,9 +286,8 @@ class PerfherderUploader(object):
                                             link=link,
                                             version=version,
                                             repo_link=repo_link,
-                                            video_links=video_links)
-        print('### Job Set ###')
-        print(j_dataset)
+                                            video_links=video_links,
+                                            extra_info_obj=extra_info_obj)
         tjc = self.create_job_collection(j_dataset)
 
         client = TreeherderClient(protocol=self.potocol,
@@ -293,4 +296,3 @@ class PerfherderUploader(object):
                                   secret=self.secret)
         client.post_collection(self.repo, trsc)
         client.post_collection(self.repo, tjc)
-        print('### Done ###')

@@ -579,6 +579,10 @@ class HasalServer:
                                         info_browser_link = 'http://hg.mozilla.org/mozilla-central/rev/{}'.format(test_result.get('revision'))
                                     elif info_browser_type.lower() == 'chrome':
                                         info_browser_link = 'https://chromium.googlesource.com/chromium/src.git/+/{}'.format(test_result.get('version'))
+                                    extra_info_obj = {
+                                        'OS/Target/Comment': '{}/{}/{}'.format(os_name, target_name, comment_name),
+                                        'Suites': suite_name
+                                    }
 
                                     perf_data = {
                                         'performance_data': {
@@ -605,7 +609,8 @@ class HasalServer:
                                                         link=link,
                                                         version=test_result.get('version'),
                                                         repo_link=info_browser_link,
-                                                        video_links=video_links)
+                                                        video_links=video_links,
+                                                        extra_info_obj=extra_info_obj)
 
                                         # Remove from Register
                                         data_register[os_name][target_name][comment_name][browser_name][suite_name] = []
