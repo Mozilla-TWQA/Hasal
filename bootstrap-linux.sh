@@ -75,7 +75,7 @@ func_log "[PASS] Checking finished."
 
 # https://launchpad.net/~mc3man/+archive/ubuntu/trusty-media
 func_log "[INFO] Add mc3man/trusty-media for ffmpeg ..."
-sudo add-apt-repository ppa:mc3man/trusty-media
+sudo add-apt-repository --yes ppa:mc3man/trusty-media
 
 func_log "[INFO] Running apt-get update ..."
 sudo apt-get -yq update
