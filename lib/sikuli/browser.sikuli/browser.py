@@ -126,7 +126,10 @@ class Firefox(GeneralBrowser):
 
     # Launch web console for developer
     def triggerConsole(self):
-        type("k", self.control + Key.SHIFT)
+        if self.os.lower() == 'mac':
+            type("k", self.control + Key.ALT)
+        else:
+            type("k", self.control + Key.SHIFT)
 
     def closeConsole(self):
         type(Key.F12)
@@ -134,14 +137,15 @@ class Firefox(GeneralBrowser):
     # Get information from web console, e.g. info = "window.performance.timing"
     def getConsoleInfo(self, info, pre_command=""):
         self.triggerConsole()
-        wait(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
-        click(Pattern("pics/ff_webconsole_arrow.png").similar(0.85).targetOffset(14, 1))
+        wait(Pattern("pics/ff_webconsole_bar.png").similar(0.85), 10)
+        wait(3)
         if pre_command:
-            type(pre_command)
+            paste(pre_command)
             type(Key.ENTER)
         wait(2)
-        type("copy(" + info + ")")
+        paste("copy(" + info + ")")
         type(Key.ENTER)
+        wait(2)
         return Env.getClipboard().strip()
 
     # Prevent cursor twinkling on screen
