@@ -55,6 +55,7 @@ class PerfBaseTest(unittest.TestCase):
             result_list.append(avconv_profiler)
 
         if self.env.PROFILER_FLAG_GECKOPROFILER in self.enabled_profiler_list:
+            result_list.append(performance_timing_profiler)
             result_list.append(gecko_profiler)
 
         if self.env.PROFILER_FLAG_HAREXPORT in self.enabled_profiler_list:
