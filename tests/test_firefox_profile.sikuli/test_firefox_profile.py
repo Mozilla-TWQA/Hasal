@@ -10,7 +10,6 @@ wait(2)
 ff.focus()
 ff.profileAnalyze()
 
-wait(10)
 ff.getConsoleInfo("window.tmpProfileBin", "window.Parser.getSerializedProfile(true, function (serializedProfile) { window.tmpProfileBin = serializedProfile; });")
 
 wait(2)

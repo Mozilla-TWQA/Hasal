@@ -22,8 +22,12 @@ class HarProfiler(BaseProfiler):
                 elif len(har_file_list) == 0:
                     logger.error("can't find any har file in log folder %s" % har_dir_path)
                 else:
-                    logger.error("find more than one har file in log folder %s" % har_dir_path)
+                    logger.warn("find more than one har file in log folder %s" % har_dir_path)
+                    for har_file in har_file_list:
+                        har_file_path = os.path.join(har_dir_path, har_file)
+                        har_file_fp = self.env.profile_har_file_fp.replace('.har', '-{}'.format(har_file))
+                        os.rename(har_file_path, har_file_fp)
+                    break
             else:
                 logger.error("har log folder is not exist %s " % har_dir_path)
-
-            time.sleep(1)
+                time.sleep(1)
