@@ -38,7 +38,7 @@ DEFAULT_RUNNING_STAT_FN = "stat.json"
 DEFAULT_ERROR_CASE_LIST = "error_case_list.txt"
 
 if platform.system().lower() == "linux":
-    DEFAULT_TASK_KILL_LIST = ["avconv", "firefox", "chrome"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
