@@ -9,7 +9,7 @@ https://twitter.com/hashtag/news
 https://us.yahoo.com/
 # Doesn't work without login. https://www.linkedin.com/in/reidhoffman
 https://www.bing.com/search?q=flowers
-https://www.booking.com/
+https://www.booking.com/index.en-us.html
 # Animation on landing page. http://techcrunch.com
 https://www.instagram.com/explore/tags/fashion/
 http://www.ask.com/web?q=mozilla
