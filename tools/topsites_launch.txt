@@ -1,6 +1,6 @@
 # Base on https://goo.gl/1av33F
 https://www.google.com/#q=barack+obama
-https://www.facebook.com/barackobama
+# Captcha. https://www.facebook.com/barackobama
 # Animation on landing page. https://www.youtube.com/
 https://www.amazon.com/
 https://en.wikipedia.org/wiki/Barack_Obama
