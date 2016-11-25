@@ -75,13 +75,13 @@ class PerfherderUploader(object):
         job_guid = PerfherderUploader.gen_guid(len(revision))
 
         if browser.lower() == 'firefox':
-            job_symbol = 'f'
+            job_symbol = 'F'
             job_name = 'Hasal on Firefox'
         elif browser.lower() == 'chrome':
-            job_symbol = 'c'
+            job_symbol = 'C'
             job_name = 'Hasal on Chrome'
         else:
-            job_symbol = 'o'
+            job_symbol = 'O'
             job_name = 'Hasal'
 
         job_details = [
