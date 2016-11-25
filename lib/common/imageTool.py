@@ -149,14 +149,14 @@ class ImageTool(object):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct_list[0], comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     break
             for img_index in range(self.search_range[2] - 1, self.search_range[3]):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct_list[1], comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     break
         end = time.time()
@@ -173,14 +173,14 @@ class ImageTool(object):
                 image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
                     break
         else:
             for img_index in range(self.search_range[2] - 1, self.search_range[3]):
                 image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.info("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
                     break
         result_list.append(image_data)
 
@@ -223,7 +223,7 @@ class ImageTool(object):
                     image_data = self.image_list[img_index]
                     comparing_dct = self.convert_to_dct(image_data['image_fp'])
                     if self.compare_two_images(sample_dct, comparing_dct):
-                        logger.info("Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c")))
+                        logger.debug("Comparing sample %d file end %s" % (sample_index + 1, time.strftime("%c")))
                         result_list.append(image_data)
                         m_start_index = img_index
                         break
@@ -347,7 +347,7 @@ class ImageTool(object):
             # print '*******elapsed %f'%elapsed
             # Full Path of the Current Frame
             current_frame = p['image_fp']
-            logger.info("Current Image is %s" % current_frame)
+            logger.debug("Current Image is %s" % current_frame)
             # Takes full path of PNG frames to compute SSIM value
             per_si += elapsed * (1.0 - ssim)
             ssim = compute_ssim(current_frame, target_frame)
