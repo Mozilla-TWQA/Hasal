@@ -40,11 +40,11 @@ class ResultMetricGenerator(object):
                 else:
                     print(
                         '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1=case_name,
-                                                                                       s2="Something wrong",
-                                                                                       s3="Something wrong",
-                                                                                       s4="Something wrong",
-                                                                                       s5="Something wrong",
-                                                                                       s6="Something wrong"))
+                                                                                       s2=obj_json[case_name].get('med_time', 0),
+                                                                                       s3=obj_json[case_name].get('avg_time', 0),
+                                                                                       s4=obj_json[case_name].get('std_dev', 0),
+                                                                                       s5=obj_json[case_name].get('speed_index', 0),
+                                                                                       s6=obj_json[case_name].get('perceptual_speed_index', 0)))
 
     def run(self):
         self.generate_metric()
