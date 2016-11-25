@@ -11,4 +11,10 @@ ff.enterLink(sys.argv[3])
 
 sleep(2)
 wait(Pattern('www_bing_com.png').similar(0.80), 60)
-mouseMove(Location(0, 0))
+
+icon_loc = wait(Pattern('www_bing_com.png').similar(0.80), 60).getTarget()
+x_offset = 0
+y_offset = 150
+inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
+
+mouseMove(inside_window)
