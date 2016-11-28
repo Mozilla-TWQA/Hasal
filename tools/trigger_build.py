@@ -150,12 +150,18 @@ class TriggerBuild(object):
                 dl_json_data = json.load(dl_json_fh)
                 perfherder_revision = dl_json_data['moz_source_stamp']
                 build_pkg_platform = dl_json_data['moz_pkg_platform']
+                # mapping the perfherder pkg platform to nomenclature of builddot
+                builddot_mapping_platform = {"linux-i686": "linux32",
+                                             "linux-x86_64": "linux64",
+                                             "mac": "osx-10-10",
+                                             "win32": "windows7-32",
+                                             "win64": "windows8-64"}
                 with open(self.HASAL_JSON_FN, "w") as write_fh:
                     write_data = copy.deepcopy(self.env_data)
                     write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
                     write_data['FX-DL-JSON-PATH'] = download_json_fp
                     write_data['--PERFHERDER-REVISION'] = perfherder_revision
-                    write_data['--PERFHERDER-PKG-PLATFORM'] = build_pkg_platform
+                    write_data['--PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform]
                     json.dump(write_data, write_fh)
 
             if os.path.exists(os.path.join(os.getcwd(), self.HASAL_JSON_FN)):
