@@ -301,13 +301,20 @@ class ImageTool(object):
         return output_sample_fp
 
     def calculate_progress_for_si(self, result_list):
+        frame_calculation_interval = 5
         histograms = []
         start_index = self.image_list.index(result_list[0])
         end_index = self.image_list.index(result_list[1])
         # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
         # Might need to adjust if we need to raise the accuracy
-        for i_index in range(start_index, end_index + 1, 5):
+        for i_index in range(start_index, end_index + 1, frame_calculation_interval):
             image_data = copy.deepcopy(self.image_list[i_index])
+            image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
+            histograms.append(image_data)
+            gc.collect()
+
+        if end_index % frame_calculation_interval:
+            image_data = copy.deepcopy(self.image_list[end_index])
             image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
             histograms.append(image_data)
             gc.collect()
