@@ -304,7 +304,9 @@ class ImageTool(object):
         histograms = []
         start_index = self.image_list.index(result_list[0])
         end_index = self.image_list.index(result_list[1])
-        for i_index in range(start_index, end_index + 1, 10):
+        # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
+        # Might need to adjust if we need to raise the accuracy
+        for i_index in range(start_index, end_index + 1, 5):
             image_data = copy.deepcopy(self.image_list[i_index])
             image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
             histograms.append(image_data)
