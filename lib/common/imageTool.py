@@ -334,23 +334,20 @@ class ImageTool(object):
     def calculate_perceptual_speed_index(self, progress):
         from ssim import compute_ssim
         x = len(progress)
-        first_paint_frame = progress[1]['image_fp']
         target_frame = progress[x - 1]['image_fp']
-        ssim_1 = compute_ssim(first_paint_frame, target_frame)
-        per_si = float(progress[1]['time'])
-        last_ms = progress[1]['time']
+        per_si = 0.0
+        last_ms = progress[0]['time']
         # Full Path of the Target Frame
         logger.info("Target image for perSI is %s" % target_frame)
-        ssim = ssim_1
-        for p in progress[1:]:
+        for p in progress:
             elapsed = p['time'] - last_ms
             # print '*******elapsed %f'%elapsed
             # Full Path of the Current Frame
             current_frame = p['image_fp']
             logger.info("Current Image is %s" % current_frame)
             # Takes full path of PNG frames to compute SSIM value
-            per_si += elapsed * (1.0 - ssim)
             ssim = compute_ssim(current_frame, target_frame)
+            per_si += elapsed * (1.0 - ssim)
             gc.collect()
             last_ms = p['time']
         return int(per_si)
