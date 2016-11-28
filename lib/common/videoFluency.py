@@ -243,7 +243,7 @@ class VideoFluency(object):
         if not peaks:
             t_distance_norm = []
         else:
-            cluster_level = 10
+            # cluster_level = 10
             t_distance = self.get_distance(peaks)
             cluster_Q = 200
             t_distance_norm = [math.floor(float(val) / cluster_Q) * cluster_Q for val in t_distance]
@@ -380,6 +380,7 @@ class VideoFluency(object):
                 video.write(np.concatenate((img1, img2), axis=1))
             video.release()
         return video_list
+
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Video Fluency Measurement',
