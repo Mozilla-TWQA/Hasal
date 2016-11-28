@@ -1,1 +1,1 @@
-tests.pilot.bbc.test_chrome_bbc_homepage
+tests\pilot\bbc\test_chrome_bbc_homepage
