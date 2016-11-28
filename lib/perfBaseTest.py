@@ -104,7 +104,8 @@ class PerfBaseTest(unittest.TestCase):
         self.browser_type = self.env.get_browser_type()
 
         # init target helper
-        self.target_helper = targetHelper.TagetHelper(self.env)
+        if hasattr(self, "test_target"):
+            self.target_helper = targetHelper.TagetHelper(self.env)
 
         # init sikuli
         self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
