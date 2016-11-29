@@ -275,9 +275,9 @@ class PerfherderUploader(object):
         return tjc
 
     def submit(self, revision, browser, timestamp, perf_data, link='', version='', repo_link='', video_links='', extra_info_obj={}):
-        rs_dataset = self.create_resultset_dataset(revision=revision,
-                                                   timestamp=timestamp)
-        trsc = self.create_resultset_collection(rs_dataset)
+        # rs_dataset = self.create_resultset_dataset(revision=revision,
+        #                                            timestamp=timestamp)
+        # trsc = self.create_resultset_collection(rs_dataset)
 
         j_dataset = self.create_job_dataset(revision=revision,
                                             browser=browser,
@@ -294,5 +294,6 @@ class PerfherderUploader(object):
                                   host=self.host,
                                   client_id=self.client_id,
                                   secret=self.secret)
-        client.post_collection(self.repo, trsc)
+        # don't post resultset, that overwrites existing data. see: https://bugzilla.mozilla.org/show_bug.cgi?id=1320694
+        # client.post_collection(self.repo, trsc)
         client.post_collection(self.repo, tjc)
