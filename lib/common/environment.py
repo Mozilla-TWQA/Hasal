@@ -22,7 +22,10 @@ class Environment(object):
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
 
-    DEFAULT_VIDEO_RECORDING_FPS = 60
+    if platform.system().lower() == "darwin":
+        DEFAULT_VIDEO_RECORDING_FPS = 40
+    else:
+        DEFAULT_VIDEO_RECORDING_FPS = 60
     DEFAULT_VIDEO_RECORDING_POS_X = 72
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = 1024
