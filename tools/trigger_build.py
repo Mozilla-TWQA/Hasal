@@ -100,6 +100,8 @@ class TriggerBuild(object):
             # extract job id from agent_status dir
             agent_status_dir_path = os.path.join(os.getcwd(), self.DEFAULT_AGENT_STATUS_DIR)
             print "INFO: housekeeping the agent status folder [%s]" % agent_status_dir_path
+            if not os.path.exists(agent_status_dir_path):
+                os.mkdir(agent_status_dir_path)
             agent_status_file_list = os.listdir(agent_status_dir_path)
             print "DEBUG: current agent status file list [%s]" % agent_status_file_list
 
