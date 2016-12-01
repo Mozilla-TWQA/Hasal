@@ -18,6 +18,7 @@ class GeneralBrowser():
 
     def enterLink(self, link):
         urlbar_loc = self.clickBar()
+        type("a", self.control)
         paste(link)
         type(Key.ENTER)
         x_offset = 0
