@@ -353,7 +353,6 @@ class ImageTool(object):
             # print '*******elapsed %f'%elapsed
             # Full Path of the Current Frame
             current_frame = p['image_fp']
-            logger.debug("Current Image is %s" % current_frame)
             # Takes full path of PNG frames to compute SSIM value
             ssim = compute_ssim(current_frame, target_frame)
             per_si += elapsed * (1.0 - ssim)
@@ -390,7 +389,6 @@ class ImageTool(object):
         return math.floor(progress * 100)
 
     def calculate_image_histogram(self, file):
-        logger.info('Calculating histogram for ' + file)
         try:
             from PIL import Image
 
