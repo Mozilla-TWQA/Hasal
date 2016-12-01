@@ -6,7 +6,6 @@ import common
 com = common.General()
 ch = browser.Chrome()
 
-ch.clickBar()
 ch.enterLink(sys.argv[3])
 
 sleep(2)
