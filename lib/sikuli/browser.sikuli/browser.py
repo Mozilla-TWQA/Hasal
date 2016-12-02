@@ -7,15 +7,26 @@ class GeneralBrowser():
     def __init__(self):
         self.os = str(Env.getOS())  # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
         self.os_version = str(Env.getOSVersion())
+        self.urlbar_loc = None
 
         if self.os.startswith("M"):
             self.control = Key.CMD
         else:
             self.control = Key.CTRL
 
+    def clickBar(self):
+        raise NotImplementedError
+
     def enterLink(self, link):
+        if not self.urlbar_loc:
+            self.urlbar_loc = self.clickBar()
+        type("a", self.control)
         paste(link)
         type(Key.ENTER)
+        x_offset = 0
+        y_offset = -35
+        inside_window = Location(self.urlbar_loc.getX() + x_offset, self.urlbar_loc.getY() + y_offset)
+        mouseMove(inside_window)
 
     def scroll_down(self, step):
         if self.os.lower() == 'mac':
@@ -75,8 +86,9 @@ class Chrome(GeneralBrowser):
         urlbar_pics = ['pics/chrome_urlbar_53.png', 'pics/chrome_urlbar.png']
         for urlbar_pic in urlbar_pics:
             if exists(Pattern(urlbar_pic).similar(0.70)):
+                self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0)).getTarget()
                 click(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0))
-                break
+                return self.urlbar_loc
 
     # Launch or close web console for developer
     def triggerConsole(self):
@@ -121,8 +133,9 @@ class Firefox(GeneralBrowser):
         urlbar_pics = ['pics/ff_urlbar_black.png', 'pics/ff_urlbar_gray.png']
         for urlbar_pic in urlbar_pics:
             if exists(Pattern(urlbar_pic).similar(0.70)):
+                self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0)).getTarget()
                 click(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0))
-                break
+                return self.urlbar_loc
 
     # Launch web console for developer
     def triggerConsole(self):

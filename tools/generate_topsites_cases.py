@@ -50,18 +50,10 @@ import common
 com = common.General()
 ff = browser.Firefox()
 
-ff.clickBar()
 ff.enterLink(sys.argv[3])
 
 sleep(2)
 wait(Pattern('{0}.png').similar(0.80), 60)
-
-icon_loc = wait(Pattern('{0}.png').similar(0.80), 60).getTarget()
-x_offset = 0
-y_offset = 150
-inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
-
-mouseMove(inside_window)
 """
     BROWSER_CHROME_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -71,18 +63,10 @@ import common
 com = common.General()
 ch = browser.Chrome()
 
-ch.clickBar()
 ch.enterLink(sys.argv[3])
 
 sleep(2)
 wait(Pattern('{0}.png').similar(0.80), 60)
-
-icon_loc = wait(Pattern('{0}.png').similar(0.80), 60).getTarget()
-x_offset = 0
-y_offset = 150
-inside_window = Location(icon_loc.getX() + x_offset, icon_loc.getY() + y_offset)
-
-mouseMove(inside_window)
 """
     BROWSER_FIREFOX_SCROLL_SCRIPT = """
 sys.path.append(sys.argv[2])
@@ -92,7 +76,6 @@ import common
 com = common.General()
 ff = browser.Firefox()
 
-ff.clickBar()
 ff.enterLink(sys.argv[3])
 
 sleep(2)
@@ -114,7 +97,6 @@ import common
 com = common.General()
 ch = browser.Chrome()
 
-ch.clickBar()
 ch.enterLink(sys.argv[3])
 
 sleep(2)

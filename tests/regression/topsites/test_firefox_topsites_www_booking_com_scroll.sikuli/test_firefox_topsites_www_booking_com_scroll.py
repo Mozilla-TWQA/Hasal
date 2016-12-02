@@ -6,7 +6,6 @@ import common
 com = common.General()
 ff = browser.Firefox()
 
-ff.clickBar()
 ff.enterLink(sys.argv[3])
 
 sleep(2)
