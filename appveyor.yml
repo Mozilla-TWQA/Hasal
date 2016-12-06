@@ -23,6 +23,8 @@ environment:
 
 init:
   - "@ECHO AppVeyor CI run started!"
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 
 install:
   - bootstrap.bat
@@ -33,6 +35,7 @@ test_script:
   - python scripts\cv2_checker.py
   - python runtest.py -h
   - ffmpeg -h
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - python runtest.py pt suite.txt --max-run=1 --max-retry=1
   - dir
 
