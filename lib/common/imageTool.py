@@ -414,6 +414,100 @@ class ImageTool(object):
             logger.error('Calculating histogram for ' + file)
         return histogram
 
+    def find_image_viewport(self, file):
+        try:
+            from PIL import Image
+            im = Image.open(file)
+            width, height = im.size
+            x = int(math.floor(width / 2))
+            y = int(math.floor(height / 2))
+            pixels = im.load()
+            background = pixels[x, y]
+
+            # Find the left edge
+            left = None
+            while left is None and x >= 0:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    left = x + 1
+                else:
+                    x -= 1
+            if left is None:
+                left = 0
+            logger.debug('Viewport left edge is {0:d}'.format(left))
+
+            # Find the right edge
+            x = int(math.floor(width / 2))
+            right = None
+            while right is None and x < width:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    right = x - 1
+                else:
+                    x += 1
+            if right is None:
+                right = width
+            logger.debug('Viewport right edge is {0:d}'.format(right))
+
+            # Find the top edge
+            x = int(math.floor(width / 2))
+            top = None
+            while top is None and y >= 0:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    top = y + 1
+                else:
+                    y -= 1
+            if top is None:
+                top = 0
+            logger.debug('Viewport top edge is {0:d}'.format(top))
+
+            # Find the bottom edge
+            y = int(math.floor(height / 2))
+            bottom = None
+            while bottom is None and y < height:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    bottom = y - 1
+                else:
+                    y += 1
+            if bottom is None:
+                bottom = height
+            logger.debug('Viewport bottom edge is {0:d}'.format(bottom))
+
+            viewport = {'x': left, 'y': top, 'width': (right - left), 'height': (bottom - top)}
+
+        except Exception as e:
+            viewport = None
+
+        return viewport
+
+    def colors_are_similar(self, a, b, threshold=15):
+        similar = True
+        sum = 0
+        for x in xrange(3):
+            delta = abs(a[x] - b[x])
+            sum += delta
+            if delta > threshold:
+                similar = False
+        if sum > threshold:
+            similar = False
+
+        return similar
+
+    def crop_all_images(self, viewport):
+        if viewport['width'] % 2:
+            viewport['width'] -= 1
+        if viewport['height'] % 2:
+            viewport['height'] -= 1
+        crop_region = [viewport['x'], viewport['y'], viewport['x'] + viewport['width'], viewport['y'] + viewport['height']]
+        from PIL import Image
+        for img in self.image_list:
+            if os.path.exists(img['image_fp']):
+                try:
+                    im = Image.open(img['image_fp'])
+                    new_im = im.crop(crop_region)
+                    new_im.save(img['image_fp'])
+                except Exception as e:
+                    self.search_range[3] = self.search_range[3] - 1
+                    logger.error(e)
+
 
 def main():
     arg_parser = argparse.ArgumentParser(description='Image tool',
