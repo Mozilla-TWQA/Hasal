@@ -475,6 +475,7 @@ class ImageTool(object):
 
         except Exception as e:
             viewport = None
+            logger.error(e)
 
         return viewport
 
