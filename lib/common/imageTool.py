@@ -229,7 +229,6 @@ class ImageTool(object):
         return map_result_list
 
     def parallel_compare_image(self, img_list, event_point, sample_dct, result_list):
-        image_data = {}
         if event_point == 0:
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
                 image_data = self.image_list[img_index]
@@ -238,6 +237,7 @@ class ImageTool(object):
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
                     break
         elif event_point == 1:
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
@@ -247,6 +247,7 @@ class ImageTool(object):
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
                     break
         elif event_point == 2:
             for img_index in range(self.search_range[2] - 1, self.search_range[3] - 1):
@@ -254,8 +255,8 @@ class ImageTool(object):
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing end point file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
                     break
-        result_list.append(image_data)
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
