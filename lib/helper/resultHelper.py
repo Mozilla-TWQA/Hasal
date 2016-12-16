@@ -23,18 +23,25 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
         img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_object(input_sample_dp)
     else:
-        if calc_si == 0 and waveform == 0:
-            img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
-        else:
-            start_time = time.time()
-            img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
         start_time = time.time()
+        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+        convert_video_to_images_end = time.time()
+        elapsed_time = convert_video_to_images_end - start_time
+        logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
+
+        viewport = img_tool_obj.crop_viewport(input_sample_dp, output_img_dp)
+        crop_viewport_end = time.time()
+        elapsed_time = crop_viewport_end - convert_video_to_images_end
+        logger.debug("Crop Viewport from All Images Elapsed: [%s]" % elapsed_time)
+
+        img_tool_obj.crop_tab_view(input_sample_dp, output_img_dp, viewport)
+        crop_tab_view_end = time.time()
+        elapsed_time = crop_tab_view_end - crop_viewport_end
+        logger.debug("Crop Tab_View from All Images Elapsed: [%s]" % elapsed_time)
+
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_image_multi_process(input_sample_dp)
         end_time = time.time()
-        elapsed_time = end_time - start_time
+        elapsed_time = end_time - crop_viewport_end
         logger.debug("Compare Image Time Elapsed: [%s]" % elapsed_time)
     if calc_si == 1:
         start_time = time.time()
@@ -58,6 +65,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
 def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     run_time = 0
+    first_paint_time = 0
     if os.path.exists(output_fp):
         with open(output_fp) as fh:
             result = json.load(fh)
@@ -66,8 +74,9 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 
     current_run_result = result_data['running_time_result']
 
-    if len(current_run_result) == 2:
-        run_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[1]['time_seq'])
+    if len(current_run_result) == 3:
+        run_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[2]['time_seq'])
+        first_paint_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[1]['time_seq'])
 
     calc_obj = outlier()
 
@@ -77,7 +86,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     else:
         si_value = 0
         psi_value = 0
-    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value}
+    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'first_paint_time': first_paint_time}
 
     if test_method_name in result:
         result[test_method_name]['total_run_no'] += 1

@@ -36,6 +36,7 @@ import shutil
 import numpy as np
 import gc
 import math
+from PIL import Image
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
 from ..common.logConfig import get_logger
@@ -58,7 +59,7 @@ class ImageTool(object):
         with open(output_fp, "wb") as fh:
             json.dump(data, fh)
 
-    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[], comp_mode=False):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[]):
         vidcap = cv2.VideoCapture(input_video_fp)
         if hasattr(cv2, 'CAP_PROP_FPS'):
             header_fps = vidcap.get(cv2.CAP_PROP_FPS)
@@ -94,10 +95,7 @@ class ImageTool(object):
             while True:
                 img_cnt += 1
                 str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
-                if (comp_mode and self.search_range[0] <= img_cnt <= self.search_range[3]) or \
-                        (self.search_range[0] <= img_cnt <= self.search_range[1]) or \
-                        (self.search_range[2] <= img_cnt <= self.search_range[3]) or \
-                        not exec_timestamp_list:
+                if not exec_timestamp_list or (self.search_range[0] <= img_cnt <= self.search_range[3]):
                     result, image = vidcap.read()
                     cv2.imwrite(str_image_fp, image)
                     io_times += 1
@@ -120,15 +118,68 @@ class ImageTool(object):
         logger.info("Image Comparison search range: " + str(self.search_range))
         return self.image_list
 
+    def crop_viewport(self, sample_dp, output_image_dp):
+        sample_fn_list = os.listdir(sample_dp)
+        sample_fn_list.sort()
+        sample_fp_list = [os.path.join(sample_dp, item) for item in sample_fn_list]
+        sample_fp_list = [item for item in sample_fp_list if os.path.isfile(item)]
+        viewport = self.find_image_viewport(sample_fp_list[0])
+
+        img_fn_list = os.listdir(output_image_dp)
+        img_fp_list = [os.path.join(output_image_dp, item) for item in img_fn_list]
+
+        sample_viewport_dp = os.path.join(sample_dp, "viewport")
+        img_viewport_dp = os.path.join(output_image_dp, "viewport")
+        os.mkdir(sample_viewport_dp)
+        os.mkdir(img_viewport_dp)
+
+        self.crop_all_images(viewport, sample_fp_list, sample_viewport_dp)
+        self.crop_all_images(viewport, img_fp_list, img_viewport_dp)
+
+        return viewport
+
+    def crop_tab_view(self, sample_dp, output_image_dp, viewport):
+        sample_fn_list = os.listdir(sample_dp)
+        sample_fn_list.sort()
+        sample_fp_list = [os.path.join(sample_dp, item) for item in sample_fn_list]
+        sample_fp_list = [item for item in sample_fp_list if os.path.isfile(item)]
+        tab_view = self.find_tab_view(sample_fp_list[0], viewport)
+
+        img_fn_list = os.listdir(output_image_dp)
+        img_fp_list = [os.path.join(output_image_dp, item) for item in img_fn_list]
+
+        sample_tab_view_dp = os.path.join(sample_dp, "tab_view")
+        img_tab_view_dp = os.path.join(output_image_dp, "tab_view")
+        os.mkdir(sample_tab_view_dp)
+        os.mkdir(img_tab_view_dp)
+
+        self.crop_all_images(tab_view, sample_fp_list, sample_tab_view_dp)
+        self.crop_all_images(tab_view, img_fp_list, img_tab_view_dp)
+
+        return tab_view
+
     def compare_with_sample_image_multi_process(self, input_sample_dp):
         manager = Manager()
         result_list = manager.list()
         sample_fn_list = os.listdir(input_sample_dp)
-        if len(sample_fn_list) != 2:
-            return map(dict, result_list)
         sample_fn_list.sort()
-        sample_fp_list = [os.path.join(input_sample_dp, item) for item in sample_fn_list]
-        sample_dct_list = [self.convert_to_dct(item) for item in sample_fp_list]
+        sample_fp_list = list()
+        for item in sample_fn_list:
+            item_fp = os.path.join(input_sample_dp, item)
+            if os.path.isfile(item_fp):
+                sample_fp_list.append(item_fp)
+        if len(sample_fp_list) != 2:
+            return map(dict, result_list)
+        sample_viewport_dp = os.path.join(input_sample_dp, "viewport")
+        sample_tab_view_dp = os.path.join(input_sample_dp, "tab_view")
+        sample_viewport_fn_list = os.listdir(sample_viewport_dp)
+        sample_tab_view_fn_list = os.listdir(sample_tab_view_dp)
+        sample_viewport_fn_list.sort()
+        sample_tab_view_fn_list.sort()
+        sample_viewport_fp_list = [os.path.join(sample_viewport_dp, item) for item in sample_viewport_fn_list]
+        sample_tab_view_fp_list = [os.path.join(sample_tab_view_dp, item) for item in sample_tab_view_fn_list]
+        sample_dct_list = [self.convert_to_dct(sample_tab_view_fp_list[0]),
+                           self.convert_to_dct(sample_viewport_fp_list[0]), self.convert_to_dct(sample_fp_list[1])]
         logger.info("Comparing sample file start %s" % time.strftime("%c"))
         start = time.time()
 
@@ -138,25 +189,36 @@ class ImageTool(object):
             cv2.setNumThreads(0)
             p_list = []
             for index in range(len(sample_dct_list)):
-                args = [self.image_list, not index, sample_dct_list[index], result_list]
+                args = [self.image_list, index, sample_dct_list[index], result_list]
                 p_list.append(Process(target=self.parallel_compare_image, args=args))
                 p_list[index].start()
             for index in range(len(p_list)):
                 p_list[index].join()
         else:
             logger.debug("Image comparison from single process")
-            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+            for img_index in range(self.search_range[0], self.search_range[1] - 1):
                 image_data = self.image_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct_list[0], comparing_dct):
-                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
+                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
+                                      os.path.basename(image_data['image_fp']))
+                comparing_dct = self.convert_to_dct(img_fp)
+                if not self.compare_two_images(sample_dct_list[0], comparing_dct):
+                    logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     break
-            for img_index in range(self.search_range[2] - 1, self.search_range[3]):
+            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+                image_data = self.image_list[img_index]
+                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
+                                      os.path.basename(image_data['image_fp']))
+                comparing_dct = self.convert_to_dct(img_fp)
+                if self.compare_two_images(sample_dct_list[1], comparing_dct):
+                    logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
+                    result_list.append(image_data)
+                    break
+            for img_index in range(self.search_range[2] - 1, self.search_range[3] - 1):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct_list[1], comparing_dct):
-                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
+                if self.compare_two_images(sample_dct_list[2], comparing_dct):
+                    logger.debug("Comparing end point file end %s" % time.strftime("%c"))
                     result_list.append(image_data)
                     break
         end = time.time()
@@ -166,21 +228,32 @@ class ImageTool(object):
         logger.info(map_result_list)
         return map_result_list
 
-    def parallel_compare_image(self, img_list, asc, sample_dct, result_list):
+    def parallel_compare_image(self, img_list, event_point, sample_dct, result_list):
         image_data = {}
-        if asc:
+        if event_point == 0:
+            for img_index in range(self.search_range[0], self.search_range[1] - 1):
+                image_data = self.image_list[img_index]
+                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
+                                      os.path.basename(image_data['image_fp']))
+                comparing_dct = self.convert_to_dct(img_fp)
+                if not self.compare_two_images(sample_dct, comparing_dct):
+                    logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
+                    break
+        elif event_point == 1:
             for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
                 image_data = img_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data['image_fp'])
+                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
+                                      os.path.basename(image_data['image_fp']))
+                comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
                     break
-        else:
-            for img_index in range(self.search_range[2] - 1, self.search_range[3]):
+        elif event_point == 2:
+            for img_index in range(self.search_range[2] - 1, self.search_range[3] - 1):
                 image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.debug("Comparing sample file end %s" % time.strftime("%c"))
+                    logger.debug("Comparing end point file end %s" % time.strftime("%c"))
                     break
         result_list.append(image_data)
 
@@ -390,8 +463,6 @@ class ImageTool(object):
 
     def calculate_image_histogram(self, file):
         try:
-            from PIL import Image
-
             im = Image.open(file)
             width, height = im.size
             pixels = im.load()
@@ -416,7 +487,6 @@ class ImageTool(object):
 
     def find_image_viewport(self, file):
         try:
-            from PIL import Image
             im = Image.open(file)
             width, height = im.size
             x = int(math.floor(width / 2))
@@ -479,6 +549,58 @@ class ImageTool(object):
 
         return viewport
 
+    def find_tab_view(self, file, viewport):
+        try:
+            im = Image.open(file)
+            width, height = im.size
+            x = int(math.floor(width / 2))
+            y = int(math.floor(viewport['y'] / 2))
+            pixels = im.load()
+            background = pixels[x, y]
+
+            # Find the right edge
+            right = None
+            while right is None and x < width:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    right = x - 1
+                else:
+                    x += 1
+            if right is None:
+                right = width
+            logger.debug('Browser tab view right edge is {0:d}'.format(right))
+
+            # Find the top edge
+            x = int(math.floor(width / 2))
+            top = None
+            while top is None and y >= 0:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    top = y + 1
+                else:
+                    y -= 1
+            if top is None:
+                top = 0
+            logger.debug('Browser tab view top edge is {0:d}'.format(top))
+
+            # Find the bottom edge
+            y = int(math.floor(viewport['y'] / 2))
+            bottom = None
+            while bottom is None and y < height:
+                if not self.colors_are_similar(background, pixels[x, y]):
+                    bottom = y - 1
+                else:
+                    y += 1
+            if bottom is None:
+                bottom = height
+            logger.debug('Browser tab view bottom edge is {0:d}'.format(bottom))
+
+            tab_view = {'x': 0, 'y': top, 'width': right, 'height': (bottom - top)}
+
+        except Exception as e:
+            tab_view = None
+            logger.error(e)
+
+        return tab_view
+
     def colors_are_similar(self, a, b, threshold=15):
         similar = True
         sum = 0
@@ -492,22 +614,38 @@ class ImageTool(object):
 
         return similar
 
-    def crop_all_images(self, viewport):
-        if viewport['width'] % 2:
-            viewport['width'] -= 1
-        if viewport['height'] % 2:
-            viewport['height'] -= 1
-        crop_region = [viewport['x'], viewport['y'], viewport['x'] + viewport['width'], viewport['y'] + viewport['height']]
-        from PIL import Image
-        for img in self.image_list:
-            if os.path.exists(img['image_fp']):
+    def crop_all_images(self, region, img_fp_list, output_dp):
+        if region['width'] % 2:
+            region['width'] -= 1
+        if region['height'] % 2:
+            region['height'] -= 1
+        crop_region = [region['x'], region['y'], region['x'] + region['width'], region['y'] + region['height']]
+
+        for img in img_fp_list:
+            if type(img) == str:
                 try:
-                    im = Image.open(img['image_fp'])
-                    new_im = im.crop(crop_region)
-                    new_im.save(img['image_fp'])
+                    if os.path.isfile(img):
+                        img_fn = os.path.basename(img)
+                        img_fp = os.path.join(output_dp, img_fn)
+                        im = Image.open(img)
+                        new_im = im.crop(crop_region)
+                        new_im.save(img_fp)
+                    else:
+                        continue
                 except Exception as e:
-                    self.search_range[3] = self.search_range[3] - 1
                     logger.error(e)
+            else:
+                if os.path.exists(img['image_fp']):
+                    try:
+                        img_fn = os.path.basename(img['image_fp'])
+                        if additional_fn:
+                            img_fn = img_fn[:-4] + additional_fn + img_fn[-4:]
+                        img_fp = os.path.join(output_dp, img_fn)
+                        im = Image.open(img['image_fp'])
+                        new_im = im.crop(crop_region)
+                        new_im.save(img_fp)
+                    except Exception as e:
+                        logger.error(e)
 
 
 def main():
