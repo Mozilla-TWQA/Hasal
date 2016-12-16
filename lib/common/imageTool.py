@@ -196,30 +196,46 @@ class ImageTool(object):
                 p_list[index].join()
         else:
             logger.debug("Image comparison from single process")
-            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+            start_index = self.search_range[1] - 1
+            end_index = self.search_range[0]
+            for img_index in range(start_index, end_index, -1):
                 image_data = self.image_list[img_index]
                 img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
                                       os.path.basename(image_data['image_fp']))
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct_list[0], comparing_dct):
                     logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
-            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+            for img_index in range(start_index, end_index, -1):
                 image_data = self.image_list[img_index]
                 img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
                                       os.path.basename(image_data['image_fp']))
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct_list[1], comparing_dct):
                     logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
-            for img_index in range(self.search_range[2] - 1, self.search_range[3] - 1):
+            start_index = self.search_range[2] - 1
+            end_index = self.search_range[3] - 1
+            for img_index in range(start_index, end_index):
                 image_data = self.image_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct_list[2], comparing_dct):
                     logger.debug("Comparing end point file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
         end = time.time()
         elapsed = end - start
@@ -230,32 +246,50 @@ class ImageTool(object):
 
     def parallel_compare_image(self, img_list, event_point, sample_dct, result_list):
         if event_point == 0:
-            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+            start_index = self.search_range[1] - 1
+            end_index = self.search_range[0]
+            for img_index in range(start_index, end_index, -1):
                 image_data = self.image_list[img_index]
                 img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
                                       os.path.basename(image_data['image_fp']))
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
         elif event_point == 1:
-            for img_index in range(self.search_range[1] - 1, self.search_range[0], -1):
+            start_index = self.search_range[1] - 1
+            end_index = self.search_range[0]
+            for img_index in range(start_index, end_index, -1):
                 image_data = img_list[img_index]
                 img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
                                       os.path.basename(image_data['image_fp']))
                 comparing_dct = self.convert_to_dct(img_fp)
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
         elif event_point == 2:
-            for img_index in range(self.search_range[2] - 1, self.search_range[3] - 1):
+            start_index = self.search_range[2] - 1
+            end_index = self.search_range[3] - 1
+            for img_index in range(start_index, end_index):
                 image_data = img_list[img_index]
                 comparing_dct = self.convert_to_dct(image_data['image_fp'])
                 if self.compare_two_images(sample_dct, comparing_dct):
                     logger.debug("Comparing end point file end %s" % time.strftime("%c"))
-                    result_list.append(image_data)
+                    if img_index != start_index:
+                        result_list.append(image_data)
+                    else:
+                        logger.error(
+                            "Find matched file in boundary of search range, event point might out of search range.")
                     break
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
