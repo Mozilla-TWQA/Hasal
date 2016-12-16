@@ -13,22 +13,20 @@ from ..common.videoFluency import VideoFluency
 logger = get_logger(__name__)
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0, waveform=0):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0):
     return_result = {}
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
     img_tool_obj = ImageTool(fps=fps)
+    start_time = time.time()
+    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+    convert_video_to_images_end = time.time()
+    elapsed_time = convert_video_to_images_end - start_time
+    logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
     if crop_data:
-        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list, True)
         img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_object(input_sample_dp)
     else:
-        start_time = time.time()
-        img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
-        convert_video_to_images_end = time.time()
-        elapsed_time = convert_video_to_images_end - start_time
-        logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
-
         viewport = img_tool_obj.crop_viewport(input_sample_dp, output_img_dp)
         crop_viewport_end = time.time()
         elapsed_time = crop_viewport_end - convert_video_to_images_end
@@ -172,7 +170,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
-            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si, waveform)
+            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
     else:
         result_data = None
 
