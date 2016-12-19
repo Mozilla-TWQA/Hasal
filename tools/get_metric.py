@@ -13,38 +13,30 @@ class ResultMetricGenerator(object):
         with open(self.result_fp) as fh:
             obj_json = json.load(fh)
             print(
-                '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1="Case Name",
-                                                                               s2="Median time",
-                                                                               s3="Average Time",
-                                                                               s4="Standard deviation",
-                                                                               s5="Speed Index",
-                                                                               s6="Perceptual Speed Index"))
-            print('{s1:{c}^{n1}}'.format(s1="", c="=", n1=150))
+                '{s1:<50}\t{s2:<15}\t{s3:<15}\t{s4:<15}\t{s5:<15}\t{s6:<15}'.format(s1="CASE NAME",
+                                                                                    s2="MEDIAN",
+                                                                                    s3="AVG",
+                                                                                    s4="STD",
+                                                                                    s5="SI",
+                                                                                    s6="PSI"))
+            print(
+                '{s1:<50}\t{s2:<15}\t{s3:<15}\t{s4:<15}\t{s5:<15}\t{s6:<15}'.format(s1="##############################",
+                                                                                    s2="###############",
+                                                                                    s3="###############",
+                                                                                    s4="###############",
+                                                                                    s5="###############",
+                                                                                    s6="###############"))
             key_list = copy.deepcopy(obj_json.keys())
             key_list.sort()
 
             for case_name in key_list:
-                key_count = 0
-                for key_name in ['med_time', 'avg_time', 'std_dev', 'speed_index', 'perceptual_speed_index']:
-                    if key_name in obj_json[case_name]:
-                        key_count += 1
-
-                if key_count == len(['med_time', 'avg_time', 'std_dev', 'speed_index', 'perceptual_speed_index']):
-                    print(
-                        '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1=case_name,
-                                                                                       s2=obj_json[case_name]['med_time'],
-                                                                                       s3=obj_json[case_name]['avg_time'],
-                                                                                       s4=obj_json[case_name]['std_dev'],
-                                                                                       s5=obj_json[case_name]['speed_index'],
-                                                                                       s6=obj_json[case_name]['perceptual_speed_index']))
-                else:
-                    print(
-                        '{s1:<60} {s2:<18} {s3:<18} {s4:<18} {s5:<18} {s6:<18}'.format(s1=case_name,
-                                                                                       s2=obj_json[case_name].get('med_time', 0),
-                                                                                       s3=obj_json[case_name].get('avg_time', 0),
-                                                                                       s4=obj_json[case_name].get('std_dev', 0),
-                                                                                       s5=obj_json[case_name].get('speed_index', 0),
-                                                                                       s6=obj_json[case_name].get('perceptual_speed_index', 0)))
+                print(
+                    '{s1:<50}\t{s2:<15}\t{s3:<15}\t{s4:<15}\t{s5:<15}\t{s6:<15}'.format(s1=case_name,
+                                                                                        s2=str(obj_json[case_name].get('med_time', 'na')),
+                                                                                        s3=str(obj_json[case_name].get('avg_time', 'na')),
+                                                                                        s4=str(obj_json[case_name].get('std_dev', 'na')),
+                                                                                        s5=str(obj_json[case_name].get('speed_index', 'na')),
+                                                                                        s6=str(obj_json[case_name].get('perceptual_speed_index', 'na'))))
 
     def run(self):
         self.generate_metric()
