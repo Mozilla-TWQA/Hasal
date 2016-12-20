@@ -83,12 +83,13 @@ class Chrome(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = ['pics/chrome_urlbar_53.png', 'pics/chrome_urlbar.png']
+        urlbar_pics = [('pics/chrome_urlbar_53.png', -40, 0),
+                       ('pics/chrome_urlbar.png', -40, 0)]
         for counter in range(10):
-            for urlbar_pic in urlbar_pics:
+            for urlbar_pic, offset_x, offset_y in urlbar_pics:
                 if exists(Pattern(urlbar_pic).similar(0.70), 1):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0))
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
@@ -132,12 +133,13 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = ['pics/ff_urlbar_black.png', 'pics/ff_urlbar_gray.png']
+        urlbar_pics = [('pics/ff_urlbar_black.png', -80, 0),
+                       ('pics/ff_urlbar_gray.png', -80, 0)]
         for counter in range(10):
-            for urlbar_pic in urlbar_pics:
+            for urlbar_pic, offset_x, offset_y in urlbar_pics:
                 if exists(Pattern(urlbar_pic).similar(0.70), 1):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0))
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
