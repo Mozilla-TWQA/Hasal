@@ -84,11 +84,13 @@ class Chrome(GeneralBrowser):
     # Wait for URL bar to appear
     def clickBar(self):
         urlbar_pics = ['pics/chrome_urlbar_53.png', 'pics/chrome_urlbar.png']
-        for urlbar_pic in urlbar_pics:
-            if exists(Pattern(urlbar_pic).similar(0.70)):
-                self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0)).getTarget()
-                click(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0))
-                return self.urlbar_loc
+        for counter in range(10):
+            for urlbar_pic in urlbar_pics:
+                if exists(Pattern(urlbar_pic).similar(0.70), 1):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(-40, 0))
+                    return self.urlbar_loc
+        raise Exception('Cannot find URL bar.')
 
     # Launch or close web console for developer
     def triggerConsole(self):
@@ -131,11 +133,13 @@ class Firefox(GeneralBrowser):
     # Wait for URL bar to appear
     def clickBar(self):
         urlbar_pics = ['pics/ff_urlbar_black.png', 'pics/ff_urlbar_gray.png']
-        for urlbar_pic in urlbar_pics:
-            if exists(Pattern(urlbar_pic).similar(0.70)):
-                self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0)).getTarget()
-                click(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0))
-                return self.urlbar_loc
+        for counter in range(10):
+            for urlbar_pic in urlbar_pics:
+                if exists(Pattern(urlbar_pic).similar(0.70), 1):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(-80, 0))
+                    return self.urlbar_loc
+        raise Exception('Cannot find URL bar.')
 
     # Launch web console for developer
     def triggerConsole(self):
