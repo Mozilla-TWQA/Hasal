@@ -27,7 +27,10 @@ class ResultMetricGenerator(object):
                                                                                     s5="###############",
                                                                                     s6="###############"))
             key_list = copy.deepcopy(obj_json.keys())
+            # sort by browser "test_<BROWSER>"_<CASENAME>
             key_list.sort()
+            # then sort by case name test_<BROWSER>_"<CASENAME>"
+            key_list.sort(key=lambda x: x.split('_', 2)[2])
 
             for case_name in key_list:
                 print(
