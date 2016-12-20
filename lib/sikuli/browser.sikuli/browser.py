@@ -87,7 +87,7 @@ class Chrome(GeneralBrowser):
                        ('pics/chrome_urlbar.png', -40, 0)]
         for counter in range(10):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 1):
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.5):
                     self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
                     click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
@@ -137,7 +137,7 @@ class Firefox(GeneralBrowser):
                        ('pics/ff_urlbar_gray.png', -80, 0)]
         for counter in range(10):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 1):
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.5):
                     self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
                     click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
