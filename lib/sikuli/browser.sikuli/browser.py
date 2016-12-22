@@ -134,14 +134,15 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = [('pics/ff_urlbar_black.png', -80, 0),
-                       ('pics/ff_urlbar_gray.png', -80, 0),
+        urlbar_pics = [('pics/ff_urlbar_gray.png', -80, 0),
+                       ('pics/ff_urlbar_black.png', -80, 0),
+                       ('pics/ff_urlbar_gray_focus_win.png', -80, 0),
                        ('pics/ff_urlbar_black_focus_mac.png', -80, 0)]
         for counter in range(10):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 0.5):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
+                if exists(Pattern(urlbar_pic).similar(0.80), 0.5):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
