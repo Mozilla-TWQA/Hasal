@@ -15,18 +15,18 @@ elif sys.platform == "darwin":
 class WindowObject(object):
     DEFAULT_WMCTRL_CMD = "/usr/bin/wmctrl"
 
-    def __init__(self, input_window_name):
+    def __init__(self, input_window_name, pos_x=0, pos_y=0, window_width=800, window_height=600, window_gravity=0):
         self.window_type = sys.platform
         self.window_name = input_window_name
         self.window_identity = None
         self.callback_ret = None
 
         # default settings
-        self.pos_x = 0
-        self.pos_y = 0
-        self.window_height = 800
-        self.window_width = 600
-        self.window_gravity = 0
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.window_width = window_width
+        self.window_height = window_height
+        self.window_gravity = window_gravity
 
         # get window identity
         self.get_window_identity()
@@ -95,12 +95,19 @@ class WindowObject(object):
         logger.warning('Cannot found [{}] for moving position.'.format(self.window_name))
         return False
 
-    def move_window_pos(self, pos_x, pos_y, window_height, window_width, window_gravity=0):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.window_height = window_height
-        self.window_width = window_width
-        self.window_gravity = window_gravity
+    def move_window_pos(self, pos_x=None, pos_y=None, window_width=None, window_height=None, window_gravity=None):
+        if pos_x:
+            self.pos_x = pos_x
+        if pos_y:
+            self.pos_y = pos_y
+        if window_width:
+            self.window_width = window_width
+        if window_height:
+            self.window_height = window_height
+        if window_gravity:
+            self.window_gravity = window_gravity
+
+        # Try to move window
         if self.window_type == 'linux2':
             return self.wmctrl_move_window()
         elif self.window_type == 'win32':

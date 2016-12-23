@@ -89,7 +89,7 @@ def lock_window_pos(browser_type):
     # Moving window by strings from window_title
     for window_name in window_title:
         window_obj = WindowObject(window_name)
-        if window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH):
+        if window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT):
             break
 
 
