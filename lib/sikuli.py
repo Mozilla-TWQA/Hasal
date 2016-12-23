@@ -38,8 +38,19 @@ class Sikuli():
     def close_browser(self, browser):
         if sys.platform == 'darwin':
             print('Close {} by appscript tool...'.format(browser))
-            browser_obj = app(browser)
-            browser_obj.quit()
+            appname_list = [browser]
+            if browser.lower() == 'firefox':
+                appname_list = ['Firefox', 'FirefoxNightly']
+            elif browser.lower() == 'chrome':
+                appname_list = ['Google Chrome']
+            for appname in appname_list:
+                try:
+                    browser_obj = app(appname)
+                    break
+                except:
+                    pass
+            if browser_obj:
+                browser_obj.quit()
         else:
             script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
             script_dir_path = script_path + "/closeBrowser.sikuli"

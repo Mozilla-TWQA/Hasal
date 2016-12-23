@@ -3,16 +3,18 @@ browser_name = sys.argv[1]
 platform = sys.argv[2]
 sys.path.append(sys.argv[3])
 
-CMD_CLOSE = ('w', Key.CTRL)
+CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
 if platform == 'darwin':
     CMD_CLOSE = ('q', Key.CMD)
 elif platform == 'win32':
-    CMD_CLOSE = ('q', Key.SHIFT + Key.CTRL)
+    CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
 elif platform == 'linux2':
-    CMD_CLOSE = ('q', Key.SHIFT + Key.CTRL)
+    CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
 
 if browser_name == "chrome":
     browser = App("Google Chrome")
+elif browser_name == "firefox":
+    browser = App("Firefox")
 else:
     browser = App(browser_name)
 browser.focus()
@@ -25,6 +27,6 @@ for i in range(10):
         wait(0.5)
 
 # Try to close the app one last time
-if browser.window() or browser.running:
+if (browser.window() or browser.running) and platform != 'linux2':
     browser.focus()
     browser.close()
