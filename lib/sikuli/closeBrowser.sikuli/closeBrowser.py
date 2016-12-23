@@ -20,9 +20,11 @@ browser.focus()
 # Do 10 times before final forced shut down App
 for i in range(10):
     if browser.window() or browser.running:
-        wait(0.1)
+        browser.focus()
         type(*CMD_CLOSE)
+        wait(0.5)
 
 # Try to close the app one last time
 if browser.window() or browser.running:
+    browser.focus()
     browser.close()

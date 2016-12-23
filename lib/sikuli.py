@@ -1,5 +1,7 @@
 import os
 import sys
+if sys.platform == "darwin":
+    from appscript import *  # NOQA
 
 
 class Sikuli():
@@ -34,7 +36,12 @@ class Sikuli():
         return os.system(cmd)
 
     def close_browser(self, browser):
-        script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
-        script_dir_path = script_path + "/closeBrowser.sikuli"
-        args_list = [browser, sys.platform, self.set_syspath(self.hasal_dir)]
-        self.run_sikulix_cmd(script_dir_path, args_list)
+        if sys.platform == 'darwin':
+            print('Close {} by appscript tool...'.format(browser))
+            browser_obj = app(browser)
+            browser_obj.quit()
+        else:
+            script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
+            script_dir_path = script_path + "/closeBrowser.sikuli"
+            args_list = [browser, sys.platform, self.set_syspath(self.hasal_dir)]
+            self.run_sikulix_cmd(script_dir_path, args_list)
