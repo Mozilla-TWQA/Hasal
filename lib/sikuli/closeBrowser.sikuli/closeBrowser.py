@@ -1,7 +1,15 @@
 # We will take sys.argv[1] as browser name
 browser_name = sys.argv[1]
-sys.path.append(sys.argv[2])
+platform = sys.argv[2]
+sys.path.append(sys.argv[3])
 
+CMD_CLOSE = ('w', Key.CTRL)
+if platform == 'darwin':
+    CMD_CLOSE = ('q', Key.CMD)
+elif platform == 'win32':
+    CMD_CLOSE = ('q', Key.SHIFT + Key.CTRL)
+elif platform == 'linux2':
+    CMD_CLOSE = ('q', Key.SHIFT + Key.CTRL)
 
 if browser_name == "chrome":
     browser = App("Google Chrome")
@@ -11,14 +19,10 @@ browser.focus()
 
 # Do 10 times before final forced shut down App
 for i in range(10):
-    if browser.window():
-        wait(1)
-        if "firefox" in browser_name:
-            type("w", Key.CTRL)
-        elif "chrome" in browser_name:
-            type("w", Key.SHIFT + Key.CTRL)
+    if browser.window() or browser.running:
+        wait(0.1)
+        type(*CMD_CLOSE)
 
 # Try to close the app one last time
-if browser.window():
-    wait(1)
+if browser.window() or browser.running:
     browser.close()

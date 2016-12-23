@@ -75,7 +75,7 @@ def lock_window_pos(browser_type):
     window_title = None
     if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
-            window_title = ["Firefox.app"]
+            window_title = ["Firefox.app", "FirefoxNightly.app"]
         else:
             # This is to ensure all kinds of firefox we supported can be properly moved.
             window_title = ["Mozilla Firefox", "Nightly"]
