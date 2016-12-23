@@ -4,9 +4,7 @@ platform = sys.argv[2]
 sys.path.append(sys.argv[3])
 
 CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
-if platform == 'darwin':
-    CMD_CLOSE = ('q', Key.CMD)
-elif platform == 'win32':
+if platform == 'win32':
     CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
 elif platform == 'linux2':
     CMD_CLOSE = ('w', Key.SHIFT + Key.CTRL)
@@ -17,12 +15,11 @@ elif browser_name == "firefox":
     browser = App("Firefox")
 else:
     browser = App(browser_name)
-browser.focus()
 
+browser.focus()
 # Do 10 times before final forced shut down App
-for i in range(10):
+for i in range(5):
     if browser.window() or browser.running:
-        browser.focus()
         type(*CMD_CLOSE)
         wait(0.5)
 

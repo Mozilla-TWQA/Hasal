@@ -44,6 +44,7 @@ class WindowObject(object):
                 tmp_list = tmp_line.split(" ")
                 window_title = " ".join(tmp_list[4:])
                 if self.window_name in window_title:
+                    logger.info('Found [{}] in wmctrl list for moving position.'.format(self.window_name))
                     return tmp_list[0]
             time.sleep(1)
         logger.warning("Can't find window name [%s] in wmctrl list!!!" % self.window_name)
@@ -74,6 +75,7 @@ class WindowObject(object):
         for counter in range(10):
             win32gui.EnumWindows(self.pywin32_callback_func, None)
             if self.callback_ret:
+                logger.info('Found [{}] for moving position.'.format(self.window_name))
                 self.callback_ret = None
                 return True
             time.sleep(1)
@@ -86,6 +88,7 @@ class WindowObject(object):
             for app_ref in app('System Events').processes.file.get():
                 if self.window_name in app_ref.name.get():
                     application_obj = app(app_ref.name.get())
+                    logger.info('Found [{}] for moving position.'.format(self.window_name))
                     # move window position
                     application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
                     # move to foreground by activate it
