@@ -97,7 +97,7 @@ brew install wget
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
     func_log "[INFO] Installing opencv without ffmpeg (on Travis CI) ..."
-    brew install homebrew/science/opencv
+    brew install homebrew/science/opencv || brew link --overwrite homebrew/python/numpy
 else
     func_log "[INFO] Installing ffmpeg ..."
     brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
@@ -162,6 +162,11 @@ func_log "[INFO] Checking System Packages ..."
 func_log_exec ./scripts/sys_pkg_checker.py
 ./scripts/sys_pkg_checker.py
 CHECK_SYS_RET=$?
+
+func_log "[INFO] Checking mitmproxy ..."
+mitmdump -h
+CHECK_PROXY_RET=$?
+echo "Return code:" ${CHECK_PROXY_RET}
 
 ###########
 # Browser #
