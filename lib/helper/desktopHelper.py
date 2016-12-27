@@ -7,13 +7,8 @@ import os
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
 from ..common.windowController import WindowObject
-
-DEFAULT_BROWSER_POS_X = 0
-DEFAULT_BROWSER_POS_Y = 0
-DEFAULT_BROWSER_WIDTH = 1200
-DEFAULT_BROWSER_HEIGHT = 980
-DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
-DEFAULT_BROWSER_TYPE_CHROME = "chrome"
+from ..common.imageTool import ImageTool
+from ..common.environment import Environment
 
 
 def extract_profile_data(input_profile_path):
@@ -31,39 +26,39 @@ def launch_browser(browser_type, **kwargs):
     profile_path = None
 
     if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
-        if browser_type == DEFAULT_BROWSER_TYPE_CHROME:
-            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH,
+        if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
+            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                         tracing_path=env.chrome_tracing_file_fp)
         else:
-            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
-        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             if kwargs['profile_path'] is not None:
                 profile_path = extract_profile_data(kwargs['profile_path'])
-                browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, tracelogger=True,
+                browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
                                              profile_path=profile_path)
             else:
-                browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, tracelogger=True)
+                browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True)
         else:
-            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     elif kwargs['profile_path'] is not None:
-        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             profile_path = extract_profile_data(kwargs['profile_path'])
-            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
         else:
-            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:
-        if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
-            browser_obj = BrowserFirefox(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
         else:
-            browser_obj = BrowserChrome(DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
 
     browser_obj.launch()
     return profile_path
 
 
 def get_browser_version(browser_type):
-    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         browser_obj = BrowserFirefox(0, 0)
     else:
         browser_obj = BrowserChrome(0, 0)
@@ -71,9 +66,9 @@ def get_browser_version(browser_type):
     return return_version
 
 
-def lock_window_pos(browser_type):
+def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
     window_title = None
-    if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
             window_title = ["Firefox.app", "FirefoxNightly.app"]
         else:
@@ -87,9 +82,11 @@ def lock_window_pos(browser_type):
             window_title = ["Google Chrome"]
 
     # Moving window by strings from window_title
+    height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
+    width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
     for window_name in window_title:
         window_obj = WindowObject(window_name)
-        if window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT):
+        if window_obj.move_window_pos(0, 0, height, width)
             break
 
 
@@ -103,3 +100,12 @@ def minimize_window():
             new_window_id = subprocess.check_output(get_active_windows_cmd, shell=True)
             if new_window_id != org_window_id:
                 break
+
+
+def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
+    img_obj = ImageTool()
+    img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
+    viewport = img_obj.find_image_viewport(img_sample_fp)
+    height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
+    width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
+    lock_window_pos(browser_type, height_adjustment, width_adjustment)

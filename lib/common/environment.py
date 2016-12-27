@@ -22,14 +22,33 @@ class Environment(object):
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
 
+    DEFAULT_BROWSER_POS_X = 0
+    DEFAULT_BROWSER_POS_Y = 0
+    DEFAULT_BROWSER_WIDTH = 1200
+    DEFAULT_BROWSER_HEIGHT = 980
+    DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
+    DEFAULT_BROWSER_TYPE_CHROME = "chrome"
+    DEFAULT_VIEWPORT_WIDTH = 1024
+    DEFAULT_VIEWPORT_HEIGHT = 768
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_FPS = 40
     else:
         DEFAULT_VIDEO_RECORDING_FPS = 60
     DEFAULT_VIDEO_RECORDING_POS_X = 72
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
-    DEFAULT_VIDEO_RECORDING_WIDTH = 1024
-    DEFAULT_VIDEO_RECORDING_HEIGHT = 768
+    DEFAULT_VIDEO_RECORDING_WIDTH = DEFAULT_BROWSER_WIDTH + 100
+    DEFAULT_VIDEO_RECORDING_HEIGHT = DEFAULT_BROWSER_HEIGHT + 100
+    IMG_FILE_EXTENSION = ['.jpg', '.png', '.jpeg']
+
+    SEARCH_TARGET_VIEWPORT = 'viewport'
+    SEARCH_TARGET_TAB_VIEW = 'tab_view'
+    SEARCH_TARGET_BROWSER = 'browser'
+    # event points need to follow the order of appearing time from searching
+    BROWSER_VISUAL_EVENT_POINTS = {'backward_search': [{'event': 'first_paint', 'search_target': SEARCH_TARGET_VIEWPORT},
+                                                       {'event': 'start', 'search_target': SEARCH_TARGET_TAB_VIEW}],
+                                   'forward_search': [
+                                       {'event': 'viewport_visual_complete', 'search_target': SEARCH_TARGET_VIEWPORT},
+                                       {'event': 'end', 'search_target': SEARCH_TARGET_BROWSER}]}
 
     DEFAULT_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOTHhJNEhTN1pqYm8"
     GSHEET_TEST_TARGET_FOLDER_URI = "0B6LePZQnd-uOdkNVTkItaG96WkU"

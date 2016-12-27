@@ -40,6 +40,7 @@ from PIL import Image
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
 from ..common.logConfig import get_logger
+from ..common.environment import Environment
 from multiprocessing import Process, Manager
 logger = get_logger(__name__)
 
@@ -54,6 +55,8 @@ class ImageTool(object):
         self.image_list = []
         self.current_fps = fps
         self.search_range = [0, 0, 0, 0]
+        self.img_file_extension_list = Environment.IMG_FILE_EXTENSION
+        self.skip_status_bar_fraction = 0.95
 
     def dump_result_to_json(self, data, output_fp):
         with open(output_fp, "wb") as fh:
@@ -109,134 +112,93 @@ class ImageTool(object):
             logger.debug("Actual %s Images IO Time Elapsed: [%s]" % (str(io_times), elapsed_time))
         if self.search_range[0] < 0:
             self.search_range[0] = 0
-        if self.search_range[1] > len(self.image_list):
-            self.search_range[1] = len(self.image_list)
+        if self.search_range[1] >= len(self.image_list):
+            self.search_range[1] = len(self.image_list) - 1
         if self.search_range[2] < 0:
             self.search_range[2] = 0
-        if self.search_range[3] > len(self.image_list):
-            self.search_range[3] = len(self.image_list)
+        if self.search_range[3] >= len(self.image_list):
+            self.search_range[3] = len(self.image_list) - 1
         logger.info("Image Comparison search range: " + str(self.search_range))
         return self.image_list
 
-    def crop_viewport(self, sample_dp, output_image_dp):
+    def crop_target_region(self, sample_dp, output_image_dp, search_target, region):
+        sample_fp_list = self.get_sample_img_list(sample_dp)
+        img_fp_list = self.get_output_img_list(output_image_dp)
+        sample_dp = os.path.join(sample_dp, search_target)
+        img_dp = os.path.join(output_image_dp, search_target)
+        if not os.path.exists(sample_dp):
+            os.mkdir(sample_dp)
+        if not os.path.exists(img_dp):
+            os.mkdir(img_dp)
+        self.crop_all_images(region, sample_fp_list, sample_dp)
+        self.crop_all_images(region, img_fp_list, img_dp)
+
+    def get_sample_img_list(self, sample_dp):
         sample_fn_list = os.listdir(sample_dp)
         sample_fn_list.sort()
-        sample_fp_list = [os.path.join(sample_dp, item) for item in sample_fn_list]
-        sample_fp_list = [item for item in sample_fp_list if os.path.isfile(item)]
-        viewport = self.find_image_viewport(sample_fp_list[0])
+        sample_fp_list = self.filter_file_extension(sample_dp, sample_fn_list)
+        return sample_fp_list
 
+    def get_output_img_list(self, output_image_dp):
         img_fn_list = os.listdir(output_image_dp)
-        img_fp_list = [os.path.join(output_image_dp, item) for item in img_fn_list]
+        img_fn_list.sort()
+        img_fp_list = self.filter_file_extension(output_image_dp, img_fn_list)
+        return img_fp_list
 
-        sample_viewport_dp = os.path.join(sample_dp, "viewport")
-        img_viewport_dp = os.path.join(output_image_dp, "viewport")
-        os.mkdir(sample_viewport_dp)
-        os.mkdir(img_viewport_dp)
+    def filter_file_extension(self, dir_path, file_name_list):
+        file_path_list = list()
+        for item in file_name_list:
+            item_fp = os.path.join(dir_path, item)
+            if os.path.isfile(item_fp) and os.path.splitext(item_fp)[1] in self.img_file_extension_list:
+                file_path_list.append(item_fp)
+        return file_path_list
 
-        self.crop_all_images(viewport, sample_fp_list, sample_viewport_dp)
-        self.crop_all_images(viewport, img_fp_list, img_viewport_dp)
-
-        return viewport
-
-    def crop_tab_view(self, sample_dp, output_image_dp, viewport):
-        sample_fn_list = os.listdir(sample_dp)
-        sample_fn_list.sort()
-        sample_fp_list = [os.path.join(sample_dp, item) for item in sample_fn_list]
-        sample_fp_list = [item for item in sample_fp_list if os.path.isfile(item)]
-        tab_view = self.find_tab_view(sample_fp_list[0], viewport)
-
-        img_fn_list = os.listdir(output_image_dp)
-        img_fp_list = [os.path.join(output_image_dp, item) for item in img_fn_list]
-
-        sample_tab_view_dp = os.path.join(sample_dp, "tab_view")
-        img_tab_view_dp = os.path.join(output_image_dp, "tab_view")
-        os.mkdir(sample_tab_view_dp)
-        os.mkdir(img_tab_view_dp)
-
-        self.crop_all_images(tab_view, sample_fp_list, sample_tab_view_dp)
-        self.crop_all_images(tab_view, img_fp_list, img_tab_view_dp)
-
-        return tab_view
+    def get_sample_dct_list(self, input_sample_dp):
+        sample_fp_list = self.get_sample_img_list(input_sample_dp)
+        sample_dct_list = dict()
+        # To generate dct list when number of sample files is 2, otherwise return empty list
+        if len(sample_fp_list) == 2:
+            event_points = Environment.BROWSER_VISUAL_EVENT_POINTS
+            for search_direction in event_points:
+                for event_point in event_points[search_direction]:
+                    event_name = event_point['event']
+                    search_target = event_point['search_target']
+                    dir_path = os.path.join(input_sample_dp, search_target)
+                    if os.path.exists(dir_path):
+                        sample_fp_list = self.get_sample_img_list(dir_path)
+                        if event_name == 'first_paint':
+                            sample_dct_list.update({event_name: self.convert_to_dct(sample_fp_list[0], self.skip_status_bar_fraction)})
+                        elif event_name == 'start':
+                            sample_dct_list.update({event_name: self.convert_to_dct(sample_fp_list[0])})
+                        elif event_name == 'viewport_visual_complete' or event_name == 'end':
+                            sample_dct_list.update({event_name: self.convert_to_dct(sample_fp_list[1])})
+        return sample_dct_list
 
     def compare_with_sample_image_multi_process(self, input_sample_dp):
         manager = Manager()
         result_list = manager.list()
-        sample_fn_list = os.listdir(input_sample_dp)
-        sample_fn_list.sort()
-        sample_fp_list = list()
-        for item in sample_fn_list:
-            item_fp = os.path.join(input_sample_dp, item)
-            if os.path.isfile(item_fp):
-                sample_fp_list.append(item_fp)
-        if len(sample_fp_list) != 2:
+        sample_dct_list = self.get_sample_dct_list(input_sample_dp)
+        if not sample_dct_list:
             return map(dict, result_list)
-        sample_viewport_dp = os.path.join(input_sample_dp, "viewport")
-        sample_tab_view_dp = os.path.join(input_sample_dp, "tab_view")
-        sample_viewport_fn_list = os.listdir(sample_viewport_dp)
-        sample_tab_view_fn_list = os.listdir(sample_tab_view_dp)
-        sample_viewport_fn_list.sort()
-        sample_tab_view_fn_list.sort()
-        sample_viewport_fp_list = [os.path.join(sample_viewport_dp, item) for item in sample_viewport_fn_list]
-        sample_tab_view_fp_list = [os.path.join(sample_tab_view_dp, item) for item in sample_tab_view_fn_list]
-        sample_dct_list = [self.convert_to_dct(sample_tab_view_fp_list[0]),
-                           self.convert_to_dct(sample_viewport_fp_list[0]), self.convert_to_dct(sample_fp_list[1])]
         logger.info("Comparing sample file start %s" % time.strftime("%c"))
         start = time.time()
+        event_points = Environment.BROWSER_VISUAL_EVENT_POINTS
 
         # Execution will be blocked while converting color base if without cv2's setNumThreads attribute
         if hasattr(cv2, 'setNumThreads'):
             logger.debug("Image comparison from multiprocessing")
             cv2.setNumThreads(0)
             p_list = []
-            for index in range(len(sample_dct_list)):
-                args = [self.image_list, index, sample_dct_list[index], result_list]
+            for search_direction in event_points.keys():
+                args = [search_direction, sample_dct_list, result_list]
                 p_list.append(Process(target=self.parallel_compare_image, args=args))
-                p_list[index].start()
-            for index in range(len(p_list)):
-                p_list[index].join()
+                p_list[-1].start()
+            for p in p_list:
+                p.join()
         else:
             logger.debug("Image comparison from single process")
-            start_index = self.search_range[1] - 1
-            end_index = self.search_range[0]
-            for img_index in range(start_index, end_index, -1):
-                image_data = self.image_list[img_index]
-                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
-                                      os.path.basename(image_data['image_fp']))
-                comparing_dct = self.convert_to_dct(img_fp)
-                if self.compare_two_images(sample_dct_list[0], comparing_dct):
-                    logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
-                    else:
-                        logger.error(
-                            "Find matched file in boundary of search range, event point might out of search range.")
-                    break
-            for img_index in range(start_index, end_index, -1):
-                image_data = self.image_list[img_index]
-                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
-                                      os.path.basename(image_data['image_fp']))
-                comparing_dct = self.convert_to_dct(img_fp)
-                if self.compare_two_images(sample_dct_list[1], comparing_dct):
-                    logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
-                    else:
-                        logger.error(
-                            "Find matched file in boundary of search range, event point might out of search range.")
-                    break
-            start_index = self.search_range[2] - 1
-            end_index = self.search_range[3] - 1
-            for img_index in range(start_index, end_index):
-                image_data = self.image_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct_list[2], comparing_dct):
-                    logger.debug("Comparing end point file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
-                    else:
-                        logger.error(
-                            "Find matched file in boundary of search range, event point might out of search range.")
-                    break
+            for search_direction in event_points.keys():
+                self.parallel_compare_image(search_direction, sample_dct_list, result_list)
         end = time.time()
         elapsed = end - start
         logger.debug("Elapsed Time: %s" % str(elapsed))
@@ -244,53 +206,83 @@ class ImageTool(object):
         logger.info(map_result_list)
         return map_result_list
 
-    def parallel_compare_image(self, img_list, event_point, sample_dct, result_list):
-        if event_point == 0:
-            start_index = self.search_range[1] - 1
-            end_index = self.search_range[0]
-            for img_index in range(start_index, end_index, -1):
-                image_data = self.image_list[img_index]
-                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "tab_view",
-                                      os.path.basename(image_data['image_fp']))
-                comparing_dct = self.convert_to_dct(img_fp)
-                if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.debug("Comparing tab view file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
-                    else:
+    def search_and_compare_image(self, sample_dct, img_index, search_target, skip_status_bar_fraction):
+        image_data = self.image_list[img_index]
+        img_fp = os.path.join(os.path.dirname(image_data['image_fp']), search_target,
+                              os.path.basename(image_data['image_fp']))
+        comparing_dct = self.convert_to_dct(img_fp, skip_status_bar_fraction)
+        return self.compare_two_images(sample_dct, comparing_dct)
+
+    def get_event_data(self, img_index, event_point):
+        image_data = self.image_list[img_index]
+
+        event_data = copy.deepcopy(image_data)
+        event_data[event_point] = image_data['image_fp']
+        del event_data['image_fp']
+        return event_data
+
+    def sequential_compare_image(self, start_index, end_index, total_search_range, event_points, sample_dct_list, result_list):
+        search_count = 0
+        img_index = start_index
+        if end_index > start_index:
+            forward_search = True
+        else:
+            forward_search = False
+        for event_point in event_points:
+            event_name = event_point['event']
+            search_target = event_point['search_target']
+            sample_dct = sample_dct_list[event_name]
+            if event_name == 'first_paint':
+                skip_status_bar_fraction = self.skip_status_bar_fraction
+            else:
+                skip_status_bar_fraction = 1.0
+            while search_count < total_search_range:
+                if forward_search and img_index > end_index:
+                    break
+                elif not forward_search and img_index < end_index:
+                    break
+                if self.search_and_compare_image(sample_dct, img_index, search_target, skip_status_bar_fraction):
+                    if img_index == start_index:
                         logger.error(
                             "Find matched file in boundary of search range, event point might out of search range.")
-                    break
-        elif event_point == 1:
-            start_index = self.search_range[1] - 1
-            end_index = self.search_range[0]
-            for img_index in range(start_index, end_index, -1):
-                image_data = img_list[img_index]
-                img_fp = os.path.join(os.path.dirname(image_data['image_fp']), "viewport",
-                                      os.path.basename(image_data['image_fp']))
-                comparing_dct = self.convert_to_dct(img_fp)
-                if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.debug("Comparing viewport file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
+                        if forward_search:
+                            start_index = max(img_index - total_search_range / 2, self.search_range[0])
+                        else:
+                            start_index = min(img_index + total_search_range / 2, self.search_range[3] - 1)
+                        img_index = start_index
                     else:
-                        logger.error(
-                            "Find matched file in boundary of search range, event point might out of search range.")
-                    break
-        elif event_point == 2:
+                        event_data = self.get_event_data(img_index, event_name)
+                        result_list.append(event_data)
+                        logger.debug("Comparing %s point end %s" % (event_name, time.strftime("%c")))
+                        # shift one index to avoid boundary matching two events at the same time
+                        if forward_search:
+                            start_index = img_index - 1
+                            end_index = min(self.search_range[3] - 1, start_index + total_search_range)
+                        else:
+                            start_index = img_index + 1
+                            end_index = max(self.search_range[0], start_index - total_search_range)
+                        search_count = 0
+                        break
+                else:
+                    if forward_search:
+                        img_index += 1
+                    else:
+                        img_index -= 1
+                    search_count += 1
+
+    def parallel_compare_image(self, search_direction, sample_dct_list, result_list):
+        total_search_range = Environment.DEFAULT_VIDEO_RECORDING_FPS * 20
+        event_points = Environment.BROWSER_VISUAL_EVENT_POINTS[search_direction]
+        if search_direction == 'backward_search':
+            start_index = self.search_range[1] - 1
+            end_index = max(self.search_range[0], start_index - total_search_range)
+        elif search_direction == 'forward_search':
             start_index = self.search_range[2] - 1
-            end_index = self.search_range[3] - 1
-            for img_index in range(start_index, end_index):
-                image_data = img_list[img_index]
-                comparing_dct = self.convert_to_dct(image_data['image_fp'])
-                if self.compare_two_images(sample_dct, comparing_dct):
-                    logger.debug("Comparing end point file end %s" % time.strftime("%c"))
-                    if img_index != start_index:
-                        result_list.append(image_data)
-                    else:
-                        logger.error(
-                            "Find matched file in boundary of search range, event point might out of search range.")
-                    break
+            end_index = min(self.search_range[3] - 1, start_index + total_search_range)
+        else:
+            start_index = 0
+            end_index = 0
+        self.sequential_compare_image(start_index, end_index, total_search_range, event_points, sample_dct_list, result_list)
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
@@ -306,8 +298,11 @@ class ImageTool(object):
             else:
                 return True
 
-    def convert_to_dct(self, image_fp):
+    def convert_to_dct(self, image_fp, skip_status_bar_fraction=1.0):
         img_obj = cv2.imread(image_fp)
+        if skip_status_bar_fraction != 1.0:
+            height, width, channel = img_obj.shape
+            img_obj = img_obj[:int(height * skip_status_bar_fraction)][:][:]
         img_gray = cv2.cvtColor(img_obj, cv2.COLOR_BGR2GRAY)
         img_dct = np.float32(img_gray) / 255.0
         dct_obj = cv2.dct(img_dct)
@@ -636,6 +631,11 @@ class ImageTool(object):
 
         return tab_view
 
+    def find_browser_view(self, viewport, tab_view):
+        browser_view = {'x': viewport['x'], 'y': tab_view['y'], 'width': viewport['width'],
+                        'height': viewport['y'] + viewport['height'] - tab_view['y']}
+        return browser_view
+
     def colors_are_similar(self, a, b, threshold=15):
         similar = True
         sum = 0
@@ -657,30 +657,17 @@ class ImageTool(object):
         crop_region = [region['x'], region['y'], region['x'] + region['width'], region['y'] + region['height']]
 
         for img in img_fp_list:
-            if type(img) == str:
-                try:
-                    if os.path.isfile(img):
-                        img_fn = os.path.basename(img)
-                        img_fp = os.path.join(output_dp, img_fn)
-                        im = Image.open(img)
-                        new_im = im.crop(crop_region)
-                        new_im.save(img_fp)
-                    else:
-                        continue
-                except Exception as e:
-                    logger.error(e)
-            else:
-                if os.path.exists(img['image_fp']):
-                    try:
-                        img_fn = os.path.basename(img['image_fp'])
-                        if additional_fn:
-                            img_fn = img_fn[:-4] + additional_fn + img_fn[-4:]
-                        img_fp = os.path.join(output_dp, img_fn)
-                        im = Image.open(img['image_fp'])
-                        new_im = im.crop(crop_region)
-                        new_im.save(img_fp)
-                    except Exception as e:
-                        logger.error(e)
+            try:
+                if os.path.isfile(img):
+                    img_fn = os.path.basename(img)
+                    img_fp = os.path.join(output_dp, img_fn)
+                    im = Image.open(img)
+                    new_im = im.crop(crop_region)
+                    new_im.save(img_fp)
+                else:
+                    continue
+            except Exception as e:
+                logger.error(e)
 
 
 def main():

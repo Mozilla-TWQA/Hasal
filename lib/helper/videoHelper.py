@@ -8,13 +8,13 @@ def capture_screen(env, output_video_fp, output_img_dp, output_img_name):
     if os.path.exists(output_video_fp):
         os.remove(output_video_fp)
     if sys.platform == "win32":
-        os.system("ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size 1024*768 -i desktop -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
+        os.system("ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i desktop -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
     elif sys.platform == "darwin":
         os.system(
-            "ffmpeg -f avfoundation -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size 1024*768 -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
+            "ffmpeg -f avfoundation -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
     else:
         os.system(
-            "ffmpeg -f x11grab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size 1024*768 -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
+            "ffmpeg -f x11grab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
 
     img_tool_obj = ImageTool()
     img_tool_obj.convert_video_to_images(output_video_fp, output_img_dp, output_img_name)

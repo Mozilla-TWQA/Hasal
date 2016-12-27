@@ -8,10 +8,11 @@ import desktopHelper
 import videoHelper
 from datetime import date
 from ..common.pyDriveUtil import PyDriveUtil
-from desktopHelper import DEFAULT_BROWSER_TYPE_FIREFOX
-from desktopHelper import DEFAULT_BROWSER_TYPE_CHROME
+from ..common.environment import Environment
 from ..common.logConfig import get_logger
 
+DEFAULT_BROWSER_TYPE_FIREFOX = Environment.DEFAULT_BROWSER_TYPE_FIREFOX
+DEFAULT_BROWSER_TYPE_CHROME = Environment.DEFAULT_BROWSER_TYPE_CHROME
 DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
 DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
 DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"

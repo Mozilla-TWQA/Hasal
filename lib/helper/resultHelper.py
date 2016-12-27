@@ -9,6 +9,8 @@ from ..common.logConfig import get_logger
 from ..common.imageTool import ImageTool
 from ..common.commonUtil import CommonUtil
 from ..common.videoFluency import VideoFluency
+from ..common.environment import Environment
+from multiprocessing import Process
 
 logger = get_logger(__name__)
 
@@ -20,26 +22,39 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
     img_tool_obj = ImageTool(fps=fps)
     start_time = time.time()
     img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
-    convert_video_to_images_end = time.time()
-    elapsed_time = convert_video_to_images_end - start_time
+    last_end = time.time()
+    elapsed_time = last_end - start_time
     logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
     if crop_data:
         img_tool_obj.crop_image(crop_data['target'], crop_data['output'], crop_data['range'])
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_object(input_sample_dp)
     else:
-        viewport = img_tool_obj.crop_viewport(input_sample_dp, output_img_dp)
-        crop_viewport_end = time.time()
-        elapsed_time = crop_viewport_end - convert_video_to_images_end
-        logger.debug("Crop Viewport from All Images Elapsed: [%s]" % elapsed_time)
+        sample_fp_list = img_tool_obj.get_sample_img_list(input_sample_dp)
+        viewport = img_tool_obj.find_image_viewport(sample_fp_list[0])
+        tab_view = img_tool_obj.find_tab_view(sample_fp_list[0], viewport)
+        browser_view = img_tool_obj.find_browser_view(viewport, tab_view)
+        target_region = {
+            Environment.SEARCH_TARGET_VIEWPORT: viewport,
+            Environment.SEARCH_TARGET_TAB_VIEW: tab_view,
+            Environment.SEARCH_TARGET_BROWSER: browser_view
+        }
 
-        img_tool_obj.crop_tab_view(input_sample_dp, output_img_dp, viewport)
-        crop_tab_view_end = time.time()
-        elapsed_time = crop_tab_view_end - crop_viewport_end
-        logger.debug("Crop Tab_View from All Images Elapsed: [%s]" % elapsed_time)
+        # multi-processing to crop different regions from original images
+        p_list = []
+        for region in target_region.keys():
+            args = [input_sample_dp, output_img_dp, region, target_region[region]]
+            p_list.append(Process(target=img_tool_obj.crop_target_region, args=args))
+            p_list[-1].start()
+        for p in p_list:
+            p.join()
+        current_time = time.time()
+        elapsed_time = current_time - last_end
+        logger.debug("Crop All Regions Elapsed: [%s]" % elapsed_time)
+        last_end = current_time
 
         return_result['running_time_result'] = img_tool_obj.compare_with_sample_image_multi_process(input_sample_dp)
         end_time = time.time()
-        elapsed_time = end_time - crop_viewport_end
+        elapsed_time = end_time - last_end
         logger.debug("Compare Image Time Elapsed: [%s]" % elapsed_time)
     if calc_si == 1:
         start_time = time.time()
@@ -62,8 +77,6 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
 
 def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
-    run_time = 0
-    first_paint_time = 0
     if os.path.exists(output_fp):
         with open(output_fp) as fh:
             result = json.load(fh)
@@ -72,19 +85,30 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 
     current_run_result = result_data['running_time_result']
 
-    if len(current_run_result) == 3:
-        run_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[2]['time_seq'])
-        first_paint_time = np.absolute(current_run_result[0]['time_seq'] - current_run_result[1]['time_seq'])
+    start_time = 0
+    end_time = 0
+    for event_data in current_run_result:
+        if 'start' in event_data:
+            start_time = event_data['time_seq']
+        if 'end' in event_data:
+            end_time = event_data['time_seq']
+    run_time = end_time - start_time
+
+    event_time_dict = dict()
+    for event_data in current_run_result:
+        for event_name in event_data:
+            if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                event_time_dict[event_name] = np.absolute(event_data['time_seq'] - start_time)
 
     calc_obj = outlier()
-
     if "speed_index" in result_data:
         si_value = result_data['speed_index']
         psi_value = result_data['perceptual_speed_index']
     else:
         si_value = 0
         psi_value = 0
-    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'first_paint_time': first_paint_time}
+    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value}
+    run_time_dict.update(event_time_dict)
 
     if test_method_name in result:
         result[test_method_name]['total_run_no'] += 1
