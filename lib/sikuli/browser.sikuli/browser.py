@@ -86,11 +86,11 @@ class Chrome(GeneralBrowser):
         urlbar_pics = [('pics/chrome_urlbar_53.png', -40, 0),
                        ('pics/chrome_urlbar_53_focus_mac.png', -40, 0),
                        ('pics/chrome_urlbar.png', -40, 0)]
-        for counter in range(50):
+        for counter in range(30):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.80), 0.1):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y))
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.1):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
@@ -140,11 +140,11 @@ class Firefox(GeneralBrowser):
                        ('pics/ff_urlbar_gray_focus_win.png', -80, 0),
                        ('pics/ff_urlbar_gray_focus_ubuntu.png', -80, 0),
                        ('pics/ff_urlbar_black_focus_mac.png', -80, 0)]
-        for counter in range(50):
+        for counter in range(30):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.80), 0.1):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.80).targetOffset(offset_x, offset_y))
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.1):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
