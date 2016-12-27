@@ -75,10 +75,9 @@ class SysPkgChecker(object):
                 print('Skip, current platform is {}, not {}'.format(self.current_platform, platform), end='\n')
                 continue
             else:
-                with open(os.devnull) as fp:
+                with open(os.devnull, 'w') as fp:
                     try:
-                        #ret_code = subprocess.call(cmd, stdout=fp, stderr=fp)
-                        ret_code = subprocess.call(cmd)
+                        ret_code = subprocess.call(cmd, stdout=fp, stderr=fp)
                         if ret_code == SysPkgChecker._CMD_SUCCESS:
                             print('OK', end='\n')
                         else:

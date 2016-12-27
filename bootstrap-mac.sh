@@ -163,11 +163,6 @@ func_log_exec ./scripts/sys_pkg_checker.py
 ./scripts/sys_pkg_checker.py
 CHECK_SYS_RET=$?
 
-func_log "[INFO] Checking mitmproxy ..."
-mitmdump -h
-CHECK_PROXY_RET=$?
-echo "Return code:" ${CHECK_PROXY_RET}
-
 ###########
 # Browser #
 ###########
