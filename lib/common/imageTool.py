@@ -183,22 +183,14 @@ class ImageTool(object):
         logger.info("Comparing sample file start %s" % time.strftime("%c"))
         start = time.time()
         event_points = Environment.BROWSER_VISUAL_EVENT_POINTS
-
-        # Execution will be blocked while converting color base if without cv2's setNumThreads attribute
-        if hasattr(cv2, 'setNumThreads'):
-            logger.debug("Image comparison from multiprocessing")
-            cv2.setNumThreads(0)
-            p_list = []
-            for search_direction in event_points.keys():
-                args = [search_direction, sample_dct_list, result_list]
-                p_list.append(Process(target=self.parallel_compare_image, args=args))
-                p_list[-1].start()
-            for p in p_list:
-                p.join()
-        else:
-            logger.debug("Image comparison from single process")
-            for search_direction in event_points.keys():
-                self.parallel_compare_image(search_direction, sample_dct_list, result_list)
+        logger.debug("Image comparison from multiprocessing")
+        p_list = []
+        for search_direction in event_points.keys():
+            args = [search_direction, sample_dct_list, result_list]
+            p_list.append(Process(target=self.parallel_compare_image, args=args))
+            p_list[-1].start()
+        for p in p_list:
+            p.join()
         end = time.time()
         elapsed = end - start
         logger.debug("Elapsed Time: %s" % str(elapsed))
@@ -300,11 +292,14 @@ class ImageTool(object):
 
     def convert_to_dct(self, image_fp, skip_status_bar_fraction=1.0):
         img_obj = cv2.imread(image_fp)
-        if skip_status_bar_fraction != 1.0:
-            height, width, channel = img_obj.shape
-            img_obj = img_obj[:int(height * skip_status_bar_fraction)][:][:]
-        img_gray = cv2.cvtColor(img_obj, cv2.COLOR_BGR2GRAY)
-        img_dct = np.float32(img_gray) / 255.0
+        height, width, channel = img_obj.shape
+        height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
+        img_obj = img_obj[:height][:][:]
+        img_gray = np.zeros((height, width))
+        for channel in range(channel):
+            img_gray += img_obj[:, :, channel]
+        img_gray /= channel
+        img_dct = img_gray / 255.0
         dct_obj = cv2.dct(img_dct)
         return dct_obj
 
