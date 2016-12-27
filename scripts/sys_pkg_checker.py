@@ -77,13 +77,15 @@ class SysPkgChecker(object):
             else:
                 with open(os.devnull) as fp:
                     try:
-                        ret_code = subprocess.call(cmd, stdout=fp, stderr=fp)
+                        #ret_code = subprocess.call(cmd, stdout=fp, stderr=fp)
+                        ret_code = subprocess.call(cmd)
                         if ret_code == SysPkgChecker._CMD_SUCCESS:
                             print('OK', end='\n')
                         else:
-                            print('Fail', end='\n')
+                            print('Fail, return code {}'.format(ret_code), end='\n')
                             error_pkg_list.append(pkg_name)
-                    except Exception:
+                    except Exception as e:
+                        print(e)
                         print('Fail', end='\n')
                         error_pkg_list.append(pkg_name)
         return error_pkg_list
