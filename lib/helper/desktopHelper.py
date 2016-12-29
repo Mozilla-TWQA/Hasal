@@ -86,7 +86,7 @@ def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
     for window_name in window_title:
         window_obj = WindowObject(window_name)
-        if window_obj.move_window_pos(0, 0, height, width):
+        if window_obj.move_window_pos(0, 0, window_height=height, window_width=width):
             break
 
 
