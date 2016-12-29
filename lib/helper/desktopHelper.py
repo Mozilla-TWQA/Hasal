@@ -75,7 +75,7 @@ def lock_window_pos(browser_type):
     window_title = None
     if browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
-            window_title = ["Firefox.app"]
+            window_title = ["Firefox.app", "FirefoxNightly.app"]
         else:
             # This is to ensure all kinds of firefox we supported can be properly moved.
             window_title = ["Mozilla Firefox", "Nightly"]
@@ -86,11 +86,11 @@ def lock_window_pos(browser_type):
         else:
             window_title = ["Google Chrome"]
 
-    # Currently, there is no call returned or exception raised if none windows was found.
-    # We can just do windows title
-    for i in window_title:
-        window_obj = WindowObject(i)
-        window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_HEIGHT, DEFAULT_BROWSER_WIDTH)
+    # Moving window by strings from window_title
+    for window_name in window_title:
+        window_obj = WindowObject(window_name)
+        if window_obj.move_window_pos(0, 0, DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT):
+            break
 
 
 def minimize_window():

@@ -84,10 +84,11 @@ class Chrome(GeneralBrowser):
     # Wait for URL bar to appear
     def clickBar(self):
         urlbar_pics = [('pics/chrome_urlbar_53.png', -40, 0),
+                       ('pics/chrome_urlbar_53_focus_mac.png', -40, 0),
                        ('pics/chrome_urlbar.png', -40, 0)]
-        for counter in range(10):
+        for counter in range(30):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 0.5):
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.1):
                     self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
                     click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
@@ -133,11 +134,15 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = [('pics/ff_urlbar_black.png', -80, 0),
-                       ('pics/ff_urlbar_gray.png', -80, 0)]
-        for counter in range(10):
+        urlbar_pics = [('pics/ff_urlbar_gray_win.png', -80, 0),
+                       ('pics/ff_urlbar_gray_ubuntu.png', -80, 0),
+                       ('pics/ff_urlbar_black.png', -80, 0),
+                       ('pics/ff_urlbar_gray_focus_win.png', -80, 0),
+                       ('pics/ff_urlbar_gray_focus_ubuntu.png', -80, 0),
+                       ('pics/ff_urlbar_black_focus_mac.png', -80, 0)]
+        for counter in range(30):
             for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 0.5):
+                if exists(Pattern(urlbar_pic).similar(0.70), 0.1):
                     self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
                     click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
