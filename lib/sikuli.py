@@ -48,10 +48,11 @@ class Sikuli():
                 try:
                     browser_obj = app(appname)
                     browser_obj.quit()
+                    print('Close {} successful.'.format(appname))
                     break
                 except:
                     print('Cannot close {} by appscript library.')
-                    pass
+
         elif sys.platform == 'linux2':
             print('Closing {} by wmctrl ...'.format(browser))
             window_title = [browser]
@@ -65,6 +66,7 @@ class Sikuli():
                 if window_obj.wmctrl_close_window():
                     print('Close {} successful.'.format(window_name))
                     break
+
         else:
             # it only works on Windows now
             script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
