@@ -299,7 +299,7 @@ class ImageTool(object):
             row1, cols1 = dct_obj_1.shape
             row2, cols2 = dct_obj_2.shape
             if (row1 == row2) and (cols1 == cols2):
-                threshold = 0.0001
+                threshold = 0.0003
                 mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
                 if mismatch_rate <= threshold:
                     match = True
@@ -639,7 +639,7 @@ class ImageTool(object):
                 bottom = height
             logger.debug('Browser tab view bottom edge is {0:d}'.format(bottom))
 
-            tab_view = {'x': 0, 'y': top, 'width': right, 'height': (bottom - top)}
+            tab_view = {'x': viewport['x'], 'y': top, 'width': viewport['width'], 'height': (bottom - top)}
 
         except Exception as e:
             tab_view = None
