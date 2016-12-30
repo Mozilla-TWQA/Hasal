@@ -66,8 +66,6 @@ class WindowObject(object):
             # move position
             win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, self.pos_x, self.pos_y, self.window_width,
                                   self.window_height, 0)
-            # move to foreground
-            win32gui.SetForegroundWindow(hwnd)
             self.callback_ret = True
 
     def pywin32_move_window(self):
