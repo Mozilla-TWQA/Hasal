@@ -128,6 +128,10 @@ class PerfBaseTest(unittest.TestCase):
 
         # lock browser start pos at (0,0)
         desktopHelper.lock_window_pos(self.browser_type)
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
+            videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                       self.env.img_output_sample_1_fn)
+        desktopHelper.adjust_viewport(self.browser_type, self.env.img_sample_dp, self.env.img_output_sample_1_fn)
 
         # execute pre-run-script.
         # You have to specify the pre_run_script and test_url before calling parent setup in your test class
