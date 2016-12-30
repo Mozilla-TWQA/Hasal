@@ -36,6 +36,7 @@ import shutil
 import numpy as np
 import gc
 import math
+import threading
 from PIL import Image
 from commonUtil import CommonUtil
 from argparse import ArgumentDefaultsHelpFormatter
@@ -130,8 +131,24 @@ class ImageTool(object):
             os.mkdir(sample_dp)
         if not os.path.exists(img_dp):
             os.mkdir(img_dp)
-        self.crop_all_images(region, sample_fp_list, sample_dp)
-        self.crop_all_images(region, img_fp_list, img_dp)
+        len_img_fp_list = len(img_fp_list)
+        first_q = len_img_fp_list / 4
+        second_q = len_img_fp_list * 2 / 4
+        third_q = len_img_fp_list * 3 / 4
+        output_target = {
+            '0': [sample_fp_list, sample_dp],
+            '1': [img_fp_list[:first_q], img_dp],
+            '2': [img_fp_list[first_q:second_q], img_dp],
+            '3': [img_fp_list[second_q:], img_dp],
+            '4': [img_fp_list[third_q:], img_dp]
+        }
+        p_list = []
+        for index in output_target.keys():
+            args = [region, output_target[index][0], output_target[index][1]]
+            p_list.append(threading.Thread(target=self.crop_all_images, args=args))
+            p_list[-1].start()
+        for p in p_list:
+            p.join()
 
     def get_sample_img_list(self, sample_dp):
         sample_fn_list = os.listdir(sample_dp)
@@ -278,29 +295,33 @@ class ImageTool(object):
 
     def compare_two_images(self, dct_obj_1, dct_obj_2):
         match = False
-        row1, cols1 = dct_obj_1.shape
-        row2, cols2 = dct_obj_2.shape
-        if (row1 != row2) or (cols1 != cols2):
-            return match
-        else:
-            threshold = 0.0001
-            mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
-            if mismatch_rate > threshold:
-                return False
-            else:
-                return True
+        try:
+            row1, cols1 = dct_obj_1.shape
+            row2, cols2 = dct_obj_2.shape
+            if (row1 == row2) and (cols1 == cols2):
+                threshold = 0.0001
+                mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
+                if mismatch_rate <= threshold:
+                    match = True
+        except Exception as e:
+            logger.error(e)
+        return match
 
     def convert_to_dct(self, image_fp, skip_status_bar_fraction=1.0):
-        img_obj = cv2.imread(image_fp)
-        height, width, channel = img_obj.shape
-        height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
-        img_obj = img_obj[:height][:][:]
-        img_gray = np.zeros((height, width))
-        for channel in range(channel):
-            img_gray += img_obj[:, :, channel]
-        img_gray /= channel
-        img_dct = img_gray / 255.0
-        dct_obj = cv2.dct(img_dct)
+        dct_obj = None
+        try:
+            img_obj = cv2.imread(image_fp)
+            height, width, channel = img_obj.shape
+            height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
+            img_obj = img_obj[:height][:][:]
+            img_gray = np.zeros((height, width))
+            for channel in range(channel):
+                img_gray += img_obj[:, :, channel]
+            img_gray /= channel
+            img_dct = img_gray / 255.0
+            dct_obj = cv2.dct(img_dct)
+        except Exception as e:
+            logger.error(e)
         return dct_obj
 
     def compare_with_sample_object(self, input_sample_dp):
