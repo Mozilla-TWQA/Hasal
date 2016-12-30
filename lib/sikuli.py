@@ -1,5 +1,6 @@
 import os
 import sys
+from common.windowController import WindowObject
 if sys.platform == "darwin":
     from appscript import *  # NOQA
 
@@ -37,7 +38,7 @@ class Sikuli():
 
     def close_browser(self, browser):
         if sys.platform == 'darwin':
-            print('Closing {} by appscript library...'.format(browser))
+            print('Closing {} by appscript library ...'.format(browser))
             appname_list = [browser]
             if browser.lower() == 'firefox':
                 appname_list = ['Firefox', 'FirefoxNightly']
@@ -47,11 +48,27 @@ class Sikuli():
                 try:
                     browser_obj = app(appname)
                     browser_obj.quit()
+                    print('Close {} successful.'.format(appname))
                     break
                 except:
                     print('Cannot close {} by appscript library.')
-                    pass
+
+        elif sys.platform == 'linux2':
+            print('Closing {} by wmctrl ...'.format(browser))
+            window_title = [browser]
+            if browser.lower() == 'firefox':
+                window_title = ["Mozilla Firefox", "Nightly"]
+            elif browser.lower() == 'chrome':
+                window_title = ['Google Chrome']
+            # Moving window by strings from window_title
+            for window_name in window_title:
+                window_obj = WindowObject(window_name)
+                if window_obj.wmctrl_close_window():
+                    print('Close {} successful.'.format(window_name))
+                    break
+
         else:
+            # it only works on Windows now
             script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
             script_dir_path = script_path + "/closeBrowser.sikuli"
             args_list = [browser, sys.platform, self.set_syspath(self.hasal_dir)]

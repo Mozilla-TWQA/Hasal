@@ -41,11 +41,13 @@ class WindowObject(object):
         for i in range(10):
             cmd_output = subprocess.check_output(window_list_cmd, shell=True)
             for tmp_line in cmd_output.splitlines():
-                tmp_list = tmp_line.split(" ")
-                window_title = " ".join(tmp_list[4:])
-                if self.window_name in window_title:
+                tmp_list = tmp_line.split(' ', 4)
+                logger.debug('Found {} in wmctrl.'.format(tmp_list))
+                window_id = tmp_list[0]
+                window_title = tmp_list[-1]
+                if window_title == self.window_name or window_title.endswith('- {}'.format(self.window_name)):
                     logger.info('Found [{}] in wmctrl list for moving position.'.format(self.window_name))
-                    return tmp_list[0]
+                    return window_id
             time.sleep(1)
         logger.warning("Can't find window name [%s] in wmctrl list!!!" % self.window_name)
         return '0'
@@ -57,6 +59,15 @@ class WindowObject(object):
             mvarg_val = ",".join([str(self.window_gravity), str(self.pos_x), str(self.pos_y), str(self.window_width), str(self.window_height)])
             wmctrl_cmd = " ".join([self.DEFAULT_WMCTRL_CMD, "-i", "-r", self.window_identity, "-e", mvarg_val])
             logger.debug("Move windows command: [%s]" % wmctrl_cmd)
+            subprocess.call(wmctrl_cmd, shell=True)
+            return True
+
+    def wmctrl_close_window(self):
+        if self.window_identity == '0':
+            return False
+        else:
+            wmctrl_cmd = ' '.join([self.DEFAULT_WMCTRL_CMD, '-i', '-c', self.window_identity])
+            logger.debug('Close windows command: [%s]' % wmctrl_cmd)
             subprocess.call(wmctrl_cmd, shell=True)
             return True
 
