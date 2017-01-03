@@ -250,13 +250,20 @@ class ImageTool(object):
                     break
                 elif not forward_search and img_index < end_index:
                     break
+                search_count += 1
                 if self.search_and_compare_image(sample_dct, img_index, search_target, skip_status_bar_fraction):
                     if img_index == start_index:
                         logger.error(
                             "Find matched file in boundary of search range, event point might out of search range.")
                         if forward_search:
+                            # if start index is already at boundary then break
+                            if start_index == self.search_range[0]:
+                                break
                             start_index = max(img_index - total_search_range / 2, self.search_range[0])
                         else:
+                            # if start index is already at boundary then break
+                            if start_index == self.search_range[3] - 1:
+                                break
                             start_index = min(img_index + total_search_range / 2, self.search_range[3] - 1)
                         img_index = start_index
                     else:
@@ -277,7 +284,6 @@ class ImageTool(object):
                         img_index += 1
                     else:
                         img_index -= 1
-                    search_count += 1
 
     def parallel_compare_image(self, search_direction, sample_dct_list, result_list):
         total_search_range = Environment.DEFAULT_VIDEO_RECORDING_FPS * 20
