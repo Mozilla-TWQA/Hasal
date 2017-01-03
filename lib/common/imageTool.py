@@ -255,8 +255,14 @@ class ImageTool(object):
                         logger.error(
                             "Find matched file in boundary of search range, event point might out of search range.")
                         if forward_search:
+                            # if start index is already at boundary then break
+                            if start_index == self.search_range[0]:
+                                break
                             start_index = max(img_index - total_search_range / 2, self.search_range[0])
                         else:
+                            # if start index is already at boundary then break
+                            if start_index == self.search_range[3] - 1:
+                                break
                             start_index = min(img_index + total_search_range / 2, self.search_range[3] - 1)
                         img_index = start_index
                     else:
