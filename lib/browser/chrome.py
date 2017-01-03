@@ -1,7 +1,5 @@
 from base import BrowserBase
 import subprocess
-import os
-import json
 
 
 class BrowserChrome(BrowserBase):
