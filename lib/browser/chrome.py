@@ -1,7 +1,5 @@
 from base import BrowserBase
 import subprocess
-import os
-import json
 
 
 class BrowserChrome(BrowserBase):
@@ -23,24 +21,8 @@ class BrowserChrome(BrowserBase):
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]
 
         if "tracing_path" in kwargs:
-            default_tracing_config_fp = os.path.join(os.getcwd(), "chrome_tracing.config")
-            default_tracing_config = {"startup_duration": default_tracing_capture_period,
-                                      "result_file": kwargs['tracing_path'],
-                                      "trace_config": {
-                                          "included_categories": ['-*',
-                                                                  'toplevel',
-                                                                  'blink.console',
-                                                                  'blink.user_timing',
-                                                                  'benchmark',
-                                                                  'netlog',
-                                                                  'devtools.timeline',
-                                                                  'disabled-by-default-devtools.timeline',
-                                                                  'disabled-by-default-devtools.timeline.frame',
-                                                                  'disabled-by-default-devtools.timeline.stack',
-                                                                  'disabled-by-default-devtools.screenshot']}}
-            with open(default_tracing_config_fp, "w") as write_fh:
-                json.dump(default_tracing_config, write_fh)
-            self.launch_cmd.extend(["--trace-startup", "--trace-config-file=" + default_tracing_config_fp])
+            self.launch_cmd.extend(["--trace-startup", "--trace-startup-file=" + kwargs['tracing_path'],
+                                    "--trace-startup-duration=" + str(default_tracing_capture_period)])
 
     def get_version_command(self):
         if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
