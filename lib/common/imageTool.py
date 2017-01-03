@@ -422,19 +422,33 @@ class ImageTool(object):
     def calculate_progress_for_si(self, result_list):
         frame_calculation_interval = 5
         histograms = []
-        start_index = self.image_list.index(result_list[0])
-        end_index = self.image_list.index(result_list[1])
+        start_index = 0
+        end_index = 0
+        for result in result_list:
+            if 'start' in result:
+                result_data = copy.deepcopy(result)
+                result_data['image_fp'] = result['start']
+                del result_data['start']
+                start_index = self.image_list.index(result_data)
+            if 'end' in result:
+                result_data = copy.deepcopy(result)
+                result_data['image_fp'] = result['end']
+                del result_data['end']
+                end_index = self.image_list.index(result_data)
         # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
         # Might need to adjust if we need to raise the accuracy
+        image_dp = os.path.join(os.path.dirname(self.image_list[0]['image_fp']), "viewport")
         for i_index in range(start_index, end_index + 1, frame_calculation_interval):
             image_data = copy.deepcopy(self.image_list[i_index])
-            image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
+            image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+            image_data['histogram'] = self.calculate_image_histogram(image_fp)
             histograms.append(image_data)
             gc.collect()
 
         if end_index % frame_calculation_interval:
             image_data = copy.deepcopy(self.image_list[end_index])
-            image_data['histogram'] = self.calculate_image_histogram(image_data['image_fp'])
+            image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+            image_data['histogram'] = self.calculate_image_histogram(image_fp)
             histograms.append(image_data)
             gc.collect()
 
