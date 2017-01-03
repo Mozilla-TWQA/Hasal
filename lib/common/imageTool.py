@@ -250,6 +250,7 @@ class ImageTool(object):
                     break
                 elif not forward_search and img_index < end_index:
                     break
+                search_count += 1
                 if self.search_and_compare_image(sample_dct, img_index, search_target, skip_status_bar_fraction):
                     if img_index == start_index:
                         logger.error(
@@ -283,7 +284,6 @@ class ImageTool(object):
                         img_index += 1
                     else:
                         img_index -= 1
-                    search_count += 1
 
     def parallel_compare_image(self, search_direction, sample_dct_list, result_list):
         total_search_range = Environment.DEFAULT_VIDEO_RECORDING_FPS * 20
