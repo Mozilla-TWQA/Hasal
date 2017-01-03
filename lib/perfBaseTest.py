@@ -125,7 +125,7 @@ class PerfBaseTest(unittest.TestCase):
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
                                                              env=self.env,
                                                              enabled_profiler_list=self.enabled_profiler_list)
-
+        time.sleep(1)
         # lock browser start pos at (0,0)
         desktopHelper.lock_window_pos(self.browser_type)
         if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
