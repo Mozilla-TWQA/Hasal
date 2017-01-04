@@ -165,6 +165,49 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.write(json.dumps(stat_data))
 
 
+def output_video(result_data, video_fp):
+    start_fp = None
+    end_fp = None
+    current_run_result = result_data['running_time_result']
+    for event_data in current_run_result:
+        if 'start' in event_data:
+            start_fp = event_data['start']
+        if 'end' in event_data:
+            end_fp = event_data['end']
+    if not start_fp and not end_fp:
+        return None
+    else:
+        source_dp = os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)
+        img_list = os.listdir(source_dp)
+        img_list.sort(key=CommonUtil.natural_keys)
+        start_fn = os.path.basename(start_fp)
+        start_index = img_list.index(start_fn)
+        end_fn = os.path.basename(end_fp)
+        end_index = img_list.index(end_fn)
+        file_ext = os.path.splitext(start_fn)[1]
+        extended_range = Environment.DEFAULT_VIDEO_RECORDING_FPS
+        offset = int(filter(str.isdigit, start_fn)) - extended_range
+        for img_index in range(len(img_list)):
+            img_list[img_index] = os.path.join(source_dp, img_list[img_index])
+            if img_index < (start_index - extended_range) or img_index > (end_index + extended_range):
+                os.remove(img_list[img_index])
+            else:
+                img_fn = os.path.basename(img_list[img_index])
+                img_time = int(filter(str.isdigit, img_fn))
+                new_time = img_time - offset
+                new_file = os.path.join(source_dp, '{0:05d}'.format(new_time) + file_ext)
+                os.rename(img_list[img_index], new_file)
+
+    video_fn, ext = os.path.splitext(video_fp)
+    codec = "ffmpeg"
+    source = " -i " + os.path.join(source_dp, "%05d" + file_ext)
+    fps = " -r " + str(Environment.DEFAULT_VIDEO_RECORDING_FPS)
+    video_format = " -pix_fmt yuv420p"
+    video_out = " " + video_fn + ".mp4"
+    command = codec + source + fps + video_format + video_out
+    os.system(command)
+
+
 def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
     waveform_info = dict()
     waveform_info['video'] = video_fp
@@ -207,6 +250,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
 
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform)
+        output_video(result_data, env.video_output_fp)
         if waveform == 1:
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
