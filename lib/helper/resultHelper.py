@@ -193,9 +193,6 @@ def output_video(result_data, video_fp):
         for img_index in range(start_index, end_index + 1):
             imf_fp = os.path.join(source_dp, img_list[img_index])
             new_img_fp = os.path.join(tempdir, '{0:05d}'.format(count) + file_ext)
-            if img_index == start_index or img_index == end_index:
-                print imf_fp
-                print new_img_fp
             shutil.copyfile(imf_fp, new_img_fp)
             count += 1
 
