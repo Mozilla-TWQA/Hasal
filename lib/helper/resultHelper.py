@@ -212,7 +212,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
 
 
 def is_number_in_tolerance(number, default_fps, tolerance):
-    return round(default_fps * (1 - tolerance)) <= number <= round(default_fps * (1 + tolerance))
+    return int(default_fps * (1 - tolerance)) <= number <= round(default_fps * (1 + tolerance))
 
 
 def fps_cal(file_path, default_fps):
