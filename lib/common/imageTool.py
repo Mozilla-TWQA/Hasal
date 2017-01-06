@@ -443,10 +443,11 @@ class ImageTool(object):
                 end_index = self.image_list.index(result_data)
         # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
         # Might need to adjust if we need to raise the accuracy
-        image_dp = os.path.join(os.path.dirname(self.image_list[0]['image_fp']), "viewport")
+        image_dp = os.path.join(os.path.dirname(self.image_list[0]['image_fp']), Environment.SEARCH_TARGET_VIEWPORT)
         for i_index in range(start_index, end_index + 1, frame_calculation_interval):
             image_data = copy.deepcopy(self.image_list[i_index])
             image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+            image_data['image_fp'] = image_fp
             image_data['histogram'] = self.calculate_image_histogram(image_fp)
             histograms.append(image_data)
             gc.collect()
@@ -454,6 +455,7 @@ class ImageTool(object):
         if end_index % frame_calculation_interval:
             image_data = copy.deepcopy(self.image_list[end_index])
             image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+            image_data['image_fp'] = image_fp
             image_data['histogram'] = self.calculate_image_histogram(image_fp)
             histograms.append(image_data)
             gc.collect()
