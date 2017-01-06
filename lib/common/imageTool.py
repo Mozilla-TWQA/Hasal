@@ -624,17 +624,6 @@ class ImageTool(object):
             pixels = im.load()
             background = pixels[x, y]
 
-            # Find the right edge
-            right = None
-            while right is None and x < width:
-                if not self.colors_are_similar(background, pixels[x, y]):
-                    right = x - 1
-                else:
-                    x += 1
-            if right is None:
-                right = width
-            logger.debug('Browser tab view right edge is {0:d}'.format(right))
-
             # Find the top edge
             x = int(math.floor(width / 2))
             top = None
