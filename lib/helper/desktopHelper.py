@@ -4,8 +4,6 @@ import lib.sikuli  # NOQA
 import tempfile
 import zipfile
 import os
-import time
-import json
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
 from ..common.windowController import WindowObject
@@ -22,41 +20,6 @@ def extract_profile_data(input_profile_path):
     return return_path
 
 
-def create_profile(prefs={}):
-    tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
-    if sys.platform == 'linux2':
-        os.system('firefox -createprofile "{} {}" -silent'.format(os.path.basename(tmp_dir), tmp_dir))
-    else:
-        if sys.platform == 'darwin':
-            firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
-        else:
-            firefox_cmd = 'firefox'
-        os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_dir))
-    print('[Info] Create Profile: {}'.format(tmp_dir))
-
-    if prefs:
-        print('[Info] Prefs {}'.format(prefs))
-        prefs_list = []
-        prefs_js_file = os.path.join(tmp_dir, 'prefs.js')
-        for k, v in prefs.items():
-            print('[Info] load {} : {}'.format(k, v))
-            if isinstance(v, bool) or isinstance(v, int):
-                prefs_list.append('user_pref("{}", {});'.format(str(k), str(v).lower()))
-            elif isinstance(v, str) or isinstance(v, unicode):
-                prefs_list.append('user_pref("{}", "{}");'.format(str(k), str(v)))
-        # Skip First Run page
-        prefs_list.append('user_pref("toolkit.startup.last_success", {});'.format(int(time.time())))
-        prefs_list.append('user_pref("browser.startup.homepage_override.mstone", "ignore");')
-
-        prefs_settings = '\n'.join(prefs_list)
-        print('[Info] Writing prefs into {}:\n{}'.format(prefs_js_file, prefs_settings))
-
-        with open(prefs_js_file, 'a') as prefs_f:
-            prefs_f.write('\n' + prefs_settings)
-
-    return tmp_dir
-
-
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
     enabled_profiler_list = kwargs['enabled_profiler_list']
@@ -67,7 +30,7 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                         tracing_path=env.chrome_tracing_file_fp)
         else:
-            profile_path = create_profile(prefs=env.firefox_settings_prefs)
+            profile_path = env.firefox_default_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                          profile_path=profile_path)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
@@ -75,7 +38,7 @@ def launch_browser(browser_type, **kwargs):
             if kwargs['profile_path'] is not None:
                 profile_path = extract_profile_data(kwargs['profile_path'])
             else:
-                profile_path = create_profile(prefs=env.firefox_settings_prefs)
+                profile_path = env.firefox_default_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
                                          profile_path=profile_path)
         else:
@@ -88,7 +51,7 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            profile_path = create_profile(prefs=env.firefox_settings_prefs)
+            profile_path = env.firefox_default_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                          profile_path=profile_path)
         else:

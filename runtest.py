@@ -24,9 +24,11 @@ Options:
 
 """
 import os
+import sys
 import json
 import time
 import shutil
+import tempfile
 import platform
 import subprocess
 from lib.helper.uploadAgentHelper import UploadAgent
@@ -70,6 +72,34 @@ class RunTest(object):
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
 
+    def _create_firefox_profile(self):
+        prefs = self.firefox_settings_prefs
+        tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
+        if sys.platform == 'linux2':
+            os.system('firefox -createprofile "{} {}" -silent'.format(os.path.basename(tmp_dir), tmp_dir))
+        else:
+            if sys.platform == 'darwin':
+                firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
+            else:
+                firefox_cmd = 'firefox'
+            os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_dir))
+        print('[Info] Create Profile: {}'.format(tmp_dir))
+        print('[Info] Profile with prefs: {}'.format(prefs))
+        prefs_list = []
+        prefs_js_file = os.path.join(tmp_dir, 'prefs.js')
+        for k, v in prefs.items():
+            if isinstance(v, bool) or isinstance(v, int):
+                prefs_list.append('user_pref("{}", {});'.format(str(k), str(v).lower()))
+            elif isinstance(v, str) or isinstance(v, unicode):
+                prefs_list.append('user_pref("{}", "{}");'.format(str(k), str(v)))
+        # Skip First Run page
+        prefs_list.append('user_pref("toolkit.startup.last_success", {});'.format(int(time.time())))
+        prefs_list.append('user_pref("browser.startup.homepage_override.mstone", "ignore");')
+        prefs_settings = '\n'.join(prefs_list)
+        with open(prefs_js_file, 'a') as prefs_f:
+            prefs_f.write('\n' + prefs_settings)
+        return tmp_dir
+
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
         result['PROFILER'] = self.profiler
@@ -79,7 +109,15 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
+
         result['FIREFOX_SETTINGS'] = self.firefox_settings
+        if os.path.exists(self.firefox_settings):
+            with open(self.firefox_settings) as firefox_settings_fh:
+                firefox_settings_obj = json.load(firefox_settings_fh)
+                self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
+                if self.firefox_settings_prefs:
+                    result['FIREFOX_DEFAULT_PROFILE_PATH'] = self._create_firefox_profile()
+
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
         else:
