@@ -1,0 +1,22 @@
+{
+  "env": {
+    "JSGC_DISABLE_POISONING": 1
+  },
+  "prefs": {
+    "plugin.state.flash": 0,
+    "browser.sessionstore.restore_on_demand": false,
+    "browser.sessionstore.resume_from_crash": false,
+    "browser.shell.checkDefaultBrowser": false,
+    "app.update.auto": false,
+    "app.update.enabled": false,
+    "app.update.silent": false,
+    "browser.tabs.remote.autostart": false,
+    "browser.tabs.remote.autostart.1": false,
+    "browser.tabs.remote.autostart.2": true,
+    "browser.tabs.remote.force-enable": true,
+    "browser.startup.homepage": "about:blank",
+    "browser.startup.page": 0,
+    "javascript.options.asyncstack": false
+  },
+  "extensions": []
+}

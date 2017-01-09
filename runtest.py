@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
   runtest.py (-h | --help)
 
 Options:
@@ -12,6 +12,7 @@ Options:
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
   --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
+  --firefox-settings=<str>        Specify the Firefox settings [default: default_settings.json].
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
   --comment=<str>                 Tag the comment on this test [default: <today>]
@@ -78,6 +79,7 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
+        result['FIREFOX_SETTINGS'] = self.firefox_settings
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
         else:
@@ -235,8 +237,11 @@ def main():
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'].strip(), calc_si=arguments['--calc-si'],
-                           waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'],
-                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'], jenkins_build_no=arguments['--jenkins-build-no'])
+                           waveform=arguments['--waveform'],
+                           perfherder_revision=arguments['--perfherder-revision'],
+                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
+                           firefox_settings=arguments['--firefox-settings'],
+                           jenkins_build_no=arguments['--jenkins-build-no'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
