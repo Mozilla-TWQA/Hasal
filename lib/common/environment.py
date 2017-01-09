@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import platform
 
 
@@ -171,6 +172,14 @@ class Environment(object):
         self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")
         self.recording_log_fp = os.path.join(self.hasal_dir, "recording.log")
         self.waveform_fp = os.path.join(self.DEFAULT_WAVEFORM_OUTPUT_DIR, self.output_name + "_waveform_info.json")
+
+        self.firefox_settings_json = os.getenv('FIREFOX_SETTINGS')
+        if os.path.exists(self.firefox_settings_json):
+            with open(self.firefox_settings_json) as firefox_settings_fh:
+                firefox_settings_obj = json.load(firefox_settings_fh)
+                self.firefox_settings_env = firefox_settings_obj.get('env', {})
+                self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
+                self.firefox_settings_extensions = firefox_settings_obj.get('extensions', {})
 
     def init_output_dir(self):
         # Init output folder
