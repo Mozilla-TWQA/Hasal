@@ -152,13 +152,13 @@ class ImageTool(object):
 
     def get_sample_img_list(self, sample_dp):
         sample_fn_list = os.listdir(sample_dp)
-        sample_fn_list.sort()
+        sample_fn_list.sort(key=CommonUtil.natural_keys)
         sample_fp_list = self.filter_file_extension(sample_dp, sample_fn_list)
         return sample_fp_list
 
     def get_output_img_list(self, output_image_dp):
         img_fn_list = os.listdir(output_image_dp)
-        img_fn_list.sort()
+        img_fn_list.sort(key=CommonUtil.natural_keys)
         img_fp_list = self.filter_file_extension(output_image_dp, img_fn_list)
         return img_fp_list
 
