@@ -249,7 +249,11 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
 
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform)
+        start_time = time.time()
         output_video(result_data, env.video_output_fp)
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
         if waveform == 1:
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
