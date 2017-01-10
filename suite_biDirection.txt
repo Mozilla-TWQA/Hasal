@@ -1,0 +1,6 @@
+tests.regression.gdoc.test_chrome_gdoc_read_BiDirection_1
+tests.regression.gdoc.test_chrome_gdoc_read_BiDirection_3
+tests.regression.gdoc.test_chrome_gdoc_read_BiDirection_100
+tests.regression.gdoc.test_firefox_gdoc_read_BiDirection_1
+tests.regression.gdoc.test_firefox_gdoc_read_BiDirection_3
+tests.regression.gdoc.test_firefox_gdoc_read_BiDirection_100
