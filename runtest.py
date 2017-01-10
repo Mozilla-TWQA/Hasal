@@ -68,7 +68,9 @@ class RunTest(object):
         self._install_profile_extensions()
 
     def teardown(self):
-        if os.path.isdir(self._firefox_profile_path):
+        if self.advance:
+            self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
+        elif os.path.isdir(self._firefox_profile_path):
             try:
                 self.logger.info('Remove Profile: {}'.format(self._firefox_profile_path))
                 shutil.rmtree(self._firefox_profile_path)
@@ -103,23 +105,11 @@ class RunTest(object):
         tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
         self.logger.info('Creating Profile: {}'.format(tmp_profile_dir))
         self.logger.info('Profile with prefs: {}'.format(prefs))
-        if sys.platform == 'linux2':
-            firefox_cmd = 'firefox'
-            # the command "--profile <PATH> -silent" doesn't work on Ubuntu
-            os.system('{} --profile {} &'.format(firefox_cmd, tmp_profile_dir))
-            for idx in range(10):
-                if os.path.isfile(os.path.join(tmp_profile_dir, 'prefs.js')):
-                    # wait for process launch
-                    time.sleep(5)
-                    break
-                time.sleep(1)
-            os.system(DEFAULT_TASK_KILL_CMD + firefox_cmd)
+        if sys.platform == 'darwin':
+            firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
         else:
-            if sys.platform == 'darwin':
-                firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
-            else:
-                firefox_cmd = 'firefox'
-            os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_profile_dir))
+            firefox_cmd = 'firefox'
+        os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_profile_dir))
 
         prefs_list = []
         prefs_js_file = os.path.join(tmp_profile_dir, 'prefs.js')
@@ -139,8 +129,9 @@ class RunTest(object):
 
     def _install_profile_extensions(self):
         extensions_settings = self.settings_json.get('extensions', {})
-        # TODO: can install extensions into self._firefox_profile_path
-        self.logger.warn('Not Implemented')
+        if extensions_settings:
+            # TODO: can install extensions into self._firefox_profile_path
+            self.logger.warn('Not Implemented')
         pass
 
     def get_test_env(self, **kwargs):
