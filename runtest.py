@@ -58,14 +58,13 @@ else:
 class RunTest(object):
     def __init__(self, **kwargs):
         self.logger = get_logger(__file__, kwargs['advance'])
-
-        self.settings_json = self._load_settings()
-        self.settings_prefs = self.settings_json.get('prefs', {})
-        self.firefox_profile_path = self._create_firefox_profile()
-
         for variable_name in kwargs.keys():
             self.logger.debug("Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name]))
             setattr(self, variable_name, kwargs[variable_name])
+        # loading settings
+        self.settings_json = self._load_settings()
+        self.settings_prefs = self.settings_json.get('prefs', {})
+        self.firefox_profile_path = self._create_firefox_profile()
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
