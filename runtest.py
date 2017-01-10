@@ -64,13 +64,14 @@ class RunTest(object):
         # loading settings
         self.settings_json = self._load_settings()
         self.settings_prefs = self.settings_json.get('prefs', {})
-        self.firefox_profile_path = self._create_firefox_profile()
+        self._firefox_profile_path = self._create_firefox_profile()
+        self._install_profile_extensions()
 
     def teardown(self):
-        if os.path.isdir(self.firefox_profile_path):
+        if os.path.isdir(self._firefox_profile_path):
             try:
-                self.logger.info('Remove Profile: {}'.format(self.firefox_profile_path))
-                shutil.rmtree(self.firefox_profile_path)
+                self.logger.info('Remove Profile: {}'.format(self._firefox_profile_path))
+                shutil.rmtree(self._firefox_profile_path)
             except Exception as e:
                 self.logger.warn(e)
 
@@ -94,20 +95,20 @@ class RunTest(object):
             return {}
 
     def _get_firefox_profile(self):
-        self.logger.info('Get Profile: {}'.format(self.firefox_profile_path))
-        return self.firefox_profile_path
+        self.logger.info('Get Profile: {}'.format(self._firefox_profile_path))
+        return self._firefox_profile_path
 
     def _create_firefox_profile(self):
         prefs = self.settings_prefs
-        tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
-        self.logger.info('Creating Profile: {}'.format(tmp_dir))
+        tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
+        self.logger.info('Creating Profile: {}'.format(tmp_profile_dir))
         self.logger.info('Profile with prefs: {}'.format(prefs))
         if sys.platform == 'linux2':
             firefox_cmd = 'firefox'
             # the command "--profile <PATH> -silent" doesn't work on Ubuntu
-            os.system('{} --profile {} &'.format(firefox_cmd, tmp_dir))
+            os.system('{} --profile {} &'.format(firefox_cmd, tmp_profile_dir))
             for idx in range(10):
-                if os.path.isfile(os.path.join(tmp_dir, 'prefs.js')):
+                if os.path.isfile(os.path.join(tmp_profile_dir, 'prefs.js')):
                     # wait for process launch
                     time.sleep(5)
                     break
@@ -118,10 +119,10 @@ class RunTest(object):
                 firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
             else:
                 firefox_cmd = 'firefox'
-            os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_dir))
+            os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_profile_dir))
 
         prefs_list = []
-        prefs_js_file = os.path.join(tmp_dir, 'prefs.js')
+        prefs_js_file = os.path.join(tmp_profile_dir, 'prefs.js')
         for k, v in prefs.items():
             if isinstance(v, bool) or isinstance(v, int):
                 prefs_list.append('user_pref("{}", {});'.format(str(k), str(v).lower()))
@@ -133,8 +134,14 @@ class RunTest(object):
         prefs_settings = '\n'.join(prefs_list)
         with open(prefs_js_file, 'a') as prefs_f:
             prefs_f.write('\n' + prefs_settings)
-        self.logger.info('[Info] Creating Profile success: {}'.format(tmp_dir))
-        return tmp_dir
+        self.logger.info('[Info] Creating Profile success: {}'.format(tmp_profile_dir))
+        return tmp_profile_dir
+
+    def _install_profile_extensions(self):
+        extensions_settings = self.settings_json.get('extensions', {})
+        # TODO: can install extensions into self._firefox_profile_path
+        self.logger.warn('Not Implemented')
+        pass
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
