@@ -139,7 +139,7 @@ class ImageTool(object):
             '0': [sample_fp_list, sample_dp],
             '1': [img_fp_list[:first_q], img_dp],
             '2': [img_fp_list[first_q:second_q], img_dp],
-            '3': [img_fp_list[second_q:], img_dp],
+            '3': [img_fp_list[second_q:third_q], img_dp],
             '4': [img_fp_list[third_q:], img_dp]
         }
         p_list = []
@@ -253,7 +253,7 @@ class ImageTool(object):
                 search_count += 1
                 if self.search_and_compare_image(sample_dct, img_index, search_target, skip_status_bar_fraction):
                     if img_index == start_index:
-                        logger.error(
+                        logger.debug(
                             "Find matched file in boundary of search range, event point might out of search range.")
                         if forward_search:
                             # if start index is already at boundary then break
