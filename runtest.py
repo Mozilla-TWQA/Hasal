@@ -86,13 +86,14 @@ class RunTest(object):
             return {}
 
     def _get_firefox_profile(self):
+        self.logger.info('Get Profile: {}'.format(self.firefox_profile_path))
         return self.firefox_profile_path
 
     def _create_firefox_profile(self):
         prefs = self.settings_prefs
         tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
-        print('[Info] Creating Profile: {}'.format(tmp_dir))
-        print('[Info] Profile with prefs: {}'.format(prefs))
+        self.logger.info('Creating Profile: {}'.format(tmp_dir))
+        self.logger.info('Profile with prefs: {}'.format(prefs))
         if sys.platform == 'linux2':
             firefox_cmd = 'firefox'
             # the command "--profile <PATH> -silent" doesn't work on Ubuntu
@@ -124,7 +125,7 @@ class RunTest(object):
         prefs_settings = '\n'.join(prefs_list)
         with open(prefs_js_file, 'a') as prefs_f:
             prefs_f.write('\n' + prefs_settings)
-        print('[Info] Creating Profile success: {}'.format(tmp_dir))
+        self.logger.info('[Info] Creating Profile success: {}'.format(tmp_dir))
         return tmp_dir
 
     def get_test_env(self, **kwargs):
@@ -138,7 +139,7 @@ class RunTest(object):
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
 
         result['FIREFOX_SETTINGS'] = self.firefox_settings
-        result['FIREFOX_DEFAULT_PROFILE_PATH'] = self._get_firefox_profile()
+        result['FIREFOX_PROFILE_PATH'] = self._get_firefox_profile()
 
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
@@ -215,8 +216,8 @@ class RunTest(object):
                 else:
                     current_retry += 1
             except Exception as e:
-                print "Exception happend during running test!"
-                print e.message
+                self.logger.warn('Exception happend during running test!')
+                self.logger.warn(e)
                 self.create_exception_file(e.message, current_retry)
                 current_retry += 1
 

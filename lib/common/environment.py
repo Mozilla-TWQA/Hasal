@@ -180,7 +180,7 @@ class Environment(object):
                 self.firefox_settings_env = firefox_settings_obj.get('env', {})
                 self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
                 self.firefox_settings_extensions = firefox_settings_obj.get('extensions', {})
-        self.firefox_default_profile_path = os.getenv('FIREFOX_DEFAULT_PROFILE_PATH')
+        self.firefox_profile_path = os.getenv('FIREFOX_PROFILE_PATH')
 
     def init_output_dir(self):
         # Init output folder
