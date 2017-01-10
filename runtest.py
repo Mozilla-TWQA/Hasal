@@ -66,6 +66,14 @@ class RunTest(object):
         self.settings_prefs = self.settings_json.get('prefs', {})
         self.firefox_profile_path = self._create_firefox_profile()
 
+    def teardown(self):
+        if os.path.isdir(self.firefox_profile_path):
+            try:
+                self.logger.info('Remove Profile: {}'.format(self.firefox_profile_path))
+                shutil.rmtree(self.firefox_profile_path)
+            except Exception as e:
+                self.logger.warn(e)
+
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
@@ -309,6 +317,9 @@ def main():
         run_test_obj.run("re", arguments['<suite.txt>'])
     else:
         run_test_obj.run("re", arguments['<suite.txt>'])
+    # teardown
+    run_test_obj.teardown()
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     logger = get_logger(__file__, arguments['--advance'])
