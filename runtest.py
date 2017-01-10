@@ -24,17 +24,15 @@ Options:
 
 """
 import os
-import sys
 import json
 import time
 import shutil
-import tempfile
 import platform
 import subprocess
-from lib.helper.uploadAgentHelper import UploadAgent
 from docopt import docopt
+from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
-
+from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
 
 DEFAULT_RESULT_FP = "./result.json"
 DEFAULT_TEST_FOLDER = "tests"
@@ -62,20 +60,17 @@ class RunTest(object):
             self.logger.debug("Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name]))
             setattr(self, variable_name, kwargs[variable_name])
         # loading settings
+        self.firefox_profile_creator = FirefoxProfileCreator()
         self.settings_json = self._load_settings()
         self.settings_prefs = self.settings_json.get('prefs', {})
-        self._firefox_profile_path = self._create_firefox_profile()
-        self._install_profile_extensions()
+        self.ext_settings = self.settings_json.get('extensions', {})
+        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(prefs=self.settings_prefs, extensions_settings=self.ext_settings)
 
     def teardown(self):
         if self.advance:
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
         elif os.path.isdir(self._firefox_profile_path):
-            try:
-                self.logger.info('Remove Profile: {}'.format(self._firefox_profile_path))
-                shutil.rmtree(self._firefox_profile_path)
-            except Exception as e:
-                self.logger.warn(e)
+            self.firefox_profile_creator.remove_firefox_profile()
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -96,44 +91,6 @@ class RunTest(object):
         except:
             return {}
 
-    def _get_firefox_profile(self):
-        self.logger.info('Get Profile: {}'.format(self._firefox_profile_path))
-        return self._firefox_profile_path
-
-    def _create_firefox_profile(self):
-        prefs = self.settings_prefs
-        tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
-        self.logger.info('Creating Profile: {}'.format(tmp_profile_dir))
-        self.logger.info('Profile with prefs: {}'.format(prefs))
-        if sys.platform == 'darwin':
-            firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
-        else:
-            firefox_cmd = 'firefox'
-        os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_profile_dir))
-
-        prefs_list = []
-        prefs_js_file = os.path.join(tmp_profile_dir, 'prefs.js')
-        for k, v in prefs.items():
-            if isinstance(v, bool) or isinstance(v, int):
-                prefs_list.append('user_pref("{}", {});'.format(str(k), str(v).lower()))
-            elif isinstance(v, str) or isinstance(v, unicode):
-                prefs_list.append('user_pref("{}", "{}");'.format(str(k), str(v)))
-        # Skip First Run page
-        prefs_list.append('user_pref("toolkit.startup.last_success", {});'.format(int(time.time())))
-        prefs_list.append('user_pref("browser.startup.homepage_override.mstone", "ignore");')
-        prefs_settings = '\n'.join(prefs_list)
-        with open(prefs_js_file, 'a') as prefs_f:
-            prefs_f.write('\n' + prefs_settings)
-        self.logger.info('[Info] Creating Profile success: {}'.format(tmp_profile_dir))
-        return tmp_profile_dir
-
-    def _install_profile_extensions(self):
-        extensions_settings = self.settings_json.get('extensions', {})
-        if extensions_settings:
-            # TODO: can install extensions into self._firefox_profile_path
-            self.logger.warn('Not Implemented')
-        pass
-
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
         result['PROFILER'] = self.profiler
@@ -145,7 +102,7 @@ class RunTest(object):
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
 
         result['FIREFOX_SETTINGS'] = self.firefox_settings
-        result['FIREFOX_PROFILE_PATH'] = self._get_firefox_profile()
+        result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(prefs=self.settings_prefs, extensions_settings=self.ext_settings)
 
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
