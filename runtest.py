@@ -58,6 +58,11 @@ else:
 class RunTest(object):
     def __init__(self, **kwargs):
         self.logger = get_logger(__file__, kwargs['advance'])
+
+        self.settings_json = self._load_settings()
+        self.settings_prefs = self.settings_json.get('prefs', {})
+        self.firefox_profile_path = self._create_firefox_profile()
+
         for variable_name in kwargs.keys():
             self.logger.debug("Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name]))
             setattr(self, variable_name, kwargs[variable_name])
@@ -73,14 +78,32 @@ class RunTest(object):
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
 
+    def _load_settings(self):
+        try:
+            if os.path.exists(self.firefox_settings):
+                with open(self.firefox_settings) as firefox_settings_fh:
+                    return json.load(firefox_settings_fh)
+        except:
+            return {}
+
+    def _get_firefox_profile(self):
+        return self.firefox_profile_path
+
     def _create_firefox_profile(self):
-        prefs = self.firefox_settings_prefs
+        prefs = self.settings_prefs
         tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
+        print('[Info] Creating Profile: {}'.format(tmp_dir))
+        print('[Info] Profile with prefs: {}'.format(prefs))
         if sys.platform == 'linux2':
             firefox_cmd = 'firefox'
             # the command "--profile <PATH> -silent" doesn't work on Ubuntu
             os.system('{} --profile {} &'.format(firefox_cmd, tmp_dir))
-            time.sleep(1)
+            for idx in range(10):
+                if os.path.isfile(os.path.join(tmp_dir, 'prefs.js')):
+                    # wait for process launch
+                    time.sleep(5)
+                    break
+                time.sleep(1)
             os.system(DEFAULT_TASK_KILL_CMD + firefox_cmd)
         else:
             if sys.platform == 'darwin':
@@ -88,8 +111,7 @@ class RunTest(object):
             else:
                 firefox_cmd = 'firefox'
             os.system('{} --profile {} -silent'.format(firefox_cmd, tmp_dir))
-        print('[Info] Create Profile: {}'.format(tmp_dir))
-        print('[Info] Profile with prefs: {}'.format(prefs))
+
         prefs_list = []
         prefs_js_file = os.path.join(tmp_dir, 'prefs.js')
         for k, v in prefs.items():
@@ -103,6 +125,7 @@ class RunTest(object):
         prefs_settings = '\n'.join(prefs_list)
         with open(prefs_js_file, 'a') as prefs_f:
             prefs_f.write('\n' + prefs_settings)
+        print('[Info] Creating Profile success: {}'.format(tmp_dir))
         return tmp_dir
 
     def get_test_env(self, **kwargs):
@@ -116,12 +139,7 @@ class RunTest(object):
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
 
         result['FIREFOX_SETTINGS'] = self.firefox_settings
-        if os.path.exists(self.firefox_settings):
-            with open(self.firefox_settings) as firefox_settings_fh:
-                firefox_settings_obj = json.load(firefox_settings_fh)
-                self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
-                if self.firefox_settings_prefs:
-                    result['FIREFOX_DEFAULT_PROFILE_PATH'] = self._create_firefox_profile()
+        result['FIREFOX_DEFAULT_PROFILE_PATH'] = self._get_firefox_profile()
 
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
