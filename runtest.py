@@ -35,6 +35,7 @@ from lib.helper.uploadAgentHelper import UploadAgent
 from docopt import docopt
 from lib.common.logConfig import get_logger
 
+
 DEFAULT_RESULT_FP = "./result.json"
 DEFAULT_TEST_FOLDER = "tests"
 DEFAULT_RUNNING_STAT_FN = "stat.json"
@@ -76,7 +77,11 @@ class RunTest(object):
         prefs = self.firefox_settings_prefs
         tmp_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
         if sys.platform == 'linux2':
-            os.system('firefox -createprofile "{} {}" -silent'.format(os.path.basename(tmp_dir), tmp_dir))
+            firefox_cmd = 'firefox'
+            # the command "--profile <PATH> -silent" doesn't work on Ubuntu
+            os.system('{} --profile {} &'.format(firefox_cmd, tmp_dir))
+            time.sleep(1)
+            os.system(DEFAULT_TASK_KILL_CMD + firefox_cmd)
         else:
             if sys.platform == 'darwin':
                 firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'

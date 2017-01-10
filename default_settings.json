@@ -18,5 +18,5 @@
     "browser.startup.page": 0,
     "javascript.options.asyncstack": false
   },
-  "extensions": []
+  "extensions": {}
 }
