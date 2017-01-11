@@ -98,11 +98,14 @@ class WindowObject(object):
                 if self.window_name in app_ref.name.get():
                     application_obj = app(app_ref.name.get())
                     logger.info('Found [{}] for moving position.'.format(self.window_name))
-                    # move window position
-                    application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
-                    # move to foreground by activate it
-                    application_obj.activate()
-                    return True
+                    for _ in range(10):
+                        if application_obj.isrunning():
+                            # move window position
+                            application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
+                            # move to foreground by activate it
+                            application_obj.activate()
+                            return True
+                        time.sleep(1)
             time.sleep(1)
         logger.warning('Cannot found [{}] for moving position.'.format(self.window_name))
         return False
