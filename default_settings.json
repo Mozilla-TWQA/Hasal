@@ -18,5 +18,9 @@
     "browser.startup.page": 0,
     "javascript.options.asyncstack": false
   },
+  "cookies": {
+    "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
+    "filename": "cookies_gsuite_fb.sqlite"
+  },
   "extensions": {}
 }

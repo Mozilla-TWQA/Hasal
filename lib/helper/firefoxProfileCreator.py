@@ -4,6 +4,7 @@ import time
 import shutil
 import tempfile
 from lib.common.logConfig import get_logger
+from lib.common.pyDriveUtil import PyDriveUtil
 
 logger = get_logger(__name__)
 
@@ -16,12 +17,13 @@ class FirefoxProfileCreator(object):
             self.firefox_cmd = 'firefox'
         self._firefox_profile_path = ''
 
-    def get_firefox_profile(self, prefs={}, extensions_settings={}):
+    def get_firefox_profile(self, prefs={}, cookies_settings={}, extensions_settings={}):
         if self._firefox_profile_path:
             logger.info('Get Profile: {}'.format(self._firefox_profile_path))
             return self._firefox_profile_path
         else:
             profile_path = self._create_firefox_profile(prefs=prefs)
+            self._download_cookies(cookies_settings=cookies_settings)
             self._install_profile_extensions(extensions_settings=extensions_settings)
             return profile_path
 
@@ -48,6 +50,20 @@ class FirefoxProfileCreator(object):
         logger.info('[Info] Creating Profile success: {}'.format(tmp_profile_dir))
         self._firefox_profile_path = tmp_profile_dir
         return self._firefox_profile_path
+
+    def _download_cookies(self, cookies_settings={}):
+        if cookies_settings:
+            folder = cookies_settings.get('folder', '')
+            filename = cookies_settings.get('filename', '')
+            if folder and filename:
+                drive_handler = PyDriveUtil()
+                drive_file_obj = drive_handler.get_file_object(folder_uri=folder, file_name=filename)
+                if drive_file_obj:
+                    cookies_target_path = os.path.join(self._firefox_profile_path, 'cookies.sqlite')
+                    drive_file_obj.GetContentFile(cookies_target_path)
+                    logger.info('Download cookies file to {}'.format(cookies_target_path))
+                else:
+                    logger.warn('Cannot found file: {}'.format(filename))
 
     def _install_profile_extensions(self, extensions_settings={}):
         if extensions_settings:

@@ -63,8 +63,12 @@ class RunTest(object):
         self.firefox_profile_creator = FirefoxProfileCreator()
         self.settings_json = self._load_settings()
         self.settings_prefs = self.settings_json.get('prefs', {})
-        self.ext_settings = self.settings_json.get('extensions', {})
-        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(prefs=self.settings_prefs, extensions_settings=self.ext_settings)
+        self.cookies_settings = self.settings_json.get('cookies', {})
+        self.extensions_settings = self.settings_json.get('extensions', {})
+        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
+            prefs=self.settings_prefs,
+            cookies_settings=self.cookies_settings,
+            extensions_settings=self.extensions_settings)
 
     def teardown(self):
         if self.advance:
@@ -102,7 +106,9 @@ class RunTest(object):
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
 
         result['FIREFOX_SETTINGS'] = self.firefox_settings
-        result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(prefs=self.settings_prefs, extensions_settings=self.ext_settings)
+        result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
+            prefs=self.settings_prefs,
+            extensions_settings=self.extensions_settings)
 
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
