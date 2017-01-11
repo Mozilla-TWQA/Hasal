@@ -1,0 +1,26 @@
+{
+  "env": {
+    "JSGC_DISABLE_POISONING": 1
+  },
+  "prefs": {
+    "plugin.state.flash": 0,
+    "browser.sessionstore.restore_on_demand": false,
+    "browser.sessionstore.resume_from_crash": false,
+    "browser.shell.checkDefaultBrowser": false,
+    "app.update.auto": false,
+    "app.update.enabled": false,
+    "app.update.silent": false,
+    "browser.tabs.remote.autostart": false,
+    "browser.tabs.remote.autostart.1": false,
+    "browser.tabs.remote.autostart.2": true,
+    "browser.tabs.remote.force-enable": true,
+    "browser.startup.homepage": "about:blank",
+    "browser.startup.page": 0,
+    "javascript.options.asyncstack": false
+  },
+  "cookies": {
+    "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
+    "filename": "cookies_gsuite_fb.sqlite"
+  },
+  "extensions": {}
+}

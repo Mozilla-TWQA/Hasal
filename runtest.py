@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
   runtest.py (-h | --help)
 
 Options:
@@ -12,6 +12,7 @@ Options:
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
   --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
+  --firefox-settings=<str>        Specify the Firefox settings [default: default_settings.json].
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
   --comment=<str>                 Tag the comment on this test [default: <today>]
@@ -28,9 +29,10 @@ import time
 import shutil
 import platform
 import subprocess
-from lib.helper.uploadAgentHelper import UploadAgent
 from docopt import docopt
+from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
+from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
 
 DEFAULT_RESULT_FP = "./result.json"
 DEFAULT_TEST_FOLDER = "tests"
@@ -57,6 +59,22 @@ class RunTest(object):
         for variable_name in kwargs.keys():
             self.logger.debug("Set variable name: %s with value: %s" % (variable_name, kwargs[variable_name]))
             setattr(self, variable_name, kwargs[variable_name])
+        # loading settings
+        self.firefox_profile_creator = FirefoxProfileCreator()
+        self.settings_json = self._load_settings()
+        self.settings_prefs = self.settings_json.get('prefs', {})
+        self.cookies_settings = self.settings_json.get('cookies', {})
+        self.extensions_settings = self.settings_json.get('extensions', {})
+        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
+            prefs=self.settings_prefs,
+            cookies_settings=self.cookies_settings,
+            extensions_settings=self.extensions_settings)
+
+    def teardown(self):
+        if self.advance:
+            self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
+        elif os.path.isdir(self._firefox_profile_path):
+            self.firefox_profile_creator.remove_firefox_profile()
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -69,6 +87,14 @@ class RunTest(object):
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
 
+    def _load_settings(self):
+        try:
+            if os.path.exists(self.firefox_settings):
+                with open(self.firefox_settings) as firefox_settings_fh:
+                    return json.load(firefox_settings_fh)
+        except:
+            return {}
+
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
         result['PROFILER'] = self.profiler
@@ -78,6 +104,12 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
+
+        result['FIREFOX_SETTINGS'] = self.firefox_settings
+        result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
+            prefs=self.settings_prefs,
+            extensions_settings=self.extensions_settings)
+
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
         else:
@@ -153,8 +185,8 @@ class RunTest(object):
                 else:
                     current_retry += 1
             except Exception as e:
-                print "Exception happend during running test!"
-                print e.message
+                self.logger.warn('Exception happend during running test!')
+                self.logger.warn(e)
                 self.create_exception_file(e.message, current_retry)
                 current_retry += 1
 
@@ -235,14 +267,20 @@ def main():
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'].strip(), calc_si=arguments['--calc-si'],
-                           waveform=arguments['--waveform'], perfherder_revision=arguments['--perfherder-revision'],
-                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'], jenkins_build_no=arguments['--jenkins-build-no'])
+                           waveform=arguments['--waveform'],
+                           perfherder_revision=arguments['--perfherder-revision'],
+                           perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
+                           firefox_settings=arguments['--firefox-settings'],
+                           jenkins_build_no=arguments['--jenkins-build-no'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
         run_test_obj.run("re", arguments['<suite.txt>'])
     else:
         run_test_obj.run("re", arguments['<suite.txt>'])
+    # teardown
+    run_test_obj.teardown()
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     logger = get_logger(__file__, arguments['--advance'])

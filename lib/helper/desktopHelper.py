@@ -30,15 +30,17 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                         tracing_path=env.chrome_tracing_file_fp)
         else:
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            profile_path = env.firefox_profile_path
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+                                         profile_path=profile_path)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             if kwargs['profile_path'] is not None:
                 profile_path = extract_profile_data(kwargs['profile_path'])
-                browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
-                                             profile_path=profile_path)
             else:
-                browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True)
+                profile_path = env.firefox_profile_path
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
+                                         profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     elif kwargs['profile_path'] is not None:
@@ -49,7 +51,9 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            profile_path = env.firefox_profile_path
+            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+                                         profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
 
