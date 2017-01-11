@@ -22,7 +22,7 @@ class ResultMetricGenerator(object):
             # generate string format
             if self.output_mode == self.DEFAULT_EASY_PASTE_MODE:
                 title_format_str = '{:<50}' + "".join(['\t{:<80}' for i in range(2)])
-                content_format_str = '{:<50}' + "".join(['\t{:<15}' for i in range(len(DEFAULT_PRINT_KEY_INDEX)*2)])
+                content_format_str = '{:<50}' + "".join(['\t{:<15}' for i in range(len(DEFAULT_PRINT_KEY_INDEX) * 2)])
             elif self.output_mode == self.DEFAULT_SHORT_VIEW_MODE:
                 content_format_str = '{:<50}' + "".join(['\t{:<15}' for i in range(len(DEFAULT_PRINT_KEY_INDEX))])
 
