@@ -1,4 +1,3 @@
-import os
 from base import BrowserBase
 
 
@@ -22,7 +21,6 @@ class BrowserFirefox(BrowserBase):
             self.launch_cmd.extend(["--profile", kwargs['profile_path']])
 
         if "tracelogger" in kwargs:
-            self.test_env = os.environ.copy()
             self.test_env['TLLOG'] = "default"
             self.test_env['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
 

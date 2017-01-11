@@ -1,3 +1,4 @@
+import os
 import sys
 import psutil
 import subprocess
@@ -16,6 +17,7 @@ class BrowserBase(object):
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
+        self.test_env = os.environ.copy()
 
     def get_browser_settings(self, **kwargs):
         pass
@@ -25,10 +27,7 @@ class BrowserBase(object):
 
     def launch(self):
         logger.debug("browser launch command:%s" % self.launch_cmd)
-        if hasattr(self, "test_env"):
-            self.browser_process = subprocess.Popen(self.launch_cmd, env=self.test_env)
-        else:
-            self.browser_process = subprocess.Popen(self.launch_cmd)
+        self.browser_process = subprocess.Popen(self.launch_cmd, env=self.test_env)
 
     def get_version(self):
         cmd = self.get_version_command()
