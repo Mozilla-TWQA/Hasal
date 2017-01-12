@@ -176,6 +176,9 @@ class Environment(object):
         self.waveform_fp = os.path.join(self.DEFAULT_WAVEFORM_OUTPUT_DIR, self.output_name + "_waveform_info.json")
 
         self.firefox_settings_json = os.getenv('FIREFOX_SETTINGS')
+        self.firefox_settings_env = {}
+        self.firefox_settings_prefs = {}
+        self.firefox_settings_extensions = {}
         if os.path.exists(self.firefox_settings_json):
             with open(self.firefox_settings_json) as firefox_settings_fh:
                 firefox_settings_obj = json.load(firefox_settings_fh)

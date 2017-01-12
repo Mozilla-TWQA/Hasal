@@ -72,7 +72,7 @@ class FirefoxProfileCreator(object):
         return
 
     def remove_firefox_profile(self):
-        if os.path.isdir(self._firefox_profile_path):
+        if self._firefox_profile_path and os.path.isdir(self._firefox_profile_path):
             for _ in range(10):
                 try:
                     logger.info('Remove Profile: {}'.format(self._firefox_profile_path))

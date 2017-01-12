@@ -1,5 +1,8 @@
 import os
 from base import BrowserBase
+from ..common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class BrowserFirefox(BrowserBase):
@@ -18,8 +21,11 @@ class BrowserFirefox(BrowserBase):
         self.launch_cmd = [self.command, "-height", self.window_size_height, "-width",
                            self.windows_size_width]
 
-        if "profile_path" in kwargs:
+        if "profile_path" in kwargs and kwargs.get('profile_path', ''):
+            logger.info('Running Firefox with profile: {}'.format(kwargs['profile_path']))
             self.launch_cmd.extend(["--profile", kwargs['profile_path']])
+        else:
+            logger.info('Running Firefox with default profile.')
 
         if "tracelogger" in kwargs:
             self.test_env = os.environ.copy()
