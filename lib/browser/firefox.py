@@ -1,4 +1,3 @@
-import os
 from base import BrowserBase
 from ..common.logConfig import get_logger
 
@@ -29,7 +28,6 @@ class BrowserFirefox(BrowserBase):
             logger.info('Running Firefox with default profile.')
 
         if "tracelogger" in kwargs:
-            self.test_env = os.environ.copy()
             self.test_env['TLLOG'] = "default"
             self.test_env['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
 

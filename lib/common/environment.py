@@ -2,6 +2,9 @@ import os
 import time
 import json
 import platform
+import logConfig
+
+logger = logConfig.get_logger(__name__)
 
 
 class Environment(object):
@@ -186,6 +189,14 @@ class Environment(object):
                 self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
                 self.firefox_settings_extensions = firefox_settings_obj.get('extensions', {})
         self.firefox_profile_path = os.getenv('FIREFOX_PROFILE_PATH')
+
+        if self.firefox_settings_env:
+            for k, v in self.firefox_settings_env.items():
+                logger.info('Set environment variable: {}={}'.format(k, v))
+                if isinstance(v, bool) or isinstance(v, int):
+                    os.putenv(k, str(int(v)))
+                elif isinstance(v, str) or isinstance(v, unicode):
+                    os.putenv(k, str(v))
 
     def init_output_dir(self):
         # Init output folder
