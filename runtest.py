@@ -96,9 +96,12 @@ class RunTest(object):
             if os.path.exists(self.firefox_settings):
                 with open(self.firefox_settings) as firefox_settings_fh:
                     settings = json.load(firefox_settings_fh)
-                    self.logger.info('** Important **\n'
+                    self.logger.warn('\n'
+                                     '###############\n'
+                                     '#  Important  #\n'
+                                     '###############\n'
                                      'Loading Settings from {}:\n'
-                                     '{}'.format(self.firefox_settings, json.dumps(settings, indent=4)))
+                                     '{}\n'.format(self.firefox_settings, json.dumps(settings, indent=4)))
                     time.sleep(3)
                     return settings
         except:
