@@ -12,7 +12,7 @@ Options:
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
   --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --firefox-settings=<str>        Specify the Firefox settings [default: default_settings.json].
+  --firefox-settings=<str>        Specify the Firefox settings.
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
   --comment=<str>                 Tag the comment on this test [default: <today>]
@@ -65,10 +65,12 @@ class RunTest(object):
         self.settings_prefs = self.settings_json.get('prefs', {})
         self.cookies_settings = self.settings_json.get('cookies', {})
         self.extensions_settings = self.settings_json.get('extensions', {})
-        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
-            prefs=self.settings_prefs,
-            cookies_settings=self.cookies_settings,
-            extensions_settings=self.extensions_settings)
+        self._firefox_profile_path = ''
+        if self.settings_json:
+            self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
+                prefs=self.settings_prefs,
+                cookies_settings=self.cookies_settings,
+                extensions_settings=self.extensions_settings)
 
     def teardown(self):
         if self.advance:
@@ -88,10 +90,20 @@ class RunTest(object):
             shutil.rmtree(output_dir)
 
     def _load_settings(self):
+        if not self.firefox_settings:
+            return {}
         try:
             if os.path.exists(self.firefox_settings):
                 with open(self.firefox_settings) as firefox_settings_fh:
-                    return json.load(firefox_settings_fh)
+                    settings = json.load(firefox_settings_fh)
+                    self.logger.warn('\n'
+                                     '###############\n'
+                                     '#  Important  #\n'
+                                     '###############\n'
+                                     'Loading Settings from {}:\n'
+                                     '{}\n'.format(self.firefox_settings, json.dumps(settings, indent=4)))
+                    time.sleep(3)
+                    return settings
         except:
             return {}
 
@@ -105,10 +117,11 @@ class RunTest(object):
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
 
-        result['FIREFOX_SETTINGS'] = self.firefox_settings
-        result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
-            prefs=self.settings_prefs,
-            extensions_settings=self.extensions_settings)
+        result['FIREFOX_SETTINGS'] = str(self.firefox_settings)
+        if self.firefox_settings:
+            result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
+                prefs=self.settings_prefs,
+                extensions_settings=self.extensions_settings)
 
         if self.perfherder_revision:
             result['PERFHERDER_REVISION'] = self.perfherder_revision
