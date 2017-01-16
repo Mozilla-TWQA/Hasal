@@ -1,5 +1,5 @@
-#This is for jenkins to get trigger information
-#"Update build name" plugin is required after executing this python script
+# This is for jenkins to get trigger information
+# "Update build name" plugin is required after executing this python script
 import os
 import urllib2
 import xml.etree.ElementTree
