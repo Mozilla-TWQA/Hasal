@@ -5,8 +5,8 @@ import urllib2
 import xml.etree.ElementTree
 
 # initialize variables
-userId=""
-userName=""
+userId = ""
+userName = ""
 
 # get necessary enviroment variables from os
 build_url = os.environ['BUILD_URL']
