@@ -9,14 +9,28 @@ from ..browser.firefox import BrowserFirefox
 from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
+from ..common.logConfig import get_logger
+from firefoxProfileCreator import FirefoxProfileCreator
+
+logger = get_logger(__name__)
 
 
-def extract_profile_data(input_profile_path):
+def extract_profile_data(input_profile_path, prefs={}, cookies={}, extensions={}):
     tmp_dir = tempfile.mkdtemp()
     profile_dir_name = input_profile_path.split(".")[0].split(os.sep)[-1]
     with zipfile.ZipFile(input_profile_path) as zh:
         zh.extractall(tmp_dir)
     return_path = os.path.join(tmp_dir, profile_dir_name)
+
+    # TODO: temporary solution for profiler, e.g geckoprofiler
+    logger.warn('Temporary solution for current profiler, e.g geckoprofile.')
+    profile_creator = FirefoxProfileCreator(firefox_profile_path=return_path)
+    if prefs:
+        profile_creator._set_prefs(prefs=prefs)
+    if cookies:
+        profile_creator._download_cookies(cookies_settings=cookies)
+    if extensions:
+        profile_creator._install_profile_extensions(extensions_settings=extensions)
     return return_path
 
 
@@ -36,7 +50,11 @@ def launch_browser(browser_type, **kwargs):
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             if kwargs['profile_path'] is not None:
-                profile_path = extract_profile_data(kwargs['profile_path'])
+                # TODO: temporary solution for profiler, e.g geckoprofiler
+                profile_path = extract_profile_data(kwargs['profile_path'],
+                                                    prefs=env.firefox_settings_prefs,
+                                                    cookies=env.firefox_settings_cookies,
+                                                    extensions=env.firefox_settings_extensions)
             else:
                 profile_path = env.firefox_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
@@ -45,7 +63,11 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     elif kwargs['profile_path'] is not None:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            profile_path = extract_profile_data(kwargs['profile_path'])
+            # TODO: temporary solution for profiler, e.g geckoprofiler
+            profile_path = extract_profile_data(kwargs['profile_path'],
+                                                prefs=env.firefox_settings_prefs,
+                                                cookies=env.firefox_settings_cookies,
+                                                extensions=env.firefox_settings_extensions)
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
