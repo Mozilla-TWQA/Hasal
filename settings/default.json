@@ -16,6 +16,7 @@
     "browser.tabs.remote.force-enable": true,
     "browser.startup.homepage": "about:blank",
     "browser.startup.page": 0,
+    "browser.tabs.warnOnClose": false,
     "javascript.options.asyncstack": false
   },
   "cookies": {
