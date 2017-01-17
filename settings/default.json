@@ -18,7 +18,10 @@
     "browser.startup.page": 0,
     "browser.tabs.warnOnClose": false,
     "javascript.options.asyncstack": false,
-    "dom.disable_open_during_load": false
+    "dom.disable_open_during_load": false,
+    "datareporting.healthreport.uploadEnabled": false,
+    "datareporting.healthreport.service.enabled": false,
+    "datareporting.healthreport.service.firstRun": false
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
