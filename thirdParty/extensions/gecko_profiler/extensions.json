@@ -1,0 +1,57 @@
+{
+    "id": "jid0-edalmuivkozlouyij0lpdx548bc@jetpack",
+    "syncGUID": "{ec289a0b-a046-463d-ae58-699c5fcc7972}",
+    "location": "app-profile",
+    "version": "2.0.13",
+    "type": "extension",
+    "internalName": null,
+    "updateURL": "https://raw.githubusercontent.com/mstange/Gecko-Profiler-Addon/master/gecko_profiler.update.rdf",
+    "updateKey": null,
+    "optionsURL": "data:text/xml,<placeholder/>",
+    "optionsType": "2",
+    "aboutURL": null,
+    "icons": {
+        "32": "icon.png",
+        "48": "icon.png"
+    },
+    "iconURL": null,
+    "icon64URL": null,
+    "defaultLocale": {
+        "name": "Gecko Profiler",
+        "description": "Collect platform profiles from Firefox Desktop.",
+        "creator": "Markus Stange <mstange@themasta.com>",
+        "homepageURL": null
+    },
+    "visible": true,
+    "active": true,
+    "userDisabled": false,
+    "appDisabled": false,
+    "descriptor": "/home/hasal/.mozilla/firefox/8p1sslm2.Default User/extensions/jid0-edalmuivkozlouyij0lpdx548bc@jetpack.xpi",
+    "installDate": 1484553467000,
+    "updateDate": 1484553467000,
+    "applyBackgroundUpdates": 1,
+    "bootstrap": true,
+    "skinnable": false,
+    "size": 6518625,
+    "sourceURI": "file:///home/hasal/Downloads/gecko_profiler.xpi",
+    "releaseNotesURI": null,
+    "softDisabled": false,
+    "foreignInstall": false,
+    "hasBinaryComponents": false,
+    "strictCompatibility": false,
+    "locales": [],
+    "targetApplications": [
+        {
+            "id": "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}",
+            "minVersion": "38.0a1",
+            "maxVersion": "*"
+        }
+    ],
+    "targetPlatforms": [],
+    "multiprocessCompatible": true,
+    "signedState": 2,
+    "seen": true,
+    "dependencies": [],
+    "hasEmbeddedWebExtension": false,
+    "mpcOptedOut": false
+}

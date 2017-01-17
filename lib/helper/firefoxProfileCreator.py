@@ -1,10 +1,12 @@
 import os
 import sys
 import time
+import json
 import shutil
 import tempfile
 from lib.common.logConfig import get_logger
 from lib.common.pyDriveUtil import PyDriveUtil
+from ..common.environment import Environment
 
 logger = get_logger(__name__)
 
@@ -67,9 +69,36 @@ class FirefoxProfileCreator(object):
 
     def _install_profile_extensions(self, extensions_settings={}):
         if extensions_settings:
-            # TODO: can install extensions into self._firefox_profile_path
-            logger.warn('Not Implemented')
-        return
+            extensions_json_file = os.path.join(self._firefox_profile_path, 'extensions.json')
+            extensions_folder = os.path.join(self._firefox_profile_path, 'extensions')
+            import_extensions_folder = Environment.DEFAULT_EXTENSIONS_DIR
+
+            for name in extensions_settings.keys():
+                ext = extensions_settings[name]
+                if not ext['enable']:
+                    logger.info(name + ' requires no additional add-on installation.')
+                    continue
+
+                logger.info('Handling "' + name + '" related profiler now.')
+                for xpi in ext['XPI']:
+                    logger.info('Installing "' + xpi + '" add-on now.')
+                    xpi_loc = os.path.join(import_extensions_folder, xpi, xpi + ".xpi")
+                    xpi_json = os.path.join(import_extensions_folder, xpi, "extensions.json")
+
+                    with open(extensions_json_file) as f, open(xpi_json) as a:
+                        data = json.load(f)
+                        new_data = json.load(a)
+                        data['addons'].append(new_data)
+
+                        pos = len(data['addons']) - 1
+                        new_xpi_name = data['addons'][pos]['descriptor'].split("/")[-1].split("\\")[-1]
+                        data['addons'][pos]['descriptor'] = os.path.join(extensions_folder, new_xpi_name)
+                        data['addons'][pos]['sourceURI'] = None
+
+                    with open(extensions_json_file, 'w') as f:
+                        json.dump(data, f)
+
+                    shutil.copyfile(os.path.join(xpi_loc, data['addons'][pos]['descriptor']))
 
     def remove_firefox_profile(self):
         if self._firefox_profile_path and os.path.isdir(self._firefox_profile_path):

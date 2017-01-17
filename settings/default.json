@@ -22,5 +22,28 @@
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
     "filename": "cookies_gsuite_fb.sqlite"
   },
-  "extensions": {}
+  "extensions": {
+    "Gecko Profiler 2.0.18": ["gecko_profiler", true]
+  },
+  "extensions": {
+    "geckoProfiler": {
+      "version": "Gecko Profiler 2.0.18",
+      "enable": true,
+      "XPI": [
+        "gecko_profiler",
+        "hotkey",
+        "marker"
+      ]
+    },
+    "harProfiler": {
+      "enable": false,
+      "XPI": [
+        "har_profiler"
+      ]
+    },
+    "traceloggerProfiler": {
+      "enable": false,
+      "XPI": []
+    }
+  }
 }
