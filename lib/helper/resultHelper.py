@@ -77,7 +77,7 @@ def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_times
     return return_result
 
 
-def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform):
+def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform, test_output):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     if os.path.exists(output_fp):
         with open(output_fp) as fh:
@@ -109,7 +109,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     else:
         si_value = 0
         psi_value = 0
-    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value}
+    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'folder': test_output}
     run_time_dict.update(event_time_dict)
 
     if test_method_name in result:
@@ -250,7 +250,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
         fh.write(json.dumps(stat_data))
 
     if result_data is not None:
-        output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform)
+        output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform, env.output_name)
         start_time = time.time()
         output_video(result_data, env.video_output_fp)
         current_time = time.time()
