@@ -557,8 +557,8 @@ class ImageTool(object):
         try:
             im = Image.open(file)
             width, height = im.size
-            x = int(math.floor(width / 2))
-            y = int(math.floor(height / 2))
+            x = int(math.floor(width / 4))
+            y = int(math.floor(height / 4))
             pixels = im.load()
             background = pixels[x, y]
 
@@ -574,7 +574,7 @@ class ImageTool(object):
             logger.debug('Viewport left edge is {0:d}'.format(left))
 
             # Find the right edge
-            x = int(math.floor(width / 2))
+            x = int(math.floor(width / 4))
             right = None
             while right is None and x < width:
                 if not self.colors_are_similar(background, pixels[x, y]):
@@ -586,7 +586,7 @@ class ImageTool(object):
             logger.debug('Viewport right edge is {0:d}'.format(right))
 
             # Find the top edge
-            x = int(math.floor(width / 2))
+            x = int(math.floor(width / 4))
             top = None
             while top is None and y >= 0:
                 if not self.colors_are_similar(background, pixels[x, y]):
@@ -598,7 +598,7 @@ class ImageTool(object):
             logger.debug('Viewport top edge is {0:d}'.format(top))
 
             # Find the bottom edge
-            y = int(math.floor(height / 2))
+            y = int(math.floor(height / 4))
             bottom = None
             while bottom is None and y < height:
                 if not self.colors_are_similar(background, pixels[x, y]):
@@ -663,7 +663,7 @@ class ImageTool(object):
                         'height': viewport['y'] + viewport['height'] - tab_view['y']}
         return browser_view
 
-    def colors_are_similar(self, a, b, threshold=15):
+    def colors_are_similar(self, a, b, threshold=30):
         similar = True
         sum = 0
         for x in xrange(3):
