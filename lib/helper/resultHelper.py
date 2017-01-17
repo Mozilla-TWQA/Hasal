@@ -129,6 +129,8 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
                 result[test_method_name]['std_dev'], result[test_method_name]['time_list'],\
                 tmp_outlier, si_value, psi_value = calc_obj.detect(result[test_method_name]['time_list'])
             result[test_method_name]['outlier'].extend(tmp_outlier)
+            result[test_method_name]['min_time'] = result[test_method_name]['time_list'][0]['run_time']
+            result[test_method_name]['max_time'] = result[test_method_name]['time_list'][-1]['run_time']
     else:
         result[test_method_name] = {}
         result[test_method_name]['description'] = test_method_doc
