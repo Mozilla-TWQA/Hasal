@@ -17,7 +17,8 @@
     "browser.startup.homepage": "about:blank",
     "browser.startup.page": 0,
     "browser.tabs.warnOnClose": false,
-    "javascript.options.asyncstack": false
+    "javascript.options.asyncstack": false,
+    "dom.disable_open_during_load": false
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
