@@ -124,7 +124,6 @@ class PerfBaseTest(unittest.TestCase):
         # Start video recordings
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.profiler_list)
-        self.profile_zip_path = self.profilers.get_profile_path()
 
         # Record timestamp t1
         self.exec_timestamp_list.append(self.profilers.get_t1_time())
