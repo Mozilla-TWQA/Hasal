@@ -1,8 +1,6 @@
 import subprocess
 import sys
 import lib.sikuli  # NOQA
-import tempfile
-import zipfile
 import os
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
@@ -10,7 +8,6 @@ from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
-from firefoxProfileCreator import FirefoxProfileCreator
 
 logger = get_logger(__name__)
 
