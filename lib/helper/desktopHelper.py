@@ -9,6 +9,10 @@ from ..browser.firefox import BrowserFirefox
 from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
+from ..common.logConfig import get_logger
+from firefoxProfileCreator import FirefoxProfileCreator
+
+logger = get_logger(__name__)
 
 
 def launch_browser(browser_type, **kwargs):

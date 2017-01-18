@@ -183,12 +183,14 @@ class Environment(object):
         self.firefox_settings_env = {}
         self.firefox_settings_prefs = {}
         self.firefox_settings_extensions = {}
+        self.firefox_settings_cookies = {}
         if os.path.exists(self.firefox_settings_json):
             with open(self.firefox_settings_json) as firefox_settings_fh:
                 firefox_settings_obj = json.load(firefox_settings_fh)
                 self.firefox_settings_env = firefox_settings_obj.get('env', {})
                 self.firefox_settings_prefs = firefox_settings_obj.get('prefs', {})
                 self.firefox_settings_extensions = firefox_settings_obj.get('extensions', {})
+                self.firefox_settings_cookies = firefox_settings_obj.get('cookies', {})
         self.firefox_profile_path = os.getenv('FIREFOX_PROFILE_PATH')
 
         if self.firefox_settings_env:

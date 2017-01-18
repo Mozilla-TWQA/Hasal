@@ -12,31 +12,36 @@ logger = get_logger(__name__)
 
 
 class FirefoxProfileCreator(object):
-    def __init__(self):
+    def __init__(self, firefox_profile_path=''):
         if sys.platform == 'darwin':
             self.firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
         else:
             self.firefox_cmd = 'firefox'
-        self._firefox_profile_path = ''
+        self._firefox_profile_path = firefox_profile_path
 
     def get_firefox_profile(self, prefs={}, cookies_settings={}, extensions_settings={}):
         if self._firefox_profile_path:
             logger.info('Get Profile: {}'.format(self._firefox_profile_path))
             return self._firefox_profile_path
         else:
-            profile_path = self._create_firefox_profile(prefs=prefs)
+            profile_path = self._create_firefox_profile()
+            self._set_prefs(prefs=prefs)
             self._download_cookies(cookies_settings=cookies_settings)
             self._install_profile_extensions(extensions_settings=extensions_settings)
             return profile_path
 
-    def _create_firefox_profile(self, prefs={}):
+    def _create_firefox_profile(self):
         tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
-        logger.info('Profile with prefs: {}'.format(prefs))
         os.system('{} --profile {} -silent'.format(self.firefox_cmd, tmp_profile_dir))
+        self._firefox_profile_path = tmp_profile_dir
+        logger.info('Creating Profile success: {}'.format(self._firefox_profile_path))
+        return self._firefox_profile_path
 
+    def _set_prefs(self, prefs={}):
         prefs_list = []
-        prefs_js_file = os.path.join(tmp_profile_dir, 'prefs.js')
+        prefs_js_file = os.path.join(self._firefox_profile_path, 'prefs.js')
+        logger.info('Set prefs to {}: {}'.format(prefs_js_file, prefs))
         for k, v in prefs.items():
             if isinstance(v, bool) or isinstance(v, int):
                 prefs_list.append('user_pref("{}", {});'.format(str(k), str(v).lower()))
@@ -46,12 +51,8 @@ class FirefoxProfileCreator(object):
         prefs_list.append('user_pref("toolkit.startup.last_success", {});'.format(int(time.time())))
         prefs_list.append('user_pref("browser.startup.homepage_override.mstone", "ignore");')
         prefs_settings = '\n'.join(prefs_list)
-
         with open(prefs_js_file, 'a') as prefs_f:
             prefs_f.write('\n' + prefs_settings)
-        logger.info('[Info] Creating Profile success: {}'.format(tmp_profile_dir))
-        self._firefox_profile_path = tmp_profile_dir
-        return self._firefox_profile_path
 
     def _download_cookies(self, cookies_settings={}):
         if cookies_settings:

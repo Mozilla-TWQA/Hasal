@@ -183,8 +183,34 @@ class Firefox(GeneralBrowser):
 
     def profileAnalyze(self):
         type("2", Key.CTRL + Key.SHIFT)
-        wait(Pattern("pics/cleopatra_complete.png"), 1 * 60 * 60)
-        wait(Pattern("pics/cleopatra_geckomain.png"), 30 * 60)
+        complete_pics = ['pics/cleopatra_complete_win.png',
+                         'pics/cleopatra_complete_ubuntu.png']
+        geckomain_pics = ['pics/cleopatra_geckomain_win.png',
+                          'pics/cleopatra_geckomain_ubuntu.png']
+        exists_complete = False
+        exists_geckomain = False
+
+        # wait "complete profile" for one hour
+        for _ in range(60 * 60):
+            if exists_complete:
+                break
+            for pic in complete_pics:
+                if exists(Pattern(pic), 1):
+                    exists_complete = True
+                    break
+        if not exists_complete:
+            raise Exception('Cannot found {}'.format(complete_pics))
+
+        # wait "complete profile" for half hour
+        for _ in range(30 * 60):
+            if exists_geckomain:
+                break
+            for pic in geckomain_pics:
+                if exists(Pattern(pic), 1):
+                    exists_geckomain = True
+                    break
+        if not exists_geckomain:
+            raise Exception('Cannot found {}'.format(geckomain_pics))
         wait(30)
 
     def profilerMark_3(self):
