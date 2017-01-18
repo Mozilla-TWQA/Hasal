@@ -23,49 +23,43 @@ class PerfBaseTest(unittest.TestCase):
         self.env = Environment(self._testMethodName, self._testMethodDoc)
 
     def get_profiler_list(self):
-        avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler", "profile_name": None}
-        mitmdump_profiler = {"path": "lib.profiler.mitmDumpProfiler", "name": "MitmDumpProfiler", "profile_name": None}
-        har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler", "profile_name": "AutoSaveHAR.zip"}
-        performance_timing_profiler = {"path": "lib.profiler.performanceTimingProfiler",
-                                       "name": "PerformanceTimingProfiler", "profile_name": None}
-        gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler",
-                          "profile_name": "GeckoProfiler.zip"}
-        tracelogger_profiler = {"path": "lib.profiler.traceloggerProfiler", "name": "TraceLoggerProfiler",
-                                "profile_name": None}
+        # firefox profilers
+        avconv_profiler = {"path": "lib.profiler.avconvProfiler", "name": "AvconvProfiler"}
+        mitmdump_profiler = {"path": "lib.profiler.mitmDumpProfiler", "name": "MitmDumpProfiler"}
+        har_profiler = {"path": "lib.profiler.harProfiler", "name": "HarProfiler"}
+        gecko_profiler = {"path": "lib.profiler.geckoProfiler", "name": "GeckoProfiler"}
+        tracelogger_profiler = {"path": "lib.profiler.traceloggerProfiler", "name": "TraceLoggerProfiler"}
+        # chrome profilers
+        chrome_tracing = {"name": "ChromeTracing"}
+
         result_list = []
+        self.enabled_profiler_list = []
 
-        profiler_list_str = os.getenv("PROFILER")
-        self.enabled_profiler_list = [item.strip() for item in profiler_list_str.split(',')]
-        if self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
+        extensions_settings = self.env.firefox_settings_extensions
+        for name in extensions_settings.keys():
+            ext = extensions_settings[name]
+            if not ext['enable']:
+                logger.info(name + ' requires no additional add-on installation.')
+                continue
+
+            if name == gecko_profiler["name"]:
+                result_list.append(gecko_profiler)
+                self.enabled_profiler_list.append(self.env.PROFILER_FLAG_GECKOPROFILER)
+            elif name == har_profiler["name"]:
+                result_list.append(har_profiler)
+                self.enabled_profiler_list.append(self.env.PROFILER_FLAG_HAREXPORT)
+            elif name == mitmdump_profiler["name"]:
+                result_list.append(mitmdump_profiler)
+                self.enabled_profiler_list.append(self.env.PROFILER_FLAG_MITMDUMP)
+            elif name == tracelogger_profiler["name"]:
+                result_list.append(tracelogger_profiler)
+                self.enabled_profiler_list.append(self.env.PROFILER_FLAG_FXTRACELOGGER)
+            elif name == chrome_tracing["name"]:
+                self.enabled_profiler_list.append(self.env.PROFILER_FLAG_CHROMETRACING)
+
+        if len(result_list) == 0:
             result_list.append(avconv_profiler)
-            result_list.append(har_profiler)
-            result_list.append(performance_timing_profiler)
-            result_list.append(gecko_profiler)
-            result_list.append(tracelogger_profiler)
-            return result_list
-
-        if self.env.PROFILER_FLAG_JUSTPROFILER in self.enabled_profiler_list:
-            result_list.append(har_profiler)
-            result_list.append(performance_timing_profiler)
-            result_list.append(gecko_profiler)
-            result_list.append(tracelogger_profiler)
-            return result_list
-
-        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list:
-            result_list.append(avconv_profiler)
-
-        if self.env.PROFILER_FLAG_GECKOPROFILER in self.enabled_profiler_list:
-            result_list.append(performance_timing_profiler)
-            result_list.append(gecko_profiler)
-
-        if self.env.PROFILER_FLAG_HAREXPORT in self.enabled_profiler_list:
-            result_list.append(har_profiler)
-
-        if self.env.PROFILER_FLAG_MITMDUMP in self.enabled_profiler_list:
-            result_list.append(mitmdump_profiler)
-
-        if self.env.PROFILER_FLAG_FXTRACELOGGER in self.enabled_profiler_list:
-            result_list.append(tracelogger_profiler)
+            self.enabled_profiler_list.append(self.env.PROFILER_FLAG_AVCONV)
 
         return result_list
 
@@ -175,7 +169,7 @@ class PerfBaseTest(unittest.TestCase):
         # capture 1st snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list:
             videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_1_fn)
         time.sleep(2)
@@ -191,7 +185,7 @@ class PerfBaseTest(unittest.TestCase):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list or self.env.PROFILER_FLAG_FXALL in self.enabled_profiler_list:
+        if self.env.PROFILER_FLAG_AVCONV in self.enabled_profiler_list:
             videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_2_fn)
 

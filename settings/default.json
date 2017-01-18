@@ -26,7 +26,7 @@
     "Gecko Profiler 2.0.18": ["gecko_profiler", true]
   },
   "extensions": {
-    "geckoProfiler": {
+    "GeckoProfiler": {
       "version": "Gecko Profiler 2.0.18",
       "enable": true,
       "XPI": [
@@ -35,13 +35,17 @@
         "marker"
       ]
     },
-    "harProfiler": {
+    "HarProfiler": {
       "enable": false,
       "XPI": [
         "har_profiler"
       ]
     },
-    "traceloggerProfiler": {
+    "TraceloggerProfiler": {
+      "enable": false,
+      "XPI": []
+    },
+    "MitmDumpProfiler": {
       "enable": false,
       "XPI": []
     }

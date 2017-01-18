@@ -11,15 +11,6 @@ from ..common.imageTool import ImageTool
 from ..common.environment import Environment
 
 
-def extract_profile_data(input_profile_path):
-    tmp_dir = tempfile.mkdtemp()
-    profile_dir_name = input_profile_path.split(".")[0].split(os.sep)[-1]
-    with zipfile.ZipFile(input_profile_path) as zh:
-        zh.extractall(tmp_dir)
-    return_path = os.path.join(tmp_dir, profile_dir_name)
-    return return_path
-
-
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
     enabled_profiler_list = kwargs['enabled_profiler_list']
@@ -35,18 +26,9 @@ def launch_browser(browser_type, **kwargs):
                                          profile_path=profile_path)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            if kwargs['profile_path'] is not None:
-                profile_path = extract_profile_data(kwargs['profile_path'])
-            else:
-                profile_path = env.firefox_profile_path
+            profile_path = env.firefox_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
                                          profile_path=profile_path)
-        else:
-            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
-    elif kwargs['profile_path'] is not None:
-        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            profile_path = extract_profile_data(kwargs['profile_path'])
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:

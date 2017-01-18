@@ -98,7 +98,7 @@ class FirefoxProfileCreator(object):
                     with open(extensions_json_file, 'w') as f:
                         json.dump(data, f)
 
-                    shutil.copyfile(os.path.join(xpi_loc, data['addons'][pos]['descriptor']))
+                    shutil.copyfile(xpi_loc, data['addons'][pos]['descriptor'])
 
     def remove_firefox_profile(self):
         if self._firefox_profile_path and os.path.isdir(self._firefox_profile_path):
