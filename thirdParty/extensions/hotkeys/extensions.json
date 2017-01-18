@@ -1,0 +1,59 @@
+{
+    "id": "@perf_mark_hotkeys",
+    "syncGUID": "{7bd7d149-1835-4126-9e6a-0eb27656d0b3}",
+    "location": "app-profile",
+    "version": "0.0.4",
+    "type": "extension",
+    "internalName": null,
+    "updateURL": null,
+    "updateKey": null,
+    "optionsURL": "data:text/xml,<placeholder/>",
+    "optionsType": "2",
+    "aboutURL": null,
+    "icons": {},
+    "iconURL": null,
+    "icon64URL": null,
+    "defaultLocale": {
+        "name": "Sending Perf Mark by Hotkeys",
+        "description": "Using Hotkeys to send Performance Mark at Runtime.",
+        "creator": "Askeing",
+        "homepageURL": null
+    },
+    "visible": true,
+    "active": true,
+    "userDisabled": false,
+    "appDisabled": false,
+    "descriptor": "/home/hasal/.mozilla/firefox/0xjkw6gg.Default User/extensions/@perf_mark_hotkeys.xpi",
+    "installDate": 1484711641000,
+    "updateDate": 1484711641000,
+    "applyBackgroundUpdates": 1,
+    "bootstrap": true,
+    "skinnable": false,
+    "size": 14211,
+    "sourceURI": "https://addons.mozilla.org/firefox/downloads/latest/sending-perf-mark-by-hotkeys/addon-700586-latest.xpi?src=dp-btn-primary",
+    "releaseNotesURI": null,
+    "softDisabled": false,
+    "foreignInstall": false,
+    "hasBinaryComponents": false,
+    "strictCompatibility": false,
+    "locales": [],
+    "targetApplications": [
+        {
+            "id": "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}",
+            "minVersion": "38.0",
+            "maxVersion": "50.0"
+        },
+        {
+            "id": "{aa3c5121-dab2-40e2-81ca-7ea25febc110}",
+            "minVersion": "38.0",
+            "maxVersion": "50.0"
+        }
+    ],
+    "targetPlatforms": [],
+    "multiprocessCompatible": false,
+    "signedState": 2,
+    "seen": true,
+    "dependencies": [],
+    "hasEmbeddedWebExtension": false,
+    "mpcOptedOut": false
+}

@@ -1,0 +1,54 @@
+{
+    "id": "{17c743a8-26cd-48e4-93a3-6a0d1e06529b}",
+    "syncGUID": "{6ac82ffa-6850-43ca-a9be-fc6b42edbe1e}",
+    "location": "app-profile",
+    "version": "1.1",
+    "type": "webextension",
+    "internalName": null,
+    "updateKey": null,
+    "optionsURL": null,
+    "optionsType": null,
+    "aboutURL": null,
+    "icons": {
+        "48": "icon.svg"
+    },
+    "iconURL": null,
+    "icon64URL": null,
+    "defaultLocale": {
+        "name": "Perf Marker",
+        "description": "Marker for key page events, clicks and scrolling",
+        "creator": null,
+        "developers": null,
+        "translators": null,
+        "contributors": null
+    },
+    "visible": true,
+    "active": true,
+    "userDisabled": false,
+    "appDisabled": false,
+    "descriptor": "/home/hasal/.mozilla/firefox/0xjkw6gg.Default User/extensions/{17c743a8-26cd-48e4-93a3-6a0d1e06529b}.xpi",
+    "installDate": 1484711645000,
+    "updateDate": 1484711645000,
+    "applyBackgroundUpdates": 1,
+    "bootstrap": true,
+    "skinnable": false,
+    "size": 24765,
+    "sourceURI": "https://addons.mozilla.org/firefox/downloads/latest/perf-marker/addon-751890-latest.xpi?src=dp-btn-primary",
+    "releaseNotesURI": null,
+    "softDisabled": false,
+    "foreignInstall": false,
+    "hasBinaryComponents": false,
+    "strictCompatibility": true,
+    "locales": [],
+    "targetApplications": [
+        {
+            "id": "toolkit@mozilla.org"
+        }
+    ],
+    "targetPlatforms": [],
+    "multiprocessCompatible": true,
+    "signedState": 2,
+    "seen": true,
+    "dependencies": [],
+    "hasEmbeddedWebExtension": false
+}
