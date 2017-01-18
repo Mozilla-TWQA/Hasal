@@ -246,7 +246,7 @@ class Firefox(GeneralBrowser):
                 click(Pattern(complete_pic))
                 wait(Pattern(share_permalink_pic), 60)
                 click(Pattern(share_permalink_pic))
-                wait(3)
+                wait(5)
                 type('a', self.control)
                 wait(1)
                 type('c', self.control)
