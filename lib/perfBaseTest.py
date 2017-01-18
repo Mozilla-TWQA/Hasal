@@ -132,8 +132,7 @@ class PerfBaseTest(unittest.TestCase):
         desktopHelper.minimize_window()
 
         # launch browser
-        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, profile_path=self.profile_zip_path,
-                                                             env=self.env,
+        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
                                                              enabled_profiler_list=self.enabled_profiler_list)
 
         # wait browser ready
