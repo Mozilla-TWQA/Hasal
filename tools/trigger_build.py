@@ -266,7 +266,8 @@ class TriggerBuild(object):
                 return False
             else:
                 matched_keyword = self.PLATFORM_FN_MAPPING[self.platform]['key'] + "." + self.PLATFORM_FN_MAPPING[self.platform]['ext']
-                matched_file_list = [fn for fn in remote_file_dict.keys() if matched_keyword in fn and "firefox" in fn]
+                matched_file_list = [fn for fn in remote_file_dict.keys()
+                                     if ((matched_keyword in fn) and ('firefox' in fn) and (not fn.endswith('.asc')))]
                 if len(matched_file_list) != 1:
                     print "WARN: the possible match file list is not equal 1, list as below: [%s]" % matched_file_list
                     if len(matched_file_list) < 1:
