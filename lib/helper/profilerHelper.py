@@ -12,7 +12,8 @@ class Profilers(object):
         self.sikuli = input_sikuli_obj
 
     def start_profiling(self, profiler_list):
-        for profiler_data in profiler_list:
+        enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
+        for profiler_data in enabled_profiler_list:
             if 'path' in profiler_list[profiler_data]:
                 profiler_class = getattr(importlib.import_module(profiler_list[profiler_data]['path']), profiler_data)
                 profiler_obj = profiler_class(self.env, self.browser_type, self.sikuli)

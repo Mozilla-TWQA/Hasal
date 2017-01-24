@@ -14,7 +14,8 @@ logger = get_logger(__name__)
 
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
-    enabled_profiler_list = kwargs['enable_profiler_list']
+    profiler_list = kwargs['profiler_list']
+    enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
     profile_path = None
 
     if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
