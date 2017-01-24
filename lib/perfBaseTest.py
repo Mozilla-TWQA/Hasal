@@ -69,6 +69,7 @@ class PerfBaseTest(unittest.TestCase):
         # Original profiler list was substitute by self.env.firefox_settings_extensions
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
+        profiler_list = self.env.firefox_settings_extensions
 
         # Init output dirs
         self.env.init_output_dir()
@@ -90,7 +91,7 @@ class PerfBaseTest(unittest.TestCase):
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
-        self.profilers.start_profiling(self.env.firefox_settings_extensions)
+        self.profilers.start_profiling(profiler_list)
 
         # Record timestamp t1
         self.exec_timestamp_list.append(self.profilers.get_t1_time())
@@ -98,9 +99,12 @@ class PerfBaseTest(unittest.TestCase):
         # minimize all windows
         desktopHelper.minimize_window()
 
+        test = [x for x in profiler_list if profiler_list[x]['enable'] is True]
+
         # launch browser
+        enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
-                                                             profiler_list=self.env.firefox_settings_extensions)
+                                                             enabled_profiler_list=enabled_profiler_list)
 
         # wait browser ready
         self.get_browser_done()
@@ -134,8 +138,8 @@ class PerfBaseTest(unittest.TestCase):
         # capture 1st snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+        if self.env.PROFILER_FLAG_AVCONV in profiler_list:
+            if profiler_list[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
                 videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_1_fn)
         time.sleep(2)
@@ -151,8 +155,8 @@ class PerfBaseTest(unittest.TestCase):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+        if self.env.PROFILER_FLAG_AVCONV in profiler_list:
+            if profiler_list[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
                 videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_2_fn)
 
