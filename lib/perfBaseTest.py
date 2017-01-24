@@ -47,19 +47,19 @@ class PerfBaseTest(unittest.TestCase):
         return result_args
 
     def get_browser_done(self):
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions or \
-                        self.env.PROFILER_FLAG_FXALL in self.env.firefox_settings_extensions:
-            for i in range(10):
-                time.sleep(1)
-                logger.debug("Check browser show up %d time(s)." % (i + 1))
-                desktopHelper.lock_window_pos(self.browser_type)
-                videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                           self.env.img_output_sample_1_fn)
-                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
-                    logger.debug("Browser shown, adjust viewport by setting.")
-                    desktopHelper.adjust_viewport(self.browser_type, self.env.img_sample_dp,
-                                                  self.env.img_output_sample_1_fn)
-                    break
+        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+                for i in range(10):
+                    time.sleep(1)
+                    logger.debug("Check browser show up %d time(s)." % (i + 1))
+                    desktopHelper.lock_window_pos(self.browser_type)
+                    videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                               self.env.img_output_sample_1_fn)
+                    if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
+                        logger.debug("Browser shown, adjust viewport by setting.")
+                        desktopHelper.adjust_viewport(self.browser_type, self.env.img_sample_dp,
+                                                      self.env.img_output_sample_1_fn)
+                        break
         else:
             time.sleep(3)
             desktopHelper.lock_window_pos(self.browser_type)
@@ -100,7 +100,7 @@ class PerfBaseTest(unittest.TestCase):
 
         # launch browser
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
-                                                             enabled_profiler_list=self.env.firefox_settings_extensions)
+                                                             profiler_list=self.env.firefox_settings_extensions)
 
         # wait browser ready
         self.get_browser_done()
@@ -135,8 +135,9 @@ class PerfBaseTest(unittest.TestCase):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                       self.env.img_output_sample_1_fn)
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+                videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                           self.env.img_output_sample_1_fn)
         time.sleep(2)
 
         # Record timestamp t2
@@ -151,8 +152,9 @@ class PerfBaseTest(unittest.TestCase):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                       self.env.img_output_sample_2_fn)
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+                videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+                                           self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)

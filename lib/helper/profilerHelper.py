@@ -14,8 +14,7 @@ class Profilers(object):
     def start_profiling(self, profiler_list):
         for profiler_data in profiler_list:
             if 'path' in profiler_list[profiler_data]:
-                profiler_class = getattr(importlib.import_module(profiler_list[profiler_data]['path']),
-                                         profiler_list[profiler_data]['name'])
+                profiler_class = getattr(importlib.import_module(profiler_list[profiler_data]['path']), profiler_data)
                 profiler_obj = profiler_class(self.env, self.browser_type, self.sikuli)
                 profiler_obj.start_recording()
                 self.profiler_obj_list.append(profiler_obj)
