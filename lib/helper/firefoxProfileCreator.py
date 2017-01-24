@@ -75,12 +75,17 @@ class FirefoxProfileCreator(object):
             import_extensions_folder = Environment.DEFAULT_EXTENSIONS_DIR
 
             for name in extensions_settings.keys():
+                import pdb; pdb.set_trace()
                 ext = extensions_settings[name]
                 if not ext['enable']:
-                    logger.info(name + ' requires no additional add-on installation.')
+                    logger.info(name + ' set to be disabled.')
                     continue
 
-                logger.info('Handling "' + name + '" related profiler now.')
+                logger.info(name + ' is enabled.')
+                if len(ext['XPI']) == 0:
+                    logger.info('It requires no additional add-on to be installed')
+                    continue
+
                 for xpi in ext['XPI']:
                     logger.info('Installing "' + xpi + '" add-on now.')
                     xpi_loc = os.path.join(import_extensions_folder, xpi, xpi + ".xpi")
