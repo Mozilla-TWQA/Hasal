@@ -28,6 +28,10 @@
     "filename": "cookies_gsuite_fb.sqlite"
   },
   "extensions": {
+    "AvconvProfiler": {
+      "enable": true,
+      "XPI": []
+    },
     "GeckoProfiler": {
       "version": "Gecko Profiler 2.0.18",
       "enable": false,
@@ -48,6 +52,10 @@
       "XPI": []
     },
     "MitmDumpProfiler": {
+      "enable": false,
+      "XPI": []
+    },
+    "ChromeTracing": {
       "enable": false,
       "XPI": []
     }

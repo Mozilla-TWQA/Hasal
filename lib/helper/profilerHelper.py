@@ -12,12 +12,13 @@ class Profilers(object):
         self.sikuli = input_sikuli_obj
 
     def start_profiling(self, profiler_list):
-        self.profiler_list = profiler_list
-        for profiler_data in self.profiler_list:
-            profiler_class = getattr(importlib.import_module(profiler_data['path']), profiler_data['name'])
-            profiler_obj = profiler_class(self.env, self.browser_type, self.sikuli)
-            profiler_obj.start_recording()
-            self.profiler_obj_list.append(profiler_obj)
+        for profiler_data in profiler_list:
+            if 'path' in profiler_list[profiler_data]:
+                profiler_class = getattr(importlib.import_module(profiler_list[profiler_data]['path']),
+                                         profiler_list[profiler_data]['name'])
+                profiler_obj = profiler_class(self.env, self.browser_type, self.sikuli)
+                profiler_obj.start_recording()
+                self.profiler_obj_list.append(profiler_obj)
 
     def stop_profiling(self, input_profile_dir_path=None):
         for profiler_obj in self.profiler_obj_list:
