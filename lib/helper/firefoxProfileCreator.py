@@ -75,7 +75,6 @@ class FirefoxProfileCreator(object):
             import_extensions_folder = Environment.DEFAULT_EXTENSIONS_DIR
 
             for name in extensions_settings.keys():
-                import pdb; pdb.set_trace()
                 ext = extensions_settings[name]
                 if not ext['enable']:
                     logger.info(name + ' set to be disabled.')
