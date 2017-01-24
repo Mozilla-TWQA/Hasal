@@ -74,6 +74,9 @@ class ImageTool(object):
                 vidcap = cv2.VideoCapture(input_video_fp)
         if not vidcap.isOpened():
             logger.debug('Video file cannot open: {}'.format(input_video_fp))
+            # Closes video file
+            logger.debug('Closes video file: {}'.format(input_video_fp))
+            vidcap.release()
             return None
         logger.debug('Video file is opened: {}'.format(input_video_fp))
 
@@ -132,6 +135,10 @@ class ImageTool(object):
         if self.search_range[3] >= len(self.image_list):
             self.search_range[3] = len(self.image_list) - 1
         logger.info("Image Comparison search range: " + str(self.search_range))
+
+        # Closes video file
+        logger.debug('Closes video file: {}'.format(input_video_fp))
+        vidcap.release()
         return self.image_list
 
     def crop_target_region(self, sample_dp, output_image_dp, search_target, region):
