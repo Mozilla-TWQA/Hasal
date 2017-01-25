@@ -9,7 +9,7 @@ class GeneralBrowser():
         self.os_version = str(Env.getOSVersion())
         self.urlbar_loc = None
 
-        if self.os.startswith("M"):
+        if self.os.lower() == 'mac':
             self.control = Key.CMD
         else:
             self.control = Key.CTRL
@@ -183,35 +183,76 @@ class Firefox(GeneralBrowser):
 
     def profileAnalyze(self):
         type("2", Key.CTRL + Key.SHIFT)
-        complete_pics = ['pics/cleopatra_complete_win.png',
-                         'pics/cleopatra_complete_ubuntu.png']
-        geckomain_pics = ['pics/cleopatra_geckomain_win.png',
-                          'pics/cleopatra_geckomain_ubuntu.png']
-        exists_complete = False
-        exists_geckomain = False
+        old_cleopatra_pics_all = {
+            'windows': {
+                'complete': 'pics/cleopatra/complete_win.png',
+                'geckomain': 'pics/cleopatra/geckomain_win.png'},
+            'linux': {
+                'complete': 'pics/cleopatra/complete_ubuntu.png',
+                'geckomain': 'pics/cleopatra/geckomain_ubuntu.png'},
+            'mac': {
+                'complete': 'pics/cleopatra/complete_mac.png',
+                'geckomain': 'pics/cleopatra/geckomain_mac.png'}
+        }
+        new_cleopatra_pics_all = {
+            'share_button': 'pics/cleopatra/new_share_button.png',
+            'windows': {
+                'complete': 'pics/cleopatra/new_complete_win.png',
+                'share_confirm': 'pics/cleopatra/new_share_confirm_button_win.png',
+                'share_link': 'pics/cleopatra/new_share_link_win.png',
+                'share_permalink': 'pics/cleopatra/new_share_permalink_button_win.png',
+            },
+            'linux': {
+                'complete': 'pics/cleopatra/new_complete_ubuntu.png',
+                'share_confirm': 'pics/cleopatra/new_share_confirm_button_ubuntu.png',
+                'share_link': 'pics/cleopatra/new_share_link_ubuntu.png',
+                'share_permalink': 'pics/cleopatra/new_share_permalink_button_ubuntu.png',
+            },
+            'mac': {
+                'complete': 'pics/cleopatra/new_complete_mac.png',
+                'share_confirm': 'pics/cleopatra/new_share_confirm_button_mac.png',
+                'share_link': 'pics/cleopatra/new_share_link_mac.png',
+                'share_permalink': 'pics/cleopatra/new_share_permalink_button_mac.png',
+            }
+        }
 
-        # wait "complete profile" for one hour
+        old_cleopatra_pics = old_cleopatra_pics_all.get(self.os.lower())
+        new_cleopatra_pics = new_cleopatra_pics_all.get(self.os.lower())
+        new_cleopatra_share_button = new_cleopatra_pics_all.get('share_button')
+        # wait complete for one hour
         for _ in range(60 * 60):
-            if exists_complete:
-                break
-            for pic in complete_pics:
-                if exists(Pattern(pic), 1):
-                    exists_complete = True
-                    break
-        if not exists_complete:
-            raise Exception('Cannot found {}'.format(complete_pics))
+            # for old cleopatra
+            complete_pic = old_cleopatra_pics.get('complete')
+            geckomain_pic = old_cleopatra_pics.get('geckomain')
+            # wait "complete profile"
+            if exists(Pattern(complete_pic), 1):
+                # wait "gecko main"
+                wait(Pattern(geckomain_pic), 30 * 60)
+                wait(30)
+                return None
 
-        # wait "complete profile" for half hour
-        for _ in range(30 * 60):
-            if exists_geckomain:
-                break
-            for pic in geckomain_pics:
-                if exists(Pattern(pic), 1):
-                    exists_geckomain = True
-                    break
-        if not exists_geckomain:
-            raise Exception('Cannot found {}'.format(geckomain_pics))
-        wait(30)
+            # for new cleopatra
+            elif exists(Pattern(new_cleopatra_share_button), 1):
+                complete_pic = new_cleopatra_pics.get('complete')
+                share_confirm_pic = new_cleopatra_pics.get('share_confirm')
+                share_permalink_pic = new_cleopatra_pics.get('share_permalink')
+                wait(10)
+                wait(Pattern(new_cleopatra_share_button), 60)
+                click(Pattern(new_cleopatra_share_button))
+                wait(3)
+                wait(Pattern(share_confirm_pic), 60)
+                click(Pattern(share_confirm_pic))
+                wait(3)
+                type('c', self.control)
+                click(Pattern(complete_pic))
+                wait(Pattern(share_permalink_pic), 60)
+                click(Pattern(share_permalink_pic))
+                wait(5)
+                type('a', self.control)
+                wait(1)
+                type('c', self.control)
+                url = Env.getClipboard()
+                return url
 
     def profilerMark_3(self):
         type("3", Key.CTRL + Key.SHIFT)

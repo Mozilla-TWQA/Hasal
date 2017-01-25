@@ -31,6 +31,10 @@ class General():
         with open(filename, mode) as f:
             json.dump(data, f, indent=2)
 
+    def writeToFile(self, data, filename, mode="w+"):
+        with open(filename, mode) as f:
+            f.write(data)
+
     def copy(self):
         type("c", self.control)
 
