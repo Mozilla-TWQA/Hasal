@@ -1,1 +1,1 @@
-tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1
+tests\pilot\bbc\test_firefox_bbc_homepage

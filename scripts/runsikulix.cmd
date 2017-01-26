@@ -74,3 +74,13 @@ PATH=%SIKULIX_HOME%libs;%PATH%
 echo +++ trying to run SikuliX
 echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
 java %PARMS% -jar "%SIKULIX_HOME%%SJAR%.jar" %SIKULI_COMMAND%
+GOTO FINALLY
+
+:JAVA_OK
+echo +++ running this Java
+set SIKULI_COMMAND=%*
+"%JAVA_HOME%\bin\java.exe" -version
+PATH=%SIKULIX_HOME%libs;%PATH%
+echo +++ trying to run SikuliX
+echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
+"%JAVA_HOME%\bin\ja
