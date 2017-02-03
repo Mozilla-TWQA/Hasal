@@ -4,6 +4,7 @@ sys.path.append(sys.argv[2])
 import browser
 import common
 import gslide
+import time
 
 com = common.General()
 ff = browser.Firefox()
@@ -21,4 +22,4 @@ type(Key.END)
 sleep(1)
 wait(gs.mix_content_30_list_final)
 type(Key.ENTER)
-waitVanish(gs.mix_content_30_list_final)
+wait(gs.mix_content_30_list_final_end)
