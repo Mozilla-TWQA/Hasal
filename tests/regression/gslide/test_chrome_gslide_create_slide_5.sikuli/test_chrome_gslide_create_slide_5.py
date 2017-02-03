@@ -15,8 +15,10 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.slides_5_list_original)
 
 type(Key.END)
 sleep(1)
+wait(gs.slides_5_list_final)
 type(Key.ENTER)
-waitVanish(gs.page_end)
+wait(gs.slides_5_list_final_end)

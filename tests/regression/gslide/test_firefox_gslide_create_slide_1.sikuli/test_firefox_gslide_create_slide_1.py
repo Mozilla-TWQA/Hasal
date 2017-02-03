@@ -15,6 +15,7 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.blank_list_original)
 
 type(Key.END)
 sleep(1)
