@@ -65,6 +65,21 @@ class ImageTool(object):
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[]):
         vidcap = cv2.VideoCapture(input_video_fp)
+        # make sure the video file is opened, ready for convert to images
+        for _ in range(60):
+            if vidcap.isOpened():
+                break
+            else:
+                time.sleep(1)
+                vidcap = cv2.VideoCapture(input_video_fp)
+        if not vidcap.isOpened():
+            logger.debug('Video file cannot open: {}'.format(input_video_fp))
+            # Closes video file
+            logger.debug('Closes video file: {}'.format(input_video_fp))
+            vidcap.release()
+            return None
+        logger.debug('Video file is opened: {}'.format(input_video_fp))
+
         if hasattr(cv2, 'CAP_PROP_FPS'):
             header_fps = vidcap.get(cv2.CAP_PROP_FPS)
         else:
@@ -120,6 +135,10 @@ class ImageTool(object):
         if self.search_range[3] >= len(self.image_list):
             self.search_range[3] = len(self.image_list) - 1
         logger.info("Image Comparison search range: " + str(self.search_range))
+
+        # Closes video file
+        logger.debug('Closes video file: {}'.format(input_video_fp))
+        vidcap.release()
         return self.image_list
 
     def crop_target_region(self, sample_dp, output_image_dp, search_target, region):
