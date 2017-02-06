@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -21,6 +21,7 @@ Options:
   --perfherder-revision=<str>     Revision for upload to perfherder
   --perfherder-pkg-platform=<str> Package platform for upload to perfherder
   --jenkins-build-no=<int>        Jenkins build no [default: 0].
+  --perfherder-suitename=<str>    Suite name used for shown on perfherder.
 
 """
 import os
@@ -257,7 +258,7 @@ class RunTest(object):
                             test_env = None
                     if self.online:
                         if self.perfherder_revision:
-                            self.upload_agent_obj.upload_register_data(input_suite_fp, type)
+                            self.upload_agent_obj.upload_register_data(input_suite_fp, type, self.perfherder_suitename)
                         self.upload_agent_obj.upload_videos(self.loop_test(test_case_module_name, test_name, test_env))
                     else:
                         self.loop_test(test_case_module_name, test_name, test_env)
@@ -284,7 +285,8 @@ def main():
                            perfherder_revision=arguments['--perfherder-revision'],
                            perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
                            firefox_settings=arguments['--firefox-settings'],
-                           jenkins_build_no=arguments['--jenkins-build-no'])
+                           jenkins_build_no=arguments['--jenkins-build-no'],
+                           perfherder_suitename=arguments['--perfherder-suitename'])
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
