@@ -11,6 +11,7 @@ class Environment(object):
 
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
+    DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
     DEFAULT_FLOW_DIR = os.path.join(os.getcwd(), "flows")
@@ -80,14 +81,12 @@ class Environment(object):
     PROFILE_NAME_HAR_PROFILER = "HarProfiler"
     PROFILE_NAME_GECKO_PROFILER = "GeckoProfiler"
 
-    PROFILER_FLAG_AVCONV = "avconv"
-    PROFILER_FLAG_HAREXPORT = "harexport"
-    PROFILER_FLAG_GECKOPROFILER = "geckoprofiler"
-    PROFILER_FLAG_CHROMETRACING = "chrometracing"
-    PROFILER_FLAG_FXALL = "fxall"
-    PROFILER_FLAG_JUSTPROFILER = "justprofiler"
-    PROFILER_FLAG_MITMDUMP = "mitmdump"
-    PROFILER_FLAG_FXTRACELOGGER = "fxtracelogger"
+    PROFILER_FLAG_AVCONV = "AvconvProfiler"
+    PROFILER_FLAG_HAREXPORT = "HarProfiler"
+    PROFILER_FLAG_GECKOPROFILER = "GeckoProfiler"
+    PROFILER_FLAG_CHROMETRACING = "ChromeTracing"
+    PROFILER_FLAG_MITMDUMP = "MitmDumpProfiler"
+    PROFILER_FLAG_FXTRACELOGGER = "TraceloggerProfiler"
 
     TEST_FB_HOME = "https://www.facebook.com/"
     TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/testmoztext/")

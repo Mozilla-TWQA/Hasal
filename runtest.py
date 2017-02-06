@@ -11,7 +11,6 @@ Options:
   --max-retry=<int>               Test failed retry max no [default: 15].
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
   --firefox-settings=<str>        Specify the Firefox settings.
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
@@ -109,7 +108,6 @@ class RunTest(object):
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
-        result['PROFILER'] = self.profiler
         result['KEEP_BROWSER'] = str(int(self.keep_browser))
         result['ENABLE_ONLINE'] = str(int(self.online))
         result['ONLINE_CONFIG'] = self.online_config
@@ -275,8 +273,7 @@ class RunTest(object):
 def main():
     start_time = time.time()
     arguments = docopt(__doc__)
-    run_test_obj = RunTest(profiler=arguments['--profiler'], keep_browser=arguments['--keep-browser'],
-                           max_run=int(arguments['--max-run']),
+    run_test_obj = RunTest(keep_browser=arguments['--keep-browser'], max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'].strip(), calc_si=arguments['--calc-si'],
