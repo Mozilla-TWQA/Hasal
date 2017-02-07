@@ -7,7 +7,7 @@ import gslide
 
 com = common.General()
 chrome = browser.Chrome()
-gs = gslide.gSlide()
+gs = gslide.gSlide('chrome')
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])

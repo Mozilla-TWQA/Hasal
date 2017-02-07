@@ -7,7 +7,7 @@ import gslide
 
 com = common.General()
 ff = browser.Firefox()
-gs = gslide.gSlide()
+gs = gslide.gSlide('ff')
 
 ff.clickBar()
 ff.enterLink(sys.argv[3])
@@ -15,6 +15,8 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.slides_5_list_original)
+wait(gs.theme_mozilla_tag_red)
 
 gs.invoke_layout_list()
 type(Key.DOWN)
@@ -22,4 +24,5 @@ sleep(0.5)
 type(Key.DOWN)
 sleep(0.5)
 type(Key.ENTER)
-waitVanish(gs.theme_mozilla_tag_red)
+if not waitVanish(gs.theme_mozilla_tag_red):
+    exit(1)

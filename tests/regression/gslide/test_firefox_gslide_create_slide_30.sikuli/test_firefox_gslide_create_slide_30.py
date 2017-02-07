@@ -8,7 +8,7 @@ import time
 
 com = common.General()
 ff = browser.Firefox()
-gs = gslide.gSlide()
+gs = gslide.gSlide('ff')
 
 ff.clickBar()
 ff.enterLink(sys.argv[3])
