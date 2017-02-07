@@ -78,14 +78,13 @@ class RunTest(object):
     def setup(self):
         upload_dir = os.path.join(os.getcwd(), 'upload')
         date_seq_id = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
-        suite_upload_dir = os.path.join(upload_dir, date_seq_id)
+        self.suite_upload_dp = os.path.join(upload_dir, date_seq_id)
         if os.path.exists(upload_dir):
-            if os.path.exists(suite_upload_dir) is False:
-                os.mkdir(suite_upload_dir)
+            if not os.path.exists(self.suite_upload_dp):
+                os.mkdir(self.suite_upload_dp)
         else:
             os.mkdir(upload_dir)
-            os.mkdir(suite_upload_dir)
-        self.suite_upload_dp = suite_upload_dir
+            os.mkdir(self.suite_upload_dp)
 
     def teardown(self):
         if self.advance:
