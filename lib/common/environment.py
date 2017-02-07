@@ -14,6 +14,7 @@ class Environment(object):
     DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
+    DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")
     DEFAULT_FLOW_DIR = os.path.join(os.getcwd(), "flows")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
     DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
@@ -162,6 +163,7 @@ class Environment(object):
         self.output_name = self.test_name + "_" + self.time_stamp
         self.flow_file_fp = self.test_name + ".flow"
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
+        self.converted_video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mp4")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
         self.img_sample_dp = os.path.join(self.DEFAULT_IMAGE_SAMPLE_DIR, self.output_name)

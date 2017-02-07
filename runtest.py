@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -20,6 +20,7 @@ Options:
   --perfherder-revision=<str>     Revision for upload to perfherder
   --perfherder-pkg-platform=<str> Package platform for upload to perfherder
   --jenkins-build-no=<int>        Jenkins build no [default: 0].
+  --perfherder-suitename=<str>    Suite name used for shown on perfherder.
 
 """
 import os
@@ -29,6 +30,7 @@ import shutil
 import platform
 import subprocess
 from docopt import docopt
+from datetime import datetime
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
@@ -65,17 +67,30 @@ class RunTest(object):
         self.cookies_settings = self.settings_json.get('cookies', {})
         self.extensions_settings = self.settings_json.get('extensions', {})
         self._firefox_profile_path = ''
+        self.suite_upload_dp = ''
         if self.settings_json:
             self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
                 prefs=self.settings_prefs,
                 cookies_settings=self.cookies_settings,
                 extensions_settings=self.extensions_settings)
 
+    def setup(self):
+        upload_dir = os.path.join(os.getcwd(), 'upload')
+        date_seq_id = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
+        self.suite_upload_dp = os.path.join(upload_dir, date_seq_id)
+        if os.path.exists(upload_dir):
+            if not os.path.exists(self.suite_upload_dp):
+                os.mkdir(self.suite_upload_dp)
+        else:
+            os.mkdir(upload_dir)
+            os.mkdir(self.suite_upload_dp)
+
     def teardown(self):
         if self.advance:
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
         elif os.path.isdir(self._firefox_profile_path):
             self.firefox_profile_creator.remove_firefox_profile()
+        shutil.copy(DEFAULT_RESULT_FP, self.suite_upload_dp)
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -114,8 +129,8 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
-
         result['FIREFOX_SETTINGS'] = str(self.firefox_settings)
+        result['SUITE_UPLOAD_DP'] = str(self.suite_upload_dp)
         if self.firefox_settings:
             result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
                 prefs=self.settings_prefs,
@@ -255,7 +270,7 @@ class RunTest(object):
                             test_env = None
                     if self.online:
                         if self.perfherder_revision:
-                            self.upload_agent_obj.upload_register_data(input_suite_fp, type)
+                            self.upload_agent_obj.upload_register_data(input_suite_fp, type, self.perfherder_suitename)
                         self.upload_agent_obj.upload_videos(self.loop_test(test_case_module_name, test_name, test_env))
                     else:
                         self.loop_test(test_case_module_name, test_name, test_env)
@@ -281,7 +296,11 @@ def main():
                            perfherder_revision=arguments['--perfherder-revision'],
                            perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
                            firefox_settings=arguments['--firefox-settings'],
-                           jenkins_build_no=arguments['--jenkins-build-no'])
+                           jenkins_build_no=arguments['--jenkins-build-no'],
+                           perfherder_suitename=arguments['--perfherder-suitename'])
+    # setup
+    run_test_obj.setup()
+
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
