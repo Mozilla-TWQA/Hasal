@@ -7,7 +7,7 @@ import gslide
 
 com = common.General()
 chrome = browser.Chrome()
-gs = gslide.gSlide()
+gs = gslide.gSlide('chrome')
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
@@ -15,6 +15,7 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.animation_list)
 
 gs.invoke_presentation_mode()
 wait(gs.presentation_mode)
