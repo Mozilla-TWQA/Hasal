@@ -20,6 +20,14 @@ set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
 echo [INFO] Current date and time [%ldt%]
 
 ::::::::::::::::::::
+::  >  Windows 7  ::
+::::::::::::::::::::
+
+for /f "tokens=4-5 delims=. " %%i in ('ver') do set VERSION=%%i.%%j
+if /I %version% GTR 5.2 .\bootstrap.ps1
+if /I %version% GTR 5.2 EXIT /B 0
+
+::::::::::::::::::::
 ::  Prerequisite  ::
 ::::::::::::::::::::
 
@@ -61,6 +69,7 @@ IF %JAVA_HOME%.==. (
     thirdParty\curl -L -O -H "Cookie:oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe"
     ECHO [INFO] Installing Java JDK 7u79.
     jdk-7u79-windows-i586.exe /s
+    del jdk-7u79-windows-i586.exe
 ) ELSE (
     ECHO [INFO] Java JDK exists in the environment.
     ECHO JAVA_HOME = %JAVA_HOME%
@@ -176,7 +185,7 @@ IF "%APPVEYOR%"=="True" (
 conda config --set always_yes yes --set changeps1 no
 conda install psutil
 ECHO [INFO] Creating Miniconda virtualenv (It might take some time to finish.)
-conda create -q -n hasal-env python=2.7 numpy scipy nose pywin32 pip
+conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip
 
 ::::::::::::::::::::
 ::    Browsers    ::
@@ -208,13 +217,13 @@ SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Goo
 
 IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Setup in virtualenv
-    activate hasal-env
+    activate env-python
     pip install coverage mitmproxy
     pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     python setup.py install
 ) ELSE (
     @REM Installing mitmproxy & opencv2 & Hasal
-    activate hasal-env & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+    activate env-python & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
 )
 
 ::::::::::::::::::::
