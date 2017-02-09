@@ -1,8 +1,8 @@
 {
     "id": "harexporttrigger@getfirebug.com",
-    "syncGUID": "{e454d354-02c3-4dea-938e-dc9025e3cb30}",
+    "syncGUID": "{3bec220a-068f-4d1e-81e7-61d60bde7127}",
     "location": "app-profile",
-    "version": "0.5.0-beta.7",
+    "version": "0.5.0-beta.10",
     "type": "extension",
     "internalName": null,
     "updateURL": null,
@@ -29,11 +29,11 @@
     "descriptor": "/home/hasal/.mozilla/firefox/1qicyk3x.Default User/extensions/harexporttrigger@getfirebug.com.xpi",
     "installDate": 1484722790000,
     "updateDate": 1484722790000,
-    "applyBackgroundUpdates": 1,
+    "applyBackgroundUpdates": "0",
     "bootstrap": true,
     "skinnable": false,
-    "size": 363844,
-    "sourceURI": "https://addons.mozilla.org/firefox/downloads/file/370227/har_export_trigger-0.5.0-beta.7-fx.xpi?src=api",
+    "size": 732540,
+    "sourceURI": "https://addons.cdn.mozilla.net/user-media/addons/645176/har_export_trigger-0.5.0-beta.10-fx.xpi?filehash=sha256%3Ab4e57f01e3c677376a3b598d087477ad4bbb3fb0529446e9ff8912c3d33c98fc",
     "releaseNotesURI": null,
     "softDisabled": false,
     "foreignInstall": false,
@@ -49,6 +49,6 @@
     ],
     "targetPlatforms": [],
     "multiprocessCompatible": false,
-    "signedState": 2,
+    "signedState": 1,
     "seen": true
 }
