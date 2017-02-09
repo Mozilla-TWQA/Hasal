@@ -24,8 +24,8 @@ echo [INFO] Current date and time [%ldt%]
 ::::::::::::::::::::
 
 for /f "tokens=4-5 delims=. " %%i in ('ver') do set VERSION=%%i.%%j
-if /I %version% GTR 5.2 .\bootstrap.ps1
-if /I %version% GTR 5.2 EXIT /B 0
+if /I %version% GTR 6.2 powershell .\bootstrap.ps1
+if /I %version% GTR 6.2 EXIT /B 0
 
 ::::::::::::::::::::
 ::  Prerequisite  ::
