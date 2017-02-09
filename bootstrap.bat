@@ -93,6 +93,7 @@ IF EXIST VCForPython27.msi (
     thirdParty\curl -kLO https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
     ECHO [INFO] Installing VCForPython27.msi
     msiexec /i VCForPython27.msi /qn /quiet /norestart
+    del VCForPython27.msi
 )
 
 
@@ -115,7 +116,8 @@ IF %ERRORLEVEL% EQU 0 (
         ECHO [INFO] Installing 7Zip.
         7z1604.exe /S
         SETX PATH "C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%" /m
-        SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"    
+        SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"
+        del 7z1604.exe
     )
 )
 
@@ -124,7 +126,6 @@ IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of 7zip in CI
     SET "PATH=C:\Program Files\7-Zip;%PATH%"
 )
-
 
 @REM Installing ffmpeg
 
@@ -140,6 +141,7 @@ ECHO [INFO] Installing FFMPEG.
 move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
 IF NOT "%APPVEYOR%"=="True" (
     SETX PATH "%CD%\ffmpeg\bin\;%PATH%" /m
+    del ffmpeg-20160527-git-d970f7b-win32-static.7z
 )
 SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
@@ -174,6 +176,7 @@ IF %ERRORLEVEL% EQU 0 (
     Miniconda2-latest-Windows-x86.exe /InstallationType=JustMe /RegisterPython=0 /S /D=C:\Miniconda2\
     SETX PATH "C:\Miniconda2\;C:\Miniconda2\Scripts\;%PATH%" /m
     SET "PATH=C:\Miniconda2\Scripts\;C:\Miniconda2\;%PATH%"
+    del Miniconda2-latest-Windows-x86.exe
 )
 
 :SkipConda
@@ -204,6 +207,9 @@ IF NOT "%APPVEYOR%"=="True" (
     thirdParty\curl -kLO http://dl.google.com/chrome/install/googlechromestandaloneenterprise.msi
     ECHO [INFO] Installing Chrome.
     msiexec /i "googlechromestandaloneenterprise.msi" /qn /quiet /norestart
+
+    del Firefox%%20Setup%%2049.0.1.exe
+    del googlechromestandaloneenterprise.msi
 )
 
 SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
