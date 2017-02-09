@@ -90,7 +90,8 @@ class RunTest(object):
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
         elif os.path.isdir(self._firefox_profile_path):
             self.firefox_profile_creator.remove_firefox_profile()
-        shutil.copy(DEFAULT_RESULT_FP, self.suite_upload_dp)
+        if os.path.exists(DEFAULT_RESULT_FP):
+            shutil.copy(DEFAULT_RESULT_FP, self.suite_upload_dp)
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
