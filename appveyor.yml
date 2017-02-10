@@ -30,7 +30,7 @@ install:
 
 test_script:
   - "@ECHO AppVeyor CI test started!"
-  - activate hasal-env
+  - activate env-python
   - python scripts\cv2_checker.py
   - python runtest.py -h
   - ffmpeg -h
