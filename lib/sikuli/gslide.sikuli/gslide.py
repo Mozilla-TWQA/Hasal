@@ -17,7 +17,7 @@ class gSlide():
             self.alt = Key.ALT
 
         self.default_timeout = getAutoWaitTimeout()
-        self.wait_time = 15
+        self.wait_time = 30
         setAutoWaitTimeout(self.wait_time)
 
         self.folder = os.path.join("pics", self.os.lower(), self.type)
@@ -76,7 +76,10 @@ class gSlide():
         print "wait for loaded: %s" % str(getAutoWaitTimeout())
 
     def invoke_presentation_mode(self):
-        type(Key.F5, self.control)
+        if self.os.lower() == 'mac':
+            type(Key.ENTER, self.control)
+        else:
+            type(Key.F5, self.control)
 
     def undo(self):
         type("z", self.control)

@@ -4,10 +4,10 @@ import json
 
 class General():
     def __init__(self):
-        self.os = str(Settings.getOS())
+        self.os = str(Env.getOS())
         self.os_version = str(Settings.getOSVersion())
 
-        if self.os.startswith("M"):
+        if self.os.lower() == 'mac':
             self.control = Key.CMD
         else:
             self.control = Key.CTRL
