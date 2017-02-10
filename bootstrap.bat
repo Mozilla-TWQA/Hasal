@@ -20,13 +20,9 @@ set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
 echo [INFO] Current date and time [%ldt%]
 
 IF NOT "%APPVEYOR%"=="True" (
-    ::::::::::::::::::::
-    ::  >  Windows 7  ::
-    ::::::::::::::::::::
-
     for /f "tokens=4-5 delims=. " %%i in ('ver') do set VERSION=%%i.%%j
-    if /I %version% GTR 6.2 powershell .\bootstrap.ps1
-    if /I %version% GTR 6.2 EXIT /B 0
+    IF /I %version% GTR 6.2 powershell .\bootstrap.ps1
+    IF /I %version% GTR 6.2 EXIT /B 0
 )
 
 ::::::::::::::::::::
