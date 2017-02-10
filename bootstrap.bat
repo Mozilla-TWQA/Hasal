@@ -20,7 +20,7 @@ set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
 echo [INFO] Current date and time [%ldt%]
 
 IF NOT "%APPVEYOR%"=="True" (
-    for /f "tokens=4-5 delims=. " %%i in ('ver') do set VERSION=%%i.%%j
+    for /f "tokens=4-5 delims=. " %%i in ('ver') do set version=%%i.%%j
     IF /I %version% GTR 6.2 (
         powershell .\bootstrap.ps1
     ) 
