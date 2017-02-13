@@ -1,6 +1,5 @@
 from sikuli import *  # NOQA
 import os
-import sys
 import common
 
 

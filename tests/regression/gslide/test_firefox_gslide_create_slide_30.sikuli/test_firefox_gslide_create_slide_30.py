@@ -4,7 +4,6 @@ sys.path.append(sys.argv[2])
 import browser
 import common
 import gslide
-import time
 
 com = common.General()
 ff = browser.Firefox()
