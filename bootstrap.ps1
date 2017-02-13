@@ -77,7 +77,7 @@ If ($lastexitcode -notmatch 0) {
 }
 
 # installation of Hasal prerequisite
-$tmp = & java -version >$null 2>&1
+$tmp = & CMD /C java -version >$null 2>&1
 If ($lastexitcode -notmatch 0) {
     "[INFO] Installing Java 8 -version 8.0.121"
     choco install jre8
@@ -92,7 +92,7 @@ If ($lastexitcode -notmatch 0) {
 }
 
 
-$tmp = & ffmpeg -help >$null 2>&1
+$tmp = & CMD /C ffmpeg -help >$null 2>&1
 If ($lastexitcode -notmatch 0) {
     "[INFO] Installing FFMPEG"
     choco install ffmpeg -version 3.2.2.20161219
@@ -106,7 +106,7 @@ If ($lastexitcode -notmatch 0) {
     "[INFO] FFMPEG found in current system. Not going to install it."
 }
 
-$tmp = & conda -help >$null 2>&1
+$tmp = & CMD /C conda -help >$null 2>&1
 If ($lastexitcode -notmatch 0) {
     "[INFO] Installing MiniConda"
     choco install miniconda
@@ -178,7 +178,7 @@ Copy-Item C:\ProgramData\chocolatey\lib\sikulix\content\* .\thirdParty\
 Copy-Item .\scripts\runsikuli* .\thirdParty\
 
 CMD /C 'C:\Program Files\Miniconda2\envs\env-python\Scripts\pip' install mitmproxy
-If ($env:PROCESSOR_ARCHITECTURE == 'x86') {
+If ($env:PROCESSOR_ARCHITECTURE -match 'x86') {
     CMD /C 'C:\Program Files\Miniconda2\envs\env-python\Scripts\pip' install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
 } Else {
     CMD /C 'C:\Program Files\Miniconda2\envs\env-python\Scripts\pip' install thirdParty\opencv_python-2.4.13.2-cp27-cp27m-win_amd64.whl
