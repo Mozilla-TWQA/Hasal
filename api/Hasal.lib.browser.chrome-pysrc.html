@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Hasal.lib.browser.chrome</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;Hasal ::
+        <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
+        <a href="Hasal.lib.browser-module.html">Package&nbsp;browser</a> ::
+        Module&nbsp;chrome
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Hasal.lib.browser.chrome-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="Hasal.lib.browser.chrome-module.html">Module Hasal.lib.browser.chrome</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module Hasal.lib.browser.base=Hasal.lib.browser.base-module.html,Module Hasal.lib.profiler.base=Hasal.lib.profiler.base-module.html"><a title="Hasal.lib.browser.base
+Hasal.lib.profiler.base" class="py-name" href="#" onclick="return doclink('link-0', 'base', 'link-0');">base</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class Hasal.lib.browser.base.BrowserBase=Hasal.lib.browser.base.BrowserBase-class.html"><a title="Hasal.lib.browser.base.BrowserBase" class="py-name" href="#" onclick="return doclink('link-1', 'BrowserBase', 'link-1');">BrowserBase</a></tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">subprocess</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"> </tt>
+<a name="BrowserChrome"></a><div id="BrowserChrome-def"><a name="L5"></a><tt class="py-lineno"> 5</tt> <a class="py-toggle" href="#" id="BrowserChrome-toggle" onclick="return toggle('BrowserChrome');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.browser.chrome.BrowserChrome-class.html">BrowserChrome</a><tt class="py-op">(</tt><tt class="py-base-class">BrowserBase</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="BrowserChrome-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="BrowserChrome-expanded"><a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line">    <tt id="link-2" class="py-name" targets="Variable Hasal.lib.browser.chrome.BrowserChrome.windows_chrome_command=Hasal.lib.browser.chrome.BrowserChrome-class.html#windows_chrome_command"><a title="Hasal.lib.browser.chrome.BrowserChrome.windows_chrome_command" class="py-name" href="#" onclick="return doclink('link-2', 'windows_chrome_command', 'link-2');">windows_chrome_command</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'chrome'</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line">    <tt id="link-3" class="py-name" targets="Variable Hasal.lib.browser.chrome.BrowserChrome.ubuntu_chrome_command=Hasal.lib.browser.chrome.BrowserChrome-class.html#ubuntu_chrome_command"><a title="Hasal.lib.browser.chrome.BrowserChrome.ubuntu_chrome_command" class="py-name" href="#" onclick="return doclink('link-3', 'ubuntu_chrome_command', 'link-3');">ubuntu_chrome_command</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'google-chrome'</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line">    <tt id="link-4" class="py-name" targets="Variable Hasal.lib.browser.chrome.BrowserChrome.darwin_chrome_command=Hasal.lib.browser.chrome.BrowserChrome-class.html#darwin_chrome_command"><a title="Hasal.lib.browser.chrome.BrowserChrome.darwin_chrome_command" class="py-name" href="#" onclick="return doclink('link-4', 'darwin_chrome_command', 'link-4');">darwin_chrome_command</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"> </tt>
+<a name="BrowserChrome.get_browser_settings"></a><div id="BrowserChrome.get_browser_settings-def"><a name="L10"></a><tt class="py-lineno">10</tt> <a class="py-toggle" href="#" id="BrowserChrome.get_browser_settings-toggle" onclick="return toggle('BrowserChrome.get_browser_settings');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.browser.chrome.BrowserChrome-class.html#get_browser_settings">get_browser_settings</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="BrowserChrome.get_browser_settings-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="BrowserChrome.get_browser_settings-expanded"><a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line">        <tt class="py-name">default_tracing_capture_period</tt> <tt class="py-op">=</tt> <tt class="py-number">900</tt>  <tt class="py-comment"># sec</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Variable Hasal.lib.browser.base.BrowserBase.browser_process=Hasal.lib.browser.base.BrowserBase-class.html#browser_process"><a title="Hasal.lib.browser.base.BrowserBase.browser_process" class="py-name" href="#" onclick="return doclink('link-5', 'browser_process', 'link-5');">browser_process</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"chrome"</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Variable Hasal.lib.browser.base.BrowserBase.process_name=Hasal.lib.browser.base.BrowserBase-class.html#process_name"><a title="Hasal.lib.browser.base.BrowserBase.process_name" class="py-name" href="#" onclick="return doclink('link-6', 'process_name', 'link-6');">process_name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"chrome"</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt><tt class="py-op">:</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">command</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-7" class="py-name"><a title="Hasal.lib.browser.chrome.BrowserChrome.darwin_chrome_command" class="py-name" href="#" onclick="return doclink('link-7', 'darwin_chrome_command', 'link-4');">darwin_chrome_command</a></tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"linux2"</tt><tt class="py-op">:</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">command</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="Hasal.lib.browser.chrome.BrowserChrome.ubuntu_chrome_command" class="py-name" href="#" onclick="return doclink('link-8', 'ubuntu_chrome_command', 'link-3');">ubuntu_chrome_command</a></tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">command</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="Hasal.lib.browser.chrome.BrowserChrome.windows_chrome_command" class="py-name" href="#" onclick="return doclink('link-9', 'windows_chrome_command', 'link-2');">windows_chrome_command</a></tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Variable Hasal.lib.browser.base.BrowserBase.launch_cmd=Hasal.lib.browser.base.BrowserBase-class.html#launch_cmd"><a title="Hasal.lib.browser.base.BrowserBase.launch_cmd" class="py-name" href="#" onclick="return doclink('link-10', 'launch_cmd', 'link-10');">launch_cmd</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">command</tt><tt class="py-op">,</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line">                           <tt class="py-string">"--window-size="</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">windows_size_width</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">","</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">window_size_height</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"tracing_path"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">kwargs</tt><tt class="py-op">:</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="Hasal.lib.browser.base.BrowserBase.launch_cmd" class="py-name" href="#" onclick="return doclink('link-11', 'launch_cmd', 'link-10');">launch_cmd</a></tt><tt class="py-op">.</tt><tt class="py-name">extend</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-string">"--trace-startup"</tt><tt class="py-op">,</tt> <tt class="py-string">"--trace-startup-file="</tt> <tt class="py-op">+</tt> <tt class="py-name">kwargs</tt><tt class="py-op">[</tt><tt class="py-string">'tracing_path'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">                                    <tt class="py-string">"--trace-startup-duration="</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">default_tracing_capture_period</tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="BrowserChrome.get_version_command"></a><div id="BrowserChrome.get_version_command-def"><a name="L27"></a><tt class="py-lineno">27</tt> <a class="py-toggle" href="#" id="BrowserChrome.get_version_command-toggle" onclick="return toggle('BrowserChrome.get_version_command');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.browser.chrome.BrowserChrome-class.html#get_version_command">get_version_command</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="BrowserChrome.get_version_command-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="BrowserChrome.get_version_command-expanded"><a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt> <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"linux2"</tt><tt class="py-op">:</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">command</tt><tt class="py-op">,</tt> <tt class="py-string">"--version"</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-op">[</tt><tt class="py-string">'reg'</tt><tt class="py-op">,</tt> <tt class="py-string">'query'</tt><tt class="py-op">,</tt> <tt class="py-string">'HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon'</tt><tt class="py-op">,</tt> <tt class="py-string">'/v'</tt><tt class="py-op">,</tt> <tt class="py-string">'version'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">                    <tt class="py-op">[</tt><tt class="py-string">"reg"</tt><tt class="py-op">,</tt> <tt class="py-string">"query"</tt><tt class="py-op">,</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">                     <tt class="py-string">"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome"</tt><tt class="py-op">,</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">                     <tt class="py-string">"/v"</tt><tt class="py-op">,</tt> <tt class="py-string">"DisplayVersion"</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"> </tt>
+<a name="BrowserChrome.get_version"></a><div id="BrowserChrome.get_version-def"><a name="L36"></a><tt class="py-lineno">36</tt> <a class="py-toggle" href="#" id="BrowserChrome.get_version-toggle" onclick="return toggle('BrowserChrome.get_version');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.browser.chrome.BrowserChrome-class.html#get_version">get_version</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="BrowserChrome.get_version-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="BrowserChrome.get_version-expanded"><a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">        <tt class="py-name">commands</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method Hasal.lib.browser.base.BrowserBase.get_version_command()=Hasal.lib.browser.base.BrowserBase-class.html#get_version_command,Method Hasal.lib.browser.chrome.BrowserChrome.get_version_command()=Hasal.lib.browser.chrome.BrowserChrome-class.html#get_version_command,Method Hasal.lib.browser.firefox.BrowserFirefox.get_version_command()=Hasal.lib.browser.firefox.BrowserFirefox-class.html#get_version_command"><a title="Hasal.lib.browser.base.BrowserBase.get_version_command
+Hasal.lib.browser.chrome.BrowserChrome.get_version_command
+Hasal.lib.browser.firefox.BrowserFirefox.get_version_command" class="py-name" href="#" onclick="return doclink('link-12', 'get_version_command', 'link-12');">get_version_command</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">        <tt class="py-name">return_version</tt> <tt class="py-op">=</tt> <tt class="py-string">'0'</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt> <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_platform_name</tt> <tt class="py-op">==</tt> <tt class="py-string">"linux2"</tt><tt class="py-op">:</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">cmd</tt> <tt class="py-keyword">in</tt> <tt class="py-name">commands</tt><tt class="py-op">:</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">call</tt><tt class="py-op">(</tt><tt class="py-name">cmd</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">                    <tt class="py-name">return_version</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">check_output</tt><tt class="py-op">(</tt><tt class="py-name">cmd</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">splitlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">" "</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">                    <tt class="py-keyword">break</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">cmd</tt> <tt class="py-keyword">in</tt> <tt class="py-name">commands</tt><tt class="py-op">:</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">call</tt><tt class="py-op">(</tt><tt class="py-name">cmd</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">                    <tt class="py-name">return_version</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">check_output</tt><tt class="py-op">(</tt><tt class="py-name">cmd</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">splitlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">return_version</tt> </tt>
+</div></div><a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Tue Feb 14 10:29:07 2017
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
