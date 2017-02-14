@@ -13,10 +13,8 @@ _virtualenv
 .ssh
 *.log
 HasalServer.log.*
-
-# Python documents
-docs/
-
+stage/*
+docs/*
 
 # 3rd party files
 thirdParty/*
