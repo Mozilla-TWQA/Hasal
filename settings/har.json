@@ -25,7 +25,9 @@
     "devtools.netmonitor.har.enableAutoExportToFile": true,
     "extensions.netmonitor.har.autoConnect": true,
     "extensions.netmonitor.har.contentAPIToken": "true",
-    "extensions.netmonitor.har.enableAutomation": true
+    "extensions.netmonitor.har.enableAutomation": true,
+    "general.useragent.locale": "en-US",
+    "intl.accept_languages": "en-US, en"
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
