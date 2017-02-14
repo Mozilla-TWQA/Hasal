@@ -14,6 +14,10 @@ _virtualenv
 *.log
 HasalServer.log.*
 
+# Python documents
+docs/
+
+
 # 3rd party files
 thirdParty/*
 # creds files

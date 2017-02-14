@@ -18,6 +18,7 @@ SEARCH_PATHS = [
 # Individual files providing mach commands.
 MACH_MODULES = [
     os.path.join('python', 'hasal', 'testing_commands.py'),
+    os.path.join('python', 'hasal', 'docs_commands.py'),
 ]
 
 
