@@ -6,6 +6,8 @@ class BrowserChrome(BrowserBase):
     windows_chrome_command = 'chrome'
     ubuntu_chrome_command = 'google-chrome'
     darwin_chrome_command = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    windows_language_postfix = '--lang=en-US'
+    ubuntu_language_prefix = 'LANGUAGE=en-US'
 
     def get_browser_settings(self, **kwargs):
         default_tracing_capture_period = 900  # sec
@@ -17,8 +19,14 @@ class BrowserChrome(BrowserBase):
             self.command = self.ubuntu_chrome_command
         else:
             self.command = self.windows_chrome_command
+
         self.launch_cmd = [self.command,
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]
+
+        if self.current_platform_name == "linux2":
+            self.launch_cmd = [ubuntu_language_prefix] + self.launch_cmd
+        elif self.current_platform_name.startswith('win'):
+            self.launch_cmd.extend([windows_language_postfix])
 
         if "tracing_path" in kwargs:
             self.launch_cmd.extend(["--trace-startup", "--trace-startup-file=" + kwargs['tracing_path'],
