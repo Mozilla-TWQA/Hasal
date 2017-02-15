@@ -1,5 +1,8 @@
 mach == 0.6.0
 
+# For docs
+epydoc == 3.0.1
+
 # For Python linting
 flake8 == 2.4.1
 pep8 == 1.5.7
