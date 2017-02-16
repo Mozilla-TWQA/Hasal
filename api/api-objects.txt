@@ -169,10 +169,12 @@ Hasal.lib.browser.chrome.BrowserChrome.get_version	Hasal.lib.browser.chrome.Brow
 Hasal.lib.browser.chrome.BrowserChrome.windows_chrome_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#windows_chrome_command
 Hasal.lib.browser.base.BrowserBase.process_name	Hasal.lib.browser.base.BrowserBase-class.html#process_name
 Hasal.lib.browser.base.BrowserBase.stop	Hasal.lib.browser.base.BrowserBase-class.html#stop
+Hasal.lib.browser.chrome.BrowserChrome.ubuntu_language_prefix	Hasal.lib.browser.chrome.BrowserChrome-class.html#ubuntu_language_prefix
 Hasal.lib.browser.chrome.BrowserChrome.get_version_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#get_version_command
 Hasal.lib.browser.chrome.BrowserChrome.get_browser_settings	Hasal.lib.browser.chrome.BrowserChrome-class.html#get_browser_settings
 Hasal.lib.browser.chrome.BrowserChrome.darwin_chrome_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#darwin_chrome_command
 Hasal.lib.browser.base.BrowserBase.launch	Hasal.lib.browser.base.BrowserBase-class.html#launch
+Hasal.lib.browser.chrome.BrowserChrome.windows_language_postfix	Hasal.lib.browser.chrome.BrowserChrome-class.html#windows_language_postfix
 Hasal.lib.browser.firefox.BrowserFirefox	Hasal.lib.browser.firefox.BrowserFirefox-class.html
 Hasal.lib.browser.base.BrowserBase.browser_process	Hasal.lib.browser.base.BrowserBase-class.html#browser_process
 Hasal.lib.browser.firefox.BrowserFirefox.ubuntu_firefox_command	Hasal.lib.browser.firefox.BrowserFirefox-class.html#ubuntu_firefox_command
