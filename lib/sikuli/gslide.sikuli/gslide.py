@@ -22,7 +22,7 @@ class gSlide():
         self.folder = os.path.join("pics", self.os.lower(), self.type)
         self.gslide_logo = Pattern(os.path.join(self.folder, "gslide.png")).similar(0.70)
         self.gslide_icon = Pattern(os.path.join(self.folder, "gslide_icon.png")).similar(0.70)
-        self.page_end = Pattern(os.path.join(self.folder, "page_end.png")).similar(0.70)
+        self.page_end = Pattern(os.path.join(self.folder, "page_end.png")).similar(0.85)
         self.presentation_mode = Pattern(os.path.join(self.folder, "presentation_mode.png")).similar(0.70)
         self.presentation_blank_end = Pattern(os.path.join(self.folder, "presentation_blank_end.png")).similar(0.70)
         self.presentation_page_2 = Pattern(os.path.join(self.folder, "presentation_page_2.png")).similar(0.60)
