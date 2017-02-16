@@ -22,8 +22,10 @@ class BrowserChrome(BrowserBase):
         self.launch_cmd = [self.command,
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]
 
-        if self.current_platform_name == 'win32':
+        if self.current_platform_name == "win32":
             self.launch_cmd.extend([self.windows_language_postfix])
+        elif self.current_platform_name == "linux2":
+            self.test_env['LANGUAGE'] = "en-US"
 
         if "tracing_path" in kwargs:
             self.launch_cmd.extend(["--trace-startup", "--trace-startup-file=" + kwargs['tracing_path'],
