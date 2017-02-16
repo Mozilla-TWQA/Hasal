@@ -22,7 +22,7 @@ class BrowserChrome(BrowserBase):
         self.launch_cmd = [self.command,
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]
 
-        if self.current_platform_name.startswith('win'):
+        if self.current_platform_name == 'win32':
             self.launch_cmd.extend([self.windows_language_postfix])
 
         if "tracing_path" in kwargs:
