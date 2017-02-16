@@ -18,6 +18,8 @@ class BrowserBase(object):
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
         self.test_env = os.environ.copy()
+        if self.current_platform_name == "linux2":
+            self.test_env['LANGUAGE'] = "en-US"
 
     def get_browser_settings(self, **kwargs):
         pass
