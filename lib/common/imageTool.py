@@ -418,8 +418,8 @@ class ImageTool(object):
             height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
             img_obj = img_obj[:height][:][:]
             img_gray = np.zeros((height, width))
-            for channel in range(channel):
-                img_gray += img_obj[:, :, channel]
+            for each_channel in range(channel):
+                img_gray += img_obj[:, :, each_channel]
             img_gray /= channel
             img_dct = img_gray / 255.0
             dct_obj = cv2.dct(img_dct)
