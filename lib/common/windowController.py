@@ -41,10 +41,12 @@ class WindowObject(object):
         window_list_cmd = self.DEFAULT_WMCTRL_CMD + " -l"
         for i in range(10):
             cmd_output = subprocess.check_output(window_list_cmd, shell=True)
+            logger.debug('Getting window list from wmctrl ...')
             for tmp_line in cmd_output.splitlines():
                 tmp_list = tmp_line.split(' ', 4)
                 window_id = tmp_list[0]
                 window_title = tmp_list[-1]
+                logger.debug('Get [{}] in wmctrl'.format(window_title))
                 for name in self.window_name_list:
                     if window_title == name or window_title.endswith('- {}'.format(name)):
                         logger.info('Found [{}] in wmctrl list for moving position.'.format(name))
