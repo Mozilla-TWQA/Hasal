@@ -169,7 +169,6 @@ Hasal.lib.browser.chrome.BrowserChrome.get_version	Hasal.lib.browser.chrome.Brow
 Hasal.lib.browser.chrome.BrowserChrome.windows_chrome_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#windows_chrome_command
 Hasal.lib.browser.base.BrowserBase.process_name	Hasal.lib.browser.base.BrowserBase-class.html#process_name
 Hasal.lib.browser.base.BrowserBase.stop	Hasal.lib.browser.base.BrowserBase-class.html#stop
-Hasal.lib.browser.chrome.BrowserChrome.ubuntu_language_prefix	Hasal.lib.browser.chrome.BrowserChrome-class.html#ubuntu_language_prefix
 Hasal.lib.browser.chrome.BrowserChrome.get_version_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#get_version_command
 Hasal.lib.browser.chrome.BrowserChrome.get_browser_settings	Hasal.lib.browser.chrome.BrowserChrome-class.html#get_browser_settings
 Hasal.lib.browser.chrome.BrowserChrome.darwin_chrome_command	Hasal.lib.browser.chrome.BrowserChrome-class.html#darwin_chrome_command
