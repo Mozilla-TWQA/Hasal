@@ -23,7 +23,8 @@
     "datareporting.healthreport.service.enabled": false,
     "datareporting.healthreport.service.firstRun": false,
     "general.useragent.locale": "en-US",
-    "intl.accept_languages": "en-US, en"
+    "intl.accept_languages": "en-US, en",
+    "gfx.downloadable_fonts.otl_validation": false
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
