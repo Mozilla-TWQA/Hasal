@@ -55,17 +55,15 @@ class Sikuli():
 
         elif sys.platform == 'linux2':
             print('Closing {} by wmctrl ...'.format(browser))
-            window_title = [browser]
+            window_title_list = [browser]
             if browser.lower() == 'firefox':
-                window_title = ["Mozilla Firefox", "Nightly"]
+                window_title_list = ["Mozilla Firefox", "Nightly"]
             elif browser.lower() == 'chrome':
-                window_title = ['Google Chrome']
+                window_title_list = ['Google Chrome']
             # Moving window by strings from window_title
-            for window_name in window_title:
-                window_obj = WindowObject(window_name)
-                if window_obj.wmctrl_close_window():
-                    print('Close {} successful.'.format(window_name))
-                    break
+            window_obj = WindowObject(window_title_list)
+            if window_obj.wmctrl_close_window():
+                print('Close {} successful.'.format(window_title_list))
 
         else:
             # it only works on Windows now

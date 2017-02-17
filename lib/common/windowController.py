@@ -15,9 +15,9 @@ elif sys.platform == "darwin":
 class WindowObject(object):
     DEFAULT_WMCTRL_CMD = "/usr/bin/wmctrl"
 
-    def __init__(self, input_window_name, pos_x=0, pos_y=0, window_width=800, window_height=600, window_gravity=0):
+    def __init__(self, input_window_name_list, pos_x=0, pos_y=0, window_width=800, window_height=600, window_gravity=0):
         self.window_type = sys.platform
-        self.window_name = input_window_name
+        self.window_name_list = input_window_name_list
         self.window_identity = None
         self.callback_ret = None
 
@@ -42,14 +42,14 @@ class WindowObject(object):
             cmd_output = subprocess.check_output(window_list_cmd, shell=True)
             for tmp_line in cmd_output.splitlines():
                 tmp_list = tmp_line.split(' ', 4)
-                logger.debug('Found {} in wmctrl.'.format(tmp_list))
                 window_id = tmp_list[0]
                 window_title = tmp_list[-1]
-                if window_title == self.window_name or window_title.endswith('- {}'.format(self.window_name)):
-                    logger.info('Found [{}] in wmctrl list for moving position.'.format(self.window_name))
-                    return window_id
+                for name in self.window_name_list:
+                    if window_title == name or window_title.endswith('- {}'.format(name)):
+                        logger.info('Found [{}] in wmctrl list for moving position.'.format(name))
+                        return window_id
             time.sleep(1)
-        logger.warning("Can't find window name [%s] in wmctrl list!!!" % self.window_name)
+        logger.warning("Can't find one of window name [%s] in wmctrl list!!!" % self.window_name_list)
         return '0'
 
     def wmctrl_move_window(self):
@@ -73,41 +73,44 @@ class WindowObject(object):
 
     def pywin32_callback_func(self, hwnd, extra):
         window_title = win32gui.GetWindowText(hwnd)
-        if self.window_name in window_title:
-            # move position
-            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, self.pos_x, self.pos_y, self.window_width,
-                                  self.window_height, 0)
-            self.callback_ret = True
+        for name in self.window_name_list:
+            if name in window_title:
+                # move position
+                win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, self.pos_x, self.pos_y, self.window_width,
+                                      self.window_height, 0)
+                self.callback_ret = True
+                logger.info('Found [{}] for moving position.'.format(name))
+                break
 
     def pywin32_move_window(self):
         # try to move window after window launched
         for counter in range(10):
             win32gui.EnumWindows(self.pywin32_callback_func, None)
             if self.callback_ret:
-                logger.info('Found [{}] for moving position.'.format(self.window_name))
                 self.callback_ret = None
                 return True
             time.sleep(1)
-        logger.warning('Cannot found [{}] for moving position.'.format(self.window_name))
+        logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
     def appscript_move_window(self):
         # try to move window after window launched
         for counter in range(10):
             for app_ref in app('System Events').processes.file.get():
-                if self.window_name in app_ref.name.get():
-                    application_obj = app(app_ref.name.get())
-                    logger.info('Found [{}] for moving position.'.format(self.window_name))
-                    for _ in range(10):
-                        if application_obj.isrunning():
-                            # move window position
-                            application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
-                            # move to foreground by activate it
-                            application_obj.activate()
-                            return True
-                        time.sleep(1)
+                for name in self.window_name_list:
+                    if name in app_ref.name.get():
+                        application_obj = app(app_ref.name.get())
+                        logger.info('Found [{}] for moving position.'.format(name))
+                        for _ in range(10):
+                            if application_obj.isrunning():
+                                # move window position
+                                application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
+                                # move to foreground by activate it
+                                application_obj.activate()
+                                return True
+                            time.sleep(1)
             time.sleep(1)
-        logger.warning('Cannot found [{}] for moving position.'.format(self.window_name))
+        logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
     def move_window_pos(self, pos_x=None, pos_y=None, window_width=None, window_height=None, window_gravity=None):
@@ -130,5 +133,5 @@ class WindowObject(object):
         elif self.window_type == 'darwin':
             return self.appscript_move_window()
         else:
-            logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name, self.window_type))
+            logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
             return False
