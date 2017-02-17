@@ -63,7 +63,7 @@ class Sikuli():
             # Moving window by strings from window_title
             window_obj = WindowObject(window_title_list)
             if window_obj.wmctrl_close_window():
-                print('Close {} successful.'.format(window_title_list))
+                print('Close successful.')
 
         else:
             # it only works on Windows now

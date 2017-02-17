@@ -19,6 +19,7 @@ class WindowObject(object):
         self.window_type = sys.platform
         self.window_name_list = input_window_name_list
         self.window_identity = None
+        self.window_identity_name = None
         self.callback_ret = None
 
         # default settings
@@ -47,6 +48,7 @@ class WindowObject(object):
                 for name in self.window_name_list:
                     if window_title == name or window_title.endswith('- {}'.format(name)):
                         logger.info('Found [{}] in wmctrl list for moving position.'.format(name))
+                        self.window_identity_name = name
                         return window_id
             time.sleep(1)
         logger.warning("Can't find one of window name [%s] in wmctrl list!!!" % self.window_name_list)
@@ -59,6 +61,7 @@ class WindowObject(object):
             mvarg_val = ",".join([str(self.window_gravity), str(self.pos_x), str(self.pos_y), str(self.window_width), str(self.window_height)])
             wmctrl_cmd = " ".join([self.DEFAULT_WMCTRL_CMD, "-i", "-r", self.window_identity, "-e", mvarg_val])
             logger.debug("Move windows command: [%s]" % wmctrl_cmd)
+            logger.info('Moving [{}] position ...'.format(self.window_identity_name))
             subprocess.call(wmctrl_cmd, shell=True)
             return True
 
@@ -68,6 +71,7 @@ class WindowObject(object):
         else:
             wmctrl_cmd = ' '.join([self.DEFAULT_WMCTRL_CMD, '-i', '-c', self.window_identity])
             logger.debug('Close windows command: [%s]' % wmctrl_cmd)
+            logger.info('Closing window [{}] ...'.format(self.window_identity_name))
             subprocess.call(wmctrl_cmd, shell=True)
             return True
 
