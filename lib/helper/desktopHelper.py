@@ -55,27 +55,25 @@ def get_browser_version(browser_type):
 
 
 def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
-    window_title = None
+    window_title_list = None
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
-            window_title = ["Firefox.app", "FirefoxNightly.app"]
+            window_title_list = ["Firefox.app", "FirefoxNightly.app"]
         else:
             # This is to ensure all kinds of firefox we supported can be properly moved.
-            window_title = ["Mozilla Firefox", "Nightly"]
+            window_title_list = ["Mozilla Firefox", "Nightly"]
 
     else:
         if sys.platform == "darwin":
-            window_title = ["Chrome.app"]
+            window_title_list = ["Chrome.app"]
         else:
-            window_title = ["Google Chrome"]
+            window_title_list = ["Google Chrome"]
 
     # Moving window by strings from window_title
     height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
-    for window_name in window_title:
-        window_obj = WindowObject(window_name)
-        if window_obj.move_window_pos(0, 0, window_height=height, window_width=width):
-            break
+    window_obj = WindowObject(window_title_list)
+    window_obj.move_window_pos(0, 0, window_height=height, window_width=width)
 
 
 def minimize_window():
