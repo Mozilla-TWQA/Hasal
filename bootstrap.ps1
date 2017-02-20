@@ -174,12 +174,18 @@ conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip
 Copy-Item C:\ProgramData\chocolatey\lib\sikulix\content\* .\thirdParty\
 Copy-Item .\scripts\runsikuli* .\thirdParty\
 
-CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install mitmproxy
-If ($env:PROCESSOR_ARCHITECTURE -match 'x86') {
+If (Test-Path C:\Miniconda2\) {
+    CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install mitmproxy
     CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
-} Else {
     CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13.2-cp27-cp27m-win_amd64.whl
+    CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
+    CMD /C "C:\Miniconda2\envs\env-python\python" setup.py install
+    CMD /C "C:\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
+} Else {
+    CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install mitmproxy
+    CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
+    CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13.2-cp27-cp27m-win_amd64.whl
+    CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
+    CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" setup.py install
+    CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
 }
-CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
-CMD /C "C:\Miniconda2\envs\env-python\python" setup.py install
-CMD /C "C:\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
