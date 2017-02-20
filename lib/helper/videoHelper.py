@@ -11,7 +11,7 @@ def capture_screen(env, output_video_fp, output_img_dp, output_img_name):
         os.system("ffmpeg -f gdigrab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i desktop -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
     elif sys.platform == "darwin":
         os.system(
-            "ffmpeg -f avfoundation -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
+            "ffmpeg -f avfoundation -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i " + get_mac_os_display_channel() + " -filter:v crop=" + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + ":" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + ":0:0 -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
     else:
         os.system(
             "ffmpeg -f x11grab -draw_mouse 0 -framerate " + str(env.DEFAULT_VIDEO_RECORDING_FPS) + " -video_size " + str(env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(env.DEFAULT_VIDEO_RECORDING_HEIGHT) + " -i " + get_mac_os_display_channel() + " -c:v libx264 -preset veryfast  -g 15 -crf 0 -frames 1 " + output_video_fp)
