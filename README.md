@@ -7,7 +7,33 @@
 
 A Framework for testing web performance between different browser
 
-## Installation
+## Automatical Installation
+If you do not wish to install Hasal automatically, please proceed to next section "Manual Installation". For those who wants to install Hasal, please be notified that a clean environment or
+* Ubuntu
+```
+.\bootstrap-linux.sh
+```
+
+* Mac OS
+```
+.\bootstrap-mac.sh
+```
+
+* Windows 7
+Launch a command line console with administrator privilege.
+```
+bootstrap.bat
+```
+
+* Windows 8 or above
+Launch a powershell console with administrator privilege.
+```
+Set-ExecutionPolicy Unrestricted
+.\bootstrap.ps1
+```
+Please noted that Hasal in Windows systems can be run from command line only.
+
+## Manual Installation
 * Install Firefox
 * Install SikluliX (https://launchpad.net/sikuli/sikulix/1.1.0), place the runsikulix and other installation files in hasal/thirdparty. When sikulix setup diaglog come out, please select the Pack 1 and make sure scripting language: Python is checked.
 * Install video recording codes and libs (windows/mac:ffmpeg or ubuntu:avconv)
