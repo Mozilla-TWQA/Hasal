@@ -49,8 +49,8 @@ class PerfBaseTest(baseTest.BaseTest):
 
             # execute pre run script
             self.round_status = self.sikuli.run_test(os.getenv("PRE_SCRIPT_PATH"),
-                                                      os.getenv("PRE_SCRIPT_PATH") + "_" + self.env.time_stamp,
-                                                      args_list=pre_script_args)
+                                                     os.getenv("PRE_SCRIPT_PATH") + "_" + self.env.time_stamp,
+                                                     args_list=pre_script_args)
 
         # capture 1st snapshot
         time.sleep(5)

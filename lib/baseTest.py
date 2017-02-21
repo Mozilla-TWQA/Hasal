@@ -125,4 +125,3 @@ class BaseTest(unittest.TestCase):
                                                 suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
         else:
             logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.round_status))
-
