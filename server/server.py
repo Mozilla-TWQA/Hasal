@@ -16,6 +16,9 @@ from lib.common.outlier import outlier
 from perfherder_uploader import PerfherderUploader
 
 
+ENV_CONFIG_PATH = os.environ.get('CONFIG_PATH', '~/.hasal_server/')
+
+
 def geometric_mean(iterable):
     filtered = list(filter(lambda x: x > 0, iterable))
     return (reduce(operator.mul, filtered)) ** (1.0 / len(filtered))
@@ -65,14 +68,15 @@ class StorageHandler:
     If there is no config file, the default value will be 30 times.
     """
     _storage_mutex = Lock()
-    _storage_dir = os.path.expanduser('~/.hasal_server/')
+    _storage_dir = os.path.expanduser(ENV_CONFIG_PATH)
     _storage_path = os.path.join(_storage_dir, 'dump.json')
     _config_path = os.path.join(_storage_dir, 'config.json')
     _register_mutex = Lock()
     _register_path = os.path.join(_storage_dir, 'register.json')
 
     def __init__(self):
-        pass
+        if not os.path.exists(self._storage_dir):
+            os.makedirs(self._storage_dir)
 
     def load_config(self):
         """
@@ -85,9 +89,11 @@ class StorageHandler:
             "perfherder_host": "local.treeherder.mozilla.org",
             "perfherder_client_id": "",
             "perfherder_secret": "",
+            "perfherder_repo": "mozilla-central",
             "dashboard_host": "",
             "dashboard_ssh": ""
         }
+        logger_hasal.info('Loading config file from {} ...'.format(self._config_path))
         if os.path.isfile(self._config_path):
             with open(self._config_path, 'r') as f:
                 return json.load(f)
@@ -379,6 +385,7 @@ class HasalServer:
     _config_perfherder_host = _config.get('perfherder_host', 'local.treeherder.mozilla.org')
     _config_perfherder_client_id = _config.get('perfherder_client_id', '')
     _config_perfherder_secret = _config.get('perfherder_secret', '')
+    _config_perfherder_repo = _config.get('perfherder_repo', 'mozilla-central')
     _config_dashboard_host = _config.get('dashboard_host', '')
     _config_dashboard_ssh = _config.get('dashboard_ssh', '')
     _config_dashboard_link = _config.get('dashboard_link', 'https://askeing.github.io/hasal-dashboard/')
@@ -600,6 +607,7 @@ class HasalServer:
                                                                       platform=test_result.get('platform'),
                                                                       machine_arch=test_result.get('platform'),
                                                                       build_arch=test_result.get('platform'),
+                                                                      repo=HasalServer._config_perfherder_repo,
                                                                       protocol=HasalServer._config_perfherder_protocol,
                                                                       host=HasalServer._config_perfherder_host)
                                         uploader.submit(revision=test_result.get('revision'),
