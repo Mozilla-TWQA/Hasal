@@ -1,3 +1,8 @@
+"""
+1. run `python server/server.py <IP_ADDRESS>:<PORT>` for normal usage.
+2. run `CONFIG_PATH=<PATH_TO_CONFIG_FOLDER> python server/server.py <IP_ADDRESS>:<PORT>` for specify config settings.`
+"""
+
 import os
 import re
 import web
