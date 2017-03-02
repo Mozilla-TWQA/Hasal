@@ -61,9 +61,11 @@
 <!-- ==================== CLASS DESCRIPTION ==================== -->
 <h1 class="epydoc">Class PerfBaseTest</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest">source&nbsp;code</a></span></p>
 <pre class="base-tree">
-unittest.TestCase --+
-                    |
-                   <strong class="uidshort">PerfBaseTest</strong>
+unittest.TestCase --+    
+                    |    
+    <a href="Hasal.lib.baseTest.BaseTest-class.html">baseTest.BaseTest</a> --+
+                        |
+                       <strong class="uidshort">PerfBaseTest</strong>
 </pre>
 
 <hr />
@@ -90,7 +92,7 @@ unittest.TestCase --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="Hasal.lib.perfBaseTest.PerfBaseTest-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span></td>
           <td align="right" valign="top">
@@ -108,74 +110,7 @@ unittest.TestCase --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="set_profiler_path"></a><span class="summary-sig-name">set_profiler_path</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.set_profiler_path">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="set_variable"></a><span class="summary-sig-name">set_variable</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">**kwargs</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.set_variable">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="args_parser"></a><span class="summary-sig-name">args_parser</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">input_script_name</span>,
-        <span class="summary-sig-arg">input_args</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.args_parser">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="get_browser_done"></a><span class="summary-sig-name">get_browser_done</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.get_browser_done">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="setUp"></a><span class="summary-sig-name">setUp</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="Hasal.lib.perfBaseTest.PerfBaseTest-class.html#setUp" class="summary-sig-name">setUp</a>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.setUp">source&nbsp;code</a></span>
             
@@ -191,7 +126,7 @@ unittest.TestCase --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="tearDown"></a><span class="summary-sig-name">tearDown</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="Hasal.lib.perfBaseTest.PerfBaseTest-class.html#tearDown" class="summary-sig-name">tearDown</a>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.tearDown">source&nbsp;code</a></span>
             
@@ -201,7 +136,107 @@ unittest.TestCase --+
       
     </td>
   </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.baseTest.BaseTest-class.html">baseTest.BaseTest</a></code></b>:
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#args_parser">args_parser</a></code>,
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#clone_test_file">clone_test_file</a></code>,
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#get_browser_done">get_browser_done</a></code>,
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#remove_test_file">remove_test_file</a></code>,
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#set_profiler_path">set_profiler_path</a></code>,
+      <code><a href="Hasal.lib.baseTest.BaseTest-class.html#set_variable">set_variable</a></code>
+      </p>
+    </td>
+  </tr>
 </table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">*args</span>,
+        <span class="sig-arg">**kwargs</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="Hasal.lib.baseTest.BaseTest-class.html#__init__">baseTest.BaseTest.__init__</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setUp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setUp</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.setUp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="Hasal.lib.baseTest.BaseTest-class.html#setUp">baseTest.BaseTest.setUp</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="tearDown"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">tearDown</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.perfBaseTest-pysrc.html#PerfBaseTest.tearDown">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="Hasal.lib.baseTest.BaseTest-class.html#tearDown">baseTest.BaseTest.tearDown</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -230,7 +265,7 @@ unittest.TestCase --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Feb 21 07:21:36 2017
+    Generated by Epydoc 3.0.1 on Thu Mar  2 03:16:06 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

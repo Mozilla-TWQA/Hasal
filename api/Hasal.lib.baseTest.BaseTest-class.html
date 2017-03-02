@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Hasal.lib.helper.desktopHelper</title>
+  <title>Hasal.lib.baseTest.BaseTest</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -41,8 +41,8 @@
       <span class="breadcrumbs">
         Package&nbsp;Hasal ::
         <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
-        <a href="Hasal.lib.helper-module.html">Package&nbsp;helper</a> ::
-        Module&nbsp;desktopHelper
+        <a href="Hasal.lib.baseTest-module.html">Module&nbsp;baseTest</a> ::
+        Class&nbsp;BaseTest
       </span>
     </td>
     <td>
@@ -52,25 +52,32 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="Hasal.lib.helper.desktopHelper-module.html"
+            >]&nbsp;|&nbsp;<a href="Hasal.lib.baseTest.BaseTest-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
-<!-- ==================== MODULE DESCRIPTION ==================== -->
-<h1 class="epydoc">Module desktopHelper</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html">source&nbsp;code</a></span></p>
-<!-- ==================== FUNCTIONS ==================== -->
-<a name="section-Functions"></a>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class BaseTest</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+unittest.TestCase --+
+                    |
+                   <strong class="uidshort">BaseTest</strong>
+</pre>
+
+<hr />
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr bgcolor="#70b0f0" class="table-header">
   <td colspan="2" class="table-header">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <tr valign="top">
-        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="left"><span class="table-header">Instance Methods</span></td>
         <td align="right" valign="top"
-         ><span class="options">[<a href="#section-Functions"
+         ><span class="options">[<a href="#section-InstanceMethods"
          class="privatelink" onclick="toggle_private();"
          >hide private</a>]</span></td>
       </tr>
@@ -83,10 +90,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="launch_browser"></a><span class="summary-sig-name">launch_browser</span>(<span class="summary-sig-arg">browser_type</span>,
+          <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#launch_browser">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -100,9 +108,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_browser_version"></a><span class="summary-sig-name">get_browser_version</span>(<span class="summary-sig-arg">browser_type</span>)</span></td>
+          <td><span class="summary-sig"><a name="set_profiler_path"></a><span class="summary-sig-name">set_profiler_path</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#get_browser_version">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.set_profiler_path">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -116,11 +124,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="lock_window_pos"></a><span class="summary-sig-name">lock_window_pos</span>(<span class="summary-sig-arg">browser_type</span>,
-        <span class="summary-sig-arg">height_adjustment</span>=<span class="summary-sig-default">0</span>,
-        <span class="summary-sig-arg">width_adjustment</span>=<span class="summary-sig-default">0</span>)</span></td>
+          <td><span class="summary-sig"><a name="set_variable"></a><span class="summary-sig-name">set_variable</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">**kwargs</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#lock_window_pos">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.set_variable">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -134,9 +141,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="minimize_window"></a><span class="summary-sig-name">minimize_window</span>()</span></td>
+          <td><span class="summary-sig"><a name="args_parser"></a><span class="summary-sig-name">args_parser</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">input_script_name</span>,
+        <span class="summary-sig-arg">input_args</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#minimize_window">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.args_parser">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -150,11 +159,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="adjust_viewport"></a><span class="summary-sig-name">adjust_viewport</span>(<span class="summary-sig-arg">browser_type</span>,
-        <span class="summary-sig-arg">img_sample_dp</span>,
-        <span class="summary-sig-arg">img_sample_name</span>)</span></td>
+          <td><span class="summary-sig"><a name="get_browser_done"></a><span class="summary-sig-name">get_browser_done</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#adjust_viewport">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.get_browser_done">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -168,10 +175,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="check_browser_show_up"></a><span class="summary-sig-name">check_browser_show_up</span>(<span class="summary-sig-arg">img_sample_dp</span>,
-        <span class="summary-sig-arg">img_sample_name</span>)</span></td>
+          <td><span class="summary-sig"><a name="clone_test_file"></a><span class="summary-sig-name">clone_test_file</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.desktopHelper-pysrc.html#check_browser_show_up">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.clone_test_file">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -179,29 +185,52 @@
       
     </td>
   </tr>
-</table>
-<!-- ==================== VARIABLES ==================== -->
-<a name="section-Variables"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Variables</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-Variables"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="logger"></a><span class="summary-name">logger</span> = <code title="get_logger(__name__)">get_logger(__name__)</code>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="remove_test_file"></a><span class="summary-sig-name">remove_test_file</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.remove_test_file">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setUp"></a><span class="summary-sig-name">setUp</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.setUp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="tearDown"></a><span class="summary-sig-name">tearDown</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.baseTest-pysrc.html#BaseTest.tearDown">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
     </td>
   </tr>
 </table>
