@@ -40,7 +40,7 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
 
     def {0}(self):
-        self.sikuli_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{1}", script_dp=self.env.test_script_py_dp)
+        self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target="{1}", script_dp=self.env.test_script_py_dp)
 """
     BROWSER_FIREFOX_LAUNCH_SCRIPT = """
 sys.path.append(sys.argv[2])
