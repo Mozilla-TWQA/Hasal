@@ -101,10 +101,24 @@ class StorageHandler:
         logger_hasal.info('Loading config file from {} ...'.format(self._config_path))
         if os.path.isfile(self._config_path):
             with open(self._config_path, 'r') as f:
-                return json.load(f)
+                ret_obj = json.load(f)
+                test_times = ret_obj.get('test_times', '')
+                perf_protocol = ret_obj.get('perfherder_protocol', '')
+                perf_host = ret_obj.get('perfherder_host', '')
+                perf_repo = ret_obj.get('perfherder_repo', '')
+                if test_times:
+                    logger_hasal.info('Test Times: {}'.format(test_times))
+                if perf_protocol:
+                    logger_hasal.info('Perfherder Protocol: {}'.format(perf_protocol))
+                if perf_host:
+                    logger_hasal.info('Perfherder Host: {}'.format(perf_host))
+                if perf_repo:
+                    logger_hasal.info('Perfherder Repo: {}'.format(perf_repo))
+                return ret_obj
         else:
             with open(self._config_path, 'w') as f:
                 f.write(json.dumps(DEFAULT_CONFIG))
+                logger_hasal.info('No config.json file {}. Generate default config.'.format(self._config_path))
         return DEFAULT_CONFIG
 
     def load_register(self):
