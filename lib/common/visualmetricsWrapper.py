@@ -26,25 +26,28 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
-from ..thirdparty.visualmetrics import *
+
+from ..thirdparty.visualmetrics import *  # NOQA
 from logConfig import get_logger
 
 logger = get_logger(__name__)
 
-def colors_are_similar(a, b, threshold = 30):
-  similar = True
-  sum = 0
-  for x in xrange(3):
-    delta = abs(a[x] - b[x])
-    sum += delta
-    if delta > threshold:
-      similar = False
-  if sum > threshold:
-    similar = False
 
-  return similar
+def colors_are_similar(a, b, threshold=30):
+    similar = True
+    sum = 0
+    for x in xrange(3):
+        delta = abs(a[x] - b[x])
+        sum += delta
+        if delta > threshold:
+            similar = False
+    if sum > threshold:
+        similar = False
 
-def find_tab_view(file, viewport):
+    return similar
+
+
+def find_tab_view(input_file, viewport):
     """
 
     @param file:
@@ -52,7 +55,7 @@ def find_tab_view(file, viewport):
     @return:
     """
     try:
-        im = Image.open(file)
+        im = Image.open(input_file)
         width, height = im.size
         x = int(math.floor(width / 2))
         y = int(math.floor(viewport['y'] / 2))
@@ -91,66 +94,67 @@ def find_tab_view(file, viewport):
 
     return tab_view
 
+
 def find_image_viewport(file):
-  try:
-    from PIL import Image
-    im = Image.open(file)
-    width, height = im.size
-    x = int(math.floor(width / 4))
-    y = int(math.floor(height / 4))
-    pixels = im.load()
-    background = pixels[x, y]
+    try:
+        from PIL import Image
+        im = Image.open(file)
+        width, height = im.size
+        x = int(math.floor(width / 4))
+        y = int(math.floor(height / 4))
+        pixels = im.load()
+        background = pixels[x, y]
 
-    # Find the left edge
-    left = None
-    while left is None and x >= 0:
-      if not colors_are_similar(background, pixels[x, y]):
-        left = x + 1
-      else:
-        x -= 1
-    if left is None:
-      left = 0
-    logging.debug('Viewport left edge is {0:d}'.format(left))
+        # Find the left edge
+        left = None
+        while left is None and x >= 0:
+            if not colors_are_similar(background, pixels[x, y]):
+                left = x + 1
+            else:
+                x -= 1
+        if left is None:
+            left = 0
+        logging.debug('Viewport left edge is {0:d}'.format(left))
 
-    # Find the right edge
-    x = int(math.floor(width / 2))
-    right = None
-    while right is None and x < width:
-      if not colors_are_similar(background, pixels[x, y]):
-        right = x - 1
-      else:
-        x += 1
-    if right is None:
-      right = width
-    logging.debug('Viewport right edge is {0:d}'.format(right))
+        # Find the right edge
+        x = int(math.floor(width / 2))
+        right = None
+        while right is None and x < width:
+            if not colors_are_similar(background, pixels[x, y]):
+                right = x - 1
+            else:
+                x += 1
+        if right is None:
+            right = width
+        logging.debug('Viewport right edge is {0:d}'.format(right))
 
-    # Find the top edge
-    x = int(math.floor(width / 2))
-    top = None
-    while top is None and y >= 0:
-      if not colors_are_similar(background, pixels[x, y]):
-        top = y + 1
-      else:
-        y -= 1
-    if top is None:
-      top = 0
-    logging.debug('Viewport top edge is {0:d}'.format(top))
+        # Find the top edge
+        x = int(math.floor(width / 2))
+        top = None
+        while top is None and y >= 0:
+            if not colors_are_similar(background, pixels[x, y]):
+                top = y + 1
+            else:
+                y -= 1
+        if top is None:
+            top = 0
+        logging.debug('Viewport top edge is {0:d}'.format(top))
 
-    # Find the bottom edge
-    y = int(math.floor(height / 2))
-    bottom = None
-    while bottom is None and y < height:
-      if not colors_are_similar(background, pixels[x, y]):
-        bottom = y - 1
-      else:
-        y += 1
-    if bottom is None:
-      bottom = height
-    logging.debug('Viewport bottom edge is {0:d}'.format(bottom))
+        # Find the bottom edge
+        y = int(math.floor(height / 2))
+        bottom = None
+        while bottom is None and y < height:
+            if not colors_are_similar(background, pixels[x, y]):
+                bottom = y - 1
+            else:
+                y += 1
+        if bottom is None:
+            bottom = height
+        logging.debug('Viewport bottom edge is {0:d}'.format(bottom))
 
-    viewport = {'x': left, 'y': top, 'width': (right - left), 'height': (bottom - top)}
+        viewport = {'x': left, 'y': top, 'width': (right - left), 'height': (bottom - top)}
+    except Exception as e:
+        logging.debug(e)
+        viewport = None
 
-  except Exception as e:
-    viewport = None
-
-  return viewport
+    return viewport

@@ -38,8 +38,7 @@ class DctRunTimeGenerator(object):
         # crop sample data area
         # generate viewport crop area
         if DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT] = \
-            input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT]
+            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT]
         else:
             viewport_value = find_image_viewport(input_sample_data['fp'])
             return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
@@ -47,8 +46,7 @@ class DctRunTimeGenerator(object):
 
         # generate tab_view crop area
         if DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW] = \
-            input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW]
+            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW] = input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW]
         else:
             tabview_value = find_tab_view(input_sample_data['fp'], return_result[input_generator_name]['crop_data'][
                 DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT])
@@ -57,8 +55,7 @@ class DctRunTimeGenerator(object):
 
         # generate browser crop area
         if DctRunTimeGenerator.SEARCH_TARGET_BROWSER in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_BROWSER] = \
-            input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_BROWSER]
+            return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_BROWSER] = input_sample_data[DctRunTimeGenerator.SEARCH_TARGET_BROWSER]
         else:
             browser_view_value = find_browser_view(
                 return_result[input_generator_name]['crop_data'][DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT],
@@ -87,7 +84,6 @@ class DctRunTimeGenerator(object):
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = convert_to_dct(search_target_fp, event_obj['fraction'])
 
         return return_result
-
 
     def generate_result(self, input_data, input_global_result):
         """
@@ -127,7 +123,3 @@ class DctRunTimeGenerator(object):
         compare_result = compare_with_sample_image_multi_process(input_data['sample_result'], input_image_list, compare_setting)
 
         return compare_result
-
-
-
-

@@ -40,6 +40,7 @@ IGNORED_DIRS = [
     os.path.join(".", "flows"),
     os.path.join(".", "output"),
     os.path.join(".", "thirdParty"),
+    os.path.join(".", "lib", "thirdparty"),
     os.path.join(".", "resource"),
     os.path.join(".", "python", "_virtualenv"),
     os.path.join(".", "python", "tidy"),

@@ -1,12 +1,12 @@
 import os
 import cv2
-import math
 import time
 import copy
 import numpy as np
 import threading
 from PIL import Image
 from multiprocessing import Process, Manager
+from commonUtil import CommonUtil
 from logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -72,14 +72,13 @@ def convert_to_dct(image_fp, skip_status_bar_fraction=1.0):
         height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
         img_obj = img_obj[:height][:][:]
         img_gray = np.zeros((height, width))
-        for channel in range(channel):
-            img_gray += img_obj[:, :, channel]
+        for each_channel in range(channel):
+            img_gray += img_obj[:, :, each_channel]
         img_gray /= channel
         img_dct = img_gray / 255.0
         dct_obj = cv2.dct(img_dct)
     except Exception as e:
         logger.error(e)
-    return dct_obj
     return dct_obj
 
 
@@ -89,7 +88,7 @@ def find_browser_view(viewport, tab_view):
     return browser_view
 
 
-def generate_crop_data(input_target_list, crop_taget_list):
+def generate_crop_data(input_target_list, crop_target_list):
     """
     generate crop data for crop images functions
     @param input_target_list: target obj list, for example {'fp': 'xxxx, 'write_to_file': True}
@@ -98,11 +97,10 @@ def generate_crop_data(input_target_list, crop_taget_list):
     """
     crop_data_dict = {}
     for input_target in input_target_list:
-        if 'write_to_file' in input_target:
-            if input_target['write_to_file'] is True:
-                for crop_taget_name in crop_taget_list:
+        if 'write_to_file' in input_target and input_target['write_to_file']:
+                for crop_taget_name in crop_target_list:
                     input_fn_name = os.path.basename(input_target['fp'])
-                    input_parent_dp = os.path.abspath(input_target['fp']).rsplit(os.path.sep, 1)[0]
+                    input_parent_dp = os.path.dirname(input_target['fp'])
                     output_dp = os.path.join(input_parent_dp, crop_taget_name)
                     if not os.path.exists(output_dp):
                         os.mkdir(output_dp)
@@ -113,7 +111,7 @@ def generate_crop_data(input_target_list, crop_taget_list):
                                 {'input_fp': input_target['fp'], 'output_fp': output_fp})
                         else:
                             crop_data_dict[crop_taget_name] = {'fp_list': [{'input_fp': input_target['fp'], 'output_fp': output_fp}],
-                                                               'crop_area': crop_taget_list[crop_taget_name]}
+                                                               'crop_area': crop_target_list[crop_taget_name]}
     return crop_data_dict
 
 
@@ -185,7 +183,7 @@ def crop_multiple_images(input_image_list, input_crop_area):
                 logger.debug("crop file[%s] already exists, skip crop actions!" % input_image_data['output_fp'])
             else:
                 if os.path.isfile(input_image_data['input_fp']):
-                    #logger.debug("Crop file [%s] with crop area [%s]" % (input_image_data['input_fp'], crop_region))
+                    # logger.debug("Crop file [%s] with crop area [%s]" % (input_image_data['input_fp'], crop_region))
                     src_img = Image.open(input_image_data['input_fp'])
                     dst_img = src_img.crop(crop_region)
                     dst_img.save(input_image_data['output_fp'])
@@ -225,7 +223,7 @@ def get_search_range(input_time_stamp, input_fps, input_image_list_len=0, input_
         search_range = [
             # For finding the beginning, the range cannot start less than zero.
             max(int((ref_start_point - input_cover_sec) * input_fps), 0),
-            min(int((ref_start_point + input_cover_sec) * input_fps), input_image_list_len - 1 ),
+            min(int((ref_start_point + input_cover_sec) * input_fps), input_image_list_len - 1),
             # For finding the end, the range cannot start less than zero.
             max(int((ref_end_point - input_cover_sec) * input_fps), 0),
             min(int((ref_end_point + input_cover_sec) * input_fps), input_image_list_len - 1)]
@@ -245,13 +243,11 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     # init value
     sample_dct = None
     image_fn_list = copy.deepcopy(input_image_data.keys())
-    image_fn_list.sort()
+    image_fn_list.sort(key=CommonUtil.natural_keys)
 
     # generate search range
     search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
                                     len(input_image_data))
-
-
     total_search_range = input_settings['default_fps'] * 20
     if input_settings['search_direction'] == 'backward_search':
         start_index = search_range[1] - 1
