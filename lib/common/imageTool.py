@@ -121,7 +121,11 @@ class ImageTool(object):
         real_time_shift = float(header_fps) / self.current_fps
         logger.info('[FPS] Real time shift: {}'.format(real_time_shift))
 
-        if exec_timestamp_list:
+        try:
+            with open(Environment.DEFAULT_TIMESTAMP, "r") as fh:
+                timestamp = json.load(fh)
+                logger.info('Load timestamps: %s' % timestamp)
+            exec_timestamp_list = map(float, [timestamp["t1"], timestamp["t2"], timestamp["t3"]])
             # search range: [head_start, head_end, tail_start, tail_end]
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
             ref_end_point = exec_timestamp_list[2] - exec_timestamp_list[0]
@@ -132,6 +136,10 @@ class ImageTool(object):
                 # For finding the end, the range cannot start less than zero.
                 max(int((ref_end_point - 10) * self.current_fps), 0),
                 int((ref_end_point + 10) * self.current_fps)]
+        except Exception as e:
+            logger.error(e)
+            logger.error('Make timestamp list be empty.')
+            exec_timestamp_list = []
         # Only for convert ONE image.
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:

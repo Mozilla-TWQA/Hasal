@@ -27,6 +27,7 @@ class Environment(object):
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
+    DEFAULT_TIMESTAMP = os.path.join(os.getcwd(), "timestamp.json")
 
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
