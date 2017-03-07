@@ -34,13 +34,14 @@ class GeckoProfiler(BaseProfiler):
 
             # Getting profiling link ...
             link = my_client.get_profiling_link()
-            logger.info('>> Profiling Link: ' + link)
-            with open(saving_url_filename, 'w') as f:
-                f.write(link)
+            logger.info('>> Profiling Link: {}'.format(link))
+            if link:
+                with open(saving_url_filename, 'w') as f:
+                    f.write(link)
 
             # Getting profiling file ...
             filepath = my_client.get_profiling_file()
-            logger.info('>> Profiling File: ' + filepath)
+            logger.info('>> Profiling File: {}'.format(filepath))
 
             # Close server and disconnect
             logger.info('Stopping Web Socket server ...')
