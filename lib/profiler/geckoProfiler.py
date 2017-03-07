@@ -1,7 +1,8 @@
 from base import BaseProfiler
 
-from geckoprofiler_controller.control_server import *
-from geckoprofiler_controller.control_client import *
+import os
+from geckoprofiler_controller.control_server import ServerController
+from geckoprofiler_controller.control_client import ControllerClient
 from ..common.logConfig import get_logger
 
 logger = get_logger(__name__)
