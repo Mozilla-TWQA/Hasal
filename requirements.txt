@@ -13,7 +13,7 @@ argparse==1.2.1
 watchdog==0.8.3
 peakutils==1.0.3
 treeherder-client==3.1.0
-geckoprofiler_controller==0.0.2
+geckoprofiler_controller==0.0.3
 # matplotlib>=1.5.1
 
 python-dateutil
