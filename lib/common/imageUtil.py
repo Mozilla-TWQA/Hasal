@@ -8,7 +8,6 @@ import threading
 from PIL import Image
 from multiprocessing import Process, Manager
 from logConfig import get_logger
-from ..thirdparty.visualmetrics import colors_are_similar
 
 logger = get_logger(__name__)
 
@@ -81,54 +80,7 @@ def convert_to_dct(image_fp, skip_status_bar_fraction=1.0):
     except Exception as e:
         logger.error(e)
     return dct_obj
-
-
-def find_tab_view(file, viewport):
-    """
-
-    @param file:
-    @param viewport:
-    @return:
-    """
-    try:
-        im = Image.open(file)
-        width, height = im.size
-        x = int(math.floor(width / 2))
-        y = int(math.floor(viewport['y'] / 2))
-        pixels = im.load()
-        background = pixels[x, y]
-
-        # Find the top edge
-        x = int(math.floor(width / 2))
-        top = None
-        while top is None and y >= 0:
-            if not colors_are_similar(background, pixels[x, y]):
-                top = y + 1
-            else:
-                y -= 1
-        if top is None:
-            top = 0
-        logger.debug('Browser tab view top edge is {0:d}'.format(top))
-
-        # Find the bottom edge
-        y = int(math.floor(viewport['y'] / 2))
-        bottom = None
-        while bottom is None and y < height:
-            if not colors_are_similar(background, pixels[x, y]):
-                bottom = y - 1
-            else:
-                y += 1
-        if bottom is None:
-            bottom = height
-        logger.debug('Browser tab view bottom edge is {0:d}'.format(bottom))
-
-        tab_view = {'x': viewport['x'], 'y': top, 'width': viewport['width'], 'height': (bottom - top)}
-
-    except Exception as e:
-        tab_view = None
-        logger.error(e)
-
-    return tab_view
+    return dct_obj
 
 
 def find_browser_view(viewport, tab_view):

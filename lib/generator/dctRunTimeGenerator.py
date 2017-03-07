@@ -4,10 +4,10 @@ import copy
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
-from ..common.imageUtil import find_tab_view
+from ..common.visualmetricsWrapper import find_tab_view
 from ..common.imageUtil import find_browser_view
 from ..common.imageUtil import compare_with_sample_image_multi_process
-from ..thirdparty.visualmetrics import find_image_viewport
+from ..common.visualmetricsWrapper import find_image_viewport
 from ..common.logConfig import get_logger
 
 logger = get_logger(__name__)
