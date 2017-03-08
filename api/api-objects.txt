@@ -115,6 +115,7 @@ Hasal.lib.helper.generatorHelper.DEFAULT_DCTRUNTIME_GENERATOR_NAME	Hasal.lib.hel
 Hasal.lib.helper.generatorHelper.calculate	Hasal.lib.helper.generatorHelper-module.html#calculate
 Hasal.lib.helper.generatorHelper.DEFAULT_GENERATOR_SETTINGS	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_GENERATOR_SETTINGS
 Hasal.lib.helper.generatorHelper.output_result	Hasal.lib.helper.generatorHelper-module.html#output_result
+Hasal.lib.helper.generatorHelper.get_json_data	Hasal.lib.helper.generatorHelper-module.html#get_json_data
 Hasal.lib.helper.generatorHelper.run_modules	Hasal.lib.helper.generatorHelper-module.html#run_modules
 Hasal.lib.helper.profilerHelper	Hasal.lib.helper.profilerHelper-module.html
 Hasal.lib.helper.resultHelper	Hasal.lib.helper.resultHelper-module.html
@@ -320,6 +321,7 @@ Hasal.lib.common.environment.Environment.TEST_TARGET_ID_100R_NUMBER_UTF8CHAR	Has
 Hasal.lib.common.environment.Environment.DEFAULT_TEST_TARGET_FOLDER_URI	Hasal.lib.common.environment.Environment-class.html#DEFAULT_TEST_TARGET_FOLDER_URI
 Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT	Hasal.lib.common.environment.Environment-class.html#SEARCH_TARGET_VIEWPORT
 Hasal.lib.common.environment.Environment.TEST_TARGET_ID_100R_NUMBER_ENCHAR_100FORMULA_10TABS	Hasal.lib.common.environment.Environment-class.html#TEST_TARGET_ID_100R_NUMBER_ENCHAR_100FORMULA_10TABS
+Hasal.lib.common.environment.Environment.DEFAULT_TIMESTAMP	Hasal.lib.common.environment.Environment-class.html#DEFAULT_TIMESTAMP
 Hasal.lib.common.environment.Environment.PROFILE_FILE_NAME_AUTOSAVEHAR_GECKOPROFILER	Hasal.lib.common.environment.Environment-class.html#PROFILE_FILE_NAME_AUTOSAVEHAR_GECKOPROFILER
 Hasal.lib.common.environment.Environment.DEFAULT_BROWSER_TYPE_CHROME	Hasal.lib.common.environment.Environment-class.html#DEFAULT_BROWSER_TYPE_CHROME
 Hasal.lib.common.environment.Environment.GSHEET_TEST_TARGET_FOLDER_URI	Hasal.lib.common.environment.Environment-class.html#GSHEET_TEST_TARGET_FOLDER_URI
@@ -382,6 +384,7 @@ Hasal.lib.common.environment.Environment.DEFAULT_BROWSER_WIDTH	Hasal.lib.common.
 Hasal.lib.common.environment.Environment.DEFAULT_STAT_RESULT	Hasal.lib.common.environment.Environment-class.html#DEFAULT_STAT_RESULT
 Hasal.lib.common.environment.Environment.TEST_TARGET_ID_100R_DIFFERENT_COLOR_10TABS	Hasal.lib.common.environment.Environment-class.html#TEST_TARGET_ID_100R_DIFFERENT_COLOR_10TABS
 Hasal.lib.common.environment.Environment.IMG_FILE_EXTENSION	Hasal.lib.common.environment.Environment-class.html#IMG_FILE_EXTENSION
+Hasal.lib.common.environment.Environment.INITIAL_TIMESTAMP_NAME	Hasal.lib.common.environment.Environment-class.html#INITIAL_TIMESTAMP_NAME
 Hasal.lib.common.environment.Environment.DEFAULT_VIEWPORT_HEIGHT	Hasal.lib.common.environment.Environment-class.html#DEFAULT_VIEWPORT_HEIGHT
 Hasal.lib.common.environment.Environment.TEST_TARGET_ID_SLIDE_2_PAGE_ANIMATION	Hasal.lib.common.environment.Environment-class.html#TEST_TARGET_ID_SLIDE_2_PAGE_ANIMATION
 Hasal.lib.common.environment.Environment.DEFAULT_VIDEO_OUTPUT_DIR	Hasal.lib.common.environment.Environment-class.html#DEFAULT_VIDEO_OUTPUT_DIR
