@@ -22,7 +22,6 @@ DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
-DEFAULT_IMG_CLEAVER_NAME = 'ImgCleaver'
 
 DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsValidator'},
                                           DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.fileExistValidator'}}}
@@ -250,6 +249,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.seek(0)
         fh.write(json.dumps(stat_data))
 
+
 def calculate(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
     """
 
@@ -300,7 +300,6 @@ def calculate(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, r
         generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[DEFAULT_SAMPLE_CONVERTER_NAME],
                           'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS, 'exec_timestamp_list': exec_timestamp_list}
         generator_result = run_generators(generator_settings, generator_data)
-
 
         # To support legacy function output result need to put all result in running time result key
         for generator_name in sample_data['configuration']['generator']:
