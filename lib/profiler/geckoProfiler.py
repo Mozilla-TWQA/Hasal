@@ -44,6 +44,9 @@ class GeckoProfiler(BaseProfiler):
             filepath = my_client.get_profiling_file()
             logger.info('>> Profiling File: {}'.format(filepath))
 
+            logger.info('Wait for sharing finish ...')
+            my_client.wait_profiling_link_sharing_finish()
+
             # Close server and disconnect
             logger.info('Stopping Web Socket server ...')
             my_client.send_stop_server_command()
