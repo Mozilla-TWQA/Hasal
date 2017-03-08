@@ -250,6 +250,20 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.write(json.dumps(stat_data))
 
 
+def get_json_data(input_fp, initial_timestamp_name):
+    # TODO: need to support multiple sample timestamps in the future
+    try:
+        with open(input_fp, "r") as fh:
+            timestamp = json.load(fh)
+            logger.debug('Load timestamps: %s' % timestamp)
+        timestamp_list = map(float, [timestamp[initial_timestamp_name], timestamp["t1"], timestamp["t2"]])
+    except Exception as e:
+        logger.error(e)
+        logger.error('Make timestamp list be empty.')
+        timestamp_list = []
+    return timestamp_list
+
+
 def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
     """
 
@@ -273,16 +287,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
     # will do the analyze after validate pass
     validate_result = validate_data(validator_settings, validator_data)
 
-    try:
-        with open(env.DEFAULT_TIMESTAMP, "r") as fh:
-            timestamp = json.load(fh)
-            logger.debug('Load timestamps: %s' % timestamp)
-        exec_timestamp_list = map(float, [timestamp["t1"], timestamp["t2"], timestamp["t3"]])
-    except Exception as e:
-        logger.error(e)
-        logger.error('Make timestamp list be empty.')
-        exec_timestamp_list = []
-
+    exec_timestamp_list = get_json_data(env.DEFAULT_TIMESTAMP, env.INITIAL_TIMESTAMP_NAME)
     if validate_result['validate_result']:
         # using different converter will introduce different time seq,
         # the difference range will betweeen 0.000000000002 to 0.000000000004 ms (cv2 is lower than ffmpeg)

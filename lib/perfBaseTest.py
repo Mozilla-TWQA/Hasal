@@ -28,7 +28,7 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # Record timestamp t1
         with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
-            timestamp = {'t1': str(time.time())}
+            timestamp = {self.env.INITIAL_TIMESTAMP_NAME: str(time.time())}
             json.dump(timestamp, fh)
 
         # minimize all windows
@@ -67,7 +67,7 @@ class PerfBaseTest(baseTest.BaseTest):
         # Record timestamp t2
         with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
             timestamp = json.load(fh)
-            timestamp['t2'] = time.time()
+            timestamp['t1'] = time.time()
             fh.seek(0)
             fh.write(json.dumps(timestamp))
 
@@ -76,8 +76,8 @@ class PerfBaseTest(baseTest.BaseTest):
         # Record timestamp t3
         with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
             timestamp = json.load(fh)
-            if 't3' not in timestamp:
-                timestamp['t3'] = time.time()
+            if 't2' not in timestamp:
+                timestamp['t2'] = time.time()
                 fh.seek(0)
                 fh.write(json.dumps(timestamp))
 

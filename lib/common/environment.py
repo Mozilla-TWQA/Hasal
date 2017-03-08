@@ -28,6 +28,7 @@ class Environment(object):
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
     DEFAULT_TIMESTAMP = os.path.join(os.getcwd(), "timestamp.json")
+    INITIAL_TIMESTAMP_NAME = 'initial_timestamp'
 
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
