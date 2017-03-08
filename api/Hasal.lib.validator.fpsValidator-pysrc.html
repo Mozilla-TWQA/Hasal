@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Hasal.lib.validator.fpsValidator</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;Hasal ::
+        <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
+        <a href="Hasal.lib.validator-module.html">Package&nbsp;validator</a> ::
+        Module&nbsp;fpsValidator
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Hasal.lib.validator.fpsValidator-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="Hasal.lib.validator.fpsValidator-module.html">Module Hasal.lib.validator.fpsValidator</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">collections</tt> <tt class="py-keyword">import</tt> <tt class="py-name">Counter</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module Hasal.lib.validator.baseValidator=Hasal.lib.validator.baseValidator-module.html"><a title="Hasal.lib.validator.baseValidator" class="py-name" href="#" onclick="return doclink('link-0', 'baseValidator', 'link-0');">baseValidator</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class Hasal.lib.validator.baseValidator.BaseValidator=Hasal.lib.validator.baseValidator.BaseValidator-class.html"><a title="Hasal.lib.validator.baseValidator.BaseValidator" class="py-name" href="#" onclick="return doclink('link-1', 'BaseValidator', 'link-1');">BaseValidator</a></tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Package Hasal.lib.common=Hasal.lib.common-module.html"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-2', 'common', 'link-2');">common</a></tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Module Hasal.lib.common.logConfig=Hasal.lib.common.logConfig-module.html"><a title="Hasal.lib.common.logConfig" class="py-name" href="#" onclick="return doclink('link-3', 'logConfig', 'link-3');">logConfig</a></tt> <tt class="py-keyword">import</tt> <tt id="link-4" class="py-name" targets="Function Hasal.lib.common.logConfig.get_logger()=Hasal.lib.common.logConfig-module.html#get_logger"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-4', 'get_logger', 'link-4');">get_logger</a></tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt id="link-5" class="py-name" targets="Variable Hasal.agent.agent.logger=Hasal.agent.agent-module.html#logger,Variable Hasal.lib.baseTest.logger=Hasal.lib.baseTest-module.html#logger,Variable Hasal.lib.browser.base.logger=Hasal.lib.browser.base-module.html#logger,Variable Hasal.lib.browser.firefox.logger=Hasal.lib.browser.firefox-module.html#logger,Variable Hasal.lib.common.environment.logger=Hasal.lib.common.environment-module.html#logger,Variable Hasal.lib.common.imageTool.logger=Hasal.lib.common.imageTool-module.html#logger,Variable Hasal.lib.common.imageUtil.logger=Hasal.lib.common.imageUtil-module.html#logger,Variable Hasal.lib.common.pyDriveUtil.logger=Hasal.lib.common.pyDriveUtil-module.html#logger,Variable Hasal.lib.common.recordscreen.logger=Hasal.lib.common.recordscreen-module.html#logger,Variable Hasal.lib.common.videoFluency.logger=Hasal.lib.common.videoFluency-module.html#logger,Variable Hasal.lib.common.windowController.logger=Hasal.lib.common.windowController-module.html#logger,Variable Hasal.lib.converter.cv2Converter.logger=Hasal.lib.converter.cv2Converter-module.html#logger,Variable Hasal.lib.converter.sampleConverter.logger=Hasal.lib.converter.sampleConverter-module.html#logger,Variable Hasal.lib.generator.dctRunTimeGenerator.logger=Hasal.lib.generator.dctRunTimeGenerator-module.html#logger,Variable Hasal.lib.helper.desktopHelper.logger=Hasal.lib.helper.desktopHelper-module.html#logger,Variable Hasal.lib.helper.firefoxProfileCreator.logger=Hasal.lib.helper.firefoxProfileCreator-module.html#logger,Variable Hasal.lib.helper.generatorHelper.logger=Hasal.lib.helper.generatorHelper-module.html#logger,Variable Hasal.lib.helper.resultHelper.logger=Hasal.lib.helper.resultHelper-module.html#logger,Variable Hasal.lib.helper.uploadAgentHelper.logger=Hasal.lib.helper.uploadAgentHelper-module.html#logger,Variable Hasal.lib.perfBaseTest.logger=Hasal.lib.perfBaseTest-module.html#logger,Variable Hasal.lib.profiler.harProfiler.logger=Hasal.lib.profiler.harProfiler-module.html#logger,Variable Hasal.lib.profiler.mitmDumpProfiler.logger=Hasal.lib.profiler.mitmDumpProfiler-module.html#logger,Variable Hasal.lib.validator.fileExistValidator.logger=Hasal.lib.validator.fileExistValidator-module.html#logger,Variable Hasal.lib.validator.fpsValidator.logger=Hasal.lib.validator.fpsValidator-module.html#logger"><a title="Hasal.agent.agent.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.dctRunTimeGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger" class="py-name" href="#" onclick="return doclink('link-5', 'logger', 'link-5');">logger</a></tt> <tt class="py-op">=</tt> <tt id="link-6" class="py-name"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-6', 'get_logger', 'link-4');">get_logger</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">)</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"> </tt>
+<a name="FPSValidator"></a><div id="FPSValidator-def"><a name="L10"></a><tt class="py-lineno">10</tt> <a class="py-toggle" href="#" id="FPSValidator-toggle" onclick="return toggle('FPSValidator');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.validator.fpsValidator.FPSValidator-class.html">FPSValidator</a><tt class="py-op">(</tt><tt class="py-base-class">BaseValidator</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FPSValidator-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="FPSValidator-expanded"><a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"> </tt>
+<a name="FPSValidator.validate"></a><div id="FPSValidator.validate-def"><a name="L12"></a><tt class="py-lineno">12</tt> <a class="py-toggle" href="#" id="FPSValidator.validate-toggle" onclick="return toggle('FPSValidator.validate');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.validator.fpsValidator.FPSValidator-class.html#validate">validate</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">input_validate_data</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FPSValidator.validate-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="FPSValidator.validate-expanded"><a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line">        <tt class="py-name">status_success</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line">        <tt class="py-name">status_fail</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line">        <tt class="py-name">fps_stat</tt> <tt class="py-op">=</tt> <tt class="py-name">status_success</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line">        <tt class="py-name">fps_return</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">        <tt class="py-name">tolerance</tt> <tt class="py-op">=</tt> <tt class="py-number">0.03</tt>  <tt class="py-comment"># recording fps tolerance is set to 3%</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line">        <tt class="py-name">fps_frequency_threshold</tt> <tt class="py-op">=</tt> <tt class="py-number">0.9</tt>  <tt class="py-comment"># fps frequency should be more than 90%</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">input_validate_data</tt><tt class="py-op">[</tt><tt class="py-string">'recording_log_fp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line">            <tt class="py-keyword">with</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">input_validate_data</tt><tt class="py-op">[</tt><tt class="py-string">'recording_log_fp'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-string">'r'</tt><tt class="py-op">)</tt> <tt class="py-keyword">as</tt> <tt class="py-name">fh</tt><tt class="py-op">:</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line">                <tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-string">''</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">line</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">'\n'</tt><tt class="py-op">,</tt> <tt class="py-string">''</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">line</tt> <tt class="py-keyword">in</tt> <tt class="py-name">fh</tt><tt class="py-op">.</tt><tt class="py-name">readlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line">                <tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-name">map</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">,</tt> <tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">findall</tt><tt class="py-op">(</tt><tt class="py-string">'fps=(\s\d+\s)'</tt><tt class="py-op">,</tt> <tt class="py-name">data</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line">                <tt class="py-name">count</tt> <tt class="py-op">=</tt> <tt class="py-name">Counter</tt><tt class="py-op">(</tt><tt class="py-name">fps</tt><tt class="py-op">)</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line">            <tt class="py-name">fh</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">            <tt class="py-name">all_fps_tuple</tt> <tt class="py-op">=</tt> <tt class="py-name">count</tt><tt class="py-op">.</tt><tt class="py-name">most_common</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">all_fps_tuple</tt><tt class="py-op">:</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">                <tt id="link-7" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.dctRunTimeGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger" class="py-name" href="#" onclick="return doclink('link-7', 'logger', 'link-5');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"Cannot get fps information from log."</tt><tt class="py-op">)</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">                <tt class="py-name">fps_stat</tt> <tt class="py-op">=</tt> <tt class="py-name">status_fail</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">                <tt class="py-comment"># item[0]: fps</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">                <tt class="py-comment"># item[1]: counter</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">                <tt class="py-name">total_record</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">all_fps_tuple</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">                <tt class="py-name">tolerance_fps_element</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">item</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">all_fps_tuple</tt> <tt class="py-keyword">if</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">                                         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Function Hasal.lib.helper.resultHelper.is_number_in_tolerance()=Hasal.lib.helper.resultHelper-module.html#is_number_in_tolerance,Method Hasal.lib.validator.fpsValidator.FPSValidator.is_number_in_tolerance()=Hasal.lib.validator.fpsValidator.FPSValidator-class.html#is_number_in_tolerance"><a title="Hasal.lib.helper.resultHelper.is_number_in_tolerance
+Hasal.lib.validator.fpsValidator.FPSValidator.is_number_in_tolerance" class="py-name" href="#" onclick="return doclink('link-8', 'is_number_in_tolerance', 'link-8');">is_number_in_tolerance</a></tt><tt class="py-op">(</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_validate_data</tt><tt class="py-op">[</tt><tt class="py-string">'default_fps'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">tolerance</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">                <tt class="py-name">tolerance_fps_total_record</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">tolerance_fps_element</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">tolerance_fps_total_record</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">total_record</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">fps_frequency_threshold</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">                    <tt class="py-name">fps_return</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">tolerance_fps_element</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">tolerance_fps_total_record</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">                    <tt class="py-name">fps_return</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">all_fps_tuple</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">total_record</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">                    <tt class="py-name">fps_stat</tt> <tt class="py-op">=</tt> <tt class="py-name">status_fail</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">            <tt id="link-9" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.dctRunTimeGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger" class="py-name" href="#" onclick="return doclink('link-9', 'logger', 'link-5');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">warning</tt><tt class="py-op">(</tt><tt class="py-string">"Recording log doesn't exist."</tt><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">            <tt class="py-name">fps_stat</tt> <tt class="py-op">=</tt> <tt class="py-name">status_fail</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">output</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">round</tt><tt class="py-op">(</tt><tt class="py-name">fps_return</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">fps_stat</tt> </tt>
+</div><a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line"> </tt>
+<a name="FPSValidator.is_number_in_tolerance"></a><div id="FPSValidator.is_number_in_tolerance-def"><a name="L47"></a><tt class="py-lineno">47</tt> <a class="py-toggle" href="#" id="FPSValidator.is_number_in_tolerance-toggle" onclick="return toggle('FPSValidator.is_number_in_tolerance');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.validator.fpsValidator.FPSValidator-class.html#is_number_in_tolerance">is_number_in_tolerance</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">number</tt><tt class="py-op">,</tt> <tt class="py-param">default_fps</tt><tt class="py-op">,</tt> <tt class="py-param">tolerance</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FPSValidator.is_number_in_tolerance-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="FPSValidator.is_number_in_tolerance-expanded"><a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">default_fps</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">1</tt> <tt class="py-op">-</tt> <tt class="py-name">tolerance</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">number</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">round</tt><tt class="py-op">(</tt><tt class="py-name">default_fps</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">1</tt> <tt class="py-op">+</tt> <tt class="py-name">tolerance</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Mar  8 06:28:33 2017
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
