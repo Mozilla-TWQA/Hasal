@@ -4,6 +4,7 @@ import baseTest
 import lib.webdriver as webdriver
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
+from selenium import webdriver
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
 
@@ -14,31 +15,27 @@ class WebdriverBaseTest(baseTest.BaseTest):
 
     def __init__(self, *args, **kwargs):
         super(WebdriverBaseTest, self).__init__(*args, **kwargs)
-        self.browser = None
 
     def setUp(self):
         super(WebdriverBaseTest, self).setUp()
-
-        # TODO: init webdriver / way to stop browser
-        self.webdriver = webdriver.Webdriver(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
-
-        # Start video recordings
-        # TODO: need to be webdriver related / geckoProfiler and performanceTimingProfiler used Sikuli object
-        self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
-        self.profilers.start_profiling(self.env.firefox_settings_extensions)
-
-        # Record timestamp t1
-        self.exec_timestamp_list.append(self.profilers.get_t1_time())
 
         # minimize all windows
         desktopHelper.minimize_window()
 
         # launch browser
-        # TODO: should modify webdriverChrome and webdriverFirefox
-        self.browser = desktopHelper.launch_browser(self.browser_type, env=self.env, type='webdriver',
-                                                    profiler_list=self.env.firefox_settings_extensions)
+        self.browser_obj, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env, type='webdriver',
+                                                                                  profiler_list=self.env.firefox_settings_extensions)
+        self.webdriver = webdriver.Webdriver(self.browser_obj.return_driver())
 
-        # wait browser ready
+        # Start video recordings
+        # TODO: need to be webdriver related / geckoProfiler and performanceTimingProfiler used Sikuli object
+        self.profilers = Profilers(self.env, self.browser_type, self.webdriver)
+        self.profilers.start_profiling(self.env.firefox_settings_extensions)
+
+        # Record timestamp t1
+        self.exec_timestamp_list.append(self.profilers.get_t1_time())
+
+        # wait browser ready / must do after launching browser and starting of video recording
         self.get_browser_done()
 
         # capture 1st snapshot

@@ -61,16 +61,18 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
 
     browser_obj.launch()
-    return profile_path
+    return browser_obj, profile_path
 
 
-# TODO: need to done it by webdriver
+# TODO: need to finish webdriver way to get version
 def get_browser_version(browser_type):
+    chrome_class, firefox_class = _load_browser_class(engine_type)
+
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
-        pass
+        browser_obj = firefox_class(0, 0)
     else:
-        pass
-    return_version = None
+        browser_obj = chrome_class(0, 0)
+    return_version = browser_obj.get_version()
     return return_version
 
 

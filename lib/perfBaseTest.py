@@ -32,8 +32,8 @@ class PerfBaseTest(baseTest.BaseTest):
         desktopHelper.minimize_window()
 
         # launch browser
-        self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
-                                                             profiler_list=self.env.firefox_settings_extensions)
+        _, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
+                                                                profiler_list=self.env.firefox_settings_extensions)
 
         # wait browser ready
         self.get_browser_done()

@@ -1,36 +1,35 @@
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from base import BrowserBase
 from ..common.logConfig import get_logger
 
 logger = get_logger(__name__)
 
 
-# TODO: need to be Webdriver triggered
 class BrowserFirefox(BrowserBase):
-    ubuntu_firefox_command = "firefox"
-    darwin_firefox_command = "/Applications/Firefox.app/Contents/MacOS/firefox"
 
-    def get_browser_settings(self, **kwargs):
-        self.browser_process = "firefox"
-        self.process_name = "firefox"
-        if self.current_platform_name == "darwin":
-            self.command = self.darwin_firefox_command
-        elif self.current_platform_name == "linux2":
-            self.command = self.ubuntu_firefox_command
-        else:
-            self.command = self.ubuntu_firefox_command
-        self.launch_cmd = [self.command, "-height", self.window_size_height, "-width",
-                           self.windows_size_width]
+    def launch(self):
+        # TODO: Keep tracelogger environment variable for Webdriver
+        # if "tracelogger" in kwargs:
+        #     self.test_env['TLLOG'] = "default"
+        #     self.test_env['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
 
-        profile_path = kwargs.get('profile_path', '')
+        firefox_profile = FirefoxProfile(self.profile_path)
+
         if profile_path:
-            logger.info('Running Firefox with profile: {}'.format(profile_path))
-            self.launch_cmd.extend(["--profile", profile_path])
+            logger.info('Running Firefox with profile: {}'.format(self.profile_path))
+            self.driver = webdriver.Firefox(firefox_profile=firefox_profile)
         else:
             logger.info('Running Firefox with default profile.')
+            self.driver = webdriver.Firefox()
 
-        if "tracelogger" in kwargs:
-            self.test_env['TLLOG'] = "default"
-            self.test_env['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
+        WebDriverWait(self.driver, 10)
+        self.driver.set_windows_size(self.windows_size_width, self.window_size_height)
 
-    def get_version_command(self):
-        return [self.command, "-v"]
+    def get_version(self):
+        return self.driver.capabilities['browserVersion']
+
+    def return_driver(self):
+        return self.driver
+

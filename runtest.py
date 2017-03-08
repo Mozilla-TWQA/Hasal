@@ -294,6 +294,7 @@ class RunTest(object):
 
                     # if webdriver is enable, we need to get parameters for running browsers
                     if self.webdriver['enable']:
+                        test_env.webdriver = True
                         if self.webdriver['run_firefox']:
                             test_env.browser_type = "firefox"
                             data = self.loop_test(test_case_module_name, test_name, test_env)
