@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import baseTest
 import helper.desktopHelper as desktopHelper
 import lib.sikuli as sikuli
@@ -26,7 +27,9 @@ class PerfBaseTest(baseTest.BaseTest):
         self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
         # Record timestamp t1
-        self.exec_timestamp_list.append(self.profilers.get_t1_time())
+        with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
+            timestamp = {self.env.INITIAL_TIMESTAMP_NAME: str(time.time())}
+            json.dump(timestamp, fh)
 
         # minimize all windows
         desktopHelper.minimize_window()
@@ -62,12 +65,21 @@ class PerfBaseTest(baseTest.BaseTest):
         time.sleep(2)
 
         # Record timestamp t2
-        self.exec_timestamp_list.append(time.time())
+        with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
+            timestamp = json.load(fh)
+            timestamp['t1'] = time.time()
+            fh.seek(0)
+            fh.write(json.dumps(timestamp))
 
     def tearDown(self):
 
         # Record timestamp t3
-        self.exec_timestamp_list.append(time.time())
+        with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
+            timestamp = json.load(fh)
+            if 't2' not in timestamp:
+                timestamp['t2'] = time.time()
+                fh.seek(0)
+                fh.write(json.dumps(timestamp))
 
         # capture 2nd snapshot
         time.sleep(5)

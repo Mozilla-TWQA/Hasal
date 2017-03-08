@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
 
 from ..thirdparty.visualmetrics import *  # NOQA
+from PIL import Image
 from logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -97,7 +98,6 @@ def find_tab_view(input_file, viewport):
 
 def find_image_viewport(file):
     try:
-        from PIL import Image
         im = Image.open(file)
         width, height = im.size
         x = int(math.floor(width / 4))
