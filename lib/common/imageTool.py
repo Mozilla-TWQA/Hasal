@@ -124,7 +124,7 @@ class ImageTool(object):
         try:
             with open(Environment.DEFAULT_TIMESTAMP, "r") as fh:
                 timestamp = json.load(fh)
-                logger.info('Load timestamps: %s' % timestamp)
+                logger.debug('Load timestamps: %s' % timestamp)
             exec_timestamp_list = map(float, [timestamp["t1"], timestamp["t2"], timestamp["t3"]])
             # search range: [head_start, head_end, tail_start, tail_end]
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]

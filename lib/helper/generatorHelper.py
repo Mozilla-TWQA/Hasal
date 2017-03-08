@@ -250,11 +250,10 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         fh.write(json.dumps(stat_data))
 
 
-def calculate(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
+def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
     """
 
     @param env: from lib.common.environment.py
-    @param exec_timestamp_list: timestamp list
     @param crop_data: sample crop data area
     @param calc_si: '1' or '0'
     @param waveform: '1' or '0'
@@ -273,6 +272,16 @@ def calculate(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, r
 
     # will do the analyze after validate pass
     validate_result = validate_data(validator_settings, validator_data)
+
+    try:
+        with open(env.DEFAULT_TIMESTAMP, "r") as fh:
+            timestamp = json.load(fh)
+            logger.debug('Load timestamps: %s' % timestamp)
+        exec_timestamp_list = map(float, [timestamp["t1"], timestamp["t2"], timestamp["t3"]])
+    except Exception as e:
+        logger.error(e)
+        logger.error('Make timestamp list be empty.')
+        exec_timestamp_list = []
 
     if validate_result['validate_result']:
         # using different converter will introduce different time seq,
@@ -295,7 +304,6 @@ def calculate(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, r
         #  }
 
         sample_result = run_modules(sample_settings, sample_data)
-
         generator_settings = sample_data['configuration']['generator']
         generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[DEFAULT_SAMPLE_CONVERTER_NAME],
                           'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS, 'exec_timestamp_list': exec_timestamp_list}
