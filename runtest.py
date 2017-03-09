@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>] [--settings=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>] [--settings=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -294,12 +294,12 @@ class RunTest(object):
 
                     # if webdriver is enable, we need to get parameters for running browsers
                     if self.webdriver['enable']:
-                        test_env.webdriver = True
+                        test_env['webdriver'] = "True"
                         if self.webdriver['run_firefox']:
-                            test_env.browser_type = "firefox"
+                            test_env['browser_type'] = "firefox"
                             data = self.loop_test(test_case_module_name, test_name, test_env)
                         if self.webdriver['run_chrome']:
-                            test_env.browser_type = "chrome"
+                            test_env['browser_type'] = "chrome"
                             data = self.loop_test(test_case_module_name, test_name, test_env)
                     else:
                         data = self.loop_test(test_case_module_name, test_name, test_env)

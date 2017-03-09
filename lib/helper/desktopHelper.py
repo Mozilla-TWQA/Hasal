@@ -15,11 +15,11 @@ logger = get_logger(__name__)
 def _load_browser_class(type="sikuli"):
     # type = webdriver / sikuli
     if type == 'webdriver':
-        chrome_class = getattr(importlib.import_module("lib.browser.webdriverChrome", "BrowserChrome"))
-        firefox_class = getattr(importlib.import_module("lib.browser.webdriverFirefox", "BrowserFirefox"))
+        chrome_class = getattr(importlib.import_module("lib.browser.webdriverChrome"), "BrowserChrome")
+        firefox_class = getattr(importlib.import_module("lib.browser.webdriverFirefox"), "BrowserFirefox")
     elif type == 'sikuli':
-        chrome_class = getattr(importlib.import_module("lib.browser.chrome", "BrowserChrome"))
-        firefox_class = getattr(importlib.import_module("lib.browser.firefox", "BrowserFirefox"))
+        chrome_class = getattr(importlib.import_module("lib.browser.chrome"), "BrowserChrome")
+        firefox_class = getattr(importlib.import_module("lib.browser.firefox"), "BrowserFirefox")
 
     return chrome_class, firefox_class
 

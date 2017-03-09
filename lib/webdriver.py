@@ -5,7 +5,6 @@ from selenium import webdriver
 class Webdriver():
 
     def __init__(self, driver):
-        # TODO: need to launch browser
         self.driver = driver
 
     @staticmethod

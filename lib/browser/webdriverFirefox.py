@@ -1,3 +1,4 @@
+import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
@@ -10,14 +11,16 @@ logger = get_logger(__name__)
 class BrowserFirefox(BrowserBase):
 
     def launch(self):
-        # TODO: Keep tracelogger environment variable for Webdriver
+        # TODO: temporary solution here. need to have it set up in bootstrap
+        os.environ['PATH'] += ":/home/hasal/Hasal/thirdParty/geckodriver"
+        # set tracelogger environment variable for Webdriver
         # if "tracelogger" in kwargs:
-        #     self.test_env['TLLOG'] = "default"
-        #     self.test_env['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
+        #     os.environ['TLLOG'] = "default"
+        #     os.environ['TLOPTIONS'] = "EnableMainThread,EnableOffThread,EnableGraph"
 
-        firefox_profile = FirefoxProfile(self.profile_path)
-
-        if profile_path:
+        # set firefox profile path if self.profile_path is set
+        if self.profile_path:
+            firefox_profile = FirefoxProfile(self.profile_path)
             logger.info('Running Firefox with profile: {}'.format(self.profile_path))
             self.driver = webdriver.Firefox(firefox_profile=firefox_profile)
         else:
@@ -25,7 +28,7 @@ class BrowserFirefox(BrowserBase):
             self.driver = webdriver.Firefox()
 
         WebDriverWait(self.driver, 10)
-        self.driver.set_windows_size(self.windows_size_width, self.window_size_height)
+        self.driver.set_window_size(self.windows_size_width, self.window_size_height)
 
     def get_version(self):
         return self.driver.capabilities['browserVersion']

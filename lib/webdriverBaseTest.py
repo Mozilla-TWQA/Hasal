@@ -1,7 +1,7 @@
 import os
 import time
 import baseTest
-import lib.webdriver as webdriver
+import lib.webdriver as wd
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 from selenium import webdriver
@@ -23,13 +23,15 @@ class WebdriverBaseTest(baseTest.BaseTest):
         desktopHelper.minimize_window()
 
         # launch browser
-        self.browser_obj, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env, type='webdriver',
-                                                                                  profiler_list=self.env.firefox_settings_extensions)
-        self.webdriver = webdriver.Webdriver(self.browser_obj.return_driver())
+        self.browser_obj, self.profile_dir_path = \
+            desktopHelper.launch_browser(self.browser_type, env=self.env, type='webdriver',
+                                         profiler_list=self.env.firefox_settings_extensions)
+        self.driver = self.browser_obj.return_driver()
+        self.wd = wd.Webdriver(self.driver)
 
         # Start video recordings
         # TODO: need to be webdriver related / geckoProfiler and performanceTimingProfiler used Sikuli object
-        self.profilers = Profilers(self.env, self.browser_type, self.webdriver)
+        self.profilers = Profilers(self.env, self.browser_type, self.wd)
         self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
         # Record timestamp t1
@@ -66,6 +68,6 @@ class WebdriverBaseTest(baseTest.BaseTest):
 
         # Stop browser
         if int(os.getenv("KEEP_BROWSER")) == 0:
-            self.webdriver.close_browser(self.browser_type)
+            self.wd.close_browser(self.browser_type)
 
         super(WebdriverBaseTest, self).tearDown()
