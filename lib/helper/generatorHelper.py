@@ -20,6 +20,7 @@ DEFAULT_FPS_VALIDATOR_NAME = 'FPSValidator'
 DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
 DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
 DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
+DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME = 'DctInputLatencyGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
@@ -130,7 +131,10 @@ def output_video(result_data, video_fp):
     if not start_fp and not end_fp:
         return None
     else:
-        source_dp = os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)
+        if os.path.exists(os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)):
+            source_dp = os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)
+        else:
+            source_dp = os.path.dirname(start_fp)
         img_list = os.listdir(source_dp)
         img_list.sort(key=CommonUtil.natural_keys)
         start_fn = os.path.basename(start_fp)
@@ -299,10 +303,17 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         converter_result = run_modules(converter_settings, converter_data[DEFAULT_CV2_CONVERTER_NAME])
 
         sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
-        sample_data = {'sample_dp': env.img_sample_dp,
-                       'configuration': {'generator': {DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
-        if calc_si == 1:
-            sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {'path': 'lib.generator.speedIndexGenerator'}
+        if not waveform:
+            sample_data = {'sample_dp': env.img_sample_dp,
+                           'configuration': {'generator': {
+                               DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
+            if calc_si == 1:
+                sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {
+                    'path': 'lib.generator.speedIndexGenerator'}
+        else:
+            sample_data = {'sample_dp': env.img_sample_dp,
+                           'configuration': {'generator': {DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
+                               'path': 'lib.generator.dctInputLatencyGenerator'}}}}
 
         # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
         #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
@@ -334,8 +345,6 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             current_time = time.time()
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
-            if waveform == 1:
-                output_waveform_info(calculator_result, env.waveform_fp, env.img_output_dp, env.video_output_fp)
 
             upload_case_name = "_".join(env.output_name.split("_")[2:-1])
             upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
