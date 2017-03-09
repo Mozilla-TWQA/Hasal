@@ -12,6 +12,7 @@ class Environment(object):
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
+    DEFAULT_GECKODRIVER_DIR = os.path.join(os.getcwd(), "thirdParty", "geckodriver")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
     DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")

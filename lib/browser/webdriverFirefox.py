@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from base import BrowserBase
 from ..common.logConfig import get_logger
+from ..common.environment import Environment
 
 logger = get_logger(__name__)
 
@@ -11,8 +12,13 @@ logger = get_logger(__name__)
 class BrowserFirefox(BrowserBase):
 
     def launch(self):
-        # TODO: temporary solution here. need to have it set up in bootstrap
-        os.environ['PATH'] += ":/home/hasal/Hasal/thirdParty/geckodriver"
+        # adding geckoprofiler path
+        if Environment.DEFAULT_GECKODRIVER_DIR not in os.environ['PATH']:
+            if self.current_platform_name == "darwin" or self.current_platform_name == "linux2":
+                os.environ['PATH'] += ":" + Environment.DEFAULT_GECKODRIVER_DIR
+            else:
+                os.environ['PATH'] += ";" + Environment.DEFAULT_GECKODRIVER_DIR + ";"
+
         # set tracelogger environment variable for Webdriver
         # if "tracelogger" in kwargs:
         #     os.environ['TLLOG'] = "default"

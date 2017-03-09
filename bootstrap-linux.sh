@@ -85,39 +85,56 @@ func_log "[INFO] Install Requirements ..."
 # tools
 func_log "[INFO] Installing tools ..."
 sudo apt-get install -y --force-yes unzip wget git
+
 # python
 func_log "[INFO] Installing python ..."
 # python-pip has some problem of urllib3
 # ref: http://stackoverflow.com/questions/27341064/how-do-i-fix-importerror-cannot-import-name-incompleteread
 sudo apt-get install -y --force-yes python-dev python-virtualenv
 sudo easy_install pip
+
 # build toolchain
 func_log "[INFO] Installing build toolchain ..."
 sudo apt-get install -y build-essential cmake libffi-dev libssl-dev
+
 # req of numpy, scipy
 func_log "[INFO] Installing req of numpy, scipy ..."
 sudo apt-get install -y --force-yes libblas-dev liblapack-dev libatlas-base-dev libyaml-dev gfortran
+
 # OpenCV
 func_log "[INFO] Installing OpenCV ..."
 sudo apt-get install -y --force-yes libopencv-dev python-opencv
+
 # ffmpeg
 func_log "[INFO] Installing ffmpeg ..."
 sudo apt-get install -y --force-yes ffmpeg
+
 # avconv
 func_log "[INFO] Installing avconv ..."
 sudo apt-get install -y --force-yes libav-tools
+
 # imagemagick, for Speed Index
 func_log "[INFO] Installing imagemagick ..."
 sudo apt-get install -y --force-yes imagemagick
+
 # mitmproxy
 func_log "[INFO] Installing mitmproxy ..."
 sudo apt-get install -y --force-yes mitmproxy
+
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
 sudo apt-get install -y --force-yes libcv2.4 libcvaux2.4 libhighgui2.4 libtesseract-dev wmctrl xdotool
 rm -rf thirdParty/sikulixsetup-1.1.0.jar
 wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
+
+# geckodriver
+wget --output-document=./thirdParty/geckodriver-v0.14.0.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz
+mkdir -p ./thirdParty/geckodriver/
+tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
+chmod a+x ./thirdParty/geckodriver/geckodriver
+
+
 
 func_log "[INFO] Install Requirements finished."
 
