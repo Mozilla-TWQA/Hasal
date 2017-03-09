@@ -4,7 +4,6 @@ import baseTest
 import lib.webdriver as wd
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
-from selenium import webdriver
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
 

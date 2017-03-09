@@ -41,4 +41,3 @@ class BrowserFirefox(BrowserBase):
 
     def return_driver(self):
         return self.driver
-
