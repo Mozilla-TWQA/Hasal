@@ -65,14 +65,26 @@ class BaseTest(unittest.TestCase):
                                                self.env.img_output_sample_1_fn)
                     if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
                         logger.debug("Browser shown, adjust viewport by setting.")
-                        height_adjustment, width_adjustment = desktopHelper.adjust_viewport(self.browser_type,
-                                                                                            self.env.img_sample_dp,
-                                                                                            self.env.img_output_sample_1_fn)
-                        # TODO
+                        height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
+                                                                                      self.env.img_sample_dp,
+                                                                                      self.env.img_output_sample_1_fn)
+                        height_offset = 0
+                        terminal_width = width_browser
+                        terminal_height = 50
+                        if sys.platform == 'linux2':
+                            height_offset = 50
+                        elif sys.platform == 'win32':
+                            height_offset = 0
+                        elif sys.platform == 'darwin':
+                            # TODO: This offset settings only be tested on Mac Book Air
+                            height_offset = 110
+                            terminal_height = 15
                         terminal_x = 0
-                        terminal_y = height_adjustment
-                        terminal_width = 120
-                        terminal_height = 20
+                        terminal_y = height_browser + height_offset
+                        logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
+                                                                                          terminal_y,
+                                                                                          terminal_width,
+                                                                                          terminal_height))
                         self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
                                                                  pos_y=terminal_y,
                                                                  window_width=terminal_width,

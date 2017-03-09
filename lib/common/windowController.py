@@ -118,7 +118,16 @@ class WindowObject(object):
                         for _ in range(10):
                             if application_obj.isrunning():
                                 # move window position
-                                application_obj.windows.bounds.set((self.pos_x, self.pos_y, self.window_width, self.window_height))
+                                logger.debug('Set bounds of {} to (LL,TT,LR,TB): ({}, {}, {}, {})'
+                                             .format(name,
+                                                     self.pos_x,
+                                                     self.pos_y,
+                                                     self.pos_x + self.window_width,
+                                                     self.pos_y + self.window_height))
+                                application_obj.windows.bounds.set((self.pos_x,
+                                                                    self.pos_y,
+                                                                    self.pos_x + self.window_width,
+                                                                    self.pos_y + self.window_height))
                                 # move to foreground by activate it
                                 application_obj.activate()
                                 return True
