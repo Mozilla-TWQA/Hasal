@@ -32,7 +32,8 @@ class PerfBaseTest(baseTest.BaseTest):
             json.dump(timestamp, fh)
 
         # minimize all windows
-        desktopHelper.minimize_window()
+        # TODO remove minimize window due to we want to move terminal position
+        #desktopHelper.minimize_window()
 
         # launch browser
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
