@@ -21,13 +21,15 @@ class BaseTest(unittest.TestCase):
 
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
-        # TODO get Terminal Window Object here when it still active
+
+        # Get Terminal Window Object here when it still active
         if sys.platform == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
         elif sys.platform == 'win32':
             terminal_title = ['cmd']
-        elif sys.platform == 'linux2':
+        else:
             terminal_title = ['Hasal']
+        # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
 
     def set_profiler_path(self):
