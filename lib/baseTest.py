@@ -9,7 +9,7 @@ import lib.helper.targetHelper as targetHelper
 import helper.resultHelper as resultHelper
 from common.environment import Environment
 from common.logConfig import get_logger
-from ..common.windowController import WindowObject
+from common.windowController import WindowObject
 
 logger = get_logger(__name__)
 
