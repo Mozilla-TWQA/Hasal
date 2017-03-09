@@ -148,6 +148,7 @@ Hasal.lib.profiler	Hasal.lib.profiler-module.html
 Hasal.lib.profiler.avconvProfiler	Hasal.lib.profiler.avconvProfiler-module.html
 Hasal.lib.profiler.base	Hasal.lib.profiler.base-module.html
 Hasal.lib.profiler.geckoProfiler	Hasal.lib.profiler.geckoProfiler-module.html
+Hasal.lib.profiler.geckoProfiler.logger	Hasal.lib.profiler.geckoProfiler-module.html#logger
 Hasal.lib.profiler.harProfiler	Hasal.lib.profiler.harProfiler-module.html
 Hasal.lib.profiler.harProfiler.logger	Hasal.lib.profiler.harProfiler-module.html#logger
 Hasal.lib.profiler.mitmDumpProfiler	Hasal.lib.profiler.mitmDumpProfiler-module.html
