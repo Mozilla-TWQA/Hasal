@@ -15,7 +15,7 @@ elif sys.platform == "darwin":
 class WindowObject(object):
     DEFAULT_WMCTRL_CMD = "/usr/bin/wmctrl"
 
-    def __init__(self, input_window_name_list, pos_x=0, pos_y=0, window_width=800, window_height=600, window_gravity=0):
+    def __init__(self, input_window_name_list, pos_x=0, pos_y=0, window_width=800, window_height=600, window_gravity=0, current=False):
         self.window_type = sys.platform
         self.window_name_list = input_window_name_list
         self.window_identity = None
@@ -30,12 +30,20 @@ class WindowObject(object):
         self.window_gravity = window_gravity
 
         # get window identity
-        self.get_window_identity()
+        self.get_window_identity(current)
 
-    def get_window_identity(self):
+    def get_window_identity(self, current=False):
         # the identity only works on Linux now
         if self.window_type == "linux2":
-            self.window_identity = self.wmctrl_get_window_id()
+            if current:
+                self.window_identity = self.wmctrl_get_current_window_id()
+            else:
+                self.window_identity = self.wmctrl_get_window_id()
+
+    def wmctrl_get_current_window_id(self):
+        cmd = "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2"
+        cmd_output = subprocess.check_output(cmd, shell=True)
+        return cmd_output
 
     def wmctrl_get_window_id(self):
         window_list_cmd = self.DEFAULT_WMCTRL_CMD + " -l"

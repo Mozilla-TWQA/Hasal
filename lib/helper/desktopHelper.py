@@ -95,6 +95,7 @@ def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
     height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
     width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
     lock_window_pos(browser_type, height_adjustment, width_adjustment)
+    return height_adjustment, width_adjustment
 
 
 def check_browser_show_up(img_sample_dp, img_sample_name):
