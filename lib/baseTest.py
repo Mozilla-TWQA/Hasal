@@ -83,9 +83,6 @@ class BaseTest(unittest.TestCase):
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
 
-        # Init timestamp list
-        self.exec_timestamp_list = []
-
         # init target helper
         self.target_helper = targetHelper.TagetHelper(self.env)
 
@@ -116,12 +113,12 @@ class BaseTest(unittest.TestCase):
         # output result
         if self.round_status == 0:
             if hasattr(self, "crop_data"):
-                resultHelper.result_calculation(self.env, self.exec_timestamp_list, self.crop_data,
+                resultHelper.result_calculation(self.env, self.crop_data,
                                                 int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")),
                                                 os.getenv("PERFHERDER_REVISION"), os.getenv("PERFHERDER_PKG_PLATFORM"),
                                                 os.getenv("SUITE_UPLOAD_DP"))
             else:
-                resultHelper.result_calculation(self.env, self.exec_timestamp_list, calc_si=int(os.getenv("CALC_SI")),
+                resultHelper.result_calculation(self.env, calc_si=int(os.getenv("CALC_SI")),
                                                 waveform=int(os.getenv("ENABLE_WAVEFORM")),
                                                 revision=os.getenv("PERFHERDER_REVISION"),
                                                 pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),

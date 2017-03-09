@@ -17,13 +17,13 @@ from multiprocessing import Process
 logger = get_logger(__name__)
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, crop_data=None, fps=0, calc_si=0):
     return_result = {}
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
     img_tool_obj = ImageTool(fps=fps)
     start_time = time.time()
-    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None)
     last_end = time.time()
     elapsed_time = last_end - start_time
     logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
@@ -229,7 +229,7 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
             json.dump(waveform_info, fh, indent=2)
 
 
-def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
+def result_calculation(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
     fps_stat = "1"
     if os.path.exists(env.video_output_fp):
         fps_stat, fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
@@ -237,7 +237,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
-            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
+            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, crop_data, fps, calc_si)
     else:
         result_data = None
 

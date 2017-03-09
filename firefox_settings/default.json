@@ -36,7 +36,7 @@
       "XPI": []
     },
     "GeckoProfiler": {
-      "version": "Gecko Profiler 2.0.18",
+      "version": "Gecko Profiler (Hasal) 2.0.31",
       "enable": false,
       "XPI": [
         "gecko_profiler",

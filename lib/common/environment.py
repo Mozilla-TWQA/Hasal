@@ -28,6 +28,8 @@ class Environment(object):
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
+    DEFAULT_TIMESTAMP = os.path.join(os.getcwd(), "timestamp.json")
+    INITIAL_TIMESTAMP_NAME = 'initial_timestamp'
 
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
@@ -173,7 +175,6 @@ class Environment(object):
         self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
         self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
-        self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
         self.profile_tracelogger_zip_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracelogger.zip")
         self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")
