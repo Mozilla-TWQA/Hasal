@@ -43,7 +43,7 @@ class WindowObject(object):
     def wmctrl_get_current_window_id(self):
         cmd = "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2"
         cmd_output = subprocess.check_output(cmd, shell=True)
-        return cmd_output
+        return cmd_output.strip()
 
     def wmctrl_get_window_id(self):
         window_list_cmd = self.DEFAULT_WMCTRL_CMD + " -l"
@@ -127,7 +127,7 @@ class WindowObject(object):
         logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
-    def move_window_pos(self, pos_x=None, pos_y=None, window_width=None, window_height=None, window_gravity=None):
+    def move_window_pos(self, pos_x=None, pos_y=None, window_width=None, window_height=None, window_gravity=0):
         if pos_x:
             self.pos_x = pos_x
         if pos_y:
