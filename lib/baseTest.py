@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import sys
 import time
@@ -26,7 +27,7 @@ class BaseTest(unittest.TestCase):
         if sys.platform == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
         elif sys.platform == 'win32':
-            terminal_title = ['cmd']
+            terminal_title = ['cmd', 'Command Prompt', '命令提示字元']
         else:
             terminal_title = ['Hasal']
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
