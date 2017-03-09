@@ -118,6 +118,7 @@ class WindowObject(object):
                         for _ in range(10):
                             if application_obj.isrunning():
                                 # move window position
+                                # Reference: https://www.macosxautomation.com/applescript/firsttutorial/11.html
                                 logger.debug('Set bounds of {} to (LL,TT,LR,TB): ({}, {}, {}, {})'
                                              .format(name,
                                                      self.pos_x,
