@@ -72,15 +72,17 @@ class BaseTest(unittest.TestCase):
                                                                                       self.env.img_output_sample_1_fn)
                         height_offset = 0
                         terminal_width = width_browser
-                        terminal_height = 50
+                        terminal_height = 60
                         if sys.platform == 'linux2':
                             height_offset = 50
+                            terminal_height = 60
                         elif sys.platform == 'win32':
                             height_offset = 0
+                            terminal_height = 70
                         elif sys.platform == 'darwin':
                             # TODO: This offset settings only be tested on Mac Book Air
-                            height_offset = 110
-                            terminal_height = 15
+                            height_offset = 115
+                            terminal_height = 10
                         terminal_x = 0
                         terminal_y = height_browser + height_offset
                         logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
