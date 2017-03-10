@@ -481,6 +481,7 @@ Hasal.lib.common.windowController.WindowObject.pywin32_callback_func	Hasal.lib.c
 Hasal.lib.common.windowController.WindowObject.__init__	Hasal.lib.common.windowController.WindowObject-class.html#__init__
 Hasal.lib.common.windowController.WindowObject.pywin32_move_window	Hasal.lib.common.windowController.WindowObject-class.html#pywin32_move_window
 Hasal.lib.common.windowController.WindowObject.get_window_identity	Hasal.lib.common.windowController.WindowObject-class.html#get_window_identity
+Hasal.lib.common.windowController.WindowObject.wmctrl_get_current_window_id	Hasal.lib.common.windowController.WindowObject-class.html#wmctrl_get_current_window_id
 Hasal.lib.common.windowController.WindowObject.move_window_pos	Hasal.lib.common.windowController.WindowObject-class.html#move_window_pos
 Hasal.lib.common.windowController.WindowObject.DEFAULT_WMCTRL_CMD	Hasal.lib.common.windowController.WindowObject-class.html#DEFAULT_WMCTRL_CMD
 Hasal.lib.common.windowController.WindowObject.wmctrl_get_window_id	Hasal.lib.common.windowController.WindowObject-class.html#wmctrl_get_window_id
