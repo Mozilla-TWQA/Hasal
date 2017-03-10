@@ -275,7 +275,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
     @param suite_upload_dp: folder consolidate all execution result
     @return:
     """
-    calculator_result = None
+    calculator_result = {}
 
     # validation data assign
     validator_data = {DEFAULT_FPS_VALIDATOR_NAME: {'recording_log_fp': env.recording_log_fp, 'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS},
@@ -316,10 +316,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         # To support legacy function output result need to put all result in running time result key
         for generator_name in sample_data['configuration']['generator']:
             if generator_result[generator_name]:
-                if calculator_result:
-                    calculator_result['running_time_result'].update(generator_result[generator_name])
-                else:
-                    calculator_result = {'running_time_result': generator_result[generator_name]}
+                calculator_result.update(generator_result[generator_name])
 
         # output sikuli status to static file
         with open(env.DEFAULT_STAT_RESULT, "r+") as fh:

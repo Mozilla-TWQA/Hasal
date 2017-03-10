@@ -181,7 +181,7 @@ def crop_multiple_images(input_image_list, input_crop_area):
     for input_image_data in input_image_list:
         try:
             if os.path.exists(input_image_data['output_fp']):
-                #logger.debug("crop file[%s] already exists, skip crop actions!" % input_image_data['output_fp'])
+                # logger.debug("crop file[%s] already exists, skip crop actions!" % input_image_data['output_fp'])
                 continue
             else:
                 if os.path.isfile(input_image_data['input_fp']):

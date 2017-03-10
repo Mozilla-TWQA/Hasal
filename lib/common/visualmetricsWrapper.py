@@ -27,6 +27,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
 import copy
+from commonUtil import CommonUtil
 from ..thirdparty.visualmetrics import *  # NOQA
 from PIL import Image
 from logConfig import get_logger
@@ -96,46 +97,38 @@ def find_tab_view(input_file, viewport):
     return tab_view
 
 
-def calculate_progress_for_si(result_list):
-    frame_calculation_interval = 5
+def calculate_progress_for_si(result_list, input_image_list, frame_calculation_interval=5):
     histograms = []
-    start_index = 0
-    end_index = 0
+    start_event_index = 0
+    end_event_index = 0
+
+    # convert dict input image list into list order
+    image_fn_list = copy.deepcopy(input_image_list.keys())
+    image_fn_list.sort(key=CommonUtil.natural_keys)
+
     for result in result_list:
         if 'start' in result:
-            result_data = copy.deepcopy(result)
-            result_data['image_fp'] = result['start']
-            del result_data['start']
-
-            start_index = self.image_list.index(result_data)
-
-
+            start_event_fp = result['start']
+            start_event_fn = os.path.basename(start_event_fp)
+            start_event_index = image_fn_list.index(start_event_fn)
         if 'end' in result:
-            result_data = copy.deepcopy(result)
-            result_data['image_fp'] = result['end']
-            del result_data['end']
-
-
-            end_index = self.image_list.index(result_data)
-
+            end_event_fp = result['end']
+            end_event_fn = os.path.basename(end_event_fp)
+            end_event_index = image_fn_list.index(end_event_fn)
 
     # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
     # Might need to adjust if we need to raise the accuracy
-    image_dp = os.path.join(os.path.dirname(self.image_list[0]['image_fp']), Environment.SEARCH_TARGET_VIEWPORT)
-    for i_index in range(start_index, end_index + 1, frame_calculation_interval):
-        image_data = copy.deepcopy(self.image_list[i_index])
-        image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
-        image_data['image_fp'] = image_fp
-        image_data['histogram'] = calculate_image_histogram(image_fp)
+    for i_index in range(start_event_index, end_event_index + 1, frame_calculation_interval):
+        image_fn = image_fn_list[i_index]
+        image_data = copy.deepcopy(input_image_list[image_fn])
+        image_data['histogram'] = calculate_image_histogram(image_data['viewport'])
         histograms.append(image_data)
         gc.collect()
 
-    if end_index % frame_calculation_interval:
-        image_data = copy.deepcopy(self.image_list[end_index])
-        image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
-        image_data['image_fp'] = image_fp
-        image_data['histogram'] = calculate_image_histogram(image_fp)
-        histograms.append(image_data)
+    if end_event_index % frame_calculation_interval:
+        end_image_data = copy.deepcopy(input_image_list[end_event_fn])
+        end_image_data['histogram'] = calculate_image_histogram(end_image_data['viewport'])
+        histograms.append(end_image_data)
         gc.collect()
 
     progress = []
@@ -145,8 +138,29 @@ def calculate_progress_for_si(result_list):
         p = calculate_frame_progress(histogram['histogram'], first, last)
         progress.append({'time': histogram['time_seq'],
                          'progress': p,
-                         'image_fp': histogram['image_fp']})
+                         'image_fp': histogram['viewport']})
     return progress
+
+
+def calculate_perceptual_speed_index(progress):
+    from ssim import compute_ssim
+    x = len(progress)
+    target_frame = progress[x - 1]['image_fp']
+    per_si = 0.0
+    last_ms = progress[0]['time']
+    # Full Path of the Target Frame
+    logger.info("Target image for perSI is %s" % target_frame)
+    for p in progress:
+        elapsed = p['time'] - last_ms
+        # print '*******elapsed %f'%elapsed
+        # Full Path of the Current Frame
+        current_frame = p['image_fp']
+        # Takes full path of PNG frames to compute SSIM value
+        ssim = compute_ssim(current_frame, target_frame)
+        per_si += elapsed * (1.0 - ssim)
+        gc.collect()
+        last_ms = p['time']
+    return int(per_si)
 
 
 def find_image_viewport(file):
