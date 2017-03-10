@@ -79,7 +79,7 @@ class BaseTest(unittest.TestCase):
                             terminal_height = 60
                         elif sys.platform == 'win32':
                             height_offset = 0
-                            terminal_height = 70
+                            terminal_height = 50
                         elif sys.platform == 'darwin':
                             # TODO: This offset settings only be tested on Mac Book Air
                             height_offset = 115
