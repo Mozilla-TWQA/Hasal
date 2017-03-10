@@ -1,4 +1,6 @@
+# coding=utf-8
 import os
+import sys
 import time
 import json
 import unittest
@@ -8,6 +10,7 @@ import lib.helper.targetHelper as targetHelper
 import helper.resultHelper as resultHelper
 from common.environment import Environment
 from common.logConfig import get_logger
+from common.windowController import WindowObject
 
 logger = get_logger(__name__)
 
@@ -19,6 +22,16 @@ class BaseTest(unittest.TestCase):
 
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
+
+        # Get Terminal Window Object here when it still active
+        if sys.platform == 'darwin':
+            terminal_title = ['Terminal.app', 'iTerm.app']
+        elif sys.platform == 'win32':
+            terminal_title = ['cmd', 'Command Prompt', 'runtest.py']
+        else:
+            terminal_title = ['Hasal']
+        # Linux will get current by wmctrl_get_current_window_id() method if current is True
+        self.terminal_window_obj = WindowObject(terminal_title, current=True)
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
@@ -55,8 +68,32 @@ class BaseTest(unittest.TestCase):
                                                self.env.img_output_sample_1_fn)
                     if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
                         logger.debug("Browser shown, adjust viewport by setting.")
-                        desktopHelper.adjust_viewport(self.browser_type, self.env.img_sample_dp,
-                                                      self.env.img_output_sample_1_fn)
+                        height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
+                                                                                      self.env.img_sample_dp,
+                                                                                      self.env.img_output_sample_1_fn)
+                        height_offset = 0
+                        terminal_width = width_browser
+                        terminal_height = 60
+                        if sys.platform == 'linux2':
+                            height_offset = 50
+                            terminal_height = 60
+                        elif sys.platform == 'win32':
+                            height_offset = 0
+                            terminal_height = 70
+                        elif sys.platform == 'darwin':
+                            # TODO: This offset settings only be tested on Mac Book Air
+                            height_offset = 115
+                            terminal_height = 10
+                        terminal_x = 0
+                        terminal_y = height_browser + height_offset
+                        logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
+                                                                                          terminal_y,
+                                                                                          terminal_width,
+                                                                                          terminal_height))
+                        self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
+                                                                 pos_y=terminal_y,
+                                                                 window_width=terminal_width,
+                                                                 window_height=terminal_height)
                         break
         else:
             time.sleep(3)

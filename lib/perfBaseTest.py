@@ -31,9 +31,6 @@ class PerfBaseTest(baseTest.BaseTest):
             timestamp = {self.env.INITIAL_TIMESTAMP_NAME: str(time.time())}
             json.dump(timestamp, fh)
 
-        # minimize all windows
-        desktopHelper.minimize_window()
-
         # launch browser
         self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
                                                              profiler_list=self.env.firefox_settings_extensions)
