@@ -26,7 +26,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
-
+import copy
 from ..thirdparty.visualmetrics import *  # NOQA
 from PIL import Image
 from logConfig import get_logger
@@ -96,6 +96,59 @@ def find_tab_view(input_file, viewport):
     return tab_view
 
 
+def calculate_progress_for_si(result_list):
+    frame_calculation_interval = 5
+    histograms = []
+    start_index = 0
+    end_index = 0
+    for result in result_list:
+        if 'start' in result:
+            result_data = copy.deepcopy(result)
+            result_data['image_fp'] = result['start']
+            del result_data['start']
+
+            start_index = self.image_list.index(result_data)
+
+
+        if 'end' in result:
+            result_data = copy.deepcopy(result)
+            result_data['image_fp'] = result['end']
+            del result_data['end']
+
+
+            end_index = self.image_list.index(result_data)
+
+
+    # The current algorithm is to calculate the histogram of 5 frames per time, so the allowance would be within 5 frames
+    # Might need to adjust if we need to raise the accuracy
+    image_dp = os.path.join(os.path.dirname(self.image_list[0]['image_fp']), Environment.SEARCH_TARGET_VIEWPORT)
+    for i_index in range(start_index, end_index + 1, frame_calculation_interval):
+        image_data = copy.deepcopy(self.image_list[i_index])
+        image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+        image_data['image_fp'] = image_fp
+        image_data['histogram'] = calculate_image_histogram(image_fp)
+        histograms.append(image_data)
+        gc.collect()
+
+    if end_index % frame_calculation_interval:
+        image_data = copy.deepcopy(self.image_list[end_index])
+        image_fp = os.path.join(image_dp, os.path.basename(image_data['image_fp']))
+        image_data['image_fp'] = image_fp
+        image_data['histogram'] = calculate_image_histogram(image_fp)
+        histograms.append(image_data)
+        gc.collect()
+
+    progress = []
+    first = histograms[0]['histogram']
+    last = histograms[-1]['histogram']
+    for index, histogram in enumerate(histograms):
+        p = calculate_frame_progress(histogram['histogram'], first, last)
+        progress.append({'time': histogram['time_seq'],
+                         'progress': p,
+                         'image_fp': histogram['image_fp']})
+    return progress
+
+
 def find_image_viewport(file):
     try:
         im = Image.open(file)
@@ -114,7 +167,7 @@ def find_image_viewport(file):
                 x -= 1
         if left is None:
             left = 0
-        logging.debug('Viewport left edge is {0:d}'.format(left))
+        logger.debug('Viewport left edge is {0:d}'.format(left))
 
         # Find the right edge
         x = int(math.floor(width / 2))
@@ -126,7 +179,7 @@ def find_image_viewport(file):
                 x += 1
         if right is None:
             right = width
-        logging.debug('Viewport right edge is {0:d}'.format(right))
+        logger.debug('Viewport right edge is {0:d}'.format(right))
 
         # Find the top edge
         x = int(math.floor(width / 2))
@@ -138,7 +191,7 @@ def find_image_viewport(file):
                 y -= 1
         if top is None:
             top = 0
-        logging.debug('Viewport top edge is {0:d}'.format(top))
+        logger.debug('Viewport top edge is {0:d}'.format(top))
 
         # Find the bottom edge
         y = int(math.floor(height / 2))
@@ -150,7 +203,7 @@ def find_image_viewport(file):
                 y += 1
         if bottom is None:
             bottom = height
-        logging.debug('Viewport bottom edge is {0:d}'.format(bottom))
+        logger.debug('Viewport bottom edge is {0:d}'.format(bottom))
 
         viewport = {'x': left, 'y': top, 'width': (right - left), 'height': (bottom - top)}
     except Exception as e:

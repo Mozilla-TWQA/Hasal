@@ -170,8 +170,8 @@ class Environment(object):
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
         self.img_sample_dp = os.path.join(self.DEFAULT_IMAGE_SAMPLE_DIR, self.output_name)
         self.img_output_dp = os.path.join(self.DEFAULT_IMAGE_OUTPUT_DIR, self.output_name)
-        self.img_output_sample_1_fn = self.output_name + "_sample_1.jpg"
-        self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
+        self.img_output_sample_1_fn = self.output_name + "_sample_1.bmp"
+        self.img_output_sample_2_fn = self.output_name + "_sample_2.bmp"
         self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")

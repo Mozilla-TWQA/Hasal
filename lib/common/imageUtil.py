@@ -105,13 +105,14 @@ def generate_crop_data(input_target_list, crop_target_list):
                     if not os.path.exists(output_dp):
                         os.mkdir(output_dp)
                     output_fp = os.path.join(output_dp, input_fn_name)
-                    if not os.path.exists(output_fp):
-                        if crop_taget_name in crop_data_dict:
-                            crop_data_dict[crop_taget_name]['fp_list'].append(
-                                {'input_fp': input_target['fp'], 'output_fp': output_fp})
-                        else:
-                            crop_data_dict[crop_taget_name] = {'fp_list': [{'input_fp': input_target['fp'], 'output_fp': output_fp}],
-                                                               'crop_area': crop_target_list[crop_taget_name]}
+                    if crop_taget_name in crop_data_dict:
+                        crop_data_dict[crop_taget_name]['fp_list'].append(
+                            {'input_fp': input_target['fp'], 'output_fp': output_fp})
+                    else:
+                        crop_data_dict[crop_taget_name] = {
+                            'fp_list': [{'input_fp': input_target['fp'], 'output_fp': output_fp}],
+                            'crop_area': crop_target_list[crop_taget_name]}
+
     return crop_data_dict
 
 
@@ -180,7 +181,8 @@ def crop_multiple_images(input_image_list, input_crop_area):
     for input_image_data in input_image_list:
         try:
             if os.path.exists(input_image_data['output_fp']):
-                logger.debug("crop file[%s] already exists, skip crop actions!" % input_image_data['output_fp'])
+                #logger.debug("crop file[%s] already exists, skip crop actions!" % input_image_data['output_fp'])
+                continue
             else:
                 if os.path.isfile(input_image_data['input_fp']):
                     # logger.debug("Crop file [%s] with crop area [%s]" % (input_image_data['input_fp'], crop_region))

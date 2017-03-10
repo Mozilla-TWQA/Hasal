@@ -5,7 +5,8 @@ import unittest
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
-import helper.resultHelper as resultHelper
+#import helper.resultHelper as resultHelper
+import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
 
@@ -110,15 +111,15 @@ class BaseTest(unittest.TestCase):
         # output result
         if self.round_status == 0:
             if hasattr(self, "crop_data"):
-                resultHelper.result_calculation(self.env, self.crop_data,
-                                                int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")),
-                                                os.getenv("PERFHERDER_REVISION"), os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, self.crop_data,
+                                          int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")),
+                                          os.getenv("PERFHERDER_REVISION"), os.getenv("PERFHERDER_PKG_PLATFORM"),
+                                          os.getenv("SUITE_UPLOAD_DP"))
             else:
-                resultHelper.result_calculation(self.env, calc_si=int(os.getenv("CALC_SI")),
-                                                waveform=int(os.getenv("ENABLE_WAVEFORM")),
-                                                revision=os.getenv("PERFHERDER_REVISION"),
-                                                pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, calc_si=int(os.getenv("CALC_SI")),
+                                          waveform=int(os.getenv("ENABLE_WAVEFORM")),
+                                          revision=os.getenv("PERFHERDER_REVISION"),
+                                          pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
+                                          suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
         else:
             logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.round_status))
