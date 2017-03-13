@@ -12,7 +12,7 @@ Options:
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
   --firefox-settings=<str>        Specify the Firefox settings. [default: firefox_settings/default.json]
-  --settings=<str>                Specify the overall settings. [default: settings/default.json]
+  --settings=<str>                Specify the overall settings. [default: settings/default_sikuli.json]
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
   --comment=<str>                 Tag the comment on this test [default: <today>]
