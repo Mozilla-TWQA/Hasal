@@ -85,6 +85,8 @@ Hasal.lib.converter.sampleConverter.logger	Hasal.lib.converter.sampleConverter-m
 Hasal.lib.generator	Hasal.lib.generator-module.html
 Hasal.lib.generator.dctRunTimeGenerator	Hasal.lib.generator.dctRunTimeGenerator-module.html
 Hasal.lib.generator.dctRunTimeGenerator.logger	Hasal.lib.generator.dctRunTimeGenerator-module.html#logger
+Hasal.lib.generator.speedIndexGenerator	Hasal.lib.generator.speedIndexGenerator-module.html
+Hasal.lib.generator.speedIndexGenerator.logger	Hasal.lib.generator.speedIndexGenerator-module.html#logger
 Hasal.lib.helper	Hasal.lib.helper-module.html
 Hasal.lib.helper.desktopHelper	Hasal.lib.helper.desktopHelper-module.html
 Hasal.lib.helper.desktopHelper.check_browser_show_up	Hasal.lib.helper.desktopHelper-module.html#check_browser_show_up
@@ -98,6 +100,7 @@ Hasal.lib.helper.firefoxProfileCreator	Hasal.lib.helper.firefoxProfileCreator-mo
 Hasal.lib.helper.firefoxProfileCreator.logger	Hasal.lib.helper.firefoxProfileCreator-module.html#logger
 Hasal.lib.helper.generatorHelper	Hasal.lib.helper.generatorHelper-module.html
 Hasal.lib.helper.generatorHelper.RET_SUCCESSS	Hasal.lib.helper.generatorHelper-module.html#RET_SUCCESSS
+Hasal.lib.helper.generatorHelper.DEFAULT_SPEEDINDEX_GENERATOR_NAME	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_SPEEDINDEX_GENERATOR_NAME
 Hasal.lib.helper.generatorHelper.DEFAULT_CV2_CONVERTER_NAME	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_CV2_CONVERTER_NAME
 Hasal.lib.helper.generatorHelper.DEFAULT_VALIDATOR_SETTINGS	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_VALIDATOR_SETTINGS
 Hasal.lib.helper.generatorHelper.DEFAULT_FFMPEG_CONVERTER_NAME	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_FFMPEG_CONVERTER_NAME
@@ -113,7 +116,6 @@ Hasal.lib.helper.generatorHelper.DEFAULT_SAMPLE_CONVERTER_SETTINGS	Hasal.lib.hel
 Hasal.lib.helper.generatorHelper.output_waveform_info	Hasal.lib.helper.generatorHelper-module.html#output_waveform_info
 Hasal.lib.helper.generatorHelper.DEFAULT_DCTRUNTIME_GENERATOR_NAME	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_DCTRUNTIME_GENERATOR_NAME
 Hasal.lib.helper.generatorHelper.calculate	Hasal.lib.helper.generatorHelper-module.html#calculate
-Hasal.lib.helper.generatorHelper.DEFAULT_GENERATOR_SETTINGS	Hasal.lib.helper.generatorHelper-module.html#DEFAULT_GENERATOR_SETTINGS
 Hasal.lib.helper.generatorHelper.output_result	Hasal.lib.helper.generatorHelper-module.html#output_result
 Hasal.lib.helper.generatorHelper.get_json_data	Hasal.lib.helper.generatorHelper-module.html#get_json_data
 Hasal.lib.helper.generatorHelper.run_modules	Hasal.lib.helper.generatorHelper-module.html#run_modules
@@ -497,12 +499,18 @@ Hasal.lib.converter.sampleConverter.SampleConverter.DEFAULT_SUPPORT_SAMPLE_FORMA
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.SKIP_STATUS_BAR_FRACTION	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#SKIP_STATUS_BAR_FRACTION
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.SEARCH_TARGET_VIEWPORT	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.DEFAULT_SPEEDINDEX_GENERATOR_NAME	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#DEFAULT_SPEEDINDEX_GENERATOR_NAME
+Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.crop_images_based_on_samplefiles	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#crop_images_based_on_samplefiles
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.SEARCH_TARGET_BROWSER	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#SEARCH_TARGET_BROWSER
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.SEARCH_TARGET_TAB_VIEW	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#SEARCH_TARGET_TAB_VIEW
+Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.DEFAULT_CROP_TARGET_LIST	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#DEFAULT_CROP_TARGET_LIST
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.BROWSER_VISUAL_EVENT_POINTS	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.generate_sample_result	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#generate_sample_result
-Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.DEFAULT_CROP_TARGET_LIST	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#DEFAULT_CROP_TARGET_LIST
 Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator.generate_result	Hasal.lib.generator.dctRunTimeGenerator.DctRunTimeGenerator-class.html#generate_result
+Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator	Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator-class.html
+Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator.generate_sample_result	Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator-class.html#generate_sample_result
+Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator.generate_result	Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator-class.html#generate_result
+Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator.DEFAULT_DCTRUNTIME_GENERATOR_NAME	Hasal.lib.generator.speedIndexGenerator.SpeedIndexGenerator-class.html#DEFAULT_DCTRUNTIME_GENERATOR_NAME
 Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator	Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator-class.html
 Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator._set_prefs	Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator-class.html#_set_prefs
 Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator._download_cookies	Hasal.lib.helper.firefoxProfileCreator.FirefoxProfileCreator-class.html#_download_cookies
