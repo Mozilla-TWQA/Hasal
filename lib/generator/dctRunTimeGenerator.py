@@ -20,6 +20,7 @@ class DctRunTimeGenerator(object):
     SEARCH_TARGET_BROWSER = 'browser'
     SKIP_STATUS_BAR_FRACTION = 0.95
     DEFAULT_CROP_TARGET_LIST = [SEARCH_TARGET_VIEWPORT, SEARCH_TARGET_TAB_VIEW, SEARCH_TARGET_BROWSER]
+    DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 
     BROWSER_VISUAL_EVENT_POINTS = {
         'backward_search': [{'event': 'first_paint', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION},
@@ -85,13 +86,7 @@ class DctRunTimeGenerator(object):
 
         return return_result
 
-    def generate_result(self, input_data, input_global_result):
-        """
-
-        @param input_data:
-        @return:
-        """
-
+    def crop_images_based_on_samplefiles(self, input_data):
         # compare source image list
         input_image_list = copy.deepcopy(input_data['converter_result'])
 
@@ -101,7 +96,8 @@ class DctRunTimeGenerator(object):
             image_list.append(input_data['converter_result'][image_fn])
 
         # generate crop data for all images
-        crop_data_dict = generate_crop_data(image_list, input_data['sample_result'][1][self.__class__.__name__]['crop_data'])
+        crop_data_dict = generate_crop_data(image_list,
+                                            input_data['sample_result'][1][self.__class__.__name__]['crop_data'])
 
         # crop images
         start_time = time.time()
@@ -115,11 +111,25 @@ class DctRunTimeGenerator(object):
             for crop_img_obj in crop_data_dict[crop_target_name]['fp_list']:
                 image_fn = os.path.basename(crop_img_obj['input_fp'])
                 input_image_list[image_fn][crop_target_name] = crop_img_obj['output_fp']
+        return input_image_list
 
-        # compare images
-        compare_setting = {'default_fps': input_data['default_fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
-                           'generator_name': self.__class__.__name__, 'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
-                           'exec_timestamp_list': input_data['exec_timestamp_list']}
-        compare_result = compare_with_sample_image_multi_process(input_data['sample_result'], input_image_list, compare_setting)
+    def generate_result(self, input_data, input_global_result):
+        """
+
+        @param input_data:
+        @return:
+        """
+        compare_result = {}
+
+        if DctRunTimeGenerator.DEFAULT_SPEEDINDEX_GENERATOR_NAME in input_global_result:
+            compare_result = input_global_result[DctRunTimeGenerator.DEFAULT_SPEEDINDEX_GENERATOR_NAME]
+        else:
+            input_image_list = self.crop_images_based_on_samplefiles(input_data)
+            compare_result['merged_crop_image_list'] = input_image_list
+            # compare images
+            compare_setting = {'default_fps': input_data['default_fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
+                               'generator_name': self.__class__.__name__, 'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
+                               'exec_timestamp_list': input_data['exec_timestamp_list']}
+            compare_result['running_time_result'] = compare_with_sample_image_multi_process(input_data['sample_result'], input_image_list, compare_setting)
 
         return compare_result

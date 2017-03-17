@@ -19,6 +19,7 @@ RET_SUCCESSS = 0
 DEFAULT_FPS_VALIDATOR_NAME = 'FPSValidator'
 DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
 DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
+DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
@@ -29,8 +30,6 @@ DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': '
 DEFAULT_CONVERTER_SETTINGS = {'modules': {DEFAULT_CV2_CONVERTER_NAME: {'path': 'lib.converter.cv2Converter'}}}
 
 DEFAULT_SAMPLE_CONVERTER_SETTINGS = {'modules': {DEFAULT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.sampleConverter'}}}
-
-DEFAULT_GENERATOR_SETTINGS = {'modules': {DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}
 
 
 def validate_data(validator_settings, validator_data):
@@ -276,7 +275,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
     @param suite_upload_dp: folder consolidate all execution result
     @return:
     """
-    calculator_result = None
+    calculator_result = {}
 
     # validation data assign
     validator_data = {DEFAULT_FPS_VALIDATOR_NAME: {'recording_log_fp': env.recording_log_fp, 'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS},
@@ -301,13 +300,13 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
 
         sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
         sample_data = {'sample_dp': env.img_sample_dp,
-                       'configuration': {'generator': {DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}},
-                                         'crop_data': {2: {"range": [(70, 65), (920, 100)]}}}}
+                       'configuration': {'generator': {DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
+        if calc_si == 1:
+            sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {'path': 'lib.generator.speedIndexGenerator'}
 
         # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
         #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
         #  }
-
         sample_result = run_modules(sample_settings, sample_data)
         generator_settings = sample_data['configuration']['generator']
         generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[DEFAULT_SAMPLE_CONVERTER_NAME],
@@ -317,10 +316,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         # To support legacy function output result need to put all result in running time result key
         for generator_name in sample_data['configuration']['generator']:
             if generator_result[generator_name]:
-                if calculator_result:
-                    calculator_result['running_time_result'].update(generator_result[generator_name])
-                else:
-                    calculator_result = {'running_time_result': generator_result[generator_name]}
+                calculator_result.update(generator_result[generator_name])
 
         # output sikuli status to static file
         with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
