@@ -248,12 +248,9 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     image_fn_list.sort(key=CommonUtil.natural_keys)
 
     # generate search range
-    if 'search_margin' in input_settings:
-        search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
-                                        len(input_image_data), input_settings['search_margin'])
-    else:
-        search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
-                                        len(input_image_data))
+    search_margin = input_settings.get('search_margin', 10)
+    search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
+                                    len(input_image_data), search_margin)
     total_search_range = input_settings['default_fps'] * 20
     if input_settings['search_direction'] == 'backward_search':
         start_index = search_range[1] - 1
@@ -273,9 +270,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     for event_point in input_settings['event_points'][input_settings['search_direction']]:
         event_name = event_point['event']
         search_target = event_point['search_target']
-        shift_result_flag = False
-        if 'shift_result' in event_point:
-            shift_result_flag = event_point['shift_result']
+        shift_result_flag = event_point.get('shift_result', False)
         # get corresponding dct by event name
         for sample_index in input_sample_data:
             sample_data = input_sample_data[sample_index]
