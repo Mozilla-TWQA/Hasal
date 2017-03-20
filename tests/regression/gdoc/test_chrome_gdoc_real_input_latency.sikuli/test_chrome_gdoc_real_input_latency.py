@@ -26,6 +26,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg1 = capture(0, 0, capture_width, capture_height)
 type('a')
+# In normal condition, a should appear within 100ms, but if lag happened, that could lead the show up after 100 ms, and that will cause the calculation of AIL much smaller than expected.
 sleep(0.1)
 t2 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
