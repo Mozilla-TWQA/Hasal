@@ -8,6 +8,8 @@ import browser
 import time
 import json
 
+Settings.ActionLogs=0
+Settings.InfoLogs=0
 chrome = browser.Chrome()
 gs = gsheet.gSheet()
 chrome.clickBar()
@@ -20,13 +22,14 @@ sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2
 os.remove(sample1_fp)
 
 sleep(5)
-doubleClick(gs.gsheet_1st_cell)
+click(gs.gsheet_1st_cell)
 sleep(2)
 capture_width = int(sys.argv[6])
 capture_height = int(sys.argv[7])
 
 t1 = time.time()
 capimg1 = capture(0, 0, capture_width, capture_height)
+print '[log]  TYPE "9"'
 type('9')
 # In normal condition, a should appear within 100ms, but if lag happened, that could lead the show up after 100 ms, and that will cause the calculation of AIL much smaller than expected.
 sleep(0.1)
