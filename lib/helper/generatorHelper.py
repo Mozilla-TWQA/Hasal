@@ -332,7 +332,10 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         # output sikuli status to static file
         with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
             stat_data = json.load(fh)
-            stat_data['fps_stat'] = validate_result[DEFAULT_FPS_VALIDATOR_NAME]['output_result']
+            if validate_result[DEFAULT_FPS_VALIDATOR_NAME]['validate_result']:
+                stat_data['fps_stat'] = 0
+            else:
+                stat_data['fps_stat'] = 1
             fh.seek(0)
             fh.write(json.dumps(stat_data))
 
