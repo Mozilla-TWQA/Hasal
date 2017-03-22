@@ -3,10 +3,12 @@
 sys.path.append(sys.argv[2])
 import os
 import gsheet
+import common
 import shutil
 import browser
 import time
-import json
+
+com = common.General()
 
 Settings.ActionLogs=0
 Settings.InfoLogs=0
@@ -35,11 +37,6 @@ type('9')
 sleep(0.1)
 t2 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
-with open(sys.argv[8], "r+") as fh:
-    timestamp = json.load(fh)
-    timestamp['t1'] = t1
-    timestamp['t2'] = t2
-    fh.seek(0)
-    fh.write(json.dumps(timestamp))
+com.updateJson({'t1':t1, 't2':t2}, sys.argv[8])
 shutil.move(capimg1, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
 shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
