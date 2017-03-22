@@ -128,7 +128,7 @@ def output_video(result_data, video_fp):
             start_fp = event_data['start']
         if 'end' in event_data:
             end_fp = event_data['end']
-    if not start_fp and not end_fp:
+    if not start_fp or not end_fp:
         return None
     else:
         if os.path.exists(os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)):
@@ -353,4 +353,5 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
             if os.path.exists(upload_case_dp) is False:
                 os.mkdir(upload_case_dp)
-            shutil.move(env.converted_video_output_fp, upload_case_dp)
+            if os.path.exists(env.converted_video_output_fp):
+                shutil.move(env.converted_video_output_fp, upload_case_dp)
