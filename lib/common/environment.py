@@ -102,6 +102,7 @@ class Environment(object):
     TEST_FB_URL_POST = "http://goo.gl/fxja5z"
 
     GSHEET_TEST_URL_SPEC = "https://docs.google.com/spreadsheets/d/%s"
+    TEST_TARGET_ID_EMPTY_SHEET = "1AtfAeK8YRquIovcBxWuoapi0j1gJLWXKTqBnlg_sFdk"
     TEST_TARGET_ID_100R_NUMBER_ENCHAR = "1_vIBHZgVLdEPbo8DrJwbSKNVTCcyfDehOzv9yAXHJ2k"
     TEST_TARGET_ID_100R_NUMBER_UTF8CHAR = "1vOKw5Z_-NDo88UzkWL4e0Rq2bHzs5COCF_VcmjYsABU"
     TEST_TARGET_ID_1000R_NUMBER_ENCHAR = "1VrcKk4P09LQfVdJ2r9mb9yUWeQkYbzupwd8rSwPA0og"

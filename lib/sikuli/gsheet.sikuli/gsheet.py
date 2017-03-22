@@ -19,6 +19,7 @@ class gSheet():
         self.gsheet_delete_highlight_cell = Pattern("pics/column_header.png").similar(0.70).targetOffset(450, 180)
         self.gsheet_highlight_tab = Pattern("pics/highlight_tab.png").similar(0.70).targetOffset(160, 0)
         self.gsheet_column_header = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 60)
+        self.gsheet_1st_cell = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 80)
 
     def wait_for_loaded(self):
         default_timeout = getAutoWaitTimeout()
