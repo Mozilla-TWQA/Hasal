@@ -18,8 +18,8 @@ class DctAnimationInputLatencyGenerator(object):
     SKIP_STATUS_BAR_FRACTION = 1.0
 
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION},
-                            {'event': 'start', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction': SKIP_STATUS_BAR_FRACTION}]
+        'backward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]
     }
 
     @staticmethod
