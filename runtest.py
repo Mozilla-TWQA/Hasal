@@ -16,10 +16,11 @@ Options:
 
 Metrics:
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
-  --waveform=<int>                Currently using for AIL.
+  --waveform=<int>                Currently using for AIL and FT.
                                     0: off.
                                     1: dctInputLantencyGenerator.
-                                    2: dctAnimationInputLantencyGenerator. [default: 0]
+                                    2: dctAnimationInputLantencyGenerator.
+                                    3: dctFrameThroughputGenerator. [default: 0]
 
 Online Mode:
   --online                        Result will be transfer to server, calculated by server.
