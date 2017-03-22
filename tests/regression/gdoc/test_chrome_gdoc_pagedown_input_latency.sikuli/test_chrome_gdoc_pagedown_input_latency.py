@@ -22,7 +22,7 @@ capture_width = int(sys.argv[6])
 capture_height = int(sys.argv[7])
 
 t1 = time.time()
-capimg1 = capture(0, 0, capture_width, capture_height)
+capimg2 = capture(0, 0, capture_width, capture_height)
 type(Key.PAGE_DOWN)
 sleep(1)
 t2 = time.time()
