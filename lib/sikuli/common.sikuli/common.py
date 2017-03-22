@@ -38,7 +38,6 @@ class General():
             fh.seek(0)
             fh.write(json.dumps(timestamp))
 
-
     def writeToFile(self, data, filename, mode="w+"):
         with open(filename, mode) as f:
             f.write(data)
