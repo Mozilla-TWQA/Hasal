@@ -63,3 +63,7 @@ class General():
 
     def page_start(self):
         type(Key.HOME, self.control)
+
+    def infolog_enable(self, choice=1):
+        Settings.ActionLogs = choice
+        Settings.InfoLogs = choice
