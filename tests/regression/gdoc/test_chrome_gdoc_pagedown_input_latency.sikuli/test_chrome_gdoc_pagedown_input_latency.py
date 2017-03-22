@@ -8,6 +8,10 @@ import browser
 import time
 import json
 
+# Disable Sikuli action and info log
+Settings.ActionLogs = 0
+Settings.InfoLogs = 0
+
 chrome = browser.Chrome()
 gd = gdoc.gDoc()
 chrome.clickBar()
@@ -23,6 +27,8 @@ capture_height = int(sys.argv[7])
 
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
+
+print('[log]  TYPE "#PDOWN."')
 type(Key.PAGE_DOWN)
 sleep(1)
 t2 = time.time()
