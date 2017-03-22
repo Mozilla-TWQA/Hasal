@@ -180,11 +180,14 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     event_time_dict = dict()
     if len(comparing_time_data.keys()) == 2:
         run_time = comparing_time_data['end'] - comparing_time_data['start']
-        comparing_image_missing = True
-        for event_data in current_run_result:
-            for event_name in event_data:
-                if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
-                    event_time_dict[event_name] = np.absolute(event_data['time_seq'] - comparing_time_data['start'])
+        if run_time > 0:
+            comparing_image_missing = True
+            for event_data in current_run_result:
+                for event_name in event_data:
+                    if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                        event_time_dict[event_name] = np.absolute(event_data['time_seq'] - comparing_time_data['start'])
+        else:
+            comparing_image_missing = False
     else:
         run_time = 0
         comparing_image_missing = False
