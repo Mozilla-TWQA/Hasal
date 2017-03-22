@@ -21,6 +21,7 @@ DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
 DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
 DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME = 'DctInputLatencyGenerator'
+DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME = 'DctAnimationInputLatencyGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
@@ -303,17 +304,38 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         converter_result = run_modules(converter_settings, converter_data[DEFAULT_CV2_CONVERTER_NAME])
 
         sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
-        if not waveform:
+        if waveform == 1:
+            # AIL, dctInputLatencyGenerator
+            sample_data = {
+                'sample_dp': env.img_sample_dp,
+                'configuration': {
+                    'generator': {
+                        DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
+                            'path': 'lib.generator.dctInputLatencyGenerator'
+                        }
+                    }
+                }
+            }
+        elif waveform == 2:
+            # AIL, dctAnimationInputLatencyGenerator
+            sample_data = {
+                'sample_dp': env.img_sample_dp,
+                'configuration': {
+                    'generator': {
+                        DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME: {
+                            'path': 'lib.generator.dctAnimationInputLatencyGenerator'
+                        }
+                    }
+                }
+            }
+        else:
+            # normal cases
             sample_data = {'sample_dp': env.img_sample_dp,
                            'configuration': {'generator': {
                                DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
             if calc_si == 1:
                 sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {
                     'path': 'lib.generator.speedIndexGenerator'}
-        else:
-            sample_data = {'sample_dp': env.img_sample_dp,
-                           'configuration': {'generator': {DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
-                               'path': 'lib.generator.dctInputLatencyGenerator'}}}}
 
         # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
         #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
