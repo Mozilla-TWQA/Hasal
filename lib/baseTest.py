@@ -32,6 +32,7 @@ class BaseTest(unittest.TestCase):
             terminal_title = ['Hasal']
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
+        self.viewport = None
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
