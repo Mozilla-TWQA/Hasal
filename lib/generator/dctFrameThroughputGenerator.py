@@ -27,8 +27,7 @@ class DctFrameThroughputGenerator(object):
         'backward_search': [{'event': 'start', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': 1.0}],
         'forward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': 1.0}]}
 
-    @staticmethod
-    def get_frame_throughput(result_list, input_image_list):
+    def get_frame_throughput(self, result_list, input_image_list):
         """
 
         @param result_list:
@@ -58,28 +57,30 @@ class DctFrameThroughputGenerator(object):
                 end_event_index = image_fn_list.index(end_event_fn)
 
             # calculate viewport variations between start point and end point
-            start_target_fp = input_image_list[image_fn_list[start_event_index]]['viewport']
+            start_target_fp = input_image_list[image_fn_list[start_event_index]][self.SEARCH_TARGET_VIEWPORT]
             start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
             img_list_dct = [convert_to_dct(start_target_fp)]
             weight, height = img_list_dct[-1].shape
 
             freeze_count = 0
             base_time_seq = start_target_time_seq
-            frame_throughput_time_seq = []
+            frame_throughput_time_seq = [start_target_time_seq]
+            long_frame_time_seq = []
             for img_index in range(start_event_index + 1, end_event_index + 1):
                 image_fn = image_fn_list[img_index]
                 image_data = copy.deepcopy(input_image_list[image_fn])
-                img_list_dct.append(convert_to_dct(image_data['viewport']))
+                img_list_dct.append(convert_to_dct(image_data[self.SEARCH_TARGET_VIEWPORT]))
                 mismatch_rate = np.sum(np.absolute(np.subtract(img_list_dct[-2], img_list_dct[-1]))) / (weight * height)
                 if not mismatch_rate:
                     freeze_count += 1
                     logger.info("Image freeze from previous frame: %s - %f", image_fn, mismatch_rate)
                 else:
                     current_long_frame = image_data['time_seq'] - base_time_seq
-                    frame_throughput_time_seq.append(current_long_frame)
+                    frame_throughput_time_seq.append(image_data['time_seq'])
+                    long_frame_time_seq.append(current_long_frame)
                     base_time_seq = image_data['time_seq']
 
-            long_frame = max(frame_throughput_time_seq)
+            long_frame = max(long_frame_time_seq)
             expected_frames = end_event_index - start_event_index + 1
             actual_paint_frames = expected_frames - freeze_count
             frame_throughput = float(actual_paint_frames) / expected_frames
@@ -87,7 +88,7 @@ class DctFrameThroughputGenerator(object):
             return_result = dict()
             return_result['long_frame'] = long_frame
             return_result['frame_throughput'] = frame_throughput
-            return_result['freeze_frame'] = freeze_count
+            return_result['freeze_frames'] = freeze_count
             return_result['expected_frames'] = expected_frames
             return_result['actual_paint_frames'] = actual_paint_frames
             return_result['time_sequence'] = frame_throughput_time_seq
@@ -204,7 +205,7 @@ class DctFrameThroughputGenerator(object):
         compare_setting = {'default_fps': input_data['default_fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
                            'generator_name': self.__class__.__name__,
                            'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
-                           'exec_timestamp_list': input_data['exec_timestamp_list'], 'threshold': 0.01,
+                           'exec_timestamp_list': input_data['exec_timestamp_list'], 'threshold': 0.005,
                            'search_margin': 10}
         compare_result['running_time_result'] = compare_with_sample_image_multi_process(input_data['sample_result'],
                                                                                         input_image_list,

@@ -151,7 +151,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
 
     long_frame = result_data.get('long_frame', 0)
     frame_throughput = result_data.get('frame_throughput', 0)
-    freeze_frame = result_data.get('freeze_frame', 0)
+    freeze_frames = result_data.get('freeze_frames', 0)
     expected_frames = result_data.get('expected_frames', 0)
     actual_paint_frames = result_data.get('actual_paint_frames', 0)
     time_sequence = result_data.get('time_sequence', [])
@@ -186,7 +186,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         si_value = 0
         psi_value = 0
     run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'folder': test_output,
-                     'freeze_frame': freeze_frame, 'long_frame': long_frame, 'frame_throughput': frame_throughput,
+                     'freeze_frames': freeze_frames, 'long_frame': long_frame, 'frame_throughput': frame_throughput,
                      'expected_frames': expected_frames, 'actual_paint_frames': actual_paint_frames,
                      'time_sequence': time_sequence}
     run_time_dict.update(event_time_dict)
