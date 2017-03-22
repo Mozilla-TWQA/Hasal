@@ -10,8 +10,8 @@ import time
 
 com = common.General()
 
-Settings.ActionLogs=0
-Settings.InfoLogs=0
+Settings.ActionLogs = 0
+Settings.InfoLogs = 0
 chrome = browser.Chrome()
 gs = gsheet.gSheet()
 chrome.clickBar()
@@ -37,6 +37,6 @@ type('9')
 sleep(0.1)
 t2 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
-com.updateJson({'t1':t1, 't2':t2}, sys.argv[8])
+com.updateJson({'t1': t1, 't2': t2}, sys.argv[8])
 shutil.move(capimg1, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
 shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
