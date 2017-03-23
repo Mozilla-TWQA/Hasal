@@ -210,10 +210,13 @@ class RunTest(object):
 
                                 current_run += 1
                         else:
-                            if "time_list_counter" in run_result:
-                                current_run = int(run_result['time_list_counter'])
+                            if run_result.get("comparing_image_missing", False):
+                                if "time_list_counter" in run_result:
+                                    current_run = int(run_result['time_list_counter'])
+                                else:
+                                    current_run += 1
                             else:
-                                current_run += 1
+                                current_retry += 1
                     else:
                         current_retry += 1
                 else:

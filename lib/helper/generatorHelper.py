@@ -129,7 +129,7 @@ def output_video(result_data, video_fp):
             start_fp = event_data['start']
         if 'end' in event_data:
             end_fp = event_data['end']
-    if not start_fp and not end_fp:
+    if not start_fp or not end_fp:
         return None
     else:
         if os.path.exists(os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)):
@@ -171,21 +171,27 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         result = {}
 
     current_run_result = result_data['running_time_result']
-
-    start_time = 0
-    end_time = 0
+    comparing_time_data = {}
     for event_data in current_run_result:
-        if 'start' in event_data:
-            start_time = event_data['time_seq']
-        if 'end' in event_data:
-            end_time = event_data['time_seq']
-    run_time = end_time - start_time
+        for time_point in ['start', 'end']:
+            if time_point in event_data:
+                comparing_time_data[time_point] = event_data['time_seq']
+                break
 
     event_time_dict = dict()
-    for event_data in current_run_result:
-        for event_name in event_data:
-            if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
-                event_time_dict[event_name] = np.absolute(event_data['time_seq'] - start_time)
+    if len(comparing_time_data.keys()) == 2:
+        run_time = comparing_time_data['end'] - comparing_time_data['start']
+        if run_time > 0:
+            comparing_image_missing = True
+            for event_data in current_run_result:
+                for event_name in event_data:
+                    if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                        event_time_dict[event_name] = np.absolute(event_data['time_seq'] - comparing_time_data['start'])
+        else:
+            comparing_image_missing = False
+    else:
+        run_time = 0
+        comparing_image_missing = False
 
     calc_obj = outlier()
     if "speed_index" in result_data:
@@ -250,6 +256,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     with open(time_list_counter_fp, "r+") as fh:
         stat_data = json.load(fh)
         stat_data['time_list_counter'] = str(len(result[test_method_name]['time_list']))
+        stat_data['comparing_image_missing'] = comparing_image_missing
         fh.seek(0)
         fh.write(json.dumps(stat_data))
 
@@ -354,7 +361,10 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         # output sikuli status to static file
         with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
             stat_data = json.load(fh)
-            stat_data['fps_stat'] = validate_result[DEFAULT_FPS_VALIDATOR_NAME]['output_result']
+            if validate_result[DEFAULT_FPS_VALIDATOR_NAME]['validate_result']:
+                stat_data['fps_stat'] = 0
+            else:
+                stat_data['fps_stat'] = 1
             fh.seek(0)
             fh.write(json.dumps(stat_data))
 
@@ -372,4 +382,5 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
             if os.path.exists(upload_case_dp) is False:
                 os.mkdir(upload_case_dp)
-            shutil.move(env.converted_video_output_fp, upload_case_dp)
+            if os.path.exists(env.converted_video_output_fp):
+                shutil.move(env.converted_video_output_fp, upload_case_dp)
