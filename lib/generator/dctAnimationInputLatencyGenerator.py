@@ -107,7 +107,7 @@ class DctAnimationInputLatencyGenerator(object):
         # TODO: the threshold on Windows and Ubuntu are different.
         diff_threshold = 0.005
         import sys
-        if sys.platform == 'win32':
+        if sys.platform == 'linux2':
             diff_threshold = 0.01
 
         compare_setting = {
