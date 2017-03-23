@@ -370,7 +370,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
 
         if calculator_result is not None:
             drop_outlier = True
-            if waveform <> 0:
+            if waveform != 0:
                 drop_outlier = False
             output_result(env.test_name, calculator_result, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT,
                           env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp,
