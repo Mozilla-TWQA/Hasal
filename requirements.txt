@@ -13,14 +13,9 @@ argparse==1.2.1
 watchdog==0.8.3
 peakutils==1.0.3
 treeherder-client==3.1.0
-<<<<<<< HEAD
 matplotlib>=1.5.3
 pandas>=0.19.2
-
-=======
 geckoprofiler_controller==0.0.4
-# matplotlib>=1.5.1
->>>>>>> master
 
 python-dateutil
 keyring
