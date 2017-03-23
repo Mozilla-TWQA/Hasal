@@ -7,7 +7,6 @@ import tempfile
 import importlib
 import numpy as np
 from lib.common.environment import Environment
-from lib.common.videoFluency import VideoFluency
 from lib.common.commonUtil import CommonUtil
 from lib.common.outlier import outlier
 from lib.common.dumpDataToJsonFile import dump_data_to_json_file
@@ -22,6 +21,7 @@ DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
 DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME = 'DctInputLatencyGenerator'
 DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME = 'DctAnimationInputLatencyGenerator'
+DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME = 'DctFrameThroughputGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
@@ -99,27 +99,6 @@ def run_generators(generator_settings, generator_data):
     return generator_result
 
 
-def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
-    waveform_info = dict()
-    waveform_info['video'] = video_fp
-    current_run_result = result_data['running_time_result']
-    if len(current_run_result) == 2:
-        video_fluency_obj = VideoFluency()
-        img_list = os.listdir(img_dp)
-        img_list.sort(key=CommonUtil.natural_keys)
-        start_fn = os.path.basename(current_run_result[0]['image_fp'])
-        start_index = img_list.index(start_fn)
-        end_fn = os.path.basename(current_run_result[1]['image_fp'])
-        end_index = img_list.index(end_fn)
-        for img_index in range(len(img_list)):
-            img_list[img_index] = os.path.join(img_dp, img_list[img_index])
-            if img_index < start_index or img_index > end_index:
-                os.remove(img_list[img_index])
-        waveform_info['data'], waveform_info['img_list'] = video_fluency_obj.frame_difference(img_dp)
-        with open(waveform_fp, "wb") as fh:
-            json.dump(waveform_info, fh, indent=2)
-
-
 def output_video(result_data, video_fp):
     start_fp = None
     end_fp = None
@@ -170,6 +149,12 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     else:
         result = {}
 
+    long_frame = result_data.get('long_frame', 0)
+    frame_throughput = result_data.get('frame_throughput', 0)
+    freeze_frames = result_data.get('freeze_frames', 0)
+    expected_frames = result_data.get('expected_frames', 0)
+    actual_paint_frames = result_data.get('actual_paint_frames', 0)
+    time_sequence = result_data.get('time_sequence', [])
     current_run_result = result_data['running_time_result']
     comparing_time_data = {}
     for event_data in current_run_result:
@@ -200,7 +185,10 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     else:
         si_value = 0
         psi_value = 0
-    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'folder': test_output}
+    run_time_dict = {'run_time': run_time, 'si': si_value, 'psi': psi_value, 'folder': test_output,
+                     'freeze_frames': freeze_frames, 'long_frame': long_frame, 'frame_throughput': frame_throughput,
+                     'expected_frames': expected_frames, 'actual_paint_frames': actual_paint_frames,
+                     'time_sequence': time_sequence}
     run_time_dict.update(event_time_dict)
 
     if test_method_name in result:
@@ -275,16 +263,17 @@ def get_json_data(input_fp, initial_timestamp_name):
     return timestamp_list
 
 
-def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
+def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp="", viewport=""):
     """
 
     @param env: from lib.common.environment.py
     @param crop_data: sample crop data area
     @param calc_si: '1' or '0'
-    @param waveform: '1' or '0'
+    @param waveform: 0~3
     @param revision:  upload to perfherder revision
     @param pkg_platform:  upload to perfherder pkg platform name
     @param suite_upload_dp: folder consolidate all execution result
+    @param viewport: browser viewport region
     @return:
     """
     calculator_result = {}
@@ -301,7 +290,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
     exec_timestamp_list = get_json_data(env.DEFAULT_TIMESTAMP, env.INITIAL_TIMESTAMP_NAME)
     if validate_result['validate_result']:
         # using different converter will introduce different time seq,
-        # the difference range will betweeen 0.000000000002 to 0.000000000004 ms (cv2 is lower than ffmpeg)
+        # the difference range will between 0.000000000002 to 0.000000000004 ms (cv2 is lower than ffmpeg)
         converter_settings = copy.deepcopy(DEFAULT_CONVERTER_SETTINGS)
         converter_data = {
             DEFAULT_CV2_CONVERTER_NAME: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
@@ -335,6 +324,14 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
                     }
                 }
             }
+        elif waveform == 3:
+            # FT, dctFrameThroughputGenerator
+            sample_data = {
+                'sample_dp': env.img_sample_dp,
+                'configuration': {
+                    'generator': {
+                        DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME: {
+                            'path': 'lib.generator.dctFrameThroughputGenerator'}}, 'viewport': viewport}}
         else:
             # normal cases
             sample_data = {'sample_dp': env.img_sample_dp,

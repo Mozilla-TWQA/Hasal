@@ -6,6 +6,7 @@ import helper.desktopHelper as desktopHelper
 import lib.sikuli as sikuli
 import lib.helper.videoHelper as videoHelper
 from helper.profilerHelper import Profilers
+from lib.common.visualmetricsWrapper import find_image_viewport
 from common.logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -59,6 +60,9 @@ class PerfBaseTest(baseTest.BaseTest):
             if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
                 videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_1_fn)
+        if int(os.getenv("ENABLE_WAVEFORM")) == 3:
+            start_fp = os.path.join(self.env.img_sample_dp, self.env.img_output_sample_1_fn)
+            self.viewport = find_image_viewport(start_fp)
         time.sleep(2)
 
         # Record timestamp t1
