@@ -141,7 +141,7 @@ def output_video(result_data, video_fp):
     shutil.rmtree(tempdir)
 
 
-def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform, test_output):
+def output_result(test_method_name, result_data, output_fp, time_list_counter_fp, test_method_doc, outlier_check_point, video_fp, web_app_name, revision, pkg_platform, test_output, drop_outlier_flag):
     # result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'time_list':[] 'detail': []}}
     if os.path.exists(output_fp):
         with open(output_fp) as fh:
@@ -206,7 +206,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         if len(result[test_method_name]['time_list']) >= outlier_check_point:
             result[test_method_name]['avg_time'], result[test_method_name]['med_time'],\
                 result[test_method_name]['std_dev'], result[test_method_name]['time_list'],\
-                tmp_outlier, si_value, psi_value = calc_obj.detect(result[test_method_name]['time_list'])
+                tmp_outlier, si_value, psi_value = calc_obj.detect(result[test_method_name]['time_list'], drop_outlier=drop_outlier_flag)
             result[test_method_name]['outlier'].extend(tmp_outlier)
             result[test_method_name]['min_time'] = result[test_method_name]['time_list'][0]['run_time']
             result[test_method_name]['max_time'] = result[test_method_name]['time_list'][-1]['run_time']
@@ -366,9 +366,12 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             fh.write(json.dumps(stat_data))
 
         if calculator_result is not None:
+            drop_outlier = True
+            if waveform != 0:
+                drop_outlier = False
             output_result(env.test_name, calculator_result, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT,
                           env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp,
-                          env.web_app_name, revision, pkg_platform, env.output_name)
+                          env.web_app_name, revision, pkg_platform, env.output_name, drop_outlier)
             start_time = time.time()
             output_video(calculator_result, env.converted_video_output_fp)
             current_time = time.time()
