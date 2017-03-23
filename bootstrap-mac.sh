@@ -124,6 +124,13 @@ wget -P thirdParty/ https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulix
 brew cask install java
 java -jar thirdParty/sikulixsetup-1.1.0.jar options 1.1
 
+# geckodriver
+func_log "[INFO] Installing geckodriver ..."
+wget --output-document=./thirdParty/geckodriver-v0.14.0.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-macos.tar.gz
+mkdir -p ./thirdParty/geckodriver/
+tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
+chmod a+x ./thirdParty/geckodriver/geckodriver
+
 func_log "[INFO] Install Requirements finished."
 
 echo ""
