@@ -21,6 +21,7 @@ DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
 DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
 DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME = 'DctInputLatencyGenerator'
+DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME = 'DctAnimationInputLatencyGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
@@ -170,21 +171,27 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
         result = {}
 
     current_run_result = result_data['running_time_result']
-
-    start_time = 0
-    end_time = 0
+    comparing_time_data = {}
     for event_data in current_run_result:
-        if 'start' in event_data:
-            start_time = event_data['time_seq']
-        if 'end' in event_data:
-            end_time = event_data['time_seq']
-    run_time = end_time - start_time
+        for time_point in ['start', 'end']:
+            if time_point in event_data:
+                comparing_time_data[time_point] = event_data['time_seq']
+                break
 
     event_time_dict = dict()
-    for event_data in current_run_result:
-        for event_name in event_data:
-            if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
-                event_time_dict[event_name] = np.absolute(event_data['time_seq'] - start_time)
+    if len(comparing_time_data.keys()) == 2:
+        run_time = comparing_time_data['end'] - comparing_time_data['start']
+        if run_time > 0:
+            comparing_image_missing = True
+            for event_data in current_run_result:
+                for event_name in event_data:
+                    if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                        event_time_dict[event_name] = np.absolute(event_data['time_seq'] - comparing_time_data['start'])
+        else:
+            comparing_image_missing = False
+    else:
+        run_time = 0
+        comparing_image_missing = False
 
     calc_obj = outlier()
     if "speed_index" in result_data:
@@ -249,6 +256,7 @@ def output_result(test_method_name, result_data, output_fp, time_list_counter_fp
     with open(time_list_counter_fp, "r+") as fh:
         stat_data = json.load(fh)
         stat_data['time_list_counter'] = str(len(result[test_method_name]['time_list']))
+        stat_data['comparing_image_missing'] = comparing_image_missing
         fh.seek(0)
         fh.write(json.dumps(stat_data))
 
@@ -303,17 +311,38 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         converter_result = run_modules(converter_settings, converter_data[DEFAULT_CV2_CONVERTER_NAME])
 
         sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
-        if not waveform:
+        if waveform == 1:
+            # AIL, dctInputLatencyGenerator
+            sample_data = {
+                'sample_dp': env.img_sample_dp,
+                'configuration': {
+                    'generator': {
+                        DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
+                            'path': 'lib.generator.dctInputLatencyGenerator'
+                        }
+                    }
+                }
+            }
+        elif waveform == 2:
+            # AIL, dctAnimationInputLatencyGenerator
+            sample_data = {
+                'sample_dp': env.img_sample_dp,
+                'configuration': {
+                    'generator': {
+                        DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME: {
+                            'path': 'lib.generator.dctAnimationInputLatencyGenerator'
+                        }
+                    }
+                }
+            }
+        else:
+            # normal cases
             sample_data = {'sample_dp': env.img_sample_dp,
                            'configuration': {'generator': {
                                DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
             if calc_si == 1:
                 sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {
                     'path': 'lib.generator.speedIndexGenerator'}
-        else:
-            sample_data = {'sample_dp': env.img_sample_dp,
-                           'configuration': {'generator': {DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
-                               'path': 'lib.generator.dctInputLatencyGenerator'}}}}
 
         # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
         #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},

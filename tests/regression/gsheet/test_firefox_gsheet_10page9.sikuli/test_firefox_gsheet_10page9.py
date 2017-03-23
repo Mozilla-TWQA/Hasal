@@ -10,6 +10,8 @@ import time
 
 com = common.General()
 com.infolog_enable(0)
+Settings.ActionLogs = 0
+Settings.InfoLogs = 0
 ff = browser.Firefox()
 gs = gsheet.gSheet()
 ff.clickBar()
