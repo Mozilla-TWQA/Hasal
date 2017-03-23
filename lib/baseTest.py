@@ -130,7 +130,10 @@ class BaseTest(unittest.TestCase):
         self.env.init_output_dir()
 
         # get browser type
-        self.browser_type = self.env.get_browser_type()
+        if bool(os.getenv("webdriver")):
+            self.browser_type = os.getenv("browser_type")
+        else:
+            self.browser_type = self.env.get_browser_type()
 
         # clone test target
         self.clone_test_file()
@@ -158,4 +161,4 @@ class BaseTest(unittest.TestCase):
                                                 pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
                                                 suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
         else:
-            logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.round_status))
+            logger.warning("This running result of execution is not successful, return code: " + str(self.round_status))
