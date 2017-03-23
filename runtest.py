@@ -12,7 +12,7 @@ Options:
   --advance                       Only for expert user.
   --keep-browser                  Keep the browser open after test script executed.
   --settings=<str>                Specify the overall settings. [default: settings/default_sikuli.json]
-  --firefox-settings=<str>        Specify the Firefox settings. [default: settings/default.json]
+  --firefox-settings=<str>        Specify the Firefox settings. [default: firefox_settings/default.json]
   --comment=<str>                 Tag the comment on this test. [default: <today>]
 
 Metrics:
