@@ -26,13 +26,10 @@ class PerfBaseTest(baseTest.BaseTest):
         self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
-        # Record timestamp t1
+        # Record initial timestamp
         with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
             timestamp = {self.env.INITIAL_TIMESTAMP_NAME: str(time.time())}
             json.dump(timestamp, fh)
-
-        # minimize all windows
-        desktopHelper.minimize_window()
 
         # launch browser
         _, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
@@ -64,7 +61,7 @@ class PerfBaseTest(baseTest.BaseTest):
                                            self.env.img_output_sample_1_fn)
         time.sleep(2)
 
-        # Record timestamp t2
+        # Record timestamp t1
         with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
             timestamp = json.load(fh)
             timestamp['t1'] = time.time()
@@ -73,7 +70,7 @@ class PerfBaseTest(baseTest.BaseTest):
 
     def tearDown(self):
 
-        # Record timestamp t3
+        # Record timestamp t2
         with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
             timestamp = json.load(fh)
             if 't2' not in timestamp:
@@ -84,7 +81,7 @@ class PerfBaseTest(baseTest.BaseTest):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
+        if not int(os.getenv("ENABLE_WAVEFORM")) and self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
             if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
                 videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_2_fn)
