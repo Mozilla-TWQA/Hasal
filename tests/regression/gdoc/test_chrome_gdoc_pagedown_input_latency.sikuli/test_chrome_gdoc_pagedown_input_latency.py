@@ -3,14 +3,15 @@
 sys.path.append(sys.argv[2])
 import os
 import gdoc
+import common
 import shutil
 import browser
 import time
 import json
 
 # Disable Sikuli action and info log
-Settings.ActionLogs = 0
-Settings.InfoLogs = 0
+com = common.General()
+com.infolog_enable(0)
 
 chrome = browser.Chrome()
 gd = gdoc.gDoc()
