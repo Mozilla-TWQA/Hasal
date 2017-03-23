@@ -1,7 +1,14 @@
 # Hasal Performance Test
 
-[![Linux Build Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
-[![Windows Build Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/master)
+**Master**
+
+[![Master Linux Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
+[![Master Windows Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/master)
+
+**Dev**
+
+[![Dev Linux Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/dev.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
+[![Dev Windows Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/dev.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/dev)
 
 "**Hasal**" */ha'sɑlu/* this word is came from Indigenous Taiwanese "**Bunun**", and it means hail. Why we choose this word is because we expect our testing could like the hail, fast and weighty. And through our testing could bring more improvement on our performance or quality.
 

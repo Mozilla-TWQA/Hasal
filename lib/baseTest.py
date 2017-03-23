@@ -75,11 +75,11 @@ class BaseTest(unittest.TestCase):
                         terminal_width = width_browser
                         terminal_height = 60
                         if sys.platform == 'linux2':
-                            height_offset = 50
+                            height_offset = 20
                             terminal_height = 60
                         elif sys.platform == 'win32':
                             height_offset = 0
-                            terminal_height = 50
+                            terminal_height = 70
                         elif sys.platform == 'darwin':
                             # TODO: This offset settings only be tested on Mac Book Air
                             height_offset = 115
