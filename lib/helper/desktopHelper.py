@@ -96,6 +96,7 @@ def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
     window_obj = WindowObject(window_title_list)
     window_obj.move_window_pos(0, 0, window_height=height, window_width=width)
+    return height, width
 
 
 def minimize_window():
@@ -116,7 +117,8 @@ def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
     viewport = img_obj.find_image_viewport(img_sample_fp)
     height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
     width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
-    lock_window_pos(browser_type, height_adjustment, width_adjustment)
+    height, width = lock_window_pos(browser_type, height_adjustment, width_adjustment)
+    return height, width
 
 
 def check_browser_show_up(img_sample_dp, img_sample_name):
