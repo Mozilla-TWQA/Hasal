@@ -4,10 +4,21 @@ language: python
 cache:
   - pip
 
+env:
+  global:
+    - secure: >-
+        fh35rgMvaIYmuC6Vqry6rWYPfOnsZkt7qwMmt0dAPihvxxKqvZL1FHkrn3JvXlmuoNvMBeRhTBoALIYu20i0WDu1lVx9TSqN+rswKR32rmc0WUVxKBVBj6BikFLeoiQ217QaTAkoDPMJ5g61Es+Nw/frkY6mD+rAdYN9/vcgLkYfNkDweoZ44f5notL6mf2/T4SBqgnjYLK7YE80jIL/U0egSBJnf3EHplN5YW6Pvticd9Efu4jgdFEivPeq3/4UsIu9cpWlVn6qgep2pMn5TDfXKBhwvbpzMnIvDuWatLeQbmPgYF7kyeaGecsc4MsvB47rxoGGP9M0WtnhW1aXwBIvDSiiWpO+BWQRVMsfE5n5EqiWdhTCD2qU+aw9OZidTaBsYHby5dkWrNHdqlm3St5bH6sNHqEGm17qzkk7wRyjZoAD/yMWp4u+fvtg5jucVKjLPy9XwSYm70K+kgvq3K00IL5FbRUneL6QiAmn/T8FUKNVmidAt1fSO2H42U9NttbhnKjMfHxYx3QBkT4PlL33oYzcFXnOo1dQd5VzhGnZoTt62Mb7SkQnPp4q88XVYQnUN4A5jkCS1Vp4P6NcRqcgb6nZFHCnBfgqhQz6mJgFqSHa6bKzL4QwHTQ/d4E/1EErzNCgbABsZRzoZHum8tk5onAoimu6GKvGfe97kXM=
 
 matrix:
   include:
   # Linux
+    # Make Python docs
+    - env: GOAL=make-docs
+      os: linux
+      dist: trusty
+      python: 2.7
+      script:
+        - ./scripts/make_docs.sh
     # Test tidy
     - env: GOAL=test-tidy
       os: linux

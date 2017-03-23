@@ -1,8 +1,6 @@
 import subprocess
 import sys
 import lib.sikuli  # NOQA
-import tempfile
-import zipfile
 import os
 from ..browser.chrome import BrowserChrome
 from ..browser.firefox import BrowserFirefox
@@ -10,33 +8,14 @@ from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
-from firefoxProfileCreator import FirefoxProfileCreator
 
 logger = get_logger(__name__)
 
 
-def extract_profile_data(input_profile_path, prefs={}, cookies={}, extensions={}):
-    tmp_dir = tempfile.mkdtemp()
-    profile_dir_name = input_profile_path.split(".")[0].split(os.sep)[-1]
-    with zipfile.ZipFile(input_profile_path) as zh:
-        zh.extractall(tmp_dir)
-    return_path = os.path.join(tmp_dir, profile_dir_name)
-
-    # TODO: temporary solution for profiler, e.g geckoprofiler
-    logger.warn('Temporary solution for current profiler, e.g geckoprofile.')
-    profile_creator = FirefoxProfileCreator(firefox_profile_path=return_path)
-    if prefs:
-        profile_creator._set_prefs(prefs=prefs)
-    if cookies:
-        profile_creator._download_cookies(cookies_settings=cookies)
-    if extensions:
-        profile_creator._install_profile_extensions(extensions_settings=extensions)
-    return return_path
-
-
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
-    enabled_profiler_list = kwargs['enabled_profiler_list']
+    profiler_list = kwargs['profiler_list']
+    enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
     profile_path = None
 
     if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
@@ -49,26 +28,9 @@ def launch_browser(browser_type, **kwargs):
                                          profile_path=profile_path)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            if kwargs['profile_path'] is not None:
-                # TODO: temporary solution for profiler, e.g geckoprofiler
-                profile_path = extract_profile_data(kwargs['profile_path'],
-                                                    prefs=env.firefox_settings_prefs,
-                                                    cookies=env.firefox_settings_cookies,
-                                                    extensions=env.firefox_settings_extensions)
-            else:
-                profile_path = env.firefox_profile_path
+            profile_path = env.firefox_profile_path
             browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
                                          profile_path=profile_path)
-        else:
-            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
-    elif kwargs['profile_path'] is not None:
-        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            # TODO: temporary solution for profiler, e.g geckoprofiler
-            profile_path = extract_profile_data(kwargs['profile_path'],
-                                                prefs=env.firefox_settings_prefs,
-                                                cookies=env.firefox_settings_cookies,
-                                                extensions=env.firefox_settings_extensions)
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
         else:
             browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:
@@ -93,27 +55,26 @@ def get_browser_version(browser_type):
 
 
 def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
-    window_title = None
+    window_title_list = None
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
-            window_title = ["Firefox.app", "FirefoxNightly.app"]
+            window_title_list = ["Firefox.app", "FirefoxNightly.app"]
         else:
             # This is to ensure all kinds of firefox we supported can be properly moved.
-            window_title = ["Mozilla Firefox", "Nightly"]
+            window_title_list = ["Mozilla Firefox", "Nightly"]
 
     else:
         if sys.platform == "darwin":
-            window_title = ["Chrome.app"]
+            window_title_list = ["Chrome.app"]
         else:
-            window_title = ["Google Chrome"]
+            window_title_list = ["Google Chrome"]
 
     # Moving window by strings from window_title
     height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
-    for window_name in window_title:
-        window_obj = WindowObject(window_name)
-        if window_obj.move_window_pos(0, 0, window_height=height, window_width=width):
-            break
+    window_obj = WindowObject(window_title_list)
+    window_obj.move_window_pos(0, 0, window_height=height, window_width=width)
+    return height, width
 
 
 def minimize_window():
@@ -134,7 +95,8 @@ def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
     viewport = img_obj.find_image_viewport(img_sample_fp)
     height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
     width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
-    lock_window_pos(browser_type, height_adjustment, width_adjustment)
+    height, width = lock_window_pos(browser_type, height_adjustment, width_adjustment)
+    return height, width
 
 
 def check_browser_show_up(img_sample_dp, img_sample_name):

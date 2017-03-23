@@ -13,11 +13,11 @@ class BrowserBase(object):
     process_name = None
 
     def __init__(self, window_size_height, windows_size_width, **kwargs):
+        self.test_env = os.environ.copy()
         self.current_platform_name = sys.platform
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
-        self.test_env = os.environ.copy()
 
     def get_browser_settings(self, **kwargs):
         pass

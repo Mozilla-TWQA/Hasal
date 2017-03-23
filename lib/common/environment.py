@@ -11,8 +11,10 @@ class Environment(object):
 
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
+    DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
+    DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")
     DEFAULT_FLOW_DIR = os.path.join(os.getcwd(), "flows")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
     DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
@@ -25,6 +27,8 @@ class Environment(object):
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
     DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
     DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
+    DEFAULT_TIMESTAMP = os.path.join(os.getcwd(), "timestamp.json")
+    INITIAL_TIMESTAMP_NAME = 'initial_timestamp'
 
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
@@ -80,14 +84,12 @@ class Environment(object):
     PROFILE_NAME_HAR_PROFILER = "HarProfiler"
     PROFILE_NAME_GECKO_PROFILER = "GeckoProfiler"
 
-    PROFILER_FLAG_AVCONV = "avconv"
-    PROFILER_FLAG_HAREXPORT = "harexport"
-    PROFILER_FLAG_GECKOPROFILER = "geckoprofiler"
-    PROFILER_FLAG_CHROMETRACING = "chrometracing"
-    PROFILER_FLAG_FXALL = "fxall"
-    PROFILER_FLAG_JUSTPROFILER = "justprofiler"
-    PROFILER_FLAG_MITMDUMP = "mitmdump"
-    PROFILER_FLAG_FXTRACELOGGER = "fxtracelogger"
+    PROFILER_FLAG_AVCONV = "AvconvProfiler"
+    PROFILER_FLAG_HAREXPORT = "HarProfiler"
+    PROFILER_FLAG_GECKOPROFILER = "GeckoProfiler"
+    PROFILER_FLAG_CHROMETRACING = "ChromeTracing"
+    PROFILER_FLAG_MITMDUMP = "MitmDumpProfiler"
+    PROFILER_FLAG_FXTRACELOGGER = "TraceloggerProfiler"
 
     TEST_FB_HOME = "https://www.facebook.com/"
     TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/testmoztext/")
@@ -119,16 +121,16 @@ class Environment(object):
     TEST_TARGET_ID_SLIDE_1_PAGE_BLANK = "1wdPUMvSWJN8mJnMhcpJ8Q3vXTU6x2N3Mw3iAqHC8dhU"
     TEST_TARGET_ID_SLIDE_1_PAGE_TEXT = "1LLMATDFqINPkhXAO4reEvewD6Yu8IxE_WCpKefFYvS0"
     TEST_TARGET_ID_SLIDE_1_PAGE_UTF8_TEXT = "1tb7HxLXkwTt2-Bp3zrXQUbfoW8XAskq9aZrIfqZOYEY"
-    TEST_TARGET_ID_SLIDE_1_PAGE_IMAGE_CHART = "1QsMh6Y9tDGUSfPOOl80cuR8Z-twDPoJJ9Nvfp98Xoz0"
-    TEST_TARGET_ID_SLIDE_1_PAGE_TABLE = "1Mbg8sowA8ebJEuVBEkcKwiOPSteowyB9TEXaAmAJU_I"
+    TEST_TARGET_ID_SLIDE_1_PAGE_IMAGE_CHART = "1OHTiIuQypImqcrPrGyXi3B1afZ-m-5r4tdC-SjiaeeU"
+    TEST_TARGET_ID_SLIDE_1_PAGE_TABLE = "1VvEZ9DSIlbjXXXY01wAccMdaF2q9wA1Zx21-nuH3KQc"
     TEST_TARGET_ID_SLIDE_1_PAGE_SHAPE = "1N58xZ3iu9jXtf-dAibVfdDGJaO620zJ_sZdS3p0goLc"
     TEST_TARGET_ID_SLIDE_2_PAGE_ANIMATION = "1XEMltvPJyK6W9RE0sh9xikpkVvL5N7Szbd4HLx7XPGE"
-    TEST_TARGET_ID_SLIDE_5_PAGE_IMAGE_CHART = "1jkOYErWizH2B3Fwk00vZOHZFqVZCraMBV_7zQCdUF-k"
-    TEST_TARGET_ID_SLIDE_5_PAGE_MIX_CONTENT = "1E9byZkn_tV9f-QMqtlBnybib8Z78HZG9IdQ_EyYbfIE"
+    TEST_TARGET_ID_SLIDE_5_PAGE_IMAGE_CHART = "1ifP0QuDC69F-TVyH6cV8_-6eiosStFSZYicsWEaGiLY"
+    TEST_TARGET_ID_SLIDE_5_PAGE_MIX_CONTENT = "1OYe9litCbERoaIk6f4bq4yuEW__G1kZnjxVI7iPzaa0"
     TEST_TARGET_ID_SLIDE_10_PAGE_UTF8_TEXT = "1_g4xl1lSLNQQPYsaJt7mK3NH727SsD3GRdy0NIebF2A"
-    TEST_TARGET_ID_SLIDE_10_PAGE_MIX_CONTENT = "1E0YvCuXsJNSaGxMJWe14Hons1LGyiR0_j5R_WZXKItU"
-    TEST_TARGET_ID_SLIDE_30_PAGE_MIX_CONTENT = "1JWK5iCD8MpSuxPK-n6Riexs42GtA9n5lYAzZ2N9NuKw"
-    TEST_TARGET_ID_SLIDE_50_PAGE_MIX_CONTENT = "1BzvK8O8ZSxYndEkQaLuUnCtIOd9ebD2YArFKrW41tUI"
+    TEST_TARGET_ID_SLIDE_10_PAGE_MIX_CONTENT = "1XLZRP0IQ5RoG7AdgaU2mMq6LAkFcggQRTLSMdGH6Yxo"
+    TEST_TARGET_ID_SLIDE_30_PAGE_MIX_CONTENT = "1j3jzuxNYqsbbja31R3ozPOqGg-D6vStr97G5EYS8RhY"
+    TEST_TARGET_ID_SLIDE_50_PAGE_MIX_CONTENT = "1weuhf0CT_z-R1yxQm9HoKiNHBNOMoeaGi4LxE1JOYOo"
 
     if platform.system().lower() == "darwin":
         DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
@@ -163,6 +165,7 @@ class Environment(object):
         self.output_name = self.test_name + "_" + self.time_stamp
         self.flow_file_fp = self.test_name + ".flow"
         self.video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
+        self.converted_video_output_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mp4")
         self.video_output_sample_1_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
         self.img_sample_dp = os.path.join(self.DEFAULT_IMAGE_SAMPLE_DIR, self.output_name)
@@ -171,7 +174,6 @@ class Environment(object):
         self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
         self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
-        self.profile_timing_bin_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
         self.profile_tracelogger_zip_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracelogger.zip")
         self.chrome_tracing_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_tracing.json")

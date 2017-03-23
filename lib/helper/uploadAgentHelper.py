@@ -55,7 +55,7 @@ class UploadAgent(object):
         path_str = "/".join([api_root, sys.platform, self.test_target, self.test_comment_str])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
-    def upload_register_data(self, input_suite_fp, test_type):
+    def upload_register_data(self, input_suite_fp, test_type, perfherder_suite_name=None):
         # Sample data
         # hasal_perf_reg/os/target/comment
         # sampe output {'firefox':{'regression_gsheet':['test_firefox_gsheet_1000r_number_chars_deleteallcell']},
@@ -74,10 +74,13 @@ class UploadAgent(object):
                 c_name = tmp_list[3].lower()
                 if browser_type not in upload_data:
                     upload_data[browser_type] = {}
-                if app_name == "topsites":
-                    suite_name = "topsites"
+                if perfherder_suite_name:
+                    suite_name = perfherder_suite_name
                 else:
-                    suite_name = t_type + "_" + app_name
+                    if app_name == "topsites":
+                        suite_name = "topsites"
+                    else:
+                        suite_name = t_type + "_" + app_name
                 if suite_name in upload_data[browser_type]:
                     upload_data[browser_type][suite_name].append(c_name)
                 else:

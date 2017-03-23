@@ -1,0 +1,54 @@
+{
+    "id": "harexporttrigger@getfirebug.com",
+    "syncGUID": "{3bec220a-068f-4d1e-81e7-61d60bde7127}",
+    "location": "app-profile",
+    "version": "0.5.0-beta.10",
+    "type": "extension",
+    "internalName": null,
+    "updateURL": null,
+    "updateKey": null,
+    "optionsURL": "data:text/xml,<placeholder/>",
+    "optionsType": "2",
+    "aboutURL": null,
+    "icons": {},
+    "iconURL": "chrome://harexporttrigger/skin/icon-16.png",
+    "icon64URL": null,
+    "defaultLocale": {
+        "name": "HAR Export Trigger",
+        "description": "Trigger HAR export any time directly from within a page",
+        "creator": "Firebug Working Group",
+        "homepageURL": "https://github.com/firebug/har-export-trigger/wiki",
+        "contributors": [
+            "Jan Odvarko (Mozilla Corp.)"
+        ]
+    },
+    "visible": true,
+    "active": true,
+    "userDisabled": false,
+    "appDisabled": false,
+    "descriptor": "/home/hasal/.mozilla/firefox/1qicyk3x.Default User/extensions/harexporttrigger@getfirebug.com.xpi",
+    "installDate": 1484722790000,
+    "updateDate": 1484722790000,
+    "applyBackgroundUpdates": "0",
+    "bootstrap": true,
+    "skinnable": false,
+    "size": 732540,
+    "sourceURI": "https://addons.cdn.mozilla.net/user-media/addons/645176/har_export_trigger-0.5.0-beta.10-fx.xpi?filehash=sha256%3Ab4e57f01e3c677376a3b598d087477ad4bbb3fb0529446e9ff8912c3d33c98fc",
+    "releaseNotesURI": null,
+    "softDisabled": false,
+    "foreignInstall": false,
+    "hasBinaryComponents": false,
+    "strictCompatibility": false,
+    "locales": [],
+    "targetApplications": [
+        {
+            "id": "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}",
+            "minVersion": "42.0a1",
+            "maxVersion": "43.0"
+        }
+    ],
+    "targetPlatforms": [],
+    "multiprocessCompatible": false,
+    "signedState": 1,
+    "seen": true
+}

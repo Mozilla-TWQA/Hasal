@@ -17,13 +17,13 @@ from multiprocessing import Process
 logger = get_logger(__name__)
 
 
-def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, exec_timestamp_list, crop_data=None, fps=0, calc_si=0):
+def run_image_analyze(input_video_fp, output_img_dp, input_sample_dp, crop_data=None, fps=0, calc_si=0):
     return_result = {}
     if os.path.exists(output_img_dp) is False:
         os.mkdir(output_img_dp)
     img_tool_obj = ImageTool(fps=fps)
     start_time = time.time()
-    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None, exec_timestamp_list)
+    img_tool_obj.convert_video_to_images(input_video_fp, output_img_dp, None)
     last_end = time.time()
     elapsed_time = last_end - start_time
     logger.debug("Convert Video to Image Time Elapsed: [%s]" % elapsed_time)
@@ -198,12 +198,11 @@ def output_video(result_data, video_fp):
             shutil.copyfile(imf_fp, new_img_fp)
             count += 1
 
-    video_fn, ext = os.path.splitext(video_fp)
     codec = "ffmpeg"
     source = " -i " + os.path.join(tempdir, "%05d" + file_ext)
     fps = " -r " + str(Environment.DEFAULT_VIDEO_RECORDING_FPS)
     video_format = " -pix_fmt yuv420p"
-    video_out = " " + video_fn + ".mp4"
+    video_out = " " + video_fp
     command = codec + source + fps + video_format + video_out
     os.system(command)
     shutil.rmtree(tempdir)
@@ -230,7 +229,7 @@ def output_waveform_info(result_data, waveform_fp, img_dp, video_fp):
             json.dump(waveform_info, fh, indent=2)
 
 
-def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform=""):
+def result_calculation(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp=""):
     fps_stat = "1"
     if os.path.exists(env.video_output_fp):
         fps_stat, fps = fps_cal(env.recording_log_fp, env.DEFAULT_VIDEO_RECORDING_FPS)
@@ -238,7 +237,7 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
             result_data = None
             logger.warning('Real FPS cannot reach default setting, ignore current result!, current FPS:[%s], default FPS:[%s]' % (str(fps), str(env.DEFAULT_VIDEO_RECORDING_FPS)))
         else:
-            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, exec_timestamp_list, crop_data, fps, calc_si)
+            result_data = run_image_analyze(env.video_output_fp, env.img_output_dp, env.img_sample_dp, crop_data, fps, calc_si)
     else:
         result_data = None
 
@@ -252,12 +251,18 @@ def result_calculation(env, exec_timestamp_list, crop_data=None, calc_si=0, wave
     if result_data is not None:
         output_result(env.test_name, result_data, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT, env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp, env.web_app_name, revision, pkg_platform, env.output_name)
         start_time = time.time()
-        output_video(result_data, env.video_output_fp)
+        output_video(result_data, env.converted_video_output_fp)
         current_time = time.time()
         elapsed_time = current_time - start_time
         logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
         if waveform == 1:
             output_waveform_info(result_data, env.waveform_fp, env.img_output_dp, env.video_output_fp)
+
+        upload_case_name = "_".join(env.output_name.split("_")[2:-1])
+        upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
+        if os.path.exists(upload_case_dp) is False:
+            os.mkdir(upload_case_dp)
+        shutil.move(env.converted_video_output_fp, upload_case_dp)
 
 
 def is_number_in_tolerance(number, default_fps, tolerance):

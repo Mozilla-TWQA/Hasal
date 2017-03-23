@@ -5,13 +5,13 @@ from thclient import (TreeherderClient, TreeherderResultSetCollection,
 
 
 class PerfherderUploader(object):
-    def __init__(self, client_id, secret, os_name, platform, machine_arch, build_arch, protocol='http', host='local.treeherder.mozilla.org'):
+    def __init__(self, client_id, secret, os_name, platform, machine_arch, build_arch, repo='mozilla-central', protocol='http', host='local.treeherder.mozilla.org'):
         # Perfherder Information
         self.potocol = protocol
         self.host = host
         self.client_id = client_id
         self.secret = secret
-        self.repo = 'mozilla-central'
+        self.repo = repo
         # Author
         self.name = 'Hasal Bot'
         self.email = 'hasal-dev@mozilla.com'

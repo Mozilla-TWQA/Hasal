@@ -7,7 +7,7 @@ import gslide
 
 com = common.General()
 chrome = browser.Chrome()
-gs = gslide.gSlide()
+gs = gslide.gSlide('chrome')
 
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
@@ -15,9 +15,11 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.slides_10_list_original)
 
 type(Key.END)
 sleep(1)
-wait(gs.page_end)
+wait(gs.slides_10_list_final)
 type(Key.DELETE)
-waitVanish(gs.page_end)
+if not waitVanish(gs.slides_10_list_final):
+    exit(1)

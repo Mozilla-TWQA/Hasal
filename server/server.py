@@ -1,3 +1,8 @@
+"""
+1. run `python server/server.py <IP_ADDRESS>:<PORT>` for normal usage.
+2. run `CONFIG_PATH=<PATH_TO_CONFIG_FOLDER> python server/server.py <IP_ADDRESS>:<PORT>` for specify config settings.`
+"""
+
 import os
 import re
 import web
@@ -14,6 +19,9 @@ from threading import Lock
 
 from lib.common.outlier import outlier
 from perfherder_uploader import PerfherderUploader
+
+
+ENV_CONFIG_PATH = os.environ.get('CONFIG_PATH', '~/.hasal_server/')
 
 
 def geometric_mean(iterable):
@@ -65,14 +73,15 @@ class StorageHandler:
     If there is no config file, the default value will be 30 times.
     """
     _storage_mutex = Lock()
-    _storage_dir = os.path.expanduser('~/.hasal_server/')
+    _storage_dir = os.path.expanduser(ENV_CONFIG_PATH)
     _storage_path = os.path.join(_storage_dir, 'dump.json')
     _config_path = os.path.join(_storage_dir, 'config.json')
     _register_mutex = Lock()
     _register_path = os.path.join(_storage_dir, 'register.json')
 
     def __init__(self):
-        pass
+        if not os.path.exists(self._storage_dir):
+            os.makedirs(self._storage_dir)
 
     def load_config(self):
         """
@@ -85,15 +94,31 @@ class StorageHandler:
             "perfherder_host": "local.treeherder.mozilla.org",
             "perfherder_client_id": "",
             "perfherder_secret": "",
+            "perfherder_repo": "mozilla-central",
             "dashboard_host": "",
             "dashboard_ssh": ""
         }
+        logger_hasal.info('Loading config file from {} ...'.format(self._config_path))
         if os.path.isfile(self._config_path):
             with open(self._config_path, 'r') as f:
-                return json.load(f)
+                ret_obj = json.load(f)
+                test_times = ret_obj.get('test_times', '')
+                perf_protocol = ret_obj.get('perfherder_protocol', '')
+                perf_host = ret_obj.get('perfherder_host', '')
+                perf_repo = ret_obj.get('perfherder_repo', '')
+                if test_times:
+                    logger_hasal.info('Test Times: {}'.format(test_times))
+                if perf_protocol:
+                    logger_hasal.info('Perfherder Protocol: {}'.format(perf_protocol))
+                if perf_host:
+                    logger_hasal.info('Perfherder Host: {}'.format(perf_host))
+                if perf_repo:
+                    logger_hasal.info('Perfherder Repo: {}'.format(perf_repo))
+                return ret_obj
         else:
             with open(self._config_path, 'w') as f:
                 f.write(json.dumps(DEFAULT_CONFIG))
+                logger_hasal.info('No config.json file {}. Generate default config.'.format(self._config_path))
         return DEFAULT_CONFIG
 
     def load_register(self):
@@ -379,6 +404,7 @@ class HasalServer:
     _config_perfherder_host = _config.get('perfherder_host', 'local.treeherder.mozilla.org')
     _config_perfherder_client_id = _config.get('perfherder_client_id', '')
     _config_perfherder_secret = _config.get('perfherder_secret', '')
+    _config_perfherder_repo = _config.get('perfherder_repo', 'mozilla-central')
     _config_dashboard_host = _config.get('dashboard_host', '')
     _config_dashboard_ssh = _config.get('dashboard_ssh', '')
     _config_dashboard_link = _config.get('dashboard_link', 'https://askeing.github.io/hasal-dashboard/')
@@ -600,6 +626,7 @@ class HasalServer:
                                                                       platform=test_result.get('platform'),
                                                                       machine_arch=test_result.get('platform'),
                                                                       build_arch=test_result.get('platform'),
+                                                                      repo=HasalServer._config_perfherder_repo,
                                                                       protocol=HasalServer._config_perfherder_protocol,
                                                                       host=HasalServer._config_perfherder_host)
                                         uploader.submit(revision=test_result.get('revision'),

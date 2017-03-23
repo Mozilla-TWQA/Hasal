@@ -7,7 +7,7 @@ import gslide
 
 com = common.General()
 ff = browser.Firefox()
-gs = gslide.gSlide()
+gs = gslide.gSlide('ff')
 
 ff.clickBar()
 ff.enterLink(sys.argv[3])
@@ -15,6 +15,7 @@ setAutoWaitTimeout(10)
 
 sleep(2)
 gs.wait_for_loaded()
+wait(gs.mix_content_30_list_original)
 
 gs.invoke_presentation_mode()
 wait(gs.presentation_mode)

@@ -25,7 +25,14 @@ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+20170214:
+    The SI/PSI calculation and viewport finding methods of Hasal, which comes from visualmetrics[1] project.
+    Hasal also do some modification for fitting the request.
+    [1] https://github.com/WPO-Foundation/visualmetrics/blob/master/visualmetrics.py
+"""
+
 import os
 import cv2
 import json
@@ -43,6 +50,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 from ..common.logConfig import get_logger
 from ..common.environment import Environment
 from multiprocessing import Process, Manager
+
 logger = get_logger(__name__)
 
 DEFAULT_IMG_DIR_PATH = os.path.join(os.getcwd(), "images")
@@ -59,11 +67,31 @@ class ImageTool(object):
         self.img_file_extension_list = Environment.IMG_FILE_EXTENSION
         self.skip_status_bar_fraction = 0.95
 
-    def dump_result_to_json(self, data, output_fp):
-        with open(output_fp, "wb") as fh:
-            json.dump(data, fh)
+    @staticmethod
+    def dump_result_to_json(data, output_fp):
+        """
+        Dump the dict data to file (JSON format).
+        @param data: dict data
+        @param output_fp: output file path
+        @return:
+        """
+        try:
+            with open(output_fp, "wb") as fh:
+                json.dump(data, fh)
+                logger.debug('Dump data into file: {}'.format(output_fp))
+        except Exception as e:
+            logger.error(e)
 
     def convert_video_to_images(self, input_video_fp, output_image_dir_path, output_image_name=None, exec_timestamp_list=[]):
+        """
+        Convert video to images.
+        @param input_video_fp: input video path
+        @param output_image_dir_path: output images folder path
+        @param output_image_name: output image name (optional, when you want to only convert ONE image)
+        @param exec_timestamp_list: find the search range from timestamp list (optional)
+        @return:
+        """
+        logger.info('Starting convert video to images ...')
         vidcap = cv2.VideoCapture(input_video_fp)
         # make sure the video file is opened, ready for convert to images
         for _ in range(60):
@@ -73,12 +101,12 @@ class ImageTool(object):
                 time.sleep(1)
                 vidcap = cv2.VideoCapture(input_video_fp)
         if not vidcap.isOpened():
-            logger.debug('Video file cannot open: {}'.format(input_video_fp))
+            logger.error('Video file cannot open: {}'.format(input_video_fp))
             # Closes video file
             logger.debug('Closes video file: {}'.format(input_video_fp))
             vidcap.release()
             return None
-        logger.debug('Video file is opened: {}'.format(input_video_fp))
+        logger.info('Video file is opened: {}'.format(input_video_fp))
 
         if hasattr(cv2, 'CAP_PROP_FPS'):
             header_fps = vidcap.get(cv2.CAP_PROP_FPS)
@@ -86,30 +114,53 @@ class ImageTool(object):
             header_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
         if not self.current_fps:
             self.current_fps = header_fps
-            logger.info('==== FPS from video header: ' + str(self.current_fps) + '====')
+            logger.info('[FPS] Video header: {}'.format(str(self.current_fps)))
         else:
-            logger.info('==== FPS from log file: ' + str(self.current_fps) + '====')
+            logger.info('[FPS] Log file: {}'.format(str(self.current_fps)))
+
         real_time_shift = float(header_fps) / self.current_fps
-        if exec_timestamp_list:
+        logger.info('[FPS] Real time shift: {}'.format(real_time_shift))
+
+        try:
+            with open(Environment.DEFAULT_TIMESTAMP, "r") as fh:
+                timestamp = json.load(fh)
+                logger.debug('Load timestamps: %s' % timestamp)
+            exec_timestamp_list = map(float, [timestamp[Environment.INITIAL_TIMESTAMP_NAME], timestamp["t1"], timestamp["t2"]])
+            # search range: [head_start, head_end, tail_start, tail_end]
             ref_start_point = exec_timestamp_list[1] - exec_timestamp_list[0]
             ref_end_point = exec_timestamp_list[2] - exec_timestamp_list[0]
             self.search_range = [
-                int((ref_start_point - 10) * self.current_fps),
+                # For finding the beginning, the range cannot start less than zero.
+                max(int((ref_start_point - 10) * self.current_fps), 0),
                 int((ref_start_point + 10) * self.current_fps),
-                int((ref_end_point - 10) * self.current_fps),
+                # For finding the end, the range cannot start less than zero.
+                max(int((ref_end_point - 10) * self.current_fps), 0),
                 int((ref_end_point + 10) * self.current_fps)]
+        except Exception as e:
+            logger.error(e)
+            logger.error('Make timestamp list be empty.')
+            exec_timestamp_list = []
+        # Only for convert ONE image.
         if output_image_name:
             if os.path.exists(output_image_dir_path) is False:
                 os.mkdir(output_image_dir_path)
             str_image_fp = os.path.join(output_image_dir_path, output_image_name)
+            logger.info('Converting video to One image file: {} ...'.format(str_image_fp))
+            start_time = time.time()
             result, image = vidcap.read()
             cv2.imwrite(str_image_fp, image)
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            logger.info('Convert video to One image file done.')
+            logger.debug('Actual one Image IO Time Elapsed: [{}]'.format(elapsed_time))
+        # Normal case. Convert whole video to images.
         else:
             io_times = 0
             img_cnt = 0
             if os.path.exists(output_image_dir_path):
                 shutil.rmtree(output_image_dir_path)
             os.mkdir(output_image_dir_path)
+            logger.info('Converting video to image files under {} ...'.format(output_image_dir_path))
             start_time = time.time()
             while True:
                 img_cnt += 1
@@ -125,13 +176,12 @@ class ImageTool(object):
                     break
             end_time = time.time()
             elapsed_time = end_time - start_time
-            logger.debug("Actual %s Images IO Time Elapsed: [%s]" % (str(io_times), elapsed_time))
-        if self.search_range[0] < 0:
-            self.search_range[0] = 0
+            logger.info('Convert video to image files done.')
+            logger.debug('Actual %s Images IO Time Elapsed: [%s]' % (str(io_times), elapsed_time))
+
+        # After get the length of image list, we can modify the range. It cannot large than the length of image list.
         if self.search_range[1] >= len(self.image_list):
             self.search_range[1] = len(self.image_list) - 1
-        if self.search_range[2] < 0:
-            self.search_range[2] = 0
         if self.search_range[3] >= len(self.image_list):
             self.search_range[3] = len(self.image_list) - 1
         logger.info("Image Comparison search range: " + str(self.search_range))
@@ -142,6 +192,14 @@ class ImageTool(object):
         return self.image_list
 
     def crop_target_region(self, sample_dp, output_image_dp, search_target, region):
+        """
+        There are three SEARCH_TARGET, 'viewport', 'tab_view', and 'browser'.
+        @param sample_dp: input sample folder path
+        @param output_image_dp: output images folder path
+        @param search_target: the crop type
+        @param region: region is dict object, which contains 'x', 'y', 'width', and 'height'
+        @return:
+        """
         sample_fp_list = self.get_sample_img_list(sample_dp)
         img_fp_list = self.get_output_img_list(output_image_dp)
         sample_dp = os.path.join(sample_dp, search_target)
@@ -170,18 +228,35 @@ class ImageTool(object):
             p.join()
 
     def get_sample_img_list(self, sample_dp):
+        """
+        Return the sample images list
+        @param sample_dp: sample images folder path
+        @return: sample images list
+        """
         sample_fn_list = os.listdir(sample_dp)
         sample_fn_list.sort(key=CommonUtil.natural_keys)
         sample_fp_list = self.filter_file_extension(sample_dp, sample_fn_list)
         return sample_fp_list
 
     def get_output_img_list(self, output_image_dp):
+        """
+        Return the output images list
+        @param output_image_dp: output images folder path
+        @return: output images list
+        """
         img_fn_list = os.listdir(output_image_dp)
         img_fn_list.sort(key=CommonUtil.natural_keys)
         img_fp_list = self.filter_file_extension(output_image_dp, img_fn_list)
         return img_fp_list
 
     def filter_file_extension(self, dir_path, file_name_list):
+        """
+        Filter the files by extension name.
+        Base on Environment.IMG_FILE_EXTENSION, which are ['.jpg', '.png', '.jpeg'].
+        @param dir_path: folder path
+        @param file_name_list: filename list, we will join folder path with filename
+        @return:
+        """
         file_path_list = list()
         for item in file_name_list:
             item_fp = os.path.join(dir_path, item)
@@ -190,6 +265,12 @@ class ImageTool(object):
         return file_path_list
 
     def get_sample_dct_list(self, input_sample_dp):
+        """
+        Return the DCT list from input sample folder.
+        Return empty list when there are less than two sample files.
+        @param input_sample_dp: input sample folder path
+        @return: DCT list
+        """
         sample_fp_list = self.get_sample_img_list(input_sample_dp)
         sample_dct_list = dict()
         # To generate dct list when number of sample files is 2, otherwise return empty list
@@ -211,6 +292,11 @@ class ImageTool(object):
         return sample_dct_list
 
     def compare_with_sample_image_multi_process(self, input_sample_dp):
+        """
+        Compare sample images, return matching list.
+        @param input_sample_dp: input sample folder path
+        @return: the matching result list
+        """
         manager = Manager()
         result_list = manager.list()
         sample_dct_list = self.get_sample_dct_list(input_sample_dp)
@@ -340,8 +426,8 @@ class ImageTool(object):
             height = int(height * skip_status_bar_fraction) - int(height * skip_status_bar_fraction) % 2
             img_obj = img_obj[:height][:][:]
             img_gray = np.zeros((height, width))
-            for channel in range(channel):
-                img_gray += img_obj[:, :, channel]
+            for each_channel in range(channel):
+                img_gray += img_obj[:, :, each_channel]
             img_gray /= channel
             img_dct = img_gray / 255.0
             dct_obj = cv2.dct(img_dct)
@@ -406,6 +492,13 @@ class ImageTool(object):
         return min_val
 
     def crop_image(self, input_sample_fp, output_sample_fp, coord=[]):
+        """
+        For template region matching.
+        @param input_sample_fp:
+        @param output_sample_fp:
+        @param coord:
+        @return:
+        """
         img = cv2.imread(input_sample_fp)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         w, h = img_gray.shape[::-1]

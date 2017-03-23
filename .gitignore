@@ -13,6 +13,8 @@ _virtualenv
 .ssh
 *.log
 HasalServer.log.*
+stage/*
+docs/*
 
 # 3rd party files
 thirdParty/*

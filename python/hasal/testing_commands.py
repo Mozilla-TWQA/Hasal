@@ -22,14 +22,10 @@ from tidy_tests import test_tidy
 
 SCRIPT_PATH = os.path.split(__file__)[0]
 PROJECT_TOPLEVEL_PATH = os.path.abspath(os.path.join(SCRIPT_PATH, "..", ".."))
-SERVO_TESTS_PATH = os.path.join("tests", "wpt", "mozilla", "tests")
 
 
 @CommandProvider
 class MachCommands():
-    DEFAULT_RENDER_MODE = "cpu"
-    HELP_RENDER_MODE = "Value can be 'cpu', 'gpu' or 'both' (default " + DEFAULT_RENDER_MODE + ")"
-
     def __init__(self, context):
         pass
 

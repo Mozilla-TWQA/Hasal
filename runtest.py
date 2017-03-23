@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -11,8 +11,7 @@ Options:
   --max-retry=<int>               Test failed retry max no [default: 15].
   --keep-browser                  Keep the browser open after test script executed
   --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>                Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --firefox-settings=<str>        Specify the Firefox settings.
+  --firefox-settings=<str>        Specify the Firefox settings. [default: settings/default.json]
   --online                        Result will be transfer to server, calculated by server
   --online-config=<str>           Online server config [default: svrConfig.json]
   --comment=<str>                 Tag the comment on this test [default: <today>]
@@ -21,6 +20,7 @@ Options:
   --perfherder-revision=<str>     Revision for upload to perfherder
   --perfherder-pkg-platform=<str> Package platform for upload to perfherder
   --jenkins-build-no=<int>        Jenkins build no [default: 0].
+  --perfherder-suitename=<str>    Suite name used for shown on perfherder.
 
 """
 import os
@@ -30,6 +30,7 @@ import shutil
 import platform
 import subprocess
 from docopt import docopt
+from datetime import datetime
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
@@ -66,17 +67,31 @@ class RunTest(object):
         self.cookies_settings = self.settings_json.get('cookies', {})
         self.extensions_settings = self.settings_json.get('extensions', {})
         self._firefox_profile_path = ''
+        self.suite_upload_dp = ''
         if self.settings_json:
             self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
                 prefs=self.settings_prefs,
                 cookies_settings=self.cookies_settings,
                 extensions_settings=self.extensions_settings)
 
+    def setup(self):
+        upload_dir = os.path.join(os.getcwd(), 'upload')
+        date_seq_id = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
+        self.suite_upload_dp = os.path.join(upload_dir, date_seq_id)
+        if os.path.exists(upload_dir):
+            if not os.path.exists(self.suite_upload_dp):
+                os.mkdir(self.suite_upload_dp)
+        else:
+            os.mkdir(upload_dir)
+            os.mkdir(self.suite_upload_dp)
+
     def teardown(self):
         if self.advance:
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
         elif os.path.isdir(self._firefox_profile_path):
             self.firefox_profile_creator.remove_firefox_profile()
+        if os.path.exists(DEFAULT_RESULT_FP):
+            shutil.copy(DEFAULT_RESULT_FP, self.suite_upload_dp)
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -109,15 +124,14 @@ class RunTest(object):
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
-        result['PROFILER'] = self.profiler
         result['KEEP_BROWSER'] = str(int(self.keep_browser))
         result['ENABLE_ONLINE'] = str(int(self.online))
         result['ONLINE_CONFIG'] = self.online_config
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
-
         result['FIREFOX_SETTINGS'] = str(self.firefox_settings)
+        result['SUITE_UPLOAD_DP'] = str(self.suite_upload_dp)
         if self.firefox_settings:
             result['FIREFOX_PROFILE_PATH'] = self.firefox_profile_creator.get_firefox_profile(
                 prefs=self.settings_prefs,
@@ -169,7 +183,7 @@ class RunTest(object):
                     os.remove(DEFAULT_RESULT_FP)
                 run_result = self.run_test(test_case_module_name, test_env)
                 if run_result:
-                    if "sikuli_stat" in run_result and int(run_result['sikuli_stat']) == 0 and "fps_stat" in run_result and int(run_result['fps_stat']) == 0:
+                    if "round_status" in run_result and int(run_result['round_status']) == 0 and "fps_stat" in run_result and int(run_result['fps_stat']) == 0:
                         if self.online:
                             # Online mode handling
                             upload_result = self.upload_agent_obj.upload_result(DEFAULT_RESULT_FP)
@@ -257,7 +271,7 @@ class RunTest(object):
                             test_env = None
                     if self.online:
                         if self.perfherder_revision:
-                            self.upload_agent_obj.upload_register_data(input_suite_fp, type)
+                            self.upload_agent_obj.upload_register_data(input_suite_fp, type, self.perfherder_suitename)
                         self.upload_agent_obj.upload_videos(self.loop_test(test_case_module_name, test_name, test_env))
                     else:
                         self.loop_test(test_case_module_name, test_name, test_env)
@@ -275,8 +289,7 @@ class RunTest(object):
 def main():
     start_time = time.time()
     arguments = docopt(__doc__)
-    run_test_obj = RunTest(profiler=arguments['--profiler'], keep_browser=arguments['--keep-browser'],
-                           max_run=int(arguments['--max-run']),
+    run_test_obj = RunTest(keep_browser=arguments['--keep-browser'], max_run=int(arguments['--max-run']),
                            max_retry=int(arguments['--max-retry']), online=arguments['--online'],
                            online_config=arguments['--online-config'], advance=arguments['--advance'],
                            test_comment=arguments['--comment'].strip(), calc_si=arguments['--calc-si'],
@@ -284,7 +297,11 @@ def main():
                            perfherder_revision=arguments['--perfherder-revision'],
                            perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
                            firefox_settings=arguments['--firefox-settings'],
-                           jenkins_build_no=arguments['--jenkins-build-no'])
+                           jenkins_build_no=arguments['--jenkins-build-no'],
+                           perfherder_suitename=arguments['--perfherder-suitename'])
+    # setup
+    run_test_obj.setup()
+
     if arguments['pt']:
         run_test_obj.run("pt", arguments['<suite.txt>'])
     elif arguments['re']:
