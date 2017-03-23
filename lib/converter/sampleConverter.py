@@ -25,6 +25,7 @@ class SampleConverter(object):
             if sample_ext_name in self.DEFAULT_SUPPORT_SAMPLE_FORMAT:
                 sample_index = int(sampe_root_name.split("_")[-1])
                 viewport = input_data['configuration'].get('viewport', None)
+                # TODO: to fulfill new architecture, viewport should be handled by sample converter
                 if not viewport:
                     return_result[sample_index] = {'fp': sample_fp, 'write_to_file': True}
                 else:
