@@ -1,8 +1,8 @@
 """runtest.
 
 Usage:
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform=<int>] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform=<int>] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform=<int>] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>] [--settings=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform=<int>] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>] [--settings=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -11,7 +11,8 @@ Options:
   --max-retry=<int>               Test failed retry max number. [default: 15].
   --advance                       Only for expert user.
   --keep-browser                  Keep the browser open after test script executed.
-  --firefox-settings=<str>        Specify the Firefox settings. [default: settings/default.json]
+  --settings=<str>                Specify the overall settings. [default: settings/default_sikuli.json]
+  --firefox-settings=<str>        Specify the Firefox settings. [default: firefox_settings/default.json]
   --comment=<str>                 Tag the comment on this test. [default: <today>]
 
 Metrics:
@@ -70,13 +71,15 @@ class RunTest(object):
             setattr(self, variable_name, kwargs[variable_name])
         # loading settings
         self.firefox_profile_creator = FirefoxProfileCreator()
+        self.firefox_settings_json = self._load_firefox_settings()
         self.settings_json = self._load_settings()
-        self.settings_prefs = self.settings_json.get('prefs', {})
-        self.cookies_settings = self.settings_json.get('cookies', {})
-        self.extensions_settings = self.settings_json.get('extensions', {})
+        self.webdriver = self.settings_json.get('webdriver', {})
+        self.settings_prefs = self.firefox_settings_json.get('prefs', {})
+        self.cookies_settings = self.firefox_settings_json.get('cookies', {})
+        self.extensions_settings = self.firefox_settings_json.get('extensions', {})
         self._firefox_profile_path = ''
         self.suite_upload_dp = ''
-        if self.settings_json:
+        if self.firefox_settings_json:
             self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
                 prefs=self.settings_prefs,
                 cookies_settings=self.cookies_settings,
@@ -113,6 +116,24 @@ class RunTest(object):
             shutil.rmtree(output_dir)
 
     def _load_settings(self):
+        if not self.settings:
+            return {}
+        try:
+            if os.path.exists(self.settings):
+                with open(self.settings) as settings_fh:
+                    settings = json.load(settings_fh)
+                    self.logger.warn('\n'
+                                     '###############\n'
+                                     '#  Important  #\n'
+                                     '###############\n'
+                                     'Loading Settings from {}:\n'
+                                     '{}\n'.format(self.settings, json.dumps(settings, indent=4)))
+                    time.sleep(3)
+                    return settings
+        except:
+            return {}
+
+    def _load_firefox_settings(self):
         if not self.firefox_settings:
             return {}
         try:
@@ -123,7 +144,7 @@ class RunTest(object):
                                      '###############\n'
                                      '#  Important  #\n'
                                      '###############\n'
-                                     'Loading Settings from {}:\n'
+                                     'Loading Firefox Settings from {}:\n'
                                      '{}\n'.format(self.firefox_settings, json.dumps(settings, indent=4)))
                     time.sleep(3)
                     return settings
@@ -138,6 +159,7 @@ class RunTest(object):
         result['ENABLE_ADVANCE'] = str(int(self.advance))
         result['CALC_SI'] = str(int(self.calc_si))
         result['ENABLE_WAVEFORM'] = str(int(self.waveform))
+        result['SETTINGS'] = str(self.settings)
         result['FIREFOX_SETTINGS'] = str(self.firefox_settings)
         result['SUITE_UPLOAD_DP'] = str(self.suite_upload_dp)
         if self.firefox_settings:
@@ -280,12 +302,23 @@ class RunTest(object):
                         else:
                             self.logger.error("Test script [%s] is not exist!" % test_case_fp)
                             test_env = None
+
+                    # if webdriver is enable, we need to get parameters for running browsers
+                    if self.webdriver['enable']:
+                        test_env['webdriver'] = "True"
+                        if self.webdriver['run_firefox']:
+                            test_env['browser_type'] = "firefox"
+                            data = self.loop_test(test_case_module_name, test_name, test_env)
+                        if self.webdriver['run_chrome']:
+                            test_env['browser_type'] = "chrome"
+                            data = self.loop_test(test_case_module_name, test_name, test_env)
+                    else:
+                        data = self.loop_test(test_case_module_name, test_name, test_env)
+
                     if self.online:
                         if self.perfherder_revision:
                             self.upload_agent_obj.upload_register_data(input_suite_fp, type, self.perfherder_suitename)
-                        self.upload_agent_obj.upload_videos(self.loop_test(test_case_module_name, test_name, test_env))
-                    else:
-                        self.loop_test(test_case_module_name, test_name, test_env)
+                        self.upload_agent_obj.upload_videos(data)
 
             if self.online:
                 self.clean_up_output_data()
@@ -308,6 +341,7 @@ def main():
                            perfherder_revision=arguments['--perfherder-revision'],
                            perfherder_pkg_platform=arguments['--perfherder-pkg-platform'],
                            firefox_settings=arguments['--firefox-settings'],
+                           settings=arguments['--settings'],
                            jenkins_build_no=arguments['--jenkins-build-no'],
                            perfherder_suitename=arguments['--perfherder-suitename'])
     # setup

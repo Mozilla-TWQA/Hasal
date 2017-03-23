@@ -1,0 +1,7 @@
+{
+  "webdriver": {
+    "enable": false,
+    "run_firefox": false,
+    "run_chrome": false
+  }
+}

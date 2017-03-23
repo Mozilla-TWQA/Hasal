@@ -11,6 +11,7 @@ class Profilers(object):
         self.env = input_env
         self.sikuli = input_sikuli_obj
 
+    # TODO: geckoProfiler and performanceTimingProfiler used Sikuli object
     def start_profiling(self, profiler_list):
         enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
         for profiler_data in enabled_profiler_list:
