@@ -25,6 +25,7 @@ DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME = 'DctFrameThroughputGenerator'
 DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
 DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
 DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
+FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME = 'FTSampleConverter'
 
 DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsValidator'},
                                           DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.fileExistValidator'}}}
@@ -32,6 +33,7 @@ DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': '
 DEFAULT_CONVERTER_SETTINGS = {'modules': {DEFAULT_CV2_CONVERTER_NAME: {'path': 'lib.converter.cv2Converter'}}}
 
 DEFAULT_SAMPLE_CONVERTER_SETTINGS = {'modules': {DEFAULT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.sampleConverter'}}}
+FT_SAMPLE_CONVERTER_SETTINGS = {'modules': {FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.ftSampleConverter'}}}
 
 
 def validate_data(validator_settings, validator_data):
@@ -299,6 +301,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
                                          'exec_timestamp_list': exec_timestamp_list}}
         converter_result = run_modules(converter_settings, converter_data[DEFAULT_CV2_CONVERTER_NAME])
 
+        current_sample_converter_name = DEFAULT_SAMPLE_CONVERTER_NAME
         sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
         if waveform == 1:
             # AIL, dctInputLatencyGenerator
@@ -326,12 +329,15 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             }
         elif waveform == 3:
             # FT, dctFrameThroughputGenerator
+            current_sample_converter_name = FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME
+            sample_settings = copy.deepcopy(FT_SAMPLE_CONVERTER_SETTINGS)
             sample_data = {
                 'sample_dp': env.img_sample_dp,
                 'configuration': {
                     'generator': {
                         DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME: {
-                            'path': 'lib.generator.dctFrameThroughputGenerator'}}, 'viewport': viewport}}
+                            'path': 'lib.generator.dctFrameThroughputGenerator'}}},
+                'orig_sample': env.img_output_sample_1_fn}
         else:
             # normal cases
             sample_data = {'sample_dp': env.img_sample_dp,
@@ -346,7 +352,7 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
         #  }
         sample_result = run_modules(sample_settings, sample_data)
         generator_settings = sample_data['configuration']['generator']
-        generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[DEFAULT_SAMPLE_CONVERTER_NAME],
+        generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[current_sample_converter_name],
                           'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS, 'exec_timestamp_list': exec_timestamp_list}
         generator_result = run_generators(generator_settings, generator_data)
 

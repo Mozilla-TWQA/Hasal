@@ -4,11 +4,10 @@ import common
 
 class gDoc():
     def __init__(self):
-        self.os = str(Settings.getOS())
-        self.os_version = str(Settings.getOSVersion())
         self.com = common.General()
+        self.os = str(Env.getOS())
 
-        if self.os.startswith("M"):
+        if self.os.lower() == 'mac':
             self.control = Key.CMD
         else:
             self.control = Key.CTRL
@@ -124,3 +123,14 @@ class gDoc():
 
     def bullet_list(self):
         type("8", self.control + Key.SHIFT)
+
+    def move_to_highlight_scroll(self, input_direction, scroll_down_size):
+        if self.os.lower() == 'mac':
+            if input_direction == WHEEL_DOWN:
+                direction = WHEEL_UP
+            else:
+                direction = WHEEL_DOWN
+        else:
+            direction = input_direction
+        mouseMove(Pattern("pics/doc_content_left_top_page_region.png").similar(0.85))
+        wheel(Pattern("pics/doc_content_left_top_page_region.png").similar(0.85), direction, scroll_down_size)
