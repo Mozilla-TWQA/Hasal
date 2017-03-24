@@ -27,7 +27,6 @@ capture_height = int(sys.argv[7])
 
 t1 = time.time()
 capimg1 = capture(0, 0, capture_width, capture_height)
-# wheel(Pattern("pics/doc_content_left_top_page_region.png").similar(0.85), WHEEL_DOWN, 1)
 gd.move_to_highlight_scroll(WHEEL_DOWN, 1)
 sleep(1)
 t2 = time.time()
