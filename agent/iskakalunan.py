@@ -6,7 +6,6 @@ import urllib2
 import os
 import sys
 import re
-import json
 import base64
 import subprocess
 import shutil
@@ -33,9 +32,9 @@ CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Iskakalunan'
 
 LABEL_NEW_REQUEST = 'Label_8'
-LABEL_IN_QUEUE    = 'Label_4'
-LABEL_IN_PROCESS  = 'Label_5'
-LABEL_REPLIED     = 'Label_6'
+LABEL_IN_QUEUE = 'Label_4'
+LABEL_IN_PROCESS = 'Label_5'
+LABEL_REPLIED = 'Label_6'
 
 RESULT_ZIP = 'result.zip'
 RESULT_JSON = 'result.json'
@@ -44,7 +43,7 @@ FIREFOX_PATH = r'C:/Program Files/Mozilla Firefox'
 
 MSG_TYPE_INVALID_REQUEST = 'This is a notifier that your request is invalid.'
 MSG_TYPE_UNDER_EXECUTION = 'This is a notifier that your request is under execution.'
-MSG_TYPE_JOB_FINISHED    = 'This is a notifier that your request is finished.'
+MSG_TYPE_JOB_FINISHED = 'This is a notifier that your request is finished.'
 
 logger = logging.getLogger('iskakalunan')
 logging.basicConfig(format='%(module)s %(levelname)s %(message)s', level=logging.DEBUG)
@@ -68,8 +67,7 @@ class Iskakalunan(object):
             - Only messages tags w/ 'NewRequest', 'InQueue', and 'InProcess'
         """
         try:
-            response = self.service.users().messages().list(userId='me',
-                                                       labelIds=label_id).execute()
+            response = self.service.users().messages().list(userId='me', labelIds=label_id).execute()
             message_list = []
             messages = []
             if 'messages' in response:
@@ -83,9 +81,9 @@ class Iskakalunan(object):
                 message_list.extend(response['messages'])
 
             for message in message_list:
-                message_content = service.users().messages().get(userId='me', id=message_id).execute()
-                message_temp = Message(self.service, message['id'], message['threadId'], message_content)
-                if not 'moztpeqa' in message_temp.sender:
+                message_content = self.service.users().messages().get(userId='me', id=message['id']).execute()
+                message_temp = Message(message['id'], message['threadId'], message_content)
+                if 'moztpeqa' not in message_temp.sender:
                     logger.debug("message sender: %s" % message_temp.sender)
                     messages.append(message_temp)
 
@@ -136,8 +134,8 @@ class Iskakalunan(object):
                "runtest.py",
                "re",
                "test.suite",
-               "--max-run="+str(msg.max_run),
-               "--max-retry="+str(msg.max_retry)]
+               "--max-run=" + str(msg.max_run),
+               "--max-retry=" + str(msg.max_retry)]
         if msg.calc_si != "":
             cmd.append(msg.calc_si)
         if msg.advance != "":
@@ -178,7 +176,7 @@ class Iskakalunan(object):
             if content_type is None or encoding is not None:
                 content_type = 'application/octet-stream'
             main_type, sub_type = content_type.split('/', 1)
-            with open(path, 'rb') as f:
+            with open(path, 'rb') as fp:
                 message_attachment = MIMEBase(main_type, sub_type)
                 message_attachment.set_payload(fp.read())
         
@@ -186,7 +184,7 @@ class Iskakalunan(object):
                 message.attach(message_attachment)
 
         raw_message = {'raw': base64.urlsafe_b64encode(message.as_string())}
-        raw_message['threadId'] = message.thread_id
+        raw_message['threadId'] = msg.thread_id
         self.service.users().messages().send(userId='me', body=raw_message).execute()
 
 
@@ -214,11 +212,10 @@ class Iskakalunan(object):
             flow.user_agent = APPLICATION_NAME
             if flags:
                 credentials = tools.run_flow(flow, store, flags)
-            else: # Needed only for compatibility with Python 2.6
+            else:  # Needed only for compatibility with Python 2.6
                 credentials = tools.run(flow, store)
             logger.info('Storing credentials to ' + credential_path)
         return credentials
-
 
 class Message(object):
     def __init__(self, message_id, thread_id, contents):
@@ -349,4 +346,3 @@ if __name__ == '__main__':
             iskakalunan.updateLabels(messages[0], update_body)
             iskakalunan.reply_status(messages[0], MSG_TYPE_UNDER_EXECUTION)
             iskakalunan.prepare_job(messages[0])
-
