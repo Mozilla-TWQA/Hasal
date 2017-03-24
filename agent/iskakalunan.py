@@ -40,6 +40,7 @@ LABEL_REPLIED     = 'Label_6'
 RESULT_ZIP = 'result.zip'
 RESULT_JSON = 'result.json'
 UPLOAD_FOLDER = 'upload'
+FIREFOX_PATH = r'C:/Program Files/Mozilla Firefox'
 
 MSG_TYPE_INVALID_REQUEST = 'This is a notifier that your request is invalid.'
 MSG_TYPE_UNDER_EXECUTION = 'This is a notifier that your request is under execution.'
@@ -92,52 +93,55 @@ class Iskakalunan(object):
         except errors.HttpError, error:
             logger.error("An error occurred: %s" % error)
 
-    def update_labels(self, message, update_labels):
+    def update_labels(self, msg, update_labels):
         try:
-            logger.debug('Update labels for messageId: %s with %s' % (message.message_id, update_labels))
-            message = self.service.users().messages().modify(userId='me', id=message.message_id, body=update_labels).execute()
+            logger.debug('Update labels for msgId: %s with %s' % (msg.message_id, update_labels))
+            self.service.users().messages().modify(userId='me', id=msg.message_id, body=update_labels).execute()
         except errors.HttpError, error:
             logger.error('An error occurred: %s' % error)
 
     def prepare_try_build(self, revision):
-        url_try_builds = "https://archive.mozilla.org/pub/firefox/try-builds/"
-        req = urllib2.Request(url_try_builds)
-        response = urllib2.urlopen(req)
-        html_try_builds = response.read()
+        try:
+            url_try_builds = "https://archive.mozilla.org/pub/firefox/try-builds/"
+            req = urllib2.Request(url_try_builds)
+            response = urllib2.urlopen(req)
+            html_try_builds = response.read()
 
-        pattern = 'href="(.+' + message.revision + '\/)"'
-        m = re.search(pattern, html_try_builds)
-        url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-55.0a1.en-US.win64.zip"
-        logger.debug("Download build from %s" % url_revision_build)
-        file_revision_build = urllib2.urlopen(url_revision_build)
-        with open('firefox.zip', 'wb') as output:
-            while True:
-                data = file_revision_build.read(4096)
-                if data:
-                    output.write(data)
-                else:
-                    break
+            pattern = 'href="(.+' + message.revision + '\/)"'
+            m = re.search(pattern, html_try_builds)
+            url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-55.0a1.en-US.win64.zip"
+            logger.debug("Download build from %s" % url_revision_build)
+            file_revision_build = urllib2.urlopen(url_revision_build)
+            with open('firefox.zip', 'wb') as output:
+                while True:
+                    data = file_revision_build.read(4096)
+                    if data:
+                        output.write(data)
+                    else:
+                        break
 
-        with zipfile.ZipFile('firefox.zip', 'r') as zf:
-            zf.extractall()
-        shutil.rmtree(r'C:/Program Files/Mozilla Firefox')
-        shutil.move('firefox', r'C:/Program Files/Mozilla Firefox')
+            with zipfile.ZipFile('firefox.zip', 'r') as zf:
+                zf.extractall()
+            shutil.rmtree(FIREFOX_PATH)
+            shutil.move('firefox', FIREFOX_PATH)
+        except Error as e:
+            logger.error("Failed to grab builds for testing: %s" % e)
 
-    def prepare_job(self, message):
+    def prepare_job(self, msg):
         """Prepare a json represent a job and update message status
         """
-        self.prepare_try_build(message.revision)
+        self.prepare_try_build(msg.revision)
 
         cmd = [sys.executable,
                "runtest.py",
                "re",
                "test.suite",
-               "--max-run="+str(message.max_run),
-               "--max-retry="+str(message.max_retry)]
-        if message.calc_si != "":
-            cmd.append(message.calc_si)
-        if message.advance != "":
-            cmd.append(message.advance)
+               "--max-run="+str(msg.max_run),
+               "--max-retry="+str(msg.max_retry)]
+        if msg.calc_si != "":
+            cmd.append(msg.calc_si)
+        if msg.advance != "":
+            cmd.append(msg.advance)
 
         logger.debug("cmd: %s" % ' '.join(cmd))
         subprocess.call(cmd, env=os.environ.copy())
@@ -157,13 +161,13 @@ class Iskakalunan(object):
             logger.info("Job did not finish by checking")
             return False
 
-    def reply_status(self, msg_src, status):
+    def reply_status(self, msg, status):
         """Update status to sender"""
-        logger.debug("reply status to %s with %s" % (msg_src.message_id, status))
+        logger.debug("reply status to %s with %s" % (msg.message_id, status))
         message = MIMEMultipart()
         message['From'] = 'moztpeqa@mozilla.com'
-        message['To'] = msg_src.sender
-        message['Subject'] = msg_src.subject
+        message['To'] = msg.sender
+        message['Subject'] = msg.subject
         text = MIMEText(status)
         message.attach(text)
 
@@ -175,14 +179,14 @@ class Iskakalunan(object):
                 content_type = 'application/octet-stream'
             main_type, sub_type = content_type.split('/', 1)
             with open(path, 'rb') as f:
-                msg = MIMEBase(main_type, sub_type)
-                msg.set_payload(fp.read())
+                message_attachment = MIMEBase(main_type, sub_type)
+                message_attachment.set_payload(fp.read())
         
-                msg.add_header('Content-Disposition', 'attachment', filename=RESULT_ZIP)
-                message.attach(msg)
+                message_attachment.add_header('Content-Disposition', 'attachment', filename=RESULT_ZIP)
+                message.attach(message_attachment)
 
         raw_message = {'raw': base64.urlsafe_b64encode(message.as_string())}
-        raw_message['threadId'] = msg_src.thread_id
+        raw_message['threadId'] = message.thread_id
         self.service.users().messages().send(userId='me', body=raw_message).execute()
 
 
