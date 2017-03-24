@@ -12,6 +12,7 @@ import shutil
 import zipfile
 import mimetypes
 import logging
+import argparse
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -20,12 +21,6 @@ from apiclient import discovery, errors
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -50,14 +45,57 @@ logging.basicConfig(format='%(module)s %(levelname)s %(message)s', level=logging
 
 
 class Iskakalunan(object):
-    def __init__(self):
+    def __init__(self, name="iskakalunan", **kwargs):
         """Basic Iskakalunan model
 
         messages: mail queue on g-mail
         """
+        self.name = name
         self.credentials = self.get_credentials()
         http = self.credentials.authorize(httplib2.Http())
         self.service = discovery.build('gmail', 'v1', http=http)
+
+    def run(self):
+        """Runner for Hasal agent
+        """
+        # NewRequest to InQueue
+        messages = self.fetch_messages(LABEL_NEW_REQUEST)
+        logger.info("Check New Requests: %d request(s) get" % len(messages))
+
+        for message in messages:
+            if message.validation:
+                update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
+                               "addLabelIds": [LABEL_IN_QUEUE]}
+                self.updateLabels(message, update_body)
+            else:
+                update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
+                               "addLabelIds": [LABEL_REPLIED]}
+                self.updateLabels(message, update_body)
+                self.reply_status(message, MSG_TYPE_INVALID_REQUEST)
+
+        # Check if InProcess exists
+        msg_in_process = self.fetch_messages(LABEL_IN_PROCESS)
+        logger.info("Check In Process job exists: %d Job(s) on machine" % len(msg_in_process))
+
+        # Check if in process job is finished
+        job_empty = False
+        if msg_in_process and self.check_job_status():
+            update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
+                           "addLabelIds": [LABEL_REPLIED]}
+            self.updateLabels(msg_in_process[0], update_body)
+            self.reply_status(msg_in_process[0], MSG_TYPE_JOB_FINISHED)
+            job_empty = True
+        elif not msg_in_process:
+            job_empty = True
+        if job_empty:
+            messages = self.fetch_messages(LABEL_IN_QUEUE)
+            logger.info("Check In Queue tasks: %d tasks in queue" % len(messages))
+            if messages:
+                update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
+                               "addLabelIds": [LABEL_IN_PROCESS]}
+                self.updateLabels(messages[0], update_body)
+                self.reply_status(messages[0], MSG_TYPE_UNDER_EXECUTION)
+                self.prepare_job(messages[0])
 
     def fetch_messages(self, label_id):
         """Fetch messages from pre-set mail account
@@ -179,7 +217,7 @@ class Iskakalunan(object):
             with open(path, 'rb') as fp:
                 message_attachment = MIMEBase(main_type, sub_type)
                 message_attachment.set_payload(fp.read())
-        
+
                 message_attachment.add_header('Content-Disposition', 'attachment', filename=RESULT_ZIP)
                 message.attach(message_attachment)
 
@@ -187,10 +225,8 @@ class Iskakalunan(object):
         raw_message['threadId'] = msg.thread_id
         self.service.users().messages().send(userId='me', body=raw_message).execute()
 
-
     def get_credentials(self):
         """Gets valid user credentials from storage.
-
         If nothing has been stored, or if the stored credentials are invalid,
         the OAuth2 flow is completed to obtain the new credentials.
 
@@ -210,17 +246,15 @@ class Iskakalunan(object):
             logger.debug("no credential exists, request to authentication")
             flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
             flow.user_agent = APPLICATION_NAME
-            if flags:
-                credentials = tools.run_flow(flow, store, flags)
-            else:  # Needed only for compatibility with Python 2.6
-                credentials = tools.run(flow, store)
+            flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+            credentials = tools.run_flow(flow, store, flags)
             logger.info('Storing credentials to ' + credential_path)
         return credentials
+
 
 class Message(object):
     def __init__(self, message_id, thread_id, contents):
         """Basic Message Type
-        
         message_id: unique message ID
         thread_id: thread ID for easier find a message
 
