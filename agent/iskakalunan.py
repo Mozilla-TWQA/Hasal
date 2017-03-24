@@ -82,7 +82,8 @@ class Iskakalunan(object):
                 message_list.extend(response['messages'])
 
             for message in message_list:
-                message_temp = Message(self.service, message['id'], message['threadId'])
+                message_content = service.users().messages().get(userId='me', id=message_id).execute()
+                message_temp = Message(self.service, message['id'], message['threadId'], message_content)
                 if not 'moztpeqa' in message_temp.sender:
                     logger.debug("message sender: %s" % message_temp.sender)
                     messages.append(message_temp)
@@ -90,6 +91,13 @@ class Iskakalunan(object):
             return messages
         except errors.HttpError, error:
             logger.error("An error occurred: %s" % error)
+
+    def update_labels(self, message, update_labels):
+        try:
+            logger.debug('Update labels for messageId: %s with %s' % (message.message_id, update_labels))
+            message = self.service.users().messages().modify(userId='me', id=message.message_id, body=update_labels).execute()
+        except errors.HttpError, error:
+            logger.error('An error occurred: %s' % error)
 
     def prepare_try_build(self, revision):
         url_try_builds = "https://archive.mozilla.org/pub/firefox/try-builds/"
@@ -209,22 +217,19 @@ class Iskakalunan(object):
 
 
 class Message(object):
-    def __init__(self, service, message_id, thread_id):
+    def __init__(self, message_id, thread_id, contents):
         """Basic Message Type
         
-        service: service key to get message data
         message_id: unique message ID
         thread_id: thread ID for easier find a message
 
         status: status handled by Iskakalunan
         parameters: parameters requested in a message
         """
-        self.service = service
         self.message_id = message_id
         self.thread_id = thread_id
-        message = service.users().messages().get(userId='me', id=message_id).execute()
-        self.sender, self.subject = self.__resolve_headers(message)
-        self.body = self.__resolve_body(message)
+        self.sender, self.subject = self.__resolve_headers(contents)
+        self.body = self.__resolve_body(contents)
 
         self.revision = ""
         self.test_suite = ""
@@ -233,25 +238,8 @@ class Message(object):
         self.max_run = "30"
         self.max_retry = "15"
 
-        self.isValid()
-
-    def __resolve_headers(self, message):
-        subject = ""
-        sender = ""
-        for x in message['payload']['headers']:
-            if x['name'] == 'From':
-                sender = x['value']
-            if x['name'] == 'Subject':
-                subject = x['value']
-        return sender, subject
-
-    def __resolve_body(self, message):
-        if 'body' in message['payload'] and message['payload']['body']['size'] > 0:
-            return message['payload']['body']['data']
-        elif 'parts' in message['payload'] and message['payload']['parts'][0]['body']['size'] > 0:
-            return message['payload']['parts'][0]['body']['data']
-        else:
-            return ""
+        self.validation = self.__isValid()
+        self.getInfo()
 
     def getInfo(self):
         logger.debug("self.revision: %s" % self.revision)
@@ -261,11 +249,29 @@ class Message(object):
         logger.debug("self.max_run: %s" % self.max_run)
         logger.debug("self.max_retry: %s" % self.max_retry)
 
-    def isValid(self):
-        self.contents = base64.urlsafe_b64decode(self.body.encode('utf-8')).split('\r\n')
+    def __resolve_headers(self, contents):
+        subject = ""
+        sender = ""
+        for x in contents['payload']['headers']:
+            if x['name'] == 'From':
+                sender = x['value']
+            if x['name'] == 'Subject':
+                subject = x['value']
+        return sender, subject
+
+    def __resolve_body(self, contents):
+        if 'body' in contents['payload'] and contents['payload']['body']['size'] > 0:
+            return contents['payload']['body']['data']
+        elif 'parts' in contents['payload'] and contents['payload']['parts'][0]['body']['size'] > 0:
+            return contents['payload']['parts'][0]['body']['data']
+        else:
+            return ""
+
+    def __isValid(self):
+        msg_body = base64.urlsafe_b64decode(self.body.encode('utf-8')).split('\r\n')
 
         isLink = False
-        for line in self.contents:
+        for line in msg_body:
             line = line.replace('\xe2\x80\x8b', '')
             if isLink:
                 self.revision = line[-40:]
@@ -288,7 +294,6 @@ class Message(object):
                 self.max_run = line[10:]
             elif line.startswith("--max-retry="):
                 self.max_retry = line[12:]
-        self.getInfo()
 
         if len(self.revision) < 40:
             logger.warning("revision is too short: %s" % self.revision)
@@ -297,13 +302,6 @@ class Message(object):
             logger.warning("max_run and max_retry must be numbers")
             return False
         return True
-
-    def updateLabels(self, update_labels):
-        try:
-            logger.debug('Update labels for messageId: %s with %s' % (self.message_id, update_labels))
-            message = self.service.users().messages().modify(userId='me', id=self.message_id, body=update_labels).execute()
-        except errors.HttpError, error:
-            logger.error('An error occurred: %s' % error)
 
 
 if __name__ == '__main__':
@@ -314,14 +312,14 @@ if __name__ == '__main__':
     logger.info("Check New Requests: %d request(s) get" % len(messages))
 
     for message in messages:
-        if message.isValid():
+        if message.validation:
             update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
                            "addLabelIds": [LABEL_IN_QUEUE]}
-            message.updateLabels(update_body)
+            iskakalunan.updateLabels(message, update_body)
         else:
             update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
                            "addLabelIds": [LABEL_REPLIED]}
-            message.updateLabels(update_body)
+            iskakalunan.updateLabels(message, update_body)
             iskakalunan.reply_status(message, MSG_TYPE_INVALID_REQUEST)
 
     # Check if InProcess exists
@@ -333,7 +331,7 @@ if __name__ == '__main__':
     if msg_in_process and iskakalunan.check_job_status():
         update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
                        "addLabelIds": [LABEL_REPLIED]}
-        msg_in_process[0].updateLabels(update_body)
+        iskakalunan.updateLabels(msg_in_process[0], update_body)
         iskakalunan.reply_status(msg_in_process[0], MSG_TYPE_JOB_FINISHED)
         job_empty = True
     elif not msg_in_process:
@@ -344,7 +342,7 @@ if __name__ == '__main__':
         if messages:
             update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
                            "addLabelIds": [LABEL_IN_PROCESS]}
-            messages[0].updateLabels(update_body)
+            iskakalunan.updateLabels(messages[0], update_body)
             iskakalunan.reply_status(messages[0], MSG_TYPE_UNDER_EXECUTION)
             iskakalunan.prepare_job(messages[0])
 
