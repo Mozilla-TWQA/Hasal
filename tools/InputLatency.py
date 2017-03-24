@@ -2,8 +2,8 @@
 
 import pandas as pd
 import numpy as np
-import json
 import matplotlib.pyplot as plt
+import json
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
@@ -14,24 +14,23 @@ class InputLatencyGenerator(object):
     class InputLatencyGenerator
     """
 
-    def __init__(self, input_result_fp, output_mode=0):
+    def __init__(self, input_result_fp):
         """
-        __init__
+        __init__ function
+        input_result_fp, the json file name to be processed
         """
         self.result_fp = input_result_fp
-        self.output_mode = int(output_mode)
-        self.DEFAULT_SHORT_VIEW_MODE = 0
-        self.DEFAULT_EASY_PASTE_MODE = 1
 
     def generate_metric(self):
-        DEFAULT_PRINT_KEY_INDEX = ['avg_time',
-                                   'max_time',
-                                   'med_time',
-                                   'min_time',
-                                   'std_dev']
         """
-        generate_metric
+        Dump metrics from input file
         """
+
+        key_indexes = ['avg_time',
+                       'max_time',
+                       'med_time',
+                       'min_time',
+                       'std_dev']
 
         with open(self.result_fp) as data_file:
             # Setup pandas display options
@@ -40,18 +39,18 @@ class InputLatencyGenerator(object):
 
             # Loading input file
             data = json.load(data_file)
-            d = pd.DataFrame(data)
+            df = pd.DataFrame(data)
 
             # Analyze input latency
             runtime = pd.DataFrame(
-                [pd.DataFrame(d[c]['time_list'])['run_time'] for c in d]).T
-            runtime.columns = d.columns
+                [pd.DataFrame(df[c]['time_list'])['run_time'] for c in df]).T
+            runtime.columns = df.columns
             print '===== Input Latency Summary ===='
-            print d.loc[DEFAULT_PRINT_KEY_INDEX, :]
+            print df.loc[key_indexes, :]
             print '\n\n===== Input Latency Raw runtime ===='
             print runtime
             print '\n\n===== Input Latency runtime Percentile===='
-            print runtime.quantile([0.01, 0.99], interpolation='nearest')
+            print runtime.quantile([0.01, 0.05, 0.95, 0.99], interpolation='nearest')
             print '\n\n===== Input Latency runtime Table===='
             print runtime.describe()
             print '\n\n===== Input Latency runtime Plots===='
