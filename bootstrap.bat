@@ -99,7 +99,6 @@ IF EXIST VCForPython27.msi (
     del VCForPython27.msi
 )
 
-
 @REM Checking and Installing 7zip
 ECHO [INFO] Checking 7zip
 
@@ -130,8 +129,28 @@ IF "%APPVEYOR%"=="True" (
     SET "PATH=C:\Program Files\7-Zip;%PATH%"
 )
 
-@REM Installing ffmpeg
+@REM fetching gechodriver 0.14
+IF EXIST geckodriver-v0.14.0-win32.zip (
+    ECHO [INFO] Found cached geckodriver-v0.14.0-win32.zip
+) ELSE (
+    ECHO [INFO] Downloading geckodriver-v0.14.0-win32.zip
+    thirdParty\curl -kLO  https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win32.zip
+    7z x geckodriver-v0.14.0-win32.zip
+    mkdir thirdParty\geckodriver
+    move /Y geckodriver.exe thirdParty\geckodriver
+)
 
+IF NOT "%APPVEYOR%"=="True" (
+    del geckodriver-v0.14.0-win32.zip
+)
+
+
+mkdir -p ./thirdParty/geckodriver/
+tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
+chmod a+x ./thirdParty/geckodriver/geckodriver
+
+
+@REM Installing ffmpeg
 ECHO [INFO] Downloading FFMPEG.
 IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
     ECHO [INFO] Found cached ffmpeg-20160527-git-d970f7b-win32-static.7z

@@ -32,6 +32,8 @@ class BaseTest(unittest.TestCase):
             terminal_title = ['Hasal']
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
+        self.viewport = None
+        # TODO: to fulfill new architecture, viewport should be handled by sample converter
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
@@ -130,7 +132,10 @@ class BaseTest(unittest.TestCase):
         self.env.init_output_dir()
 
         # get browser type
-        self.browser_type = self.env.get_browser_type()
+        if bool(os.getenv("webdriver")):
+            self.browser_type = os.getenv("browser_type")
+        else:
+            self.browser_type = self.env.get_browser_type()
 
         # clone test target
         self.clone_test_file()
@@ -158,4 +163,4 @@ class BaseTest(unittest.TestCase):
                                                 pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
                                                 suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
         else:
-            logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.round_status))
+            logger.warning("This running result of execution is not successful, return code: " + str(self.round_status))

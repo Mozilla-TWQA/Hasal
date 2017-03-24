@@ -12,6 +12,7 @@ class Environment(object):
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
+    DEFAULT_GECKODRIVER_DIR = os.path.join(os.getcwd(), "thirdParty", "geckodriver")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
     DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")
@@ -41,7 +42,7 @@ class Environment(object):
         DEFAULT_VIEWPORT_WIDTH = 800
         DEFAULT_VIEWPORT_HEIGHT = 600
     else:
-        DEFAULT_VIDEO_RECORDING_FPS = 50
+        DEFAULT_VIDEO_RECORDING_FPS = 60
         DEFAULT_VIEWPORT_WIDTH = 1024
         DEFAULT_VIEWPORT_HEIGHT = 768
     DEFAULT_VIDEO_RECORDING_POS_X = 72
