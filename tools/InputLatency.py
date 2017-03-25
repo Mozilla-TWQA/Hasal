@@ -67,8 +67,8 @@ class InputLatencyGenerator(object):
 
 
 def main():
-    """ 
-    function main() as entry point 
+    """
+    function main() as entry point
     """
 
     arg_parser = argparse.ArgumentParser(description='Input Latency Report',
