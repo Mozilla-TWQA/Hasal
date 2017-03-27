@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import httplib2
-import urllib2
+import requests
 import os
 import sys
 import re
@@ -143,18 +143,14 @@ class Iskakalunan(object):
             response = urllib2.urlopen(req)
             html_try_builds = response.read()
 
-            pattern = 'href="(.+' + message.revision + '\/)"'
+            pattern = 'href="(.+' + revision + '\/)"'
             m = re.search(pattern, html_try_builds)
             url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-55.0a1.en-US.win64.zip"
             logger.debug("Download build from %s" % url_revision_build)
-            file_revision_build = urllib2.urlopen(url_revision_build)
-            with open('firefox.zip', 'wb') as output:
-                while True:
-                    data = file_revision_build.read(4096)
-                    if data:
-                        output.write(data)
-                    else:
-                        break
+            r = requests.get(url_revision_build, stream=True)
+            with open('firefox.zip', 'wb') as f:
+                for chunk in r.iter_content(chunk_size=4096):
+                    f.write(chunk)
 
             with zipfile.ZipFile('firefox.zip', 'r') as zf:
                 zf.extractall()
