@@ -18,6 +18,8 @@ pandas>=0.19.2
 selenium==3.0.2
 geckoprofiler_controller==0.0.4
 
+freetype-py
+pypng
 python-dateutil
 keyring
 requests
