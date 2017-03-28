@@ -1,3 +1,9 @@
+freetype-py
+pypng
+python-dateutil
+keyring
+requests
+
 theano==0.8.2
 numpy>=1.10.0
 psutil>=4.1.0
@@ -17,8 +23,3 @@ matplotlib==1.5.3
 pandas>=0.19.2
 selenium==3.0.2
 geckoprofiler_controller==0.0.4
-freetype-py
-pypng
-python-dateutil
-keyring
-requests
