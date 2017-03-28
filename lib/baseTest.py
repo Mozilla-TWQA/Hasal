@@ -84,7 +84,7 @@ class BaseTest(unittest.TestCase):
                             release_version = platform.release()
                             if release_version == '10':
                                 logger.info("Move terminal window for Windows 10.")
-                                height_offset = 0
+                                height_offset = -4
                                 terminal_height = 100
                             elif release_version == '7':
                                 logger.info("Move terminal window for Windows 7.")
