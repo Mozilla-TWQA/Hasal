@@ -1,6 +1,5 @@
 freetype-py
 pypng
-libpng
 
 theano==0.8.2
 numpy>=1.10.0
@@ -24,7 +23,6 @@ geckoprofiler_controller==0.0.4
 
 freetype-py
 pypng
-libpng
 python-dateutil
 keyring
 requests
