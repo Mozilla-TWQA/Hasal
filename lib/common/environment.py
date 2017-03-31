@@ -143,7 +143,6 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
     def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
-        self.DEFAULT_OUTLIER_CHECK_POINT = int(os.getenv("MAX_RUN"))
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
         self.test_method_doc = test_method_doc
@@ -173,8 +172,8 @@ class Environment(object):
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
         self.img_sample_dp = os.path.join(self.DEFAULT_IMAGE_SAMPLE_DIR, self.output_name)
         self.img_output_dp = os.path.join(self.DEFAULT_IMAGE_OUTPUT_DIR, self.output_name)
-        self.img_output_sample_1_fn = self.output_name + "_sample_1.jpg"
-        self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
+        self.img_output_sample_1_fn = self.output_name + "_sample_1.bmp"
+        self.img_output_sample_2_fn = self.output_name + "_sample_2.bmp"
         self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
@@ -183,7 +182,7 @@ class Environment(object):
         self.recording_log_fp = os.path.join(self.hasal_dir, "recording.log")
         self.waveform_fp = os.path.join(self.DEFAULT_WAVEFORM_OUTPUT_DIR, self.output_name + "_waveform_info.json")
 
-        self.firefox_settings_json = os.getenv('FIREFOX_SETTINGS')
+        self.firefox_settings_json = os.getenv('FIREFOX_CONFIG_FP')
         self.firefox_settings_env = {}
         self.firefox_settings_prefs = {}
         self.firefox_settings_extensions = {}

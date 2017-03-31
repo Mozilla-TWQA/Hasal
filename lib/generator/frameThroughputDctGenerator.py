@@ -15,7 +15,7 @@ from ..common.logConfig import get_logger
 logger = get_logger(__name__)
 
 
-class DctFrameThroughputGenerator(object):
+class FrameThroughputDctGenerator(object):
 
     SEARCH_TARGET_VIEWPORT = 'viewport'
     SEARCH_TARGET_TAB_VIEW = 'tab_view'
@@ -107,32 +107,32 @@ class DctFrameThroughputGenerator(object):
 
         # crop sample data area
         # generate viewport crop area
-        if DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT]
-            return_result[DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT]
+        if FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT]
+            return_result[FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT]
         else:
             viewport_value = find_image_viewport(input_sample_data['fp'])
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
-            return_result[DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
 
         # generate tab_view crop area
-        if DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW] = input_sample_data[DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW]
+        if FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW in input_sample_data:
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW] = input_sample_data[FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW]
         else:
             tabview_value = find_tab_view(input_sample_data['fp'], return_result[input_generator_name]['crop_data'][
-                DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT])
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
-            return_result[DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
+                FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT])
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
+            return_result[FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
 
         # generate browser crop area
-        if DctFrameThroughputGenerator.SEARCH_TARGET_BROWSER in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_BROWSER] = input_sample_data[DctFrameThroughputGenerator.SEARCH_TARGET_BROWSER]
+        if FrameThroughputDctGenerator.SEARCH_TARGET_BROWSER in input_sample_data:
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_BROWSER] = input_sample_data[FrameThroughputDctGenerator.SEARCH_TARGET_BROWSER]
         else:
             browser_view_value = find_browser_view(
-                return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_VIEWPORT],
-                return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_TAB_VIEW])
-            return_result[input_generator_name]['crop_data'][DctFrameThroughputGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
-            return_result[DctFrameThroughputGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
+                return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT],
+                return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_TAB_VIEW])
+            return_result[input_generator_name]['crop_data'][FrameThroughputDctGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
+            return_result[FrameThroughputDctGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
 
         # generate crop data
         if input_generator_name not in input_sample_dict[1]:
@@ -146,11 +146,11 @@ class DctFrameThroughputGenerator(object):
         # tag event to sample
         return_result[input_generator_name]['event_tags'] = {}
         if input_sample_index == 1:
-            for event_obj in DctFrameThroughputGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
+            for event_obj in FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
                 search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = convert_to_dct(search_target_fp, event_obj['fraction'])
         elif input_sample_index == 2:
-            for event_obj in DctFrameThroughputGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
+            for event_obj in FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
                 search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = convert_to_dct(search_target_fp, event_obj['fraction'])
 

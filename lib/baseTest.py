@@ -7,7 +7,7 @@ import unittest
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
-import helper.resultHelper as resultHelper
+import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
@@ -117,7 +117,19 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
+    def load_configs(self):
+        config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+        for config_env_name in config_fp_list:
+            config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
+            with open(os.getenv(config_env_name)) as fh:
+                config_value = json.load(fh)
+            setattr(self, config_variable_name, config_value)
+
     def setUp(self):
+
+        # load all settings into self object
+        self.load_configs()
+
         # Original profiler list was substitute by self.env.firefox_settings_extensions
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
@@ -132,8 +144,8 @@ class BaseTest(unittest.TestCase):
         self.env.init_output_dir()
 
         # get browser type
-        if bool(os.getenv("webdriver")):
-            self.browser_type = os.getenv("browser_type")
+        if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
+            self.browser_type = self.exec_config['webdriver-run-browser']
         else:
             self.browser_type = self.env.get_browser_type()
 
@@ -152,15 +164,10 @@ class BaseTest(unittest.TestCase):
         # output result
         if self.round_status == 0:
             if hasattr(self, "crop_data"):
-                resultHelper.result_calculation(self.env, self.crop_data,
-                                                int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")),
-                                                os.getenv("PERFHERDER_REVISION"), os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                                          os.getenv("SUITE_RESULT_DP"), self.crop_data)
             else:
-                resultHelper.result_calculation(self.env, calc_si=int(os.getenv("CALC_SI")),
-                                                waveform=int(os.getenv("ENABLE_WAVEFORM")),
-                                                revision=os.getenv("PERFHERDER_REVISION"),
-                                                pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                                          os.getenv("SUITE_RESULT_DP"))
         else:
             logger.warning("This running result of execution is not successful, return code: " + str(self.round_status))

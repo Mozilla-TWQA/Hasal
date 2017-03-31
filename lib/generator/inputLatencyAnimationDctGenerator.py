@@ -11,7 +11,7 @@ from ..common.logConfig import get_logger
 logger = get_logger(__name__)
 
 
-class DctAnimationInputLatencyGenerator(object):
+class InputLatencyAnimationDctGenerator(object):
 
     SEARCH_TARGET_VIEWPORT = 'viewport'
     SEARCH_TARGET_ORIGINAL = 'original'
@@ -31,12 +31,12 @@ class DctAnimationInputLatencyGenerator(object):
 
         # crop sample data area
         # generate viewport crop area
-        if DctAnimationInputLatencyGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
-            return_result[input_generator_name]['crop_data'][DctAnimationInputLatencyGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[DctAnimationInputLatencyGenerator.SEARCH_TARGET_VIEWPORT]
+        if InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
+            return_result[input_generator_name]['crop_data'][InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT]
         else:
             viewport_value = find_image_viewport(input_sample_data['fp'])
-            return_result[input_generator_name]['crop_data'][DctAnimationInputLatencyGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
-            return_result[DctAnimationInputLatencyGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[input_generator_name]['crop_data'][InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
 
         # generate crop data
         if input_generator_name not in input_sample_dict[1]:
@@ -52,8 +52,8 @@ class DctAnimationInputLatencyGenerator(object):
         elif input_sample_index == 2:
             # tag event to sample
             return_result[input_generator_name]['event_tags'] = {}
-            for event_obj in DctAnimationInputLatencyGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
-                if event_obj['search_target'] == DctAnimationInputLatencyGenerator.SEARCH_TARGET_ORIGINAL:
+            for event_obj in InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
+                if event_obj['search_target'] == InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL:
                     return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
                 else:
                     search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']

@@ -1,0 +1,12 @@
+{
+  "default-result-fn"                        : "result.json",
+  "default-test-dn"                          : "tests",
+  "default-current-running-status-fn"        : "stat.json",
+  "default-running-statistics-fn"            : "running_statistics.json",
+  "default-case-complete-artifact-store-dn"  : "result",
+  "default-case-temp-artifact-store-dn"      : "temp",
+  "default-error-case-list"                  : "error_case_list.txt",
+  "default-user-simulation-tool-webdriver"   : "webdriver",
+  "default-snapshot-timing-base"             : "base",
+  "default-snapshot-timing-sikuli"           : "sikuli"
+}
