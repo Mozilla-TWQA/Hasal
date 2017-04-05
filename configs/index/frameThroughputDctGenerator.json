@@ -9,5 +9,5 @@
   "case-type"               : "re",
   "snapshot-timing"         : "sikuli",
   "supported-suite-fp"      : "",
-  "drop-outlier-flag"       : true
+  "drop-outlier-flag"       : false
 }

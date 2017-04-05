@@ -22,8 +22,6 @@ DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': '
                                           DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.fileExistValidator'}}}
 
 
-
-
 def validate_data(validator_settings, validator_data):
     """
 
@@ -295,8 +293,8 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
                        'configuration': {'generator': {
                            index_config['module-name']: {'path': index_config['module-path']}}}}
 
-        # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
-        #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
+        # {1:{'fp': 'xxcxxxx', 'RunTimeDctGenerator': 'dctobj', 'SpeedIndexGenerator': None, },
+        #  2:{'fp':'xxxxx', 'SpeedIndexGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
         #  }
         sample_result = run_modules(sample_settings, sample_data)
         generator_settings = sample_data['configuration']['generator']

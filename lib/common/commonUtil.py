@@ -33,6 +33,7 @@ class StatusRecorder(object):
         with open(self.status_fp, "w+") as fh:
             json.dump(self.current_status, fh)
 
+
 class CommonUtil(object):
     @staticmethod
     def atoi(text):

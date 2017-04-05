@@ -1,4 +1,3 @@
-import os
 import logging
 
 
@@ -11,10 +10,5 @@ def get_logger(name, enable_advance=None):
     if enable_advance:
         logger.setLevel(logging.DEBUG)
         return logger
-    #else:
-    #    if os.getenv("ENABLE_ADVANCE"):
-    #        if int(os.getenv("ENABLE_ADVANCE")) == 1:
-    #            logger.setLevel(logging.DEBUG)
-    #            return logger
     logger.setLevel(logging.INFO)
     return logger

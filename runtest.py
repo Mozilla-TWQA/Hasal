@@ -15,7 +15,6 @@ Options:
 """
 import os
 import json
-import time
 import copy
 import shutil
 import platform
@@ -128,10 +127,6 @@ class RunTest(object):
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
-        #result['KEEP_BROWSER'] = str(int(self.exec_config['keep-browser']))
-        #result['ENABLE_ONLINE'] = str(int(self.online_config['enable']))
-        #result['ONLINE_CONFIG'] = self.online_config['svr-config'] # TODO modify the parameter use in base test
-        #result['ENABLE_ADVANCE'] = str(int(self.exec_config['advance']))
         result['EXEC_CONFIG_FP'] = self.exec_config_fp
         result['INDEX_CONFIG_FP'] = self.index_config_fp
         result['GLOBAL_CONFIG_FP'] = self.global_config_fp
@@ -257,7 +252,7 @@ class RunTest(object):
                         test_env = None
                         test_name = ""
                         if self.index_config['case-type'] == "pt":
-                            test_case_module_name = "%s.%s" % (self.global_config['default-test-dn'],  "test_pilot_run")
+                            test_case_module_name = "%s.%s" % (self.global_config['default-test-dn'], "test_pilot_run")
                             runtime_case_data["SIKULI_SCRIPT_PATH"] = test_case
                             runtime_case_data["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case_module_name.split(".")[:-1])
                             if test_case.endswith(os.sep):
@@ -271,24 +266,30 @@ class RunTest(object):
                             test_case_module_name = test_case
                             runtime_case_data["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case.split(".")[:-1])
                             # if webdriver is enable, we need to get parameters for running browsers
-                            if self.exec_config['user-simulation-tool'] == self.global_config[
-                                'default-user-simulation-tool-webdriver']:
+                            if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
                                 runtime_case_data['webdriver'] = "True"
-                                runtime_case_data['browser_type'] = self.exec_config['webdriver-run-browser']
-                        if os.path.exists(test_case_fp):
-                            test_env = self.get_test_env(**runtime_case_data)
-                        else:
-                            self.logger.error("Test script [%s] is not exist!" % test_case_fp)
-                            continue
-                        data = self.loop_test(test_case_module_name, test_name, test_env)
-
-                        # case teardown
-                        self.case_teardown(data)
-
+                                for browser_type in self.exec_config['webdriver-run-browser']:
+                                    runtime_case_data['browser_type'] = browser_type
+                                    if os.path.exists(test_case_fp):
+                                        test_env = self.get_test_env(**runtime_case_data)
+                                    else:
+                                        self.logger.error("Test script [%s] is not exist!" % test_case_fp)
+                                        continue
+                                    data = self.loop_test(test_case_module_name, test_name, test_env)
+                                    # case teardown
+                                    self.case_teardown(data)
+                            else:
+                                if os.path.exists(test_case_fp):
+                                    test_env = self.get_test_env(**runtime_case_data)
+                                else:
+                                    self.logger.error("Test script [%s] is not exist!" % test_case_fp)
+                                    continue
+                                data = self.loop_test(test_case_module_name, test_name, test_env)
+                                # case teardown
+                                self.case_teardown(data)
 
         else:
             self.logger.error("Current suite file [%s] contains test cases which are not supported." % self.exec_config['exec-suite-fp'])
-
 
     def run(self):
         self.suite_setup()

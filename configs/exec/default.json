@@ -5,6 +5,6 @@
   "keep-browser" : false,
   "comment"      : "<today>",
   "user-simulation-tool" : "sikuli",
-  "webdriver-run-browser" : "firefox",
+  "webdriver-run-browser" : ["firefox"],
   "exec-suite-fp": "./suite.txt"
 }

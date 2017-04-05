@@ -1,4 +1,3 @@
-import os
 import time
 import json
 import baseTest
@@ -51,7 +50,7 @@ class PerfBaseTest(baseTest.BaseTest):
                                            self.env.img_output_sample_1_fn)
         time.sleep(2)
 
-        # Record timestamp t2
+        # Record timestamp t1
         with open(self.env.DEFAULT_TIMESTAMP, "r+") as fh:
             timestamp = json.load(fh)
             timestamp['t1'] = time.time()
