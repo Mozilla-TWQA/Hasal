@@ -2,7 +2,7 @@
 
 Hasal Tools.
 
-## parse_hasal_result
+## parse\_hasal\_result
 
 ### Prepare
 
@@ -22,7 +22,7 @@ result.json
 ### Running
 
 Starting parsing the `result.json` file.
-Note: you can generate your API key from [HERE](https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey). 
+Note: you can generate your API key from [HERE](https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey).
 ```bash
 $ python tools/parse_hasal_result.py --input result.json
 1) Enter API Key
@@ -59,3 +59,20 @@ Skip - FOO F00 FQQ
 
 [Failed Bug List]
 ```
+
+
+# Jupyter
+
+## Input Latency Report Template
+report-input-latency.ipynb is designed to generate report for input latency test. Please follow next section to execute ipynb file in shell
+
+## Run jupyter report in shell
+
+```bash
+$ for f in *.json ; do file=$f runipy report-input-latency.ipynb report-$f.ipynb; done
+```
+
+## Frame Throughput Report Template
+
+
+
