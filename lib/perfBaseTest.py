@@ -6,7 +6,6 @@ import helper.desktopHelper as desktopHelper
 import lib.sikuli as sikuli
 import lib.helper.videoHelper as videoHelper
 from helper.profilerHelper import Profilers
-from lib.common.visualmetricsWrapper import find_image_viewport
 from common.logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -46,6 +45,10 @@ class PerfBaseTest(baseTest.BaseTest):
             videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_1_fn)
 
+        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+                videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                           self.env.img_output_sample_1_fn)
         time.sleep(2)
 
         # Record timestamp t2
@@ -71,6 +74,10 @@ class PerfBaseTest(baseTest.BaseTest):
         if self.index_config['snapshot-timing'] == self.global_config['default-snapshot-timing-base']:
             videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_2_fn)
+        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
+                videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+                                           self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)

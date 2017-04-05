@@ -57,6 +57,7 @@ class FrameThroughputDctGenerator(object):
                 end_event_index = image_fn_list.index(end_event_fn)
 
             # calculate viewport variations between start point and end point
+            # based on variation to determine if frame is freeze and result in frame throughput related values
             start_target_fp = input_image_list[image_fn_list[start_event_index]][self.SEARCH_TARGET_VIEWPORT]
             start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
             img_list_dct = [convert_to_dct(start_target_fp)]
@@ -73,7 +74,7 @@ class FrameThroughputDctGenerator(object):
                 mismatch_rate = np.sum(np.absolute(np.subtract(img_list_dct[-2], img_list_dct[-1]))) / (weight * height)
                 if not mismatch_rate:
                     freeze_count += 1
-                    logger.info("Image freeze from previous frame: %s - %f", image_fn, mismatch_rate)
+                    logger.debug("Image freeze from previous frame: %s", image_fn)
                 else:
                     current_long_frame = image_data['time_seq'] - base_time_seq
                     frame_throughput_time_seq.append(image_data['time_seq'])
@@ -210,6 +211,7 @@ class FrameThroughputDctGenerator(object):
         compare_result['running_time_result'] = compare_with_sample_image_multi_process(input_data['sample_result'],
                                                                                         input_image_list,
                                                                                         compare_setting)
+        # get frame throughput values
         compare_result.update(
             self.get_frame_throughput(compare_result['running_time_result'], compare_result['merged_crop_image_list']))
 

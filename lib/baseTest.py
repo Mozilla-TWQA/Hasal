@@ -32,8 +32,6 @@ class BaseTest(unittest.TestCase):
             terminal_title = ['Hasal']
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
-        self.viewport = None
-        # TODO: to fulfill new architecture, viewport should be handled by sample converter
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
@@ -80,8 +78,20 @@ class BaseTest(unittest.TestCase):
                             height_offset = 20
                             terminal_height = 60
                         elif sys.platform == 'win32':
-                            height_offset = 0
-                            terminal_height = 70
+                            import platform
+                            release_version = platform.release()
+                            if release_version == '10':
+                                logger.info("Move terminal window for Windows 10.")
+                                height_offset = -4
+                                terminal_height = 100
+                            elif release_version == '7':
+                                logger.info("Move terminal window for Windows 7.")
+                                height_offset = 0
+                                terminal_height = 80
+                            else:
+                                logger.info("Move terminal window for Windows.")
+                                height_offset = 0
+                                terminal_height = 80
                         elif sys.platform == 'darwin':
                             # TODO: This offset settings only be tested on Mac Book Air
                             height_offset = 115
