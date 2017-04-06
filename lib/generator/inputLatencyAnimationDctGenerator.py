@@ -47,11 +47,9 @@ class InputLatencyAnimationDctGenerator(object):
         # crop images
         crop_images(crop_data_dict)
 
-        if input_sample_index == 1:
-            return_result[input_generator_name]['event_tags'] = {}
-        elif input_sample_index == 2:
+        return_result[input_generator_name]['event_tags'] = {}
+        if input_sample_index == 2:
             # tag event to sample
-            return_result[input_generator_name]['event_tags'] = {}
             for event_obj in InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
                 if event_obj['search_target'] == InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL:
                     return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
