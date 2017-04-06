@@ -266,26 +266,19 @@ class RunTest(object):
                             test_case_module_name = test_case
                             runtime_case_data["TEST_SCRIPT_PY_DIR_PATH"] = os.sep.join(test_case.split(".")[:-1])
                             # if webdriver is enable, we need to get parameters for running browsers
+                            if not os.path.exists(test_case_fp):
+                                self.logger.error("Test script [%s] is not exist!" % test_case_fp)
+                                continue
                             if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
                                 runtime_case_data['webdriver'] = "True"
                                 for browser_type in self.exec_config['webdriver-run-browser']:
                                     runtime_case_data['browser_type'] = browser_type
-                                    if os.path.exists(test_case_fp):
-                                        test_env = self.get_test_env(**runtime_case_data)
-                                    else:
-                                        self.logger.error("Test script [%s] is not exist!" % test_case_fp)
-                                        continue
+                                    test_env = self.get_test_env(**runtime_case_data)
                                     data = self.loop_test(test_case_module_name, test_name, test_env)
-                                    # case teardown
                                     self.case_teardown(data)
                             else:
-                                if os.path.exists(test_case_fp):
-                                    test_env = self.get_test_env(**runtime_case_data)
-                                else:
-                                    self.logger.error("Test script [%s] is not exist!" % test_case_fp)
-                                    continue
+                                test_env = self.get_test_env(**runtime_case_data)
                                 data = self.loop_test(test_case_module_name, test_name, test_env)
-                                # case teardown
                                 self.case_teardown(data)
 
         else:
