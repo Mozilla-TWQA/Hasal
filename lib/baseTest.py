@@ -155,7 +155,7 @@ class BaseTest(unittest.TestCase):
 
         # get browser type
         if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
-            self.browser_type = self.exec_config['webdriver-run-browser']
+            self.browser_type = os.getenv("browser_type")
         else:
             self.browser_type = self.env.get_browser_type()
 
