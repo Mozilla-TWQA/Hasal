@@ -212,7 +212,7 @@ IF "%APPVEYOR%"=="True" (
 conda config --set always_yes yes --set changeps1 no
 conda install psutil
 ECHO [INFO] Creating Miniconda virtualenv (It might take some time to finish.)
-conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip
+conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip matplotlib==1.5.3 runipy==0.1.5
 
 ::::::::::::::::::::
 ::    Browsers    ::
