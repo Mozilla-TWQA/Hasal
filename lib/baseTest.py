@@ -154,6 +154,8 @@ class BaseTest(unittest.TestCase):
         self.env.init_output_dir()
 
         # get browser type
+        # TODO Maybe we can set runtime_case_data['browser_type' here, so baseTest.py can use one line self.browser_type = os.getenv("browser_type").
+
         if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
             self.browser_type = os.getenv("browser_type")
         else:
