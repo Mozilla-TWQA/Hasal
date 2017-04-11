@@ -1,0 +1,13 @@
+{
+  "module-name"             : "InputLatencyDctGenerator",
+  "module-path"             : "lib.generator.inputLatencyDctGenerator",
+  "sample-converter-name"   : "SampleConverter",
+  "sample-converter-path"   : "lib.converter.sampleConverter",
+  "image-converter-name"    : "Cv2Converter",
+  "image-converter-path"    : "lib.converter.cv2Converter",
+  "image-converter-format"  : "bmp",
+  "case-type"               : "re",
+  "snapshot-timing"         : "sikuli",
+  "supported-suite-fp"      : "",
+  "drop-outlier-flag"       : false
+}

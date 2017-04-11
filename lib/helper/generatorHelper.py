@@ -17,23 +17,9 @@ RET_SUCCESSS = 0
 
 DEFAULT_FPS_VALIDATOR_NAME = 'FPSValidator'
 DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
-DEFAULT_DCTRUNTIME_GENERATOR_NAME = 'DctRunTimeGenerator'
-DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
-DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME = 'DctInputLatencyGenerator'
-DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME = 'DctAnimationInputLatencyGenerator'
-DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME = 'DctFrameThroughputGenerator'
-DEFAULT_FFMPEG_CONVERTER_NAME = 'FfmpegConverter'
-DEFAULT_CV2_CONVERTER_NAME = 'Cv2Converter'
-DEFAULT_SAMPLE_CONVERTER_NAME = 'SampleConverter'
-FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME = 'FTSampleConverter'
 
 DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsValidator'},
                                           DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.fileExistValidator'}}}
-
-DEFAULT_CONVERTER_SETTINGS = {'modules': {DEFAULT_CV2_CONVERTER_NAME: {'path': 'lib.converter.cv2Converter'}}}
-
-DEFAULT_SAMPLE_CONVERTER_SETTINGS = {'modules': {DEFAULT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.sampleConverter'}}}
-FT_SAMPLE_CONVERTER_SETTINGS = {'modules': {FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.ftSampleConverter'}}}
 
 
 def validate_data(validator_settings, validator_data):
@@ -265,7 +251,7 @@ def get_json_data(input_fp, initial_timestamp_name):
     return timestamp_list
 
 
-def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platform="", suite_upload_dp="", viewport=""):
+def calculate(env, global_config, exec_config, index_config, firefox_config, online_config, suite_upload_dp="", crop_data=None):
     """
 
     @param env: from lib.common.environment.py
@@ -293,66 +279,26 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
     if validate_result['validate_result']:
         # using different converter will introduce different time seq,
         # the difference range will between 0.000000000002 to 0.000000000004 ms (cv2 is lower than ffmpeg)
-        converter_settings = copy.deepcopy(DEFAULT_CONVERTER_SETTINGS)
+        converter_settings = {'modules': {index_config['image-converter-name']: {'path': index_config['image-converter-path']}}}
         converter_data = {
-            DEFAULT_CV2_CONVERTER_NAME: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
-                                         'convert_fmt': 'bmp',
-                                         'current_fps': validate_result[DEFAULT_FPS_VALIDATOR_NAME]['output_result'],
-                                         'exec_timestamp_list': exec_timestamp_list}}
-        converter_result = run_modules(converter_settings, converter_data[DEFAULT_CV2_CONVERTER_NAME])
+            index_config['image-converter-name']: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
+                                                   'convert_fmt': index_config['image-converter-format'],
+                                                   'current_fps': validate_result[DEFAULT_FPS_VALIDATOR_NAME][
+                                                       'output_result'],
+                                                   'exec_timestamp_list': exec_timestamp_list}}
+        converter_result = run_modules(converter_settings, converter_data[index_config['image-converter-name']])
 
-        current_sample_converter_name = DEFAULT_SAMPLE_CONVERTER_NAME
-        sample_settings = copy.deepcopy(DEFAULT_SAMPLE_CONVERTER_SETTINGS)
-        if waveform == 1:
-            # AIL, dctInputLatencyGenerator
-            sample_data = {
-                'sample_dp': env.img_sample_dp,
-                'configuration': {
-                    'generator': {
-                        DEFAULT_DCTINPUTLATENCY_GENERATOR_NAME: {
-                            'path': 'lib.generator.dctInputLatencyGenerator'
-                        }
-                    }
-                }
-            }
-        elif waveform == 2:
-            # AIL, dctAnimationInputLatencyGenerator
-            sample_data = {
-                'sample_dp': env.img_sample_dp,
-                'configuration': {
-                    'generator': {
-                        DEFAULT_DCTANIMATIONINPUTLATENCY_GENERATOR_NAME: {
-                            'path': 'lib.generator.dctAnimationInputLatencyGenerator'
-                        }
-                    }
-                }
-            }
-        elif waveform == 3:
-            # FT, dctFrameThroughputGenerator
-            current_sample_converter_name = FRAME_THROUGHPUT_SAMPLE_CONVERTER_NAME
-            sample_settings = copy.deepcopy(FT_SAMPLE_CONVERTER_SETTINGS)
-            sample_data = {
-                'sample_dp': env.img_sample_dp,
-                'configuration': {
-                    'generator': {
-                        DEFAULT_DCTFRAMETHROUGHPUT_GENERATOR_NAME: {
-                            'path': 'lib.generator.dctFrameThroughputGenerator'}}},
-                'orig_sample': env.img_output_sample_1_fn}
-        else:
-            # normal cases
-            sample_data = {'sample_dp': env.img_sample_dp,
-                           'configuration': {'generator': {
-                               DEFAULT_DCTRUNTIME_GENERATOR_NAME: {'path': 'lib.generator.dctRunTimeGenerator'}}}}
-            if calc_si == 1:
-                sample_data['configuration']['generator'][DEFAULT_SPEEDINDEX_GENERATOR_NAME] = {
-                    'path': 'lib.generator.speedIndexGenerator'}
+        sample_settings = {'modules': {index_config['sample-converter-name']: {'path': index_config['sample-converter-path']}}}
+        sample_data = {'sample_dp': env.img_sample_dp,
+                       'configuration': {'generator': {
+                           index_config['module-name']: {'path': index_config['module-path']}}}}
 
-        # {1:{'fp': 'xxcxxxx', 'DctRunTimeGenerator': 'dctobj', 'SSIMRunTimeGenerator': None, },
-        #  2:{'fp':'xxxxx', 'SSIMRunTimeGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
+        # {1:{'fp': 'xxcxxxx', 'RunTimeDctGenerator': 'dctobj', 'SpeedIndexGenerator': None, },
+        #  2:{'fp':'xxxxx', 'SpeedIndexGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},
         #  }
         sample_result = run_modules(sample_settings, sample_data)
         generator_settings = sample_data['configuration']['generator']
-        generator_data = {'converter_result': converter_result[DEFAULT_CV2_CONVERTER_NAME], 'sample_result': sample_result[current_sample_converter_name],
+        generator_data = {'converter_result': converter_result[index_config['image-converter-name']], 'sample_result': sample_result[index_config['sample-converter-name']],
                           'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS, 'exec_timestamp_list': exec_timestamp_list}
         generator_result = run_generators(generator_settings, generator_data)
 
@@ -372,12 +318,9 @@ def calculate(env, crop_data=None, calc_si=0, waveform=0, revision="", pkg_platf
             fh.write(json.dumps(stat_data))
 
         if calculator_result is not None:
-            drop_outlier = True
-            if waveform != 0:
-                drop_outlier = False
             output_result(env.test_name, calculator_result, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT,
-                          env.test_method_doc, env.DEFAULT_OUTLIER_CHECK_POINT, env.video_output_fp,
-                          env.web_app_name, revision, pkg_platform, env.output_name, drop_outlier)
+                          env.test_method_doc, exec_config['max-run'], env.video_output_fp,
+                          env.web_app_name, online_config['perfherder-revision'], online_config['perfherder-pkg-platform'], env.output_name, index_config['drop-outlier-flag'])
             start_time = time.time()
             output_video(calculator_result, env.converted_video_output_fp)
             current_time = time.time()

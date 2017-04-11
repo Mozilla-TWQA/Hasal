@@ -1,0 +1,13 @@
+{
+  "module-name"             : "SpeedIndexGenerator",
+  "module-path"             : "lib.generator.speedIndexGenerator",
+  "sample-converter-name"   : "SampleConverter",
+  "sample-converter-path"   : "lib.converter.sampleConverter",
+  "image-converter-name"    : "Cv2Converter",
+  "image-converter-path"    : "lib.converter.cv2Converter",
+  "image-converter-format"  : "bmp",
+  "case-type"               : "re",
+  "snapshot-timing"         : "base",
+  "supported-suite-fp"      : "",
+  "drop-outlier-flag"       : false
+}

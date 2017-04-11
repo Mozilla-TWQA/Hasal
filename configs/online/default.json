@@ -1,0 +1,12 @@
+{
+  "enable"                  : false,
+  "perfherder-revision"     : "",
+  "perfherder-pkg-platform" : "",
+  "jenkins-build-no"        : 0,
+  "perfherder-suitename"    : "",
+  "svr-config" : {
+    "svr_addr": "127.0.0.1",
+    "svr_port": 1234,
+    "project_name": "hasal"
+  }
+}

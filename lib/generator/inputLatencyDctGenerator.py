@@ -6,7 +6,7 @@ from ..common.logConfig import get_logger
 logger = get_logger(__name__)
 
 
-class DctInputLatencyGenerator(object):
+class InputLatencyDctGenerator(object):
 
     SEARCH_TARGET_ORIGINAL = 'original'
     SKIP_STATUS_BAR_FRACTION = 1.0
@@ -25,10 +25,10 @@ class DctInputLatencyGenerator(object):
         # tag event to sample
         return_result[input_generator_name]['event_tags'] = {}
         if input_sample_index == 1:
-            for event_obj in DctInputLatencyGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
+            for event_obj in InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
         elif input_sample_index == 2:
-            for event_obj in DctInputLatencyGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
+            for event_obj in InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
         return return_result
 

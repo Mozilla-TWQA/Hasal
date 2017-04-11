@@ -1,4 +1,3 @@
-import os
 import json
 import time
 import baseTest
@@ -41,10 +40,9 @@ class WebdriverBaseTest(baseTest.BaseTest):
 
         # capture 1st snapshot
         time.sleep(5)
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                           self.env.img_output_sample_1_fn)
+        if self.index_config['snapshot-timing'] == self.global_config['default-snapshot-timing-base']:
+            videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                                       self.env.img_output_sample_1_fn)
         time.sleep(2)
 
         # Record timestamp t1
@@ -66,16 +64,15 @@ class WebdriverBaseTest(baseTest.BaseTest):
 
         # capture 2nd snapshot
         time.sleep(5)
-        if not int(os.getenv("ENABLE_WAVEFORM")) and self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                           self.env.img_output_sample_2_fn)
+        if self.index_config['snapshot-timing'] == self.global_config['default-snapshot-timing-base']:
+            videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+                                       self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)
 
         # Stop browser
-        if int(os.getenv("KEEP_BROWSER")) == 0:
+        if self.exec_config['keep-browser'] is False:
             self.wd.close_browser(self.browser_type)
 
         super(WebdriverBaseTest, self).tearDown()
