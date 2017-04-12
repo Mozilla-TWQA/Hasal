@@ -7,7 +7,8 @@
   "image-converter-path"    : "lib.converter.cv2Converter",
   "image-converter-format"  : "bmp",
   "case-type"               : "re",
-  "snapshot-timing"         : "sikuli",
+  "snapshot-base-sample1"   : true,
+  "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : false
 }
