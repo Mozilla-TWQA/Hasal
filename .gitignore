@@ -30,6 +30,8 @@ docs/*
 *.flow
 *.bak
 *.txt
+! requirements.txt
+! requirements_mac.txt
 
 # 3rd party files
 thirdParty/*
