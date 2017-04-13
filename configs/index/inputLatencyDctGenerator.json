@@ -10,5 +10,6 @@
   "snapshot-base-sample1"   : false,
   "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
-  "drop-outlier-flag"       : false
+  "drop-outlier-flag"       : false,
+  "video-recording-fps"     : 90
 }

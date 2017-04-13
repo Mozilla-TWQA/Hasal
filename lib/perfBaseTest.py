@@ -22,7 +22,7 @@ class PerfBaseTest(baseTest.BaseTest):
         self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
 
         # Start video recordings
-        self.profilers = Profilers(self.env, self.browser_type, self.sikuli)
+        self.profilers = Profilers(self.env, self.index_config, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
         # Record initial timestamp
@@ -40,13 +40,9 @@ class PerfBaseTest(baseTest.BaseTest):
         # capture 1st snapshot
         time.sleep(5)
 
-        if self.index_config['snapshot-base-sample1']:
-            videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                       self.env.img_output_sample_1_fn)
-
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample1'] is True:
+                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_1_fn)
         time.sleep(2)
 
@@ -70,12 +66,9 @@ class PerfBaseTest(baseTest.BaseTest):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if self.index_config['snapshot-base-sample2']:
-            videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                       self.env.img_output_sample_2_fn)
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                videoHelper.capture_screen(self.env, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample2'] is True:
+                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data

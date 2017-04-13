@@ -87,7 +87,7 @@ def run_generators(generator_settings, generator_data):
     return generator_result
 
 
-def output_video(result_data, video_fp):
+def output_video(result_data, video_fp, index_config):
     start_fp = None
     end_fp = None
     current_run_result = result_data['running_time_result']
@@ -108,7 +108,7 @@ def output_video(result_data, video_fp):
         start_fn = os.path.basename(start_fp)
         end_fn = os.path.basename(end_fp)
         file_ext = os.path.splitext(start_fn)[1]
-        extended_range = Environment.DEFAULT_VIDEO_RECORDING_FPS
+        extended_range = index_config['video-recording-fps']
         start_index = max(0, img_list.index(start_fn) - extended_range)
         end_index = min(len(img_list) - 1, img_list.index(end_fn) + extended_range)
         tempdir = tempfile.mkdtemp()
@@ -121,7 +121,7 @@ def output_video(result_data, video_fp):
 
     codec = "ffmpeg"
     source = " -i " + os.path.join(tempdir, "%05d" + file_ext)
-    fps = " -r " + str(Environment.DEFAULT_VIDEO_RECORDING_FPS)
+    fps = " -r " + str(index_config['video-recording-fps'])
     video_format = " -pix_fmt yuv420p"
     video_out = " " + video_fp
     command = codec + source + fps + video_format + video_out
@@ -322,7 +322,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
                           env.test_method_doc, exec_config['max-run'], env.video_output_fp,
                           env.web_app_name, online_config['perfherder-revision'], online_config['perfherder-pkg-platform'], env.output_name, index_config['drop-outlier-flag'])
             start_time = time.time()
-            output_video(calculator_result, env.converted_video_output_fp)
+            output_video(calculator_result, env.converted_video_output_fp, index_config)
             current_time = time.time()
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
