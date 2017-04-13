@@ -181,4 +181,3 @@ class WindowObject(object):
         else:
             logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
             return False
-
