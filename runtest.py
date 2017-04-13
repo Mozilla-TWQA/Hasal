@@ -49,11 +49,11 @@ class RunTest(object):
         self.global_config = {}
         self.firefox_config = {}
         # load exec-config, firefox-config, index-config, online-config and global config to self object
-        self.exec_config_fp = os.path.join(os.getcwd(), kwargs['exec_config'])
-        self.firefox_config_fp = os.path.join(os.getcwd(), kwargs['firefox_config'])
-        self.index_config_fp = os.path.join(os.getcwd(), kwargs['index_config'])
-        self.online_config_fp = os.path.join(os.getcwd(), kwargs['online_config'])
-        self.global_config_fp = os.path.join(os.getcwd(), kwargs['global_config'])
+        self.exec_config_fp = os.path.abspath(kwargs['exec_config'])
+        self.firefox_config_fp = os.path.abspath(kwargs['firefox_config'])
+        self.index_config_fp = os.path.abspath(kwargs['index_config'])
+        self.online_config_fp = os.path.abspath(kwargs['online_config'])
+        self.global_config_fp = os.path.abspath(kwargs['global_config'])
         for variable_name in kwargs.keys():
             setattr(self, variable_name, load_json_file(kwargs[variable_name]))
 

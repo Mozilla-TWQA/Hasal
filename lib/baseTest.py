@@ -64,7 +64,7 @@ class BaseTest(unittest.TestCase):
                     time.sleep(1)
                     logger.debug("Check browser show up %d time(s)." % (i + 1))
                     desktopHelper.lock_window_pos(self.browser_type)
-                    videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+                    videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                                self.env.img_output_sample_1_fn)
                     if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
                         logger.debug("Browser shown, adjust viewport by setting.")
