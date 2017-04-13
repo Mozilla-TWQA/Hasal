@@ -41,8 +41,7 @@ class PerfBaseTest(baseTest.BaseTest):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and \
-                            self.index_config['snapshot-base-sample1'] is True:
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample1'] is True:
                 videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_1_fn)
         time.sleep(2)
@@ -68,8 +67,7 @@ class PerfBaseTest(baseTest.BaseTest):
         time.sleep(5)
 
         if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and \
-                            self.index_config['snapshot-base-sample2'] is True:
+            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample2'] is True:
                 videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                            self.env.img_output_sample_2_fn)
 
