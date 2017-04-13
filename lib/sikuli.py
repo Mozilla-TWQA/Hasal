@@ -53,21 +53,22 @@ class Sikuli():
                 except:
                     print('Cannot close {} by appscript library.')
 
-        elif sys.platform == 'linux2':
-            print('Closing {} by wmctrl ...'.format(browser))
+        else:
             window_title_list = [browser]
             if browser.lower() == 'firefox':
                 window_title_list = ["Mozilla Firefox", "Nightly"]
             elif browser.lower() == 'chrome':
                 window_title_list = ['Google Chrome']
-            # Moving window by strings from window_title
-            window_obj = WindowObject(window_title_list)
-            if window_obj.wmctrl_close_window():
-                print('Close successful.')
 
-        else:
-            # it only works on Windows now
-            script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
-            script_dir_path = script_path + "/closeBrowser.sikuli"
-            args_list = [browser, sys.platform, self.set_syspath(self.hasal_dir)]
-            self.run_sikulix_cmd(script_dir_path, args_list)
+            if sys.platform == 'linux2':
+                print('Closing {} by wmctrl ...'.format(browser))
+                # Closing window by strings from window_title
+                window_obj = WindowObject(window_title_list)
+                if window_obj.wmctrl_close_window():
+                    print('Close successful.')
+            else:
+                print('Closing {} by pywin32 ...'.format(browser))
+                # Closing window by strings from window_title
+                window_obj = WindowObject(window_title_list)
+                if window_obj.pywin32_close_window():
+                    print('Close successful.')

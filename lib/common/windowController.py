@@ -107,6 +107,28 @@ class WindowObject(object):
         logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
+    def pywin32_close_window_callback(self, hwnd, extra):
+        window_title = win32gui.GetWindowText(hwnd)
+        for name in self.window_name_list:
+            if name in window_title:
+                # WM_CLOSE = Prompt Confirmation + WM_DESTROY
+                # close windows
+                win32gui.PostMessage(hwnd, win32con.WM_DESTROY, 0, 0)
+                self.callback_ret = True
+                logger.info('Found [{}] and closed the window.'.format(name))
+                break
+
+    def pywin32_close_window(self):
+        # try to close window
+        for counter in range(10):
+            win32gui.EnumWindows(self.pywin32_close_window_callback, None)
+            if self.callback_ret:
+                self.callback_ret = None
+                return True
+            time.sleep(1)
+        logger.warning('Cannot found one of [{}] for closing.'.format(self.window_name_list))
+        return False
+
     def appscript_move_window(self):
         # try to move window after window launched
         for counter in range(10):
@@ -159,3 +181,4 @@ class WindowObject(object):
         else:
             logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
             return False
+
