@@ -38,5 +38,3 @@ sleep(1)
 t2 = time.time()
 com.updateJson({'t1': t1, 't2': t2}, sys.argv[8])
 shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
-
-
