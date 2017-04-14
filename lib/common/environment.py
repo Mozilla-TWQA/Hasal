@@ -34,7 +34,7 @@ class Environment(object):
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
     DEFAULT_BROWSER_WIDTH = 1024
-    DEFAULT_BROWSER_HEIGHT = 800
+    DEFAULT_BROWSER_HEIGHT = 780
     DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
     DEFAULT_BROWSER_TYPE_CHROME = "chrome"
     if platform.system().lower() == "darwin":

@@ -139,7 +139,8 @@ class WindowObject(object):
                     print('Found [{}] and closed the window.'.format(appname))
                     return True
                 except:
-                    print('Cannot found one of [{}] for closing.'.format(self.window_name_list))
+                    pass
+        print('Cannot found one of [{}] for closing.'.format(self.window_name_list))
         return False
 
     def move_window_mac(self):
