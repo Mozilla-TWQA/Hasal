@@ -2,7 +2,6 @@ import os
 import sys
 import importlib
 import subprocess
-import lib.sikuli  # NOQA
 from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
@@ -64,6 +63,16 @@ def launch_browser(browser_type, **kwargs):
     return browser_obj, profile_path
 
 
+def close_browser(browser_type):
+    window_title_list = browser_type.lower()
+    if browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
+        window_title_list = ['Mozilla Firefox', 'Firefox', 'FirefoxNightly']
+    elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
+        window_title_list = ['Google Chrome']
+    window_obj = WindowObject(window_title_list)
+    window_obj.close_window()
+
+
 # TODO: need to finish webdriver way to get version
 def get_browser_version(browser_type):
     chrome_class, firefox_class = _load_browser_class(engine_type)
@@ -77,7 +86,7 @@ def get_browser_version(browser_type):
 
 
 def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
-    window_title_list = None
+    window_title_list = browser_type.lower()
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         if sys.platform == "darwin":
             window_title_list = ["Firefox.app", "FirefoxNightly.app"]
