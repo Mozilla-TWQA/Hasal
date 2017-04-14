@@ -137,24 +137,42 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 * Run with proxy:        `python runtest.py re suite.txt --profiler=avconv,mitmdump`
 
 ### Usage
+Enter python virtual environment first
+## For MAC OS / Ubuntu
 ```
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+cd %HASAL_WORKING_DIR%
+source .env-python/bin/activate
+```
+## For Windows
+```
+cd %HASAL_WORKING_DIR%
+activate env-python
+```
+
+Execute runtest.py
+```
+  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
+  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--firefox-settings=<str>] [--comment=<str>] [--advance] [--waveform] [--perfherder-revision=<str>] [--perfherder-pkg-platform=<str>] [--jenkins-build-no=<int>] [--perfherder-suitename=<str>]
   runtest.py (-h | --help)
 ```
 
 ### Options:
 ```
-  -h --help                 Show this screen.
-  --max-run=<int>           Test run max no [default: 30].
-  --max-retry=<int>         Test failed retry max no [default: 15].
-  --keep-browser            Keep the browser open after test script executed
-  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --online                  Result will be transfer to server, calculated by server
-  --online-config=<str>     Online server config [default: svrConfig.json]
-  --comment=<str>           Tag the comment on this test [default: <today>]
-  --advance                 Only for expert user
+  -h --help                       Show this screen.
+  --max-run=<int>                 Test run max no [default: 30].
+  --max-retry=<int>               Test failed retry max no [default: 15].
+  --keep-browser                  Keep the browser open after test script executed
+  --calc-si                       Calculate the speed index (si) and perceptual speed index (psi)
+  --firefox-settings=<str>        Specify the Firefox settings. [default: settings/default.json]
+  --online                        Result will be transfer to server, calculated by server
+  --online-config=<str>           Online server config [default: svrConfig.json]
+  --comment=<str>                 Tag the comment on this test [default: <today>]
+  --advance                       Only for expert user
+  --waveform                      Waveform generated after case finished
+  --perfherder-revision=<str>     Revision for upload to perfherder
+  --perfherder-pkg-platform=<str> Package platform for upload to perfherder
+  --jenkins-build-no=<int>        Jenkins build no [default: 0].
+  --perfherder-suitename=<str>    Suite name used for shown on perfherder.
 ```
 
 ### Output folder structure as below:
