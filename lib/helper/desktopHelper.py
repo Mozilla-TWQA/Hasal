@@ -66,7 +66,7 @@ def launch_browser(browser_type, **kwargs):
 def close_browser(browser_type):
     window_title_list = browser_type.lower()
     if browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
-        window_title_list = ['Mozilla Firefox', 'Firefox', 'FirefoxNightly']
+        window_title_list = ['Mozilla Firefox', 'Firefox', 'Nightly']
     elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
         window_title_list = ['Google Chrome']
     window_obj = WindowObject(window_title_list)

@@ -81,8 +81,8 @@ class WindowObject(object):
         else:
             wmctrl_cmd = ' '.join([self.DEFAULT_WMCTRL_CMD, '-i', '-c', self.window_identity])
             logger.debug('Close windows command: [%s]' % wmctrl_cmd)
-            logger.info('Closing window [{}] ...'.format(self.window_identity_name))
             subprocess.call(wmctrl_cmd, shell=True)
+            logger.info('Found [{}] and closed the window.'.format(self.window_identity_name))
             return True
 
     def _move_window_win32_cb(self, hwnd, extra):
@@ -136,10 +136,10 @@ class WindowObject(object):
                 try:
                     browser_obj = app(appname)
                     browser_obj.quit()
-                    print('Close {} successful.'.format(appname))
+                    print('Found [{}] and closed the window.'.format(appname))
                     return True
                 except:
-                    print('Cannot close {} by appscript library.')
+                    print('Cannot found one of [{}] for closing.'.format(self.window_name_list))
         return False
 
     def move_window_mac(self):
