@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import sys
+import copy
 import time
 import json
 import unittest
@@ -128,11 +129,18 @@ class BaseTest(unittest.TestCase):
             self.target_helper.delete_target(self.test_url_id)
 
     def load_configs(self):
+        default_platform_dep_settings_key = "platform-dep-settings"
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+        current_platform_name = sys.platform
         for config_env_name in config_fp_list:
             config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
             with open(os.getenv(config_env_name)) as fh:
                 config_value = json.load(fh)
+            if default_platform_dep_settings_key in config_value:
+                if current_platform_name in config_value[default_platform_dep_settings_key]:
+                    platform_dep_variables = copy.deepcopy(config_value[default_platform_dep_settings_key][current_platform_name])
+                    config_value.update(platform_dep_variables)
+                config_value.pop(default_platform_dep_settings_key)
             setattr(self, config_variable_name, config_value)
 
     def setUp(self):

@@ -11,5 +11,15 @@
   "snapshot-base-sample2"   : true,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : true,
-  "video-recording-fps"     : 60
+  "platform-dep-settings"   : {
+    "darwin":{
+      "video-recording-fps"     : 60
+    },
+    "win32":{
+      "video-recording-fps"     : 60
+    },
+    "linux2":{
+      "video-recording-fps"     : 60
+    }
+  }
 }

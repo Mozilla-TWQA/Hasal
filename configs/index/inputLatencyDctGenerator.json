@@ -11,5 +11,21 @@
   "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : false,
-  "video-recording-fps"     : 90
+  "platform-dep-settings"   : {
+    "darwin":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.01,
+      "search-margin"           : 1
+    },
+    "win32":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.005,
+      "search-margin"           : 1
+    },
+    "linux2":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.005,
+      "search-margin"           : 1
+    }
+  }
 }

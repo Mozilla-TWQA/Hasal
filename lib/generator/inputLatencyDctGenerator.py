@@ -53,9 +53,9 @@ class InputLatencyDctGenerator(object):
             input_image_list[image_fn][self.SEARCH_TARGET_ORIGINAL] = input_image_list[image_fn]['fp']
 
         # compare images
-        compare_setting = {'default_fps': input_data['default_fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
+        compare_setting = {'default_fps': input_data['index_config']['video-recording-fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
                            'generator_name': self.__class__.__name__, 'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
-                           'exec_timestamp_list': input_data['exec_timestamp_list'], 'threshold': 0.005, 'search_margin': 1}
+                           'exec_timestamp_list': input_data['exec_timestamp_list'], 'threshold': input_data['index_config']['compare-threshold'], 'search_margin': input_data['index_config']['search-margin']}
         compare_result['running_time_result'] = compare_with_sample_image_multi_process(input_data['sample_result'], input_image_list, compare_setting)
 
         return compare_result
