@@ -47,7 +47,7 @@ class Cv2Converter(object):
                 in_search_flag = False
                 str_image_fn = "image_%05d.bmp" % img_cnt
                 str_image_fp = os.path.join(input_data['output_img_dp'], str_image_fn)
-                if not input_data['exec_timestamp_list'] or (search_range[0] <= img_cnt <= search_range[3]):
+                if not input_data.get('exec_timestamp_list') or (search_range[0] <= img_cnt <= search_range[3]):
                     result, image = vidcap.read()
                     cv2.imwrite(str_image_fp, image)
                     bol_write_flag = True
