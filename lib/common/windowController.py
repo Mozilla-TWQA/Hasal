@@ -64,7 +64,7 @@ class WindowObject(object):
         logger.warning("Can't find one of window name [%s] in wmctrl list!!!" % self.window_name_list)
         return '0'
 
-    def move_window_linux(self):
+    def _move_window_linux2(self):
         if self.window_identity == '0':
             return False
         else:
@@ -75,7 +75,7 @@ class WindowObject(object):
             subprocess.call(wmctrl_cmd, shell=True)
             return True
 
-    def close_window_linux(self):
+    def _close_window_linux2(self):
         if self.window_identity == '0':
             return False
         else:
@@ -96,7 +96,7 @@ class WindowObject(object):
                 logger.info('Found [{}] for moving position.'.format(name))
                 break
 
-    def move_window_win32(self):
+    def _move_window_win32(self):
         # try to move window after window launched
         for counter in range(10):
             win32gui.EnumWindows(self._move_window_win32_cb, None)
@@ -118,7 +118,7 @@ class WindowObject(object):
                 logger.info('Found [{}] and closed the window.'.format(name))
                 break
 
-    def close_window_win32(self):
+    def _close_window_win32(self):
         # try to close window
         for counter in range(10):
             win32gui.EnumWindows(self._close_window_win32_cb, None)
@@ -129,7 +129,7 @@ class WindowObject(object):
         logger.warning('Cannot found one of [{}] for closing.'.format(self.window_name_list))
         return False
 
-    def close_window_mac(self):
+    def _close_window_darwin(self):
         # try to close window
         for counter in range(10):
             for appname in self.window_name_list:
@@ -143,7 +143,7 @@ class WindowObject(object):
         print('Cannot found one of [{}] for closing.'.format(self.window_name_list))
         return False
 
-    def move_window_mac(self):
+    def _move_window_darwin(self):
         # try to move window after window launched
         for counter in range(10):
             for app_ref in app('System Events').processes.file.get():
@@ -187,11 +187,11 @@ class WindowObject(object):
 
         # Try to move window
         if self.window_type == 'linux2':
-            return self.move_window_linux()
+            return self._move_window_linux2()
         elif self.window_type == 'win32':
-            return self.move_window_win32()
+            return self._move_window_win32()
         elif self.window_type == 'darwin':
-            return self.move_window_mac()
+            return self._move_window_darwin()
         else:
             logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
             return False
@@ -199,11 +199,11 @@ class WindowObject(object):
     def close_window(self):
         # Try to move window
         if self.window_type == 'linux2':
-            return self.close_window_linux()
+            return self._close_window_linux2()
         elif self.window_type == 'win32':
-            return self.close_window_win32()
+            return self._close_window_win32()
         elif self.window_type == 'darwin':
-            return self.close_window_mac()
+            return self._close_window_darwin()
         else:
             logger.warning(
                 'Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
