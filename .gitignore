@@ -1,9 +1,17 @@
+# environment
 .DS_Store
 .idea
 .env/
 .env-*/
 env/
 env-*/
+.Hasal
+
+#local file
+agent_status/
+resource/
+upload/
+test.suite
 output
 snapshot
 result.json
@@ -15,6 +23,15 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
+
+# File types to ignore
+*.zip
+*.diff
+*.flow
+*.bak
+*.txt
+! requirements.txt
+! requirements_mac.txt
 
 # 3rd party files
 thirdParty/*
