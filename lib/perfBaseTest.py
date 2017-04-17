@@ -24,7 +24,7 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.index_config, self.browser_type, self.sikuli)
-        self.profilers.start_profiling(self.firefox_config)
+        self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
         # Record initial timestamp
         with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
