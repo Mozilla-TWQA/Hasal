@@ -76,6 +76,6 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # Stop browser
         if self.exec_config['keep-browser'] is False:
-            self.sikuli.close_browser(self.browser_type)
+            desktopHelper.close_browser(self.browser_type)
 
         super(PerfBaseTest, self).tearDown()

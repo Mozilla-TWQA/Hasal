@@ -94,8 +94,8 @@ class BaseTest(unittest.TestCase):
                                 terminal_height = 80
                         elif sys.platform == 'darwin':
                             # TODO: This offset settings only be tested on Mac Book Air
-                            height_offset = 115
-                            terminal_height = 10
+                            height_offset = 25
+                            terminal_height = 80
                         terminal_x = 0
                         terminal_y = height_browser + height_offset
                         logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,

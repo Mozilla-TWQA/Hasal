@@ -1,8 +1,5 @@
 import os
 import sys
-from common.windowController import WindowObject
-if sys.platform == "darwin":
-    from appscript import *  # NOQA
 
 
 class Sikuli():
@@ -35,40 +32,3 @@ class Sikuli():
         args_str = " ".join(['"{}"'.format(item) for item in args_list])
         cmd = self.run_sikulix_cmd_str + script_dir_path + " --args " + args_str
         return os.system(cmd)
-
-    def close_browser(self, browser):
-        if sys.platform == 'darwin':
-            print('Closing {} by appscript library ...'.format(browser))
-            appname_list = [browser]
-            if browser.lower() == 'firefox':
-                appname_list = ['Firefox', 'FirefoxNightly']
-            elif browser.lower() == 'chrome':
-                appname_list = ['Google Chrome']
-            for appname in appname_list:
-                try:
-                    browser_obj = app(appname)
-                    browser_obj.quit()
-                    print('Close {} successful.'.format(appname))
-                    break
-                except:
-                    print('Cannot close {} by appscript library.')
-
-        else:
-            window_title_list = [browser]
-            if browser.lower() == 'firefox':
-                window_title_list = ["Mozilla Firefox", "Nightly"]
-            elif browser.lower() == 'chrome':
-                window_title_list = ['Google Chrome']
-
-            if sys.platform == 'linux2':
-                print('Closing {} by wmctrl ...'.format(browser))
-                # Closing window by strings from window_title
-                window_obj = WindowObject(window_title_list)
-                if window_obj.wmctrl_close_window():
-                    print('Close successful.')
-            else:
-                print('Closing {} by pywin32 ...'.format(browser))
-                # Closing window by strings from window_title
-                window_obj = WindowObject(window_title_list)
-                if window_obj.pywin32_close_window():
-                    print('Close successful.')

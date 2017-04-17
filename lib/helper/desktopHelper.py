@@ -2,7 +2,6 @@ import os
 import sys
 import importlib
 import subprocess
-import lib.sikuli  # NOQA
 from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
@@ -64,6 +63,31 @@ def launch_browser(browser_type, **kwargs):
     return browser_obj, profile_path
 
 
+def get_browser_name_list(browser_type):
+    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
+        # This is to ensure all kinds of firefox we supported can be properly moved.
+        if sys.platform == 'darwin':
+            return ['Firefox.app', 'FirefoxNightly.app']
+        else:
+            return ['Mozilla Firefox', 'Nightly']
+    elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
+        if sys.platform == 'darwin':
+            return ['Chrome.app']
+        else:
+            return ['Google Chrome']
+    else:
+        if sys.platform == 'darwin':
+            return ['{}.app'.format(browser_type)]
+        else:
+            return [browser_type]
+
+
+def close_browser(browser_type):
+    window_title_list = get_browser_name_list(browser_type)
+    window_obj = WindowObject(window_title_list)
+    window_obj.close_window()
+
+
 # TODO: need to finish webdriver way to get version
 def get_browser_version(browser_type):
     chrome_class, firefox_class = _load_browser_class(engine_type)
@@ -77,20 +101,7 @@ def get_browser_version(browser_type):
 
 
 def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
-    window_title_list = None
-    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
-        if sys.platform == "darwin":
-            window_title_list = ["Firefox.app", "FirefoxNightly.app"]
-        else:
-            # This is to ensure all kinds of firefox we supported can be properly moved.
-            window_title_list = ["Mozilla Firefox", "Nightly"]
-
-    else:
-        if sys.platform == "darwin":
-            window_title_list = ["Chrome.app"]
-        else:
-            window_title_list = ["Google Chrome"]
-
+    window_title_list = get_browser_name_list(browser_type)
     # Moving window by strings from window_title
     height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
