@@ -203,7 +203,7 @@ class FrameThroughputDctGenerator(object):
         compare_result['merged_crop_image_list'] = input_image_list
 
         # compare images
-        compare_setting = {'default_fps': input_data['default_fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
+        compare_setting = {'default_fps': input_data['index_config']['video-recording-fps'], 'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
                            'generator_name': self.__class__.__name__,
                            'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
                            'exec_timestamp_list': input_data['exec_timestamp_list'],
