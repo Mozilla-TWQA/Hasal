@@ -79,8 +79,7 @@ class RunTest(object):
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
 
         # check the video recording, raise exception if more than one recorders
-        _, recording_flags = CommonUtil.is_video_recording(self.extensions_settings)
-        self.logger.info('Recording settings: {}'.format(recording_flags))
+        CommonUtil.is_video_recording(self.firefox_config)
 
     def suite_setup(self):
         upload_dir = os.path.join(os.getcwd(), self.global_config['default-case-complete-artifact-store-dn'])

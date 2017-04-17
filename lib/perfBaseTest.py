@@ -24,7 +24,7 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.index_config, self.browser_type, self.sikuli)
-        self.profilers.start_profiling(self.env.firefox_settings_extensions)
+        self.profilers.start_profiling(self.firefox_config)
 
         # Record initial timestamp
         with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
@@ -42,7 +42,7 @@ class PerfBaseTest(baseTest.BaseTest):
         time.sleep(5)
 
         # check the video recording
-        recording_enabled, _ = CommonUtil.is_video_recording(self.env.firefox_settings_extensions)
+        recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
         if recording_enabled and self.index_config.get('snapshot-base-sample1', False) is True:
             videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
                                        self.env.img_sample_dp,

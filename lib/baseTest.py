@@ -61,7 +61,7 @@ class BaseTest(unittest.TestCase):
 
     def get_browser_done(self):
         # check the video recording
-        recording_enabled, _ = CommonUtil.is_video_recording(self.env.firefox_settings_extensions)
+        recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
 
         if recording_enabled:
             for i in range(10):
