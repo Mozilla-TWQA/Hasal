@@ -102,20 +102,14 @@ class InputLatencyAnimationDctGenerator(object):
         input_image_list = self.crop_images_based_on_samplefiles(input_data)
         compare_result['merged_crop_image_list'] = input_image_list
 
-        # TODO: the threshold on Windows and Ubuntu are different.
-        diff_threshold = 0.005
-        import sys
-        if sys.platform == 'linux2':
-            diff_threshold = 0.01
-
         compare_setting = {
-            'default_fps': input_data['default_fps'],
+            'default_fps': input_data['index_config']['video-recording-fps'],
             'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
             'generator_name': self.__class__.__name__,
             'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
             'exec_timestamp_list': input_data['exec_timestamp_list'],
-            'threshold': diff_threshold,
-            'search_margin': 1
+            'threshold': input_data['index_config']['compare-threshold'],
+            'search_margin': input_data['index_config']['search-margin']
         }
         compare_result['running_time_result'] = compare_with_sample_image_multi_process(input_data['sample_result'],
                                                                                         input_image_list,

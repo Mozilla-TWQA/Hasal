@@ -267,7 +267,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
     calculator_result = {}
 
     # validation data assign
-    validator_data = {DEFAULT_FPS_VALIDATOR_NAME: {'recording_log_fp': env.recording_log_fp, 'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS},
+    validator_data = {DEFAULT_FPS_VALIDATOR_NAME: {'recording_log_fp': env.recording_log_fp, 'default_fps': index_config['video-recording-fps']},
                       DEFAULT_FILEEXIST_VALIDATOR_NAME: {'check_fp_list': [env.video_output_fp]}}
     validator_settings = copy.deepcopy(DEFAULT_VALIDATOR_SETTINGS)
     validator_settings['status_file'] = env.DEFAULT_STAT_RESULT
@@ -299,7 +299,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
         sample_result = run_modules(sample_settings, sample_data)
         generator_settings = sample_data['configuration']['generator']
         generator_data = {'converter_result': converter_result[index_config['image-converter-name']], 'sample_result': sample_result[index_config['sample-converter-name']],
-                          'default_fps': env.DEFAULT_VIDEO_RECORDING_FPS, 'exec_timestamp_list': exec_timestamp_list}
+                          'index_config': index_config, 'exec_timestamp_list': exec_timestamp_list}
         generator_result = run_generators(generator_settings, generator_data)
 
         # To support legacy function output result need to put all result in running time result key
