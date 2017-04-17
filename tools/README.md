@@ -2,6 +2,18 @@
 
 Hasal Tools.
 
+Please run following command for installing tools' requirements after activating virtualenv.
+
+**Linux/Mac**
+
+`pip install -r tools/requirements.txt`
+
+or
+
+**Windows**
+
+`conda install --file tools\requirements.txt`
+
 ## parse\_hasal\_result
 
 ### Prepare
@@ -9,8 +21,8 @@ Hasal Tools.
 Setup the env:
 ```bash
 $ make clean dev-env
-$ source ~/.hasalenv/bin/activate
-(.hasalenv)$
+$ source ~/.env-python/bin/activate
+(.env-python)$
 ```
 
 Then running tests. There is the `result.json` file when tests finished.
