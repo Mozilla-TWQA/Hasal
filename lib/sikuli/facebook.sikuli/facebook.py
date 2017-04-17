@@ -248,3 +248,8 @@ class facebook():
         content = ucode(f.read())
         f.close()
         return content
+
+    # focus on comment box of any post
+    def focus_comment_box(self):
+        wait(self.post_action)
+        click(self.post_action)
