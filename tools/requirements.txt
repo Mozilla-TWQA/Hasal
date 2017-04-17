@@ -1,3 +1,6 @@
 treeherder-client==3.1.0
 docopt==0.6.2
 tqdm==4.8.4
+matplotlib==1.5.3
+pandas>=0.19.2
+runipy==0.1.5

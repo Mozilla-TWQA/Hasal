@@ -13,9 +13,6 @@ argparse==1.2.1
 watchdog==0.8.3
 peakutils==1.0.3
 treeherder-client==3.1.0
-matplotlib==1.5.3
-pandas>=0.19.2
-runipy==0.1.5
 selenium==3.0.2
 geckoprofiler_controller==0.0.4
 
