@@ -12,6 +12,7 @@ import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
+from common.commonUtil import CommonUtil
 
 logger = get_logger(__name__)
 
@@ -59,55 +60,58 @@ class BaseTest(unittest.TestCase):
         return result_args
 
     def get_browser_done(self):
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                for i in range(10):
-                    time.sleep(1)
-                    logger.debug("Check browser show up %d time(s)." % (i + 1))
-                    desktopHelper.lock_window_pos(self.browser_type)
-                    videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                               self.env.img_output_sample_1_fn)
-                    if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
-                        logger.debug("Browser shown, adjust viewport by setting.")
-                        height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
-                                                                                      self.env.img_sample_dp,
-                                                                                      self.env.img_output_sample_1_fn)
-                        height_offset = 0
-                        terminal_width = width_browser
+        # check the video recording
+        recording_enabled, _ = CommonUtil.is_video_recording(self.env.firefox_settings_extensions)
+
+        if recording_enabled:
+            for i in range(10):
+                time.sleep(1)
+                logger.debug("Check browser show up %d time(s)." % (i + 1))
+                desktopHelper.lock_window_pos(self.browser_type)
+                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
+                                           self.env.img_sample_dp,
+                                           self.env.img_output_sample_1_fn)
+                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
+                    logger.debug("Browser shown, adjust viewport by setting.")
+                    height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
+                                                                                  self.env.img_sample_dp,
+                                                                                  self.env.img_output_sample_1_fn)
+                    height_offset = 0
+                    terminal_width = width_browser
+                    terminal_height = 60
+                    if sys.platform == 'linux2':
+                        height_offset = 20
                         terminal_height = 60
-                        if sys.platform == 'linux2':
-                            height_offset = 20
-                            terminal_height = 60
-                        elif sys.platform == 'win32':
-                            import platform
-                            release_version = platform.release()
-                            if release_version == '10':
-                                logger.info("Move terminal window for Windows 10.")
-                                height_offset = -4
-                                terminal_height = 100
-                            elif release_version == '7':
-                                logger.info("Move terminal window for Windows 7.")
-                                height_offset = 0
-                                terminal_height = 80
-                            else:
-                                logger.info("Move terminal window for Windows.")
-                                height_offset = 0
-                                terminal_height = 80
-                        elif sys.platform == 'darwin':
-                            # TODO: This offset settings only be tested on Mac Book Air
-                            height_offset = 25
+                    elif sys.platform == 'win32':
+                        import platform
+                        release_version = platform.release()
+                        if release_version == '10':
+                            logger.info("Move terminal window for Windows 10.")
+                            height_offset = -4
+                            terminal_height = 100
+                        elif release_version == '7':
+                            logger.info("Move terminal window for Windows 7.")
+                            height_offset = 0
                             terminal_height = 80
-                        terminal_x = 0
-                        terminal_y = height_browser + height_offset
-                        logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
-                                                                                          terminal_y,
-                                                                                          terminal_width,
-                                                                                          terminal_height))
-                        self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
-                                                                 pos_y=terminal_y,
-                                                                 window_width=terminal_width,
-                                                                 window_height=terminal_height)
-                        break
+                        else:
+                            logger.info("Move terminal window for Windows.")
+                            height_offset = 0
+                            terminal_height = 80
+                    elif sys.platform == 'darwin':
+                        # TODO: This offset settings only be tested on Mac Book Air
+                        height_offset = 25
+                        terminal_height = 80
+                    terminal_x = 0
+                    terminal_y = height_browser + height_offset
+                    logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
+                                                                                      terminal_y,
+                                                                                      terminal_width,
+                                                                                      terminal_height))
+                    self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
+                                                             pos_y=terminal_y,
+                                                             window_width=terminal_width,
+                                                             window_height=terminal_height)
+                    break
         else:
             time.sleep(3)
             desktopHelper.lock_window_pos(self.browser_type)

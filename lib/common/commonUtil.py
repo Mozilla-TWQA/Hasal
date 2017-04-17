@@ -2,6 +2,7 @@ import os
 import re
 import json
 from datetime import datetime
+from environment import Environment
 
 
 def load_json_file(fp):
@@ -42,3 +43,24 @@ class CommonUtil(object):
     @classmethod
     def natural_keys(cls, text):
         return [cls.atoi(c) for c in re.split('(\d+)', text)]
+
+    @staticmethod
+    def is_video_recording(settings):
+        """
+        Checking the Video Recording settings.
+        @return: True if there is one Recorder, False if there is no Recorder. Raise exception when there are multiple Recorders.
+        """
+        recording_flags = {Environment.PROFILER_FLAG_AVCONV: False}
+        for k in recording_flags.keys():
+            v = settings.get(k, {})
+            if v:
+                is_enabled = v.get('enable', False)
+                recording_flags[k] = is_enabled
+
+        recording_enable_amount = sum(map(bool, recording_flags.values()))
+        if recording_enable_amount == 0:
+            return False, recording_flags
+        elif recording_enable_amount == 1:
+            return True, recording_flags
+        elif recording_enable_amount > 1:
+            raise Exception('More than one video recorders are enabled.\n{}'.format(recording_flags))

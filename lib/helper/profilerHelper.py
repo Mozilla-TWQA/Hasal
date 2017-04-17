@@ -1,4 +1,3 @@
-import time
 import importlib
 
 
@@ -25,10 +24,3 @@ class Profilers(object):
     def stop_profiling(self, input_profile_dir_path=None):
         for profiler_obj in self.profiler_obj_list:
             profiler_obj.stop_recording(profile_path=input_profile_dir_path)
-
-    def get_t1_time(self):
-        t1_time = time.time()
-        for profiler_obj in self.profiler_obj_list:
-            if self.env.PROFILER_FLAG_AVCONV.lower() in profiler_obj.__class__.__name__.lower():
-                t1_time = profiler_obj.t1_time
-        return t1_time
