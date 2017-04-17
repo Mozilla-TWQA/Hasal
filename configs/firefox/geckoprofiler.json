@@ -33,6 +33,7 @@
   "extensions": {
     "AvconvProfiler": {
       "enable": false,
+      "validate-fps": true,
       "XPI": []
     },
     "GeckoProfiler": {

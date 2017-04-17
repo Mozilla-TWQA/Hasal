@@ -6,6 +6,7 @@ import lib.sikuli as sikuli
 import lib.helper.videoHelper as videoHelper
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
+from common.commonUtil import CommonUtil
 
 logger = get_logger(__name__)
 
@@ -23,7 +24,7 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.index_config, self.browser_type, self.sikuli)
-        self.profilers.start_profiling(self.env.firefox_settings_extensions)
+        self.profilers.start_profiling(self.firefox_config)
 
         # Record initial timestamp
         with open(self.env.DEFAULT_TIMESTAMP, "w") as fh:
@@ -40,10 +41,12 @@ class PerfBaseTest(baseTest.BaseTest):
         # capture 1st snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample1'] is True:
-                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                           self.env.img_output_sample_1_fn)
+        # check the video recording
+        recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
+        if recording_enabled and self.index_config.get('snapshot-base-sample1', False) is True:
+            videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
+                                       self.env.img_sample_dp,
+                                       self.env.img_output_sample_1_fn)
         time.sleep(2)
 
         # Record timestamp t1

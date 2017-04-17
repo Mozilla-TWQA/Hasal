@@ -23,6 +23,7 @@ from docopt import docopt
 from datetime import datetime
 from lib.common.commonUtil import load_json_file
 from lib.common.commonUtil import StatusRecorder
+from lib.common.commonUtil import CommonUtil
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
@@ -76,6 +77,9 @@ class RunTest(object):
             cookies_settings=self.cookies_settings,
             extensions_settings=self.extensions_settings)
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
+
+        # check the video recording, raise exception if more than one recorders
+        CommonUtil.is_video_recording(self.firefox_config)
 
     def suite_setup(self):
         upload_dir = os.path.join(os.getcwd(), self.global_config['default-case-complete-artifact-store-dn'])
