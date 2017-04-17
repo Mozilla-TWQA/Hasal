@@ -158,7 +158,7 @@ class BaseTest(unittest.TestCase):
         self.set_profiler_path()
 
         # init target helper
-        self.target_helper = targetHelper.TagetHelper(self.env)
+        self.target_helper = targetHelper.TagetHelper(self.env, self.global_config)
 
         # Init sikuli status for webdriver/sikuli
         self.round_status = 0

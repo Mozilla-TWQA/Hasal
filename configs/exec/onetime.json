@@ -1,0 +1,10 @@
+{
+  "max-run"      : 1,
+  "max-retry"    : 1,
+  "advance"      : true,
+  "keep-browser" : false,
+  "comment"      : "<today>",
+  "user-simulation-tool" : "sikuli",
+  "webdriver-run-browser" : ["firefox"],
+  "exec-suite-fp": "./suite.txt"
+}

@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_EMPTY_SHEET)
+        self.set_variable(test_target=self.global_config['gsuite']['gsheet-empty-sheet'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gsheet_ail_type_0(self):

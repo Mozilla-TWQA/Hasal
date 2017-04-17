@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_100_PAGE_CONTENT_WITH_TXT_TABLE_IMAGE_INCREASING)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-100-page-content-with-txt-table-image-increasing'])
         super(TestSikuli, self).setUp()
 
     def test_chrome_gdoc_read_basic_100_increasing(self):
