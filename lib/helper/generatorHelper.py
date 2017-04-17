@@ -1,5 +1,4 @@
 import os
-import copy
 import time
 import json
 import shutil
@@ -14,12 +13,6 @@ from lib.common.logConfig import get_logger
 
 logger = get_logger(__name__)
 RET_SUCCESSS = 0
-
-DEFAULT_FPS_VALIDATOR_NAME = 'FPSValidator'
-DEFAULT_FILEEXIST_VALIDATOR_NAME = 'FileExistValidator'
-
-DEFAULT_VALIDATOR_SETTINGS = {'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsValidator'},
-                                          DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.fileExistValidator'}}}
 
 
 def validate_data(validator_settings, validator_data):
@@ -267,9 +260,13 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
     calculator_result = {}
 
     # validation data assign
-    validator_data = {DEFAULT_FPS_VALIDATOR_NAME: {'recording_log_fp': env.recording_log_fp, 'default_fps': index_config['video-recording-fps']},
-                      DEFAULT_FILEEXIST_VALIDATOR_NAME: {'check_fp_list': [env.video_output_fp]}}
-    validator_settings = copy.deepcopy(DEFAULT_VALIDATOR_SETTINGS)
+    validator_data = {global_config['default-file-exist-validator-name']: {'check_fp_list': [env.video_output_fp]}}
+    validator_settings = {'modules': {global_config['default-file-exist-validator-name']: {'path': global_config['default-file-exist-validator-module-path']}}}
+
+    if CommonUtil.is_validate_fps(firefox_config):
+        validate_data[global_config['default-fps-validator-name']] = {'recording_log_fp': env.recording_log_fp,
+                                                                      'default_fps': index_config['video-recording-fps']}
+        validator_settings['modules'][global_config['default-fps-validator-name']] = {'path': global_config['default-fps-validator-module-path']}
     validator_settings['status_file'] = env.DEFAULT_STAT_RESULT
 
     # will do the analyze after validate pass
@@ -283,7 +280,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
         converter_data = {
             index_config['image-converter-name']: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
                                                    'convert_fmt': index_config['image-converter-format'],
-                                                   'current_fps': validate_result[DEFAULT_FPS_VALIDATOR_NAME][
+                                                   'current_fps': validate_result[global_config['default-fps-validator-name']][
                                                        'output_result'],
                                                    'exec_timestamp_list': exec_timestamp_list}}
         converter_result = run_modules(converter_settings, converter_data[index_config['image-converter-name']])
@@ -310,7 +307,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
         # output sikuli status to static file
         with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
             stat_data = json.load(fh)
-            if validate_result[DEFAULT_FPS_VALIDATOR_NAME]['validate_result']:
+            if validate_result[global_config['default-fps-validator-name']]['validate_result']:
                 stat_data['fps_stat'] = 0
             else:
                 stat_data['fps_stat'] = 1
