@@ -127,13 +127,6 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## VM Template (out-of-date)
-You can download the VM tempalte for Hasal framework environment from vagrant.
-* vagrant init shako/hasal
-* vagrant up --provider virtualbox
-* Default user name and password : hasal/hasal
-
-
 ## Usage
 
 ### Sample 
@@ -191,4 +184,11 @@ Please be remind that most cases with ail in its naming are using inputLatencyAn
 2. Try to set `about:blank` as your browser start-up page
 3. Remember to activate your virtualenv for all the things we set up for you
 4. Try to update your code and rerun bootstrap. For windows, you might want to recover the environment variable PATH from the backup file generated after you ran the bootstrap.bat
+
+
+## VM Template (out-of-date)
+You can download the VM tempalte for Hasal framework environment from vagrant.
+* vagrant init shako/hasal
+* vagrant up --provider virtualbox
+* Default user name and password : hasal/hasal
 
