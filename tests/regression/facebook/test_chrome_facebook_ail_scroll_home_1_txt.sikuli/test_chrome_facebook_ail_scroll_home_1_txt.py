@@ -1,5 +1,6 @@
 # if you are putting your test script folders under {git project folder}/tests/, it will work fine.
 # otherwise, you either add it to system path before you run or hard coded it in here.
+# win7 threshold 0.003
 sys.path.append(sys.argv[2])
 import os
 import common
