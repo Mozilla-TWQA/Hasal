@@ -49,7 +49,7 @@ Please noted that Hasal in Windows systems can be run from command line only.
 * Download the client certificate from here (https://goo.gl/yfki48 -- note: needs a mozilla.com account ATM), place all certificates in your hasal working dir. 
 * Run setup.py
 
-## For Ubuntu:
+### For Ubuntu:
 ```
 apt-get install virtualenv python-dev
 virtualenv ~/.hasalenv            # or "make clean dev-env"
@@ -94,7 +94,7 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## For Mac OS:
+### For Mac OS:
 
 ```
 virtualenv PATH_TO_YOUR_VENV            # or "make clean dev-env"
@@ -127,14 +127,6 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## VM Template (out-of-date)
-You can download the VM tempalte for Hasal framework environment from vagrant.
-* vagrant init shako/hasal
-* vagrant up --provider virtualbox
-* Default user name and password : hasal/hasal
-
-## Setup
-
 ## Usage
 
 ### Sample 
@@ -147,22 +139,56 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 ```
 
 ### Options:
+
 ```
-  -h --help                       Show this screen.
-  --exec-config=<str>             Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
-  --firefox-config=<str>          Specify the test Firefox config file; [default: configs/firefox/default.json]
-  --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
-  --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
-  --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
+  -h --help | Show this screen.
+  --exec-config=<str> | Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
+  --firefox-config=<str> | Specify the test Firefox config file; [default: configs/firefox/default.json]
+  --index-config=<str> | Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
+  --online-config=<str> | Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
+  --global-config=<str> | Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
 ```
  
-#### suite file template
-* regression test case format
-* `test_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
-* example:
-`tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1,regression/gdoc/common/test_firefox_switchcontentwindow`
+#### Suite file template
+* regression test case format:    test_script_path
 
-* pilot test case format
-* `test_sikuli_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
-* example:
-`tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/`
+
+    Example:
+        tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1
+
+* pilot test case format:     test_sikuli_script_path
+
+
+    Example:
+        tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/
+
+ 
+#### About generator
+They are all inside configs/index/ directory. Generator is all about what data do we want to generate. We use runtimeDctGenerator.json as the default generator. 
+
+Generator | What can we get?
+------------ | -------------
+runtimeDctGenerator | The total running time and related statistics
+speedIndexDctGenerator | Get the SI/PSI for your test cases
+inputLatencyDctGenerator | The input latency time for specific action (2 images)
+inputLatencyAnimationDctGenerator | The input latency time for specific action (1 images)
+frameThroughputDctGenerator | Get the frame throughput time for specific action
+
+Please be remind that most cases with ail in its naming are using inputLatencyAnimationDctGenerator and some of them are using inputLatencyDctGenerator. You may set it with `--index-config=` mentioned previously for runtest.py.
+
+
+## Basic Debugging
+### What if the Hasal framework doesn't work?
+
+1. Try to make the resolution of your pc to `1920*1080`
+2. Try to set `about:blank` as your browser start-up page
+3. Remember to activate your virtualenv for all the things we set up for you
+4. Try to update your code and rerun bootstrap. For windows, you might want to recover the environment variable PATH from the backup file generated after you ran the bootstrap.bat
+
+
+## VM Template (out-of-date)
+You can download the VM tempalte for Hasal framework environment from vagrant.
+* vagrant init shako/hasal
+* vagrant up --provider virtualbox
+* Default user name and password : hasal/hasal
+
