@@ -23,6 +23,7 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
+appveyor.yml
 
 # File types to ignore
 *.zip
