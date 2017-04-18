@@ -264,8 +264,8 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
     validator_settings = {'modules': {global_config['default-file-exist-validator-name']: {'path': global_config['default-file-exist-validator-module-path']}}}
 
     if CommonUtil.is_validate_fps(firefox_config):
-        validate_data[global_config['default-fps-validator-name']] = {'recording_log_fp': env.recording_log_fp,
-                                                                      'default_fps': index_config['video-recording-fps']}
+        validator_data[global_config['default-fps-validator-name']] = {'recording_log_fp': env.recording_log_fp,
+                                                                       'default_fps': index_config['video-recording-fps']}
         validator_settings['modules'][global_config['default-fps-validator-name']] = {'path': global_config['default-fps-validator-module-path']}
     validator_settings['status_file'] = env.DEFAULT_STAT_RESULT
 
