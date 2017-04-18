@@ -9,8 +9,8 @@ Options:
   --exec-config=<str>             Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
   --firefox-config=<str>          Specify the test Firefox config file; [default: configs/firefox/default.json]
   --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
-  --online-config=<str>           Specify the online config file; you can specify the online enable, and related settings here. [default: configs/online/default.json]
-  --global-config=<str>           Specify the global config file; you can modify the output fn, and status fn here. [default: configs/global/default.json]
+  --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
+  --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
 
 """
 import os
