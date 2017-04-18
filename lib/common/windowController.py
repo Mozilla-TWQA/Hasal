@@ -36,16 +36,16 @@ class WindowObject(object):
         # the identity only works on Linux now
         if self.window_type == "linux2":
             if current:
-                self.window_identity = self.wmctrl_get_current_window_id()
+                self.window_identity = self._get_current_window_id_linux()
             else:
-                self.window_identity = self.wmctrl_get_window_id()
+                self.window_identity = self._get_window_id_linux()
 
-    def wmctrl_get_current_window_id(self):
+    def _get_current_window_id_linux(self):
         cmd = "xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2"
         cmd_output = subprocess.check_output(cmd, shell=True)
         return cmd_output.strip()
 
-    def wmctrl_get_window_id(self):
+    def _get_window_id_linux(self):
         window_list_cmd = self.DEFAULT_WMCTRL_CMD + " -l"
         for i in range(10):
             cmd_output = subprocess.check_output(window_list_cmd, shell=True)
@@ -64,7 +64,7 @@ class WindowObject(object):
         logger.warning("Can't find one of window name [%s] in wmctrl list!!!" % self.window_name_list)
         return '0'
 
-    def wmctrl_move_window(self):
+    def _move_window_linux2(self):
         if self.window_identity == '0':
             return False
         else:
@@ -75,17 +75,17 @@ class WindowObject(object):
             subprocess.call(wmctrl_cmd, shell=True)
             return True
 
-    def wmctrl_close_window(self):
+    def _close_window_linux2(self):
         if self.window_identity == '0':
             return False
         else:
             wmctrl_cmd = ' '.join([self.DEFAULT_WMCTRL_CMD, '-i', '-c', self.window_identity])
             logger.debug('Close windows command: [%s]' % wmctrl_cmd)
-            logger.info('Closing window [{}] ...'.format(self.window_identity_name))
             subprocess.call(wmctrl_cmd, shell=True)
+            logger.info('Found [{}] and closed the window.'.format(self.window_identity_name))
             return True
 
-    def pywin32_callback_func(self, hwnd, extra):
+    def _move_window_win32_cb(self, hwnd, extra):
         window_title = win32gui.GetWindowText(hwnd)
         for name in self.window_name_list:
             if name in window_title:
@@ -96,10 +96,10 @@ class WindowObject(object):
                 logger.info('Found [{}] for moving position.'.format(name))
                 break
 
-    def pywin32_move_window(self):
+    def _move_window_win32(self):
         # try to move window after window launched
         for counter in range(10):
-            win32gui.EnumWindows(self.pywin32_callback_func, None)
+            win32gui.EnumWindows(self._move_window_win32_cb, None)
             if self.callback_ret:
                 self.callback_ret = None
                 return True
@@ -107,7 +107,43 @@ class WindowObject(object):
         logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
-    def appscript_move_window(self):
+    def _close_window_win32_cb(self, hwnd, extra):
+        window_title = win32gui.GetWindowText(hwnd)
+        for name in self.window_name_list:
+            if name in window_title:
+                # WM_CLOSE = Prompt Confirmation + WM_DESTROY
+                # close windows
+                win32gui.PostMessage(hwnd, win32con.WM_DESTROY, 0, 0)
+                self.callback_ret = True
+                logger.info('Found [{}] and closed the window.'.format(name))
+                break
+
+    def _close_window_win32(self):
+        # try to close window
+        for counter in range(10):
+            win32gui.EnumWindows(self._close_window_win32_cb, None)
+            if self.callback_ret:
+                self.callback_ret = None
+                return True
+            time.sleep(1)
+        logger.warning('Cannot found one of [{}] for closing.'.format(self.window_name_list))
+        return False
+
+    def _close_window_darwin(self):
+        # try to close window
+        for counter in range(10):
+            for appname in self.window_name_list:
+                try:
+                    browser_obj = app(appname)
+                    browser_obj.quit()
+                    print('Found [{}] and closed the window.'.format(appname))
+                    return True
+                except:
+                    pass
+        print('Cannot found one of [{}] for closing.'.format(self.window_name_list))
+        return False
+
+    def _move_window_darwin(self):
         # try to move window after window launched
         for counter in range(10):
             for app_ref in app('System Events').processes.file.get():
@@ -151,11 +187,24 @@ class WindowObject(object):
 
         # Try to move window
         if self.window_type == 'linux2':
-            return self.wmctrl_move_window()
+            return self._move_window_linux2()
         elif self.window_type == 'win32':
-            return self.pywin32_move_window()
+            return self._move_window_win32()
         elif self.window_type == 'darwin':
-            return self.appscript_move_window()
+            return self._move_window_darwin()
         else:
             logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
+            return False
+
+    def close_window(self):
+        # Try to move window
+        if self.window_type == 'linux2':
+            return self._close_window_linux2()
+        elif self.window_type == 'win32':
+            return self._close_window_win32()
+        elif self.window_type == 'darwin':
+            return self._close_window_darwin()
+        else:
+            logger.warning(
+                'Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
             return False

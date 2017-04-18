@@ -31,6 +31,13 @@ class General():
         with open(filename, mode) as f:
             json.dump(data, f, indent=2)
 
+    def updateJson(self, data, filename, mode="r+"):
+        with open(filename, mode) as fh:
+            timestamp = json.load(fh)
+            timestamp.update(data)
+            fh.seek(0)
+            fh.write(json.dumps(timestamp))
+
     def writeToFile(self, data, filename, mode="w+"):
         with open(filename, mode) as f:
             f.write(data)
@@ -56,3 +63,7 @@ class General():
 
     def page_start(self):
         type(Key.HOME, self.control)
+
+    def infolog_enable(self, choice=1):
+        Settings.ActionLogs = choice
+        Settings.InfoLogs = choice

@@ -19,6 +19,9 @@ class BrowserBase(object):
         self.windows_size_width = str(windows_size_width)
         self.get_browser_settings(**kwargs)
 
+        self.profile_path = kwargs.get('profile_path', '')
+        self.driver = None
+
     def get_browser_settings(self, **kwargs):
         pass
 

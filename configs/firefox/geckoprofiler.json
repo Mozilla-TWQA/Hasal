@@ -22,10 +22,6 @@
     "datareporting.healthreport.uploadEnabled": false,
     "datareporting.healthreport.service.enabled": false,
     "datareporting.healthreport.service.firstRun": false,
-    "devtools.netmonitor.har.enableAutoExportToFile": true,
-    "extensions.netmonitor.har.autoConnect": true,
-    "extensions.netmonitor.har.contentAPIToken": "true",
-    "extensions.netmonitor.har.enableAutomation": true,
     "general.useragent.locale": "en-US",
     "intl.accept_languages": "en-US, en",
     "gfx.downloadable_fonts.otl_validation": false
@@ -36,12 +32,13 @@
   },
   "extensions": {
     "AvconvProfiler": {
-      "enable": true,
+      "enable": false,
+      "validate-fps": true,
       "XPI": []
     },
     "GeckoProfiler": {
       "version": "Gecko Profiler (Hasal) 2.0.31",
-      "enable": false,
+      "enable": true,
       "XPI": [
         "gecko_profiler",
         "hotkeys",

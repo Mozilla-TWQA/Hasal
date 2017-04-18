@@ -32,12 +32,13 @@
   },
   "extensions": {
     "AvconvProfiler": {
-      "enable": false,
+      "enable": true,
+      "validate-fps": true,
       "XPI": []
     },
     "GeckoProfiler": {
       "version": "Gecko Profiler (Hasal) 2.0.31",
-      "enable": true,
+      "enable": false,
       "XPI": [
         "gecko_profiler",
         "hotkeys",
@@ -45,7 +46,7 @@
       ]
     },
     "HarProfiler": {
-      "enable": true,
+      "enable": false,
       "XPI": [
         "har_profiler"
       ]

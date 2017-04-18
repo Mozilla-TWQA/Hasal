@@ -26,6 +26,7 @@ class facebook():
         self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.70)
         self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.70)
         self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.70)
+        self.home_post_area_focused = Pattern("pics/facebook_home_post_area_focused.png").similar(0.70)
         self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.85)
         self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.70)
         self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.70)
@@ -190,9 +191,9 @@ class facebook():
     def click_post_area_home(self, type='center'):
         if type == 'center':
             click(self.home_post_area)
-            wait(self.post_area_focused)
+            wait(self.home_post_area_focused)
         elif type == 'photo_video':
-            click(self.home_post_area.targetOffset(-180, -60))
+            click(self.home_post_area.targetOffset(-180, 50))
             waitVanish(self.home_post_area, 10)
 
     # base on post type to click different areas from club
