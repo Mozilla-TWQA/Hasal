@@ -127,7 +127,7 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## VM Template
+## VM Template (out-of-date)
 You can download the VM tempalte for Hasal framework environment from vagrant.
 * vagrant init shako/hasal
 * vagrant up --provider virtualbox
@@ -138,38 +138,23 @@ You can download the VM tempalte for Hasal framework environment from vagrant.
 ## Usage
 
 ### Sample 
-* Trigger the framework: `python runtest.py re suite.txt`
-* Run only once:         `python runtest.py re suite.txt --max-run=1 --max-retry=1`
-* Record the profiler:   `python runtest.py re suite.txt --profiler=justprofiler`
-* Run with proxy:        `python runtest.py re suite.txt --profiler=avconv,mitmdump`
+* Trigger the framework: `python runtest.py`
 
 ### Usage
 ```
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
+  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>]
   runtest.py (-h | --help)
 ```
 
 ### Options:
 ```
-  -h --help                 Show this screen.
-  --max-run=<int>           Test run max no [default: 30].
-  --max-retry=<int>         Test failed retry max no [default: 15].
-  --keep-browser            Keep the browser open after test script executed
-  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --online                  Result will be transfer to server, calculated by server
-  --online-config=<str>     Online server config [default: svrConfig.json]
-  --comment=<str>           Tag the comment on this test [default: <today>]
-  --advance                 Only for expert user
+  -h --help                       Show this screen.
+  --exec-config=<str>             Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
+  --firefox-config=<str>          Specify the test Firefox config file; [default: configs/firefox/default.json]
+  --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
+  --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
+  --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
 ```
-
-### Output folder structure as below:
-* `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
-* `/output/images/output/[case_class_name]_[timestamp]`: images converted from desktop recording video 
-* `/output/videos`: video recording during case execution
-* `/output/profiles`: profile recording during case execution
-* * `.bin`: the Geckon profile recording, can be viewed on https://cleopatra.io/
  
 #### suite file template
 * regression test case format
