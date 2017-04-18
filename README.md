@@ -192,9 +192,3 @@ Please be remind that most cases with ail in its naming are using inputLatencyAn
 3. Remember to activate your virtualenv for all the things we set up for you
 4. Try to update your code and rerun bootstrap. For windows, you might want to recover the environment variable PATH from the backup file generated after you ran the bootstrap.bat
 
-
-
-
-
-
-
