@@ -34,7 +34,7 @@ if platform.system().lower() == "linux":
     DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
     DEFAULT_TASK_KILL_CMD = "taskkill /f /t /im "
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe", "obs32.exe", "obs64.exe"]
     DEFAULT_EDITOR_CMD = "type "
 else:
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]

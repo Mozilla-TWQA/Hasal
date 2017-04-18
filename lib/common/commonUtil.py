@@ -38,7 +38,7 @@ class StatusRecorder(object):
 
 class CommonUtil(object):
 
-    RECORDER_LIST = [Environment.PROFILER_FLAG_AVCONV, ]
+    RECORDER_LIST = [Environment.PROFILER_FLAG_AVCONV, Environment.PROFILER_FLAG_OBS]
     logger = get_logger(__file__)
 
     @staticmethod
