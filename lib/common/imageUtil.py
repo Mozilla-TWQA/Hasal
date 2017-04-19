@@ -302,6 +302,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         compare_result = compare_two_images(sample_dct, current_img_dct, input_settings['threshold'])
                     else:
                         compare_result = compare_two_images(sample_dct, current_img_dct)
+
                     if compare_result:
                         if img_index == start_index:
                             logger.debug(

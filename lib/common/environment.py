@@ -3,6 +3,7 @@ import time
 import json
 import platform
 import logConfig
+from urlparse import urljoin
 
 logger = logConfig.get_logger(__name__)
 
@@ -10,13 +11,13 @@ logger = logConfig.get_logger(__name__)
 class Environment(object):
 
     DEFAULT_HASAL_DIR = os.getcwd()
-    DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
-    DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
-    DEFAULT_GECKODRIVER_DIR = os.path.join(os.getcwd(), "thirdParty", "geckodriver")
-    DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
-    DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
-    DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")
-    DEFAULT_FLOW_DIR = os.path.join(os.getcwd(), "flows")
+    DEFAULT_THIRDPARTY_DIR = os.path.join(DEFAULT_HASAL_DIR, "thirdParty")
+    DEFAULT_EXTENSIONS_DIR = os.path.join(DEFAULT_THIRDPARTY_DIR, "extensions")
+    DEFAULT_GECKODRIVER_DIR = os.path.join(DEFAULT_THIRDPARTY_DIR, "geckodriver")
+    DEFAULT_OUTPUT_DIR = os.path.join(DEFAULT_HASAL_DIR, "output")
+    DEFAULT_PROFILE_DIR = os.path.join(DEFAULT_HASAL_DIR, "resource")
+    DEFAULT_UPLOAD_DIR = os.path.join(DEFAULT_HASAL_DIR, "upload")
+    DEFAULT_FLOW_DIR = os.path.join(DEFAULT_HASAL_DIR, "flows")
     DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
     DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
     DEFAULT_WAVEFORM_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "waveform")
@@ -26,9 +27,9 @@ class Environment(object):
     DEFAULT_GECKO_PROFILER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "geckoprofiler-signed.xpi")
     DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
     DEFAULT_SIKULI_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix") if os.path.isfile(os.path.join(DEFAULT_THIRDPARTY_DIR, "sikulix", "runsikulix")) else os.path.join(DEFAULT_THIRDPARTY_DIR)
-    DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
-    DEFAULT_STAT_RESULT = os.path.join(os.getcwd(), "stat.json")
-    DEFAULT_TIMESTAMP = os.path.join(os.getcwd(), "timestamp.json")
+    DEFAULT_TEST_RESULT = os.path.join(DEFAULT_HASAL_DIR, "result.json")
+    DEFAULT_STAT_RESULT = os.path.join(DEFAULT_HASAL_DIR, "stat.json")
+    DEFAULT_TIMESTAMP = os.path.join(DEFAULT_HASAL_DIR, "timestamp.json")
     INITIAL_TIMESTAMP_NAME = 'initial_timestamp'
 
     DEFAULT_BROWSER_POS_X = 0
@@ -93,14 +94,15 @@ class Environment(object):
     PROFILER_FLAG_FXTRACELOGGER = "TraceloggerProfiler"
 
     TEST_FB_HOME = "https://www.facebook.com/"
-    TEST_FB_TEXT_GROUP = os.path.join(TEST_FB_HOME, "groups/testmoztext/")
-    TEST_FB_IMAGE_GROUP = os.path.join(TEST_FB_HOME, "groups/testmozimage/")
-    TEST_FB_VIDEO_GROUP = os.path.join(TEST_FB_HOME, "groups/testmozvideo/")
-    TEST_FB_FIRST_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013326969542")
-    TEST_FB_SECOND_WALL = os.path.join(TEST_FB_HOME, "profile.php?id=100013275014638")
-    TEST_FB_MIX_CONTENT_POST = "http://goo.gl/PZNikF"
-    TEST_FB_VIDEO_POST = "http://goo.gl/z3iwyh"
-    TEST_FB_URL_POST = "http://goo.gl/fxja5z"
+    TEST_FB_MESSAGES = urljoin(TEST_FB_HOME, "messages")
+    TEST_FB_TEXT_GROUP = urljoin(TEST_FB_HOME, "groups/testmoztext/")
+    TEST_FB_IMAGE_GROUP = urljoin(TEST_FB_HOME, "groups/testmozimage/")
+    TEST_FB_VIDEO_GROUP = urljoin(TEST_FB_HOME, "groups/testmozvideo/")
+    TEST_FB_FIRST_WALL = urljoin(TEST_FB_HOME, "profile.php?id=100013326969542")
+    TEST_FB_SECOND_WALL = urljoin(TEST_FB_HOME, "profile.php?id=100013275014638")
+    TEST_FB_MIX_CONTENT_POST = "https://goo.gl/PZNikF"
+    TEST_FB_VIDEO_POST = "https://goo.gl/z3iwyh"
+    TEST_FB_URL_POST = "https://goo.gl/fxja5z"
 
     GSHEET_TEST_URL_SPEC = "https://docs.google.com/spreadsheets/d/%s"
     TEST_TARGET_ID_EMPTY_SHEET = "1AtfAeK8YRquIovcBxWuoapi0j1gJLWXKTqBnlg_sFdk"
