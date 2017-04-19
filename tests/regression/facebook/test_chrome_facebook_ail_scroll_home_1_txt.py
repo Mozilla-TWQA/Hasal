@@ -4,6 +4,8 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
+        index_config = {"platform-dep-settings": {"win32": {"compare-threshold": 0.003}}}
+        self.set_configs("index_config", index_config, True)
         super(TestSikuli, self).setUp()
 
     def test_chrome_facebook_ail_scroll_home_1_txt(self):
