@@ -16,6 +16,11 @@ logger = get_logger(__name__)
 
 
 class ObsProfiler(BaseProfiler):
+    """
+    Only support Windows 7 and Windows 10 currently.
+    Please download "OBS-Studio-18.0.1-Full-Installer.exe" from https://github.com/jp9000/obs-studio/releases/tag/18.0.1 link,
+    and then install into "C:\Program Files (x86)\" folder.
+    """
     OBS_SETTINGS_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio'
     OBS_SETTINGS_FN = 'global.ini'
 
@@ -126,9 +131,9 @@ class ObsProfiler(BaseProfiler):
 
     def _wait_obs_vidoe_file_creation(self):
         """
-                After the OBS video file be created, then return. Max waiting time is 10 sec.
-                :return: True after file was created. False when there is no file be created after 10 sec.
-                """
+        After the OBS video file be created, then return. Max waiting time is 10 sec.
+        :return: True after file was created. False when there is no file be created after 10 sec.
+        """
         for _ in range(10):
             file_counter = len([item for item in os.listdir(ObsProfiler.OBS_VIDEO_OUTPUT_DIR_PATH) if os.path.isfile(os.path.join(ObsProfiler.OBS_VIDEO_OUTPUT_DIR_PATH, item))])
             if file_counter >= 1:
