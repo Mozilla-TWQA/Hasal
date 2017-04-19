@@ -7,7 +7,6 @@ import common
 import shutil
 import browser
 import time
-import json
 
 # Disable Sikuli action and info log
 com = common.General()
@@ -32,11 +31,7 @@ capimg2 = capture(0, 0, capture_width, capture_height)
 print('[log]  TYPE "#PDOWN."')
 type(Key.PAGE_DOWN)
 sleep(1)
+
 t2 = time.time()
-with open(sys.argv[8], "r+") as fh:
-    timestamp = json.load(fh)
-    timestamp['t1'] = t1
-    timestamp['t2'] = t2
-    fh.seek(0)
-    fh.write(json.dumps(timestamp))
+com.updateJson({'t1': t1, 't2': t2}, sys.argv[8])
 shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
