@@ -1,7 +1,14 @@
 # Hasal Performance Test
 
-[![Linux Build Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
-[![Windows Build Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/master)
+**Master**
+
+[![Master Linux Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/master.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
+[![Master Windows Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/master)
+
+**Dev**
+
+[![Dev Linux Status](https://img.shields.io/travis/Mozilla-TWQA/Hasal/dev.svg?label=Linux/Mac%20build)](https://travis-ci.org/Mozilla-TWQA/Hasal)
+[![Dev Windows Status](https://img.shields.io/appveyor/ci/HasalDev/hasal/dev.svg?label=Windows%20build)](https://ci.appveyor.com/project/HasalDev/hasal/branch/dev)
 
 "**Hasal**" */ha'sɑlu/* this word is came from Indigenous Taiwanese "**Bunun**", and it means hail. Why we choose this word is because we expect our testing could like the hail, fast and weighty. And through our testing could bring more improvement on our performance or quality.
 
@@ -42,7 +49,7 @@ Please noted that Hasal in Windows systems can be run from command line only.
 * Download the client certificate from here (https://goo.gl/yfki48 -- note: needs a mozilla.com account ATM), place all certificates in your hasal working dir. 
 * Run setup.py
 
-## For Ubuntu:
+### For Ubuntu:
 ```
 apt-get install virtualenv python-dev
 virtualenv ~/.hasalenv            # or "make clean dev-env"
@@ -87,7 +94,7 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## For Mac OS:
+### For Mac OS:
 
 ```
 virtualenv PATH_TO_YOUR_VENV            # or "make clean dev-env"
@@ -120,57 +127,68 @@ cd PATH_TO_HASAL
 python setup.py install
 ```
 
-## VM Template
+## Usage
+
+### Sample 
+* Trigger the framework: `python runtest.py`
+
+### Usage
+```
+  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>]
+  runtest.py (-h | --help)
+```
+
+### Options:
+
+```
+  -h --help | Show this screen.
+  --exec-config=<str> | Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
+  --firefox-config=<str> | Specify the test Firefox config file; [default: configs/firefox/default.json]
+  --index-config=<str> | Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
+  --online-config=<str> | Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
+  --global-config=<str> | Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
+```
+ 
+#### Suite file template
+* regression test case format:    test_script_path
+
+
+    Example:
+        tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1
+
+* pilot test case format:     test_sikuli_script_path
+
+
+    Example:
+        tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/
+
+ 
+#### About generator
+They are all inside configs/index/ directory. Generator is all about what data do we want to generate. We use runtimeDctGenerator.json as the default generator. 
+
+Generator | What can we get?
+------------ | -------------
+runtimeDctGenerator | The total running time and related statistics
+speedIndexDctGenerator | Get the SI/PSI for your test cases
+inputLatencyDctGenerator | The input latency time for specific action (2 images)
+inputLatencyAnimationDctGenerator | The input latency time for specific action (1 images)
+frameThroughputDctGenerator | Get the frame throughput time for specific action
+
+Please be remind that most cases with ail in its naming are using inputLatencyAnimationDctGenerator and some of them are using inputLatencyDctGenerator. You may set it with `--index-config=` mentioned previously for runtest.py.
+
+
+## Basic Debugging
+### What if the Hasal framework doesn't work?
+
+1. Try to make the resolution of your pc to `1920*1080`
+2. Try to set `about:blank` as your browser start-up page
+3. Remember to activate your virtualenv for all the things we set up for you
+4. Try to update your code and rerun bootstrap. For windows, you might want to recover the environment variable PATH from the backup file generated after you ran the bootstrap.bat
+
+
+## VM Template (out-of-date)
 You can download the VM tempalte for Hasal framework environment from vagrant.
 * vagrant init shako/hasal
 * vagrant up --provider virtualbox
 * Default user name and password : hasal/hasal
 
-## Setup
-
-## Usage
-
-### Sample 
-* Trigger the framework: `python runtest.py re suite.txt`
-* Run only once:         `python runtest.py re suite.txt --max-run=1 --max-retry=1`
-* Record the profiler:   `python runtest.py re suite.txt --profiler=justprofiler`
-* Run with proxy:        `python runtest.py re suite.txt --profiler=avconv,mitmdump`
-
-### Usage
-```
-  runtest.py re <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py pt <suite.txt> [--online] [--online-config=<str>] [--max-run=<int>] [--max-retry=<int>] [--keep-browser] [--calc-si] [--profiler=<str>] [--comment=<str>] [--advance]
-  runtest.py (-h | --help)
-```
-
-### Options:
-```
-  -h --help                 Show this screen.
-  --max-run=<int>           Test run max no [default: 30].
-  --max-retry=<int>         Test failed retry max no [default: 15].
-  --keep-browser            Keep the browser open after test script executed
-  --calc-si                 Calculate the speed index (si) and perceptual speed index (psi)
-  --profiler=<str>          Enabled profiler, current support profiler:avconv,geckoprofiler,harexport,chrometracing,fxall,justprofiler,mitmdump,fxtracelogger [default: avconv]
-  --online                  Result will be transfer to server, calculated by server
-  --online-config=<str>     Online server config [default: svrConfig.json]
-  --comment=<str>           Tag the comment on this test [default: <today>]
-  --advance                 Only for expert user
-```
-
-### Output folder structure as below:
-* `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
-* `/output/images/output/[case_class_name]_[timestamp]`: images converted from desktop recording video 
-* `/output/videos`: video recording during case execution
-* `/output/profiles`: profile recording during case execution
-* * `.bin`: the Geckon profile recording, can be viewed on https://cleopatra.io/
- 
-#### suite file template
-* regression test case format
-* `test_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
-* example:
-`tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1,regression/gdoc/common/test_firefox_switchcontentwindow`
-
-* pilot test case format
-* `test_sikuli_script_path, pre_run_sikuli_script_path, post_run_sikuli_script_path`
-* example:
-`tests/pilot/facebook/test_firefox_facebook_load_homepage.sikuli/`

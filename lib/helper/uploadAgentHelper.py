@@ -30,10 +30,6 @@ class UploadAgent(object):
         for variable_name in kwargs.keys():
             setattr(self, variable_name, kwargs[variable_name])
 
-        # load server config
-        with open(self.svr_config_fp) as svr_config_fh:
-            self.svr_config = json.load(svr_config_fh)
-
         # get default installation path's browser version
         self.current_browser_version = {
             DEFAULT_BROWSER_TYPE_FIREFOX: desktopHelper.get_browser_version(DEFAULT_BROWSER_TYPE_FIREFOX),

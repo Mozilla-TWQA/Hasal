@@ -1,7 +1,9 @@
+@REM This is mostly for windows 7. Recommend to run bootstrap.ps1 in Windows 10 instead.
 @REM Author: Walter Chen
 @REM Version: 0.1.1
 @REM 0.1.0 - Successfully running in virtual machines, appveyor, and real machines.
 @REM 0.1.1 - Adding instruction and changed the command for detecting admin privileges.
+@REM 0.1.2 - Backing up the PATH variable for you in path.txt before running bootstrap
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                 *Instructions*                   ::
@@ -16,8 +18,16 @@
 
 @echo off
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j
+set timestamp=%ldt:~0,4%%ldt:~4,2%%ldt:~6,2%%ldt:~8,2%%ldt:~10,2%
 set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
 echo [INFO] Current date and time [%ldt%]
+
+@IF EXIST bootstrap_backup_env_path_%timestamp%.txt (
+    echo [INFO] bootstrap_backup_env_path_%timestamp%.txt exists. We will not replace it.
+) ELSE (
+    echo "%PATH%" > bootstrap_backup_env_path_%timestamp%.txt
+    echo [INFO] your current PATH variable was backed up in bootstrap_backup_env_path_%timestamp%.txt
+)
 
 for /f "tokens=4-5 delims=. " %%i in ('ver') do set VERSION=%%i.%%j
 
@@ -99,7 +109,6 @@ IF EXIST VCForPython27.msi (
     del VCForPython27.msi
 )
 
-
 @REM Checking and Installing 7zip
 ECHO [INFO] Checking 7zip
 
@@ -130,8 +139,28 @@ IF "%APPVEYOR%"=="True" (
     SET "PATH=C:\Program Files\7-Zip;%PATH%"
 )
 
-@REM Installing ffmpeg
+@REM fetching gechodriver 0.14
+IF EXIST geckodriver-v0.14.0-win32.zip (
+    ECHO [INFO] Found cached geckodriver-v0.14.0-win32.zip
+) ELSE (
+    ECHO [INFO] Downloading geckodriver-v0.14.0-win32.zip
+    thirdParty\curl -kLO  https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win32.zip
+    7z x geckodriver-v0.14.0-win32.zip
+    mkdir thirdParty\geckodriver
+    move /Y geckodriver.exe thirdParty\geckodriver
+)
 
+IF NOT "%APPVEYOR%"=="True" (
+    del geckodriver-v0.14.0-win32.zip
+)
+
+
+mkdir -p ./thirdParty/geckodriver/
+tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
+chmod a+x ./thirdParty/geckodriver/geckodriver
+
+
+@REM Installing ffmpeg
 ECHO [INFO] Downloading FFMPEG.
 IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
     ECHO [INFO] Found cached ffmpeg-20160527-git-d970f7b-win32-static.7z

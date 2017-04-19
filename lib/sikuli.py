@@ -1,8 +1,5 @@
 import os
 import sys
-from common.windowController import WindowObject
-if sys.platform == "darwin":
-    from appscript import *  # NOQA
 
 
 class Sikuli():
@@ -35,39 +32,3 @@ class Sikuli():
         args_str = " ".join(['"{}"'.format(item) for item in args_list])
         cmd = self.run_sikulix_cmd_str + script_dir_path + " --args " + args_str
         return os.system(cmd)
-
-    def close_browser(self, browser):
-        if sys.platform == 'darwin':
-            print('Closing {} by appscript library ...'.format(browser))
-            appname_list = [browser]
-            if browser.lower() == 'firefox':
-                appname_list = ['Firefox', 'FirefoxNightly']
-            elif browser.lower() == 'chrome':
-                appname_list = ['Google Chrome']
-            for appname in appname_list:
-                try:
-                    browser_obj = app(appname)
-                    browser_obj.quit()
-                    print('Close {} successful.'.format(appname))
-                    break
-                except:
-                    print('Cannot close {} by appscript library.')
-
-        elif sys.platform == 'linux2':
-            print('Closing {} by wmctrl ...'.format(browser))
-            window_title_list = [browser]
-            if browser.lower() == 'firefox':
-                window_title_list = ["Mozilla Firefox", "Nightly"]
-            elif browser.lower() == 'chrome':
-                window_title_list = ['Google Chrome']
-            # Moving window by strings from window_title
-            window_obj = WindowObject(window_title_list)
-            if window_obj.wmctrl_close_window():
-                print('Close successful.')
-
-        else:
-            # it only works on Windows now
-            script_path = os.path.join(self.hasal_dir, "lib", "sikuli")
-            script_dir_path = script_path + "/closeBrowser.sikuli"
-            args_list = [browser, sys.platform, self.set_syspath(self.hasal_dir)]
-            self.run_sikulix_cmd(script_dir_path, args_list)

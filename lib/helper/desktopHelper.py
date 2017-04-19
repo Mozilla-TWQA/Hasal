@@ -1,9 +1,7 @@
-import subprocess
-import sys
-import lib.sikuli  # NOQA
 import os
-from ..browser.chrome import BrowserChrome
-from ..browser.firefox import BrowserFirefox
+import sys
+import importlib
+import subprocess
 from ..common.windowController import WindowObject
 from ..common.imageTool import ImageTool
 from ..common.environment import Environment
@@ -12,63 +10,98 @@ from ..common.logConfig import get_logger
 logger = get_logger(__name__)
 
 
+# This is to load browser class according to test engine ( Sikuli / Webdriver / ... )
+def _load_browser_class(type="sikuli"):
+    # type = webdriver / sikuli
+    if type == 'webdriver':
+        chrome_class = getattr(importlib.import_module("lib.browser.webdriverChrome"), "BrowserChrome")
+        firefox_class = getattr(importlib.import_module("lib.browser.webdriverFirefox"), "BrowserFirefox")
+    elif type == 'sikuli':
+        chrome_class = getattr(importlib.import_module("lib.browser.chrome"), "BrowserChrome")
+        firefox_class = getattr(importlib.import_module("lib.browser.firefox"), "BrowserFirefox")
+
+    return chrome_class, firefox_class
+
+
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
+    # default set engine type as sikuli since type would not be specified in perfBaseTest
+    if 'type' in kwargs:
+        engine_type = kwargs['type']
+    else:
+        engine_type = 'sikuli'
     profiler_list = kwargs['profiler_list']
     enabled_profiler_list = [x for x in profiler_list if profiler_list[x]['enable'] is True]
     profile_path = None
 
+    chrome_class, firefox_class = _load_browser_class(engine_type)
+
     if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
-            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                        tracing_path=env.chrome_tracing_file_fp)
+            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+                                       tracing_path=env.chrome_tracing_file_fp)
         else:
             profile_path = env.firefox_profile_path
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                         profile_path=profile_path)
+            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+                                        profile_path=profile_path)
     elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             profile_path = env.firefox_profile_path
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
-                                         profile_path=profile_path)
+            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
+                                        profile_path=profile_path)
         else:
-            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
     else:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             profile_path = env.firefox_profile_path
-            browser_obj = BrowserFirefox(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                         profile_path=profile_path)
+            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+                                        profile_path=profile_path)
         else:
-            browser_obj = BrowserChrome(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
 
     browser_obj.launch()
-    return profile_path
+    return browser_obj, profile_path
 
 
-def get_browser_version(browser_type):
+def get_browser_name_list(browser_type):
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
-        browser_obj = BrowserFirefox(0, 0)
+        # This is to ensure all kinds of firefox we supported can be properly moved.
+        if sys.platform == 'darwin':
+            return ['Firefox.app', 'FirefoxNightly.app']
+        else:
+            return ['Mozilla Firefox', 'Nightly']
+    elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
+        if sys.platform == 'darwin':
+            return ['Chrome.app']
+        else:
+            return ['Google Chrome']
     else:
-        browser_obj = BrowserChrome(0, 0)
+        if sys.platform == 'darwin':
+            return ['{}.app'.format(browser_type)]
+        else:
+            return [browser_type]
+
+
+def close_browser(browser_type):
+    window_title_list = get_browser_name_list(browser_type)
+    window_obj = WindowObject(window_title_list)
+    window_obj.close_window()
+
+
+# TODO: need to finish webdriver way to get version
+def get_browser_version(browser_type):
+    chrome_class, firefox_class = _load_browser_class(engine_type)
+
+    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
+        browser_obj = firefox_class(0, 0)
+    else:
+        browser_obj = chrome_class(0, 0)
     return_version = browser_obj.get_version()
     return return_version
 
 
 def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
-    window_title_list = None
-    if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
-        if sys.platform == "darwin":
-            window_title_list = ["Firefox.app", "FirefoxNightly.app"]
-        else:
-            # This is to ensure all kinds of firefox we supported can be properly moved.
-            window_title_list = ["Mozilla Firefox", "Nightly"]
-
-    else:
-        if sys.platform == "darwin":
-            window_title_list = ["Chrome.app"]
-        else:
-            window_title_list = ["Google Chrome"]
-
+    window_title_list = get_browser_name_list(browser_type)
     # Moving window by strings from window_title
     height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
     width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment

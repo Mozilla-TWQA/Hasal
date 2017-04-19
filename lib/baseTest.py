@@ -1,16 +1,18 @@
 # coding=utf-8
 import os
 import sys
+import copy
 import time
 import json
 import unittest
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
-import helper.resultHelper as resultHelper
+import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
+from common.commonUtil import CommonUtil
 
 logger = get_logger(__name__)
 
@@ -58,43 +60,58 @@ class BaseTest(unittest.TestCase):
         return result_args
 
     def get_browser_done(self):
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True:
-                for i in range(10):
-                    time.sleep(1)
-                    logger.debug("Check browser show up %d time(s)." % (i + 1))
-                    desktopHelper.lock_window_pos(self.browser_type)
-                    videoHelper.capture_screen(self.env, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
-                                               self.env.img_output_sample_1_fn)
-                    if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
-                        logger.debug("Browser shown, adjust viewport by setting.")
-                        height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
-                                                                                      self.env.img_sample_dp,
-                                                                                      self.env.img_output_sample_1_fn)
-                        height_offset = 0
-                        terminal_width = width_browser
+        # check the video recording
+        recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
+
+        if recording_enabled:
+            for i in range(10):
+                time.sleep(1)
+                logger.debug("Check browser show up %d time(s)." % (i + 1))
+                desktopHelper.lock_window_pos(self.browser_type)
+                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
+                                           self.env.img_sample_dp,
+                                           self.env.img_output_sample_1_fn)
+                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
+                    logger.debug("Browser shown, adjust viewport by setting.")
+                    height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
+                                                                                  self.env.img_sample_dp,
+                                                                                  self.env.img_output_sample_1_fn)
+                    height_offset = 0
+                    terminal_width = width_browser
+                    terminal_height = 60
+                    if sys.platform == 'linux2':
+                        height_offset = 20
                         terminal_height = 60
-                        if sys.platform == 'linux2':
-                            height_offset = 50
-                            terminal_height = 60
-                        elif sys.platform == 'win32':
+                    elif sys.platform == 'win32':
+                        import platform
+                        release_version = platform.release()
+                        if release_version == '10':
+                            logger.info("Move terminal window for Windows 10.")
+                            height_offset = -4
+                            terminal_height = 100
+                        elif release_version == '7':
+                            logger.info("Move terminal window for Windows 7.")
                             height_offset = 0
-                            terminal_height = 50
-                        elif sys.platform == 'darwin':
-                            # TODO: This offset settings only be tested on Mac Book Air
-                            height_offset = 115
-                            terminal_height = 10
-                        terminal_x = 0
-                        terminal_y = height_browser + height_offset
-                        logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
-                                                                                          terminal_y,
-                                                                                          terminal_width,
-                                                                                          terminal_height))
-                        self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
-                                                                 pos_y=terminal_y,
-                                                                 window_width=terminal_width,
-                                                                 window_height=terminal_height)
-                        break
+                            terminal_height = 80
+                        else:
+                            logger.info("Move terminal window for Windows.")
+                            height_offset = 0
+                            terminal_height = 80
+                    elif sys.platform == 'darwin':
+                        # TODO: This offset settings only be tested on Mac Book Air
+                        height_offset = 25
+                        terminal_height = 80
+                    terminal_x = 0
+                    terminal_y = height_browser + height_offset
+                    logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
+                                                                                      terminal_y,
+                                                                                      terminal_width,
+                                                                                      terminal_height))
+                    self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
+                                                             pos_y=terminal_y,
+                                                             window_width=terminal_width,
+                                                             window_height=terminal_height)
+                    break
         else:
             time.sleep(3)
             desktopHelper.lock_window_pos(self.browser_type)
@@ -115,7 +132,26 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
+    def load_configs(self):
+        default_platform_dep_settings_key = "platform-dep-settings"
+        config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+        current_platform_name = sys.platform
+        for config_env_name in config_fp_list:
+            config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
+            with open(os.getenv(config_env_name)) as fh:
+                config_value = json.load(fh)
+            if default_platform_dep_settings_key in config_value:
+                if current_platform_name in config_value[default_platform_dep_settings_key]:
+                    platform_dep_variables = copy.deepcopy(config_value[default_platform_dep_settings_key][current_platform_name])
+                    config_value.update(platform_dep_variables)
+                config_value.pop(default_platform_dep_settings_key)
+            setattr(self, config_variable_name, config_value)
+
     def setUp(self):
+
+        # load all settings into self object
+        self.load_configs()
+
         # Original profiler list was substitute by self.env.firefox_settings_extensions
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
@@ -130,7 +166,12 @@ class BaseTest(unittest.TestCase):
         self.env.init_output_dir()
 
         # get browser type
-        self.browser_type = self.env.get_browser_type()
+        # TODO Maybe we can set runtime_case_data['browser_type' here, so baseTest.py can use one line self.browser_type = os.getenv("browser_type").
+
+        if self.exec_config['user-simulation-tool'] == self.global_config['default-user-simulation-tool-webdriver']:
+            self.browser_type = os.getenv("browser_type")
+        else:
+            self.browser_type = self.env.get_browser_type()
 
         # clone test target
         self.clone_test_file()
@@ -147,15 +188,10 @@ class BaseTest(unittest.TestCase):
         # output result
         if self.round_status == 0:
             if hasattr(self, "crop_data"):
-                resultHelper.result_calculation(self.env, self.crop_data,
-                                                int(os.getenv("CALC_SI")), int(os.getenv("ENABLE_WAVEFORM")),
-                                                os.getenv("PERFHERDER_REVISION"), os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                                          os.getenv("SUITE_RESULT_DP"), self.crop_data)
             else:
-                resultHelper.result_calculation(self.env, calc_si=int(os.getenv("CALC_SI")),
-                                                waveform=int(os.getenv("ENABLE_WAVEFORM")),
-                                                revision=os.getenv("PERFHERDER_REVISION"),
-                                                pkg_platform=os.getenv("PERFHERDER_PKG_PLATFORM"),
-                                                suite_upload_dp=os.getenv("SUITE_UPLOAD_DP"))
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                                          os.getenv("SUITE_RESULT_DP"))
         else:
-            logger.warning("This running result of sikuli execution is not successful, return code: " + str(self.round_status))
+            logger.warning("This running result of execution is not successful, return code: " + str(self.round_status))

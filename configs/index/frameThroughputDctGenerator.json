@@ -1,0 +1,31 @@
+{
+  "module-name"             : "FrameThroughputDctGenerator",
+  "module-path"             : "lib.generator.frameThroughputDctGenerator",
+  "sample-converter-name"   : "SampleConverter",
+  "sample-converter-path"   : "lib.converter.sampleConverter",
+  "image-converter-name"    : "Cv2Converter",
+  "image-converter-path"    : "lib.converter.cv2Converter",
+  "image-converter-format"  : "bmp",
+  "case-type"               : "re",
+  "snapshot-base-sample1"   : false,
+  "snapshot-base-sample2"   : false,
+  "supported-suite-fp"      : "",
+  "drop-outlier-flag"       : false,
+  "platform-dep-settings"   : {
+    "darwin":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.01,
+      "search-margin"           : 10
+    },
+    "win32":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.01,
+      "search-margin"           : 10
+    },
+    "linux2":{
+      "video-recording-fps"     : 90,
+      "compare-threshold"       : 0.01,
+      "search-margin"           : 10
+    }
+  }
+}

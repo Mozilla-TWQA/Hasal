@@ -46,20 +46,6 @@ matrix:
         - source .env-python/bin/activate
         - python runtest.py -h
   # Mac OS X
-    # Test tidy
-    - env: GOAL=test-tidy
-      os: osx
-      sudo: required
-      language: generic
-      osx_image: xcode7.3
-      before_install:
-        - brew update
-        - which python || brew install python
-        - pip install virtualenv
-      install:
-        - ./mach
-      script:
-        - ./mach test-tidy --no-progress --all
     # Test bootstrap-mac
     - env: GOAL=bootstrap
       os: osx

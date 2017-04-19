@@ -12,6 +12,7 @@ class Environment(object):
     DEFAULT_HASAL_DIR = os.getcwd()
     DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
     DEFAULT_EXTENSIONS_DIR = os.path.join(os.getcwd(), "thirdParty", "extensions")
+    DEFAULT_GECKODRIVER_DIR = os.path.join(os.getcwd(), "thirdParty", "geckodriver")
     DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
     DEFAULT_PROFILE_DIR = os.path.join(os.getcwd(), "resource")
     DEFAULT_UPLOAD_DIR = os.path.join(os.getcwd(), "upload")
@@ -33,7 +34,7 @@ class Environment(object):
     DEFAULT_BROWSER_POS_X = 0
     DEFAULT_BROWSER_POS_Y = 0
     DEFAULT_BROWSER_WIDTH = 1024
-    DEFAULT_BROWSER_HEIGHT = 800
+    DEFAULT_BROWSER_HEIGHT = 780
     DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
     DEFAULT_BROWSER_TYPE_CHROME = "chrome"
     if platform.system().lower() == "darwin":
@@ -41,13 +42,13 @@ class Environment(object):
         DEFAULT_VIEWPORT_WIDTH = 800
         DEFAULT_VIEWPORT_HEIGHT = 600
     else:
-        DEFAULT_VIDEO_RECORDING_FPS = 50
+        DEFAULT_VIDEO_RECORDING_FPS = 60
         DEFAULT_VIEWPORT_WIDTH = 1024
         DEFAULT_VIEWPORT_HEIGHT = 768
     DEFAULT_VIDEO_RECORDING_POS_X = 72
     DEFAULT_VIDEO_RECORDING_POS_Y = 125
     DEFAULT_VIDEO_RECORDING_WIDTH = DEFAULT_BROWSER_WIDTH + 100
-    DEFAULT_VIDEO_RECORDING_HEIGHT = DEFAULT_BROWSER_HEIGHT + 110
+    DEFAULT_VIDEO_RECORDING_HEIGHT = DEFAULT_BROWSER_HEIGHT + 120
     IMG_FILE_EXTENSION = ['.jpg', '.png', '.jpeg']
 
     SEARCH_TARGET_VIEWPORT = 'viewport'
@@ -102,6 +103,7 @@ class Environment(object):
     TEST_FB_URL_POST = "http://goo.gl/fxja5z"
 
     GSHEET_TEST_URL_SPEC = "https://docs.google.com/spreadsheets/d/%s"
+    TEST_TARGET_ID_EMPTY_SHEET = "1AtfAeK8YRquIovcBxWuoapi0j1gJLWXKTqBnlg_sFdk"
     TEST_TARGET_ID_100R_NUMBER_ENCHAR = "1_vIBHZgVLdEPbo8DrJwbSKNVTCcyfDehOzv9yAXHJ2k"
     TEST_TARGET_ID_100R_NUMBER_UTF8CHAR = "1vOKw5Z_-NDo88UzkWL4e0Rq2bHzs5COCF_VcmjYsABU"
     TEST_TARGET_ID_1000R_NUMBER_ENCHAR = "1VrcKk4P09LQfVdJ2r9mb9yUWeQkYbzupwd8rSwPA0og"
@@ -116,6 +118,7 @@ class Environment(object):
     TEST_TARGET_ID_100R_NUMBER_ENCHAR_IMAGE_10TABS = "1YZ68juV1D4uL16Off0RYZbXvhYSuG90KgNXbmZJIO1o"
     TEST_TARGET_ID_100R_NUMBER_UTF8CHAR_10TABS = "1__DF-ilgSIhkQrotazWSQZvlOc3UBISCCaDNbxPLLN8"
     TEST_TARGET_ID_100R_DIFFERENT_COLOR_10TABS = "1CPBaq71I-8FoGsbC8VETFWZdS_FdVFYPA63Tn53Kuko"
+    TEST_TARGET_ID_10PAGE_NUMBER_ENCHAR = "1DhwFaB-HwIwBXqi5k20FrCyoRWXQzc8STkfAomaAgRQ"
 
     TEST_TARGET_GOOGLE_DRIVE = "https://drive.google.com/open?id="
     TEST_TARGET_ID_SLIDE_1_PAGE_BLANK = "1wdPUMvSWJN8mJnMhcpJ8Q3vXTU6x2N3Mw3iAqHC8dhU"
@@ -140,7 +143,6 @@ class Environment(object):
     DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
     def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
-        self.DEFAULT_OUTLIER_CHECK_POINT = int(os.getenv("MAX_RUN"))
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
         self.test_method_doc = test_method_doc
@@ -170,8 +172,8 @@ class Environment(object):
         self.video_output_sample_2_fp = os.path.join(self.DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
         self.img_sample_dp = os.path.join(self.DEFAULT_IMAGE_SAMPLE_DIR, self.output_name)
         self.img_output_dp = os.path.join(self.DEFAULT_IMAGE_OUTPUT_DIR, self.output_name)
-        self.img_output_sample_1_fn = self.output_name + "_sample_1.jpg"
-        self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
+        self.img_output_sample_1_fn = self.output_name + "_sample_1.bmp"
+        self.img_output_sample_2_fn = self.output_name + "_sample_2.bmp"
         self.img_output_crop_fn = self.output_name + "_sample_3.jpg"
         self.profile_timing_json_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_har_file_fp = os.path.join(self.DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".har")
@@ -180,7 +182,7 @@ class Environment(object):
         self.recording_log_fp = os.path.join(self.hasal_dir, "recording.log")
         self.waveform_fp = os.path.join(self.DEFAULT_WAVEFORM_OUTPUT_DIR, self.output_name + "_waveform_info.json")
 
-        self.firefox_settings_json = os.getenv('FIREFOX_SETTINGS')
+        self.firefox_settings_json = os.getenv('FIREFOX_CONFIG_FP')
         self.firefox_settings_env = {}
         self.firefox_settings_prefs = {}
         self.firefox_settings_extensions = {}

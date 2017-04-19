@@ -1,0 +1,25 @@
+{
+  "module-name"             : "RunTimeDctGenerator",
+  "module-path"             : "lib.generator.runTimeDctGenerator",
+  "sample-converter-name"   : "SampleConverter",
+  "sample-converter-path"   : "lib.converter.sampleConverter",
+  "image-converter-name"    : "Cv2Converter",
+  "image-converter-path"    : "lib.converter.cv2Converter",
+  "image-converter-format"  : "bmp",
+  "case-type"               : "re",
+  "snapshot-base-sample1"   : true,
+  "snapshot-base-sample2"   : true,
+  "supported-suite-fp"      : "",
+  "drop-outlier-flag"       : true,
+  "platform-dep-settings"   : {
+    "darwin":{
+      "video-recording-fps"     : 60
+    },
+    "win32":{
+      "video-recording-fps"     : 60
+    },
+    "linux2":{
+      "video-recording-fps"     : 60
+    }
+  }
+}

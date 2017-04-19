@@ -2,29 +2,30 @@ import numpy as np
 
 
 class outlier(object):
-    def detect(self, input_seq, method=1):
+    def detect(self, input_seq, method=1, drop_outlier=True):
         seq = sorted(input_seq, key=lambda k: k['run_time'])
         seq_value = [d['run_time'] for d in seq]
         outliers = []
         outliers_value = []
         if len(seq) >= 3:
-            # Default using Moore and McCabe method to calculate quartile value
-            Q_Calculation = {
-                '1': self.Q_MooreMcCabe,
-                '2': self.Q_Tukey,
-                '3': self.Q_FreundPerles,
-                '4': self.Q_Minitab
-            }
-            [Q1, Q3] = Q_Calculation.setdefault(str(method), self.Q_MooreMcCabe)(seq_value)
-            IQR = Q3 - Q1
-            lower = Q1 - 1.5 * IQR
-            upper = Q3 + 1.5 * IQR
-            for data in seq:
-                if data['run_time'] < lower or data['run_time'] > upper:
-                    outliers.append(data)
-                    outliers_value.append(data['run_time'])
-            self.drop(seq, outliers)
-            self.drop(seq_value, outliers_value)
+            if drop_outlier:
+                # Default using Moore and McCabe method to calculate quartile value
+                Q_Calculation = {
+                    '1': self.Q_MooreMcCabe,
+                    '2': self.Q_Tukey,
+                    '3': self.Q_FreundPerles,
+                    '4': self.Q_Minitab
+                }
+                [Q1, Q3] = Q_Calculation.setdefault(str(method), self.Q_MooreMcCabe)(seq_value)
+                IQR = Q3 - Q1
+                lower = Q1 - 1.5 * IQR
+                upper = Q3 + 1.5 * IQR
+                for data in seq:
+                    if data['run_time'] < lower or data['run_time'] > upper:
+                        outliers.append(data)
+                        outliers_value.append(data['run_time'])
+                self.drop(seq, outliers)
+                self.drop(seq_value, outliers_value)
         if len(seq) == 0:
             mean = 0
             median = 0
