@@ -4,6 +4,7 @@ import sys
 import copy
 import time
 import json
+import platform
 import unittest
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
@@ -27,7 +28,7 @@ class BaseTest(unittest.TestCase):
 
         # Get Terminal Window Object here when it still active
         self.current_platform_name = sys.platform
-        if self.current_platform_namem == 'darwin':
+        if self.current_platform_name == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
             self.current_platform_ver = platform.mac_ver()[0]
         elif self.current_platform_name == 'win32':
