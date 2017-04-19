@@ -5,7 +5,6 @@ import shutil
 import tempfile
 import importlib
 import numpy as np
-from lib.common.environment import Environment
 from lib.common.commonUtil import CommonUtil
 from lib.common.outlier import outlier
 from lib.common.dumpDataToJsonFile import dump_data_to_json_file
