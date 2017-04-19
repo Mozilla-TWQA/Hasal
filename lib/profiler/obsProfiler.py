@@ -134,12 +134,12 @@ class ObsProfiler(BaseProfiler):
         After the OBS video file be created, then return. Max waiting time is 10 sec.
         :return: True after file was created. False when there is no file be created after 10 sec.
         """
-        for _ in range(10):
+        for _ in range(30):
             file_counter = len([item for item in os.listdir(ObsProfiler.OBS_VIDEO_OUTPUT_DIR_PATH) if os.path.isfile(os.path.join(ObsProfiler.OBS_VIDEO_OUTPUT_DIR_PATH, item))])
             if file_counter >= 1:
-                time.sleep(1)
+                time.sleep(0.1)
                 return True
-            time.sleep(1)
+            time.sleep(0.1)
         return False
 
     def start_recording(self):
@@ -177,14 +177,6 @@ class ObsProfiler(BaseProfiler):
                 self.process = subprocess.Popen(["ffmpeg", "-f", "avfoundation", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", get_mac_os_display_channel(), "-filter:v", "crop=" + str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + ":" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT) + ":0:0", "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
             else:
                 self.process = subprocess.Popen(["ffmpeg", "-f", "x11grab", "-draw_mouse", "0", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", get_mac_os_display_channel(), "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
-
-        # get t1 time
-        for counter in range(10):
-            if os.path.exists(self.env.video_output_fp):
-                self.t1_time = time.time()
-                break
-            else:
-                time.sleep(0.3)
 
     def stop_recording(self, **kwargs):
         if platform.system().lower() == "windows":
