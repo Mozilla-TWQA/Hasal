@@ -54,7 +54,6 @@ class ObsProfiler(BaseProfiler):
 
     def _write_obs_config_ini(self, obs_config, filename):
         with open(filename, 'w') as f:
-            f.write(codecs.BOM_UTF8)
             obs_config.write(f)
             logger.debug('Write Config: {}'.format(filename))
 
@@ -111,13 +110,17 @@ class ObsProfiler(BaseProfiler):
         obs_global_fp = os.path.join(ObsProfiler.OBS_SETTINGS_DIR_PATH, ObsProfiler.OBS_SETTINGS_FN)
         if os.path.exists(ObsProfiler.OBS_SETTINGS_DIR_PATH) and os.path.exists(obs_global_fp):
             global_config = self._get_obs_config_ini(obs_global_fp)
-            is_sys_tray = global_config.get('BasicWindow', 'SysTrayWhenStarted')
-            if not is_sys_tray:
+            global_config.set('General', 'Language', 'en-US')
+            try:
+                is_sys_tray = global_config.get('BasicWindow', 'SysTrayWhenStarted')
+            except:
+                is_sys_tray = False
+            if is_sys_tray:
+                logger.debug('SysTrayWhenStarted was True: {}'.format(obs_global_fp))
+            else:
                 global_config.set('BasicWindow', 'SysTrayWhenStarted', True)
                 self._write_obs_config_ini(global_config, obs_global_fp)
                 logger.info('Enable SysTrayWhenStarted: {}'.format(obs_global_fp))
-            else:
-                logger.debug('SysTrayWhenStarted was True: {}'.format(obs_global_fp))
         else:
             raise Exception('There is no OBS global settings file!')
 
