@@ -173,6 +173,88 @@ object --+
       
     </td>
   </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_find_recorder_stat"></a><span class="summary-sig-name">_find_recorder_stat</span>(<span class="summary-sig-arg">total_recorder_settings</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#CommonUtil._find_recorder_stat">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Hasal.lib.common.commonUtil.CommonUtil-class.html#is_video_recording" class="summary-sig-name">is_video_recording</a>(<span class="summary-sig-arg">settings</span>)</span><br />
+      Checking the Video Recording settings.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#CommonUtil.is_video_recording">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Hasal.lib.common.commonUtil.CommonUtil-class.html#is_validate_fps" class="summary-sig-name">is_validate_fps</a>(<span class="summary-sig-arg">settings</span>)</span><br />
+      Checking the FPS validation settings.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#CommonUtil.is_validate_fps">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RECORDER_LIST"></a><span class="summary-name">RECORDER_LIST</span> = <code title="[Environment.PROFILER_FLAG_AVCONV,]">[Environment.PROFILER_FLAG_AVCONV,]</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="get_logger(__file__)">get_logger(__file__)</code>
+    </td>
+  </tr>
 </table>
 <!-- ==================== PROPERTIES ==================== -->
 <a name="section-Properties"></a>
@@ -199,6 +281,71 @@ object --+
     </td>
   </tr>
 </table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="is_video_recording"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">is_video_recording</span>(<span class="sig-arg">settings</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#CommonUtil.is_video_recording">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checking the Video Recording settings.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>True if there is one Recorder, False if there is no Recorder. 
+          Raise exception when there are multiple Recorders.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="is_validate_fps"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">is_validate_fps</span>(<span class="sig-arg">settings</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#CommonUtil.is_validate_fps">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checking the FPS validation settings.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>True if FPS validation is enabled, False if FPS validation is 
+          disabled</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -227,7 +374,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Apr 19 03:37:41 2017
+    Generated by Epydoc 3.0.1 on Wed Apr 19 03:57:00 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Hasal.lib.generator.inputLatencyAnimationDctGenerator</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;Hasal ::
+        <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
+        <a href="Hasal.lib.generator-module.html">Package&nbsp;generator</a> ::
+        Module&nbsp;inputLatencyAnimationDctGenerator
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-module.html">Module Hasal.lib.generator.inputLatencyAnimationDctGenerator</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">time</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">copy</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Package Hasal.lib.common=Hasal.lib.common-module.html"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-0', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module Hasal.lib.common.imageUtil=Hasal.lib.common.imageUtil-module.html"><a title="Hasal.lib.common.imageUtil" class="py-name" href="#" onclick="return doclink('link-1', 'imageUtil', 'link-1');">imageUtil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Function Hasal.lib.common.imageUtil.generate_crop_data()=Hasal.lib.common.imageUtil-module.html#generate_crop_data"><a title="Hasal.lib.common.imageUtil.generate_crop_data" class="py-name" href="#" onclick="return doclink('link-2', 'generate_crop_data', 'link-2');">generate_crop_data</a></tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-3', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name"><a title="Hasal.lib.common.imageUtil" class="py-name" href="#" onclick="return doclink('link-4', 'imageUtil', 'link-1');">imageUtil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Function Hasal.lib.common.imageUtil.crop_images()=Hasal.lib.common.imageUtil-module.html#crop_images"><a title="Hasal.lib.common.imageUtil.crop_images" class="py-name" href="#" onclick="return doclink('link-5', 'crop_images', 'link-5');">crop_images</a></tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-6', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name"><a title="Hasal.lib.common.imageUtil" class="py-name" href="#" onclick="return doclink('link-7', 'imageUtil', 'link-1');">imageUtil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-8" class="py-name" targets="Method Hasal.lib.common.imageTool.ImageTool.convert_to_dct()=Hasal.lib.common.imageTool.ImageTool-class.html#convert_to_dct,Function Hasal.lib.common.imageUtil.convert_to_dct()=Hasal.lib.common.imageUtil-module.html#convert_to_dct"><a title="Hasal.lib.common.imageTool.ImageTool.convert_to_dct
+Hasal.lib.common.imageUtil.convert_to_dct" class="py-name" href="#" onclick="return doclink('link-8', 'convert_to_dct', 'link-8');">convert_to_dct</a></tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-9', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="Hasal.lib.common.imageUtil" class="py-name" href="#" onclick="return doclink('link-10', 'imageUtil', 'link-1');">imageUtil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-11" class="py-name" targets="Method Hasal.lib.common.imageTool.ImageTool.compare_with_sample_image_multi_process()=Hasal.lib.common.imageTool.ImageTool-class.html#compare_with_sample_image_multi_process,Function Hasal.lib.common.imageUtil.compare_with_sample_image_multi_process()=Hasal.lib.common.imageUtil-module.html#compare_with_sample_image_multi_process"><a title="Hasal.lib.common.imageTool.ImageTool.compare_with_sample_image_multi_process
+Hasal.lib.common.imageUtil.compare_with_sample_image_multi_process" class="py-name" href="#" onclick="return doclink('link-11', 'compare_with_sample_image_multi_process', 'link-11');">compare_with_sample_image_multi_process</a></tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-12', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt class="py-name">visualmetricsWrapper</tt> <tt class="py-keyword">import</tt> <tt id="link-13" class="py-name" targets="Method Hasal.lib.common.imageTool.ImageTool.find_image_viewport()=Hasal.lib.common.imageTool.ImageTool-class.html#find_image_viewport,Function Hasal.lib.thirdparty.visualmetrics.find_image_viewport()=Hasal.lib.thirdparty.visualmetrics-module.html#find_image_viewport"><a title="Hasal.lib.common.imageTool.ImageTool.find_image_viewport
+Hasal.lib.thirdparty.visualmetrics.find_image_viewport" class="py-name" href="#" onclick="return doclink('link-13', 'find_image_viewport', 'link-13');">find_image_viewport</a></tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="Hasal.lib.common" class="py-name" href="#" onclick="return doclink('link-14', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Module Hasal.lib.common.logConfig=Hasal.lib.common.logConfig-module.html"><a title="Hasal.lib.common.logConfig" class="py-name" href="#" onclick="return doclink('link-15', 'logConfig', 'link-15');">logConfig</a></tt> <tt class="py-keyword">import</tt> <tt id="link-16" class="py-name" targets="Function Hasal.lib.common.logConfig.get_logger()=Hasal.lib.common.logConfig-module.html#get_logger"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-16', 'get_logger', 'link-16');">get_logger</a></tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt id="link-17" class="py-name" targets="Variable Hasal.agent.agent.logger=Hasal.agent.agent-module.html#logger,Variable Hasal.agent.iskakalunan.logger=Hasal.agent.iskakalunan-module.html#logger,Variable Hasal.lib.baseTest.logger=Hasal.lib.baseTest-module.html#logger,Variable Hasal.lib.browser.base.logger=Hasal.lib.browser.base-module.html#logger,Variable Hasal.lib.browser.firefox.logger=Hasal.lib.browser.firefox-module.html#logger,Variable Hasal.lib.browser.webdriverFirefox.logger=Hasal.lib.browser.webdriverFirefox-module.html#logger,Variable Hasal.lib.common.commonUtil.CommonUtil.logger=Hasal.lib.common.commonUtil.CommonUtil-class.html#logger,Variable Hasal.lib.common.environment.logger=Hasal.lib.common.environment-module.html#logger,Variable Hasal.lib.common.imageTool.logger=Hasal.lib.common.imageTool-module.html#logger,Variable Hasal.lib.common.imageUtil.logger=Hasal.lib.common.imageUtil-module.html#logger,Variable Hasal.lib.common.pyDriveUtil.logger=Hasal.lib.common.pyDriveUtil-module.html#logger,Variable Hasal.lib.common.recordscreen.logger=Hasal.lib.common.recordscreen-module.html#logger,Variable Hasal.lib.common.videoFluency.logger=Hasal.lib.common.videoFluency-module.html#logger,Variable Hasal.lib.common.windowController.logger=Hasal.lib.common.windowController-module.html#logger,Variable Hasal.lib.converter.cv2Converter.logger=Hasal.lib.converter.cv2Converter-module.html#logger,Variable Hasal.lib.converter.ftSampleConverter.logger=Hasal.lib.converter.ftSampleConverter-module.html#logger,Variable Hasal.lib.converter.sampleConverter.logger=Hasal.lib.converter.sampleConverter-module.html#logger,Variable Hasal.lib.generator.frameThroughputDctGenerator.logger=Hasal.lib.generator.frameThroughputDctGenerator-module.html#logger,Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger=Hasal.lib.generator.inputLatencyAnimationDctGenerator-module.html#logger,Variable Hasal.lib.generator.inputLatencyDctGenerator.logger=Hasal.lib.generator.inputLatencyDctGenerator-module.html#logger,Variable Hasal.lib.generator.runTimeDctGenerator.logger=Hasal.lib.generator.runTimeDctGenerator-module.html#logger,Variable Hasal.lib.generator.speedIndexGenerator.logger=Hasal.lib.generator.speedIndexGenerator-module.html#logger,Variable Hasal.lib.helper.desktopHelper.logger=Hasal.lib.helper.desktopHelper-module.html#logger,Variable Hasal.lib.helper.firefoxProfileCreator.logger=Hasal.lib.helper.firefoxProfileCreator-module.html#logger,Variable Hasal.lib.helper.generatorHelper.logger=Hasal.lib.helper.generatorHelper-module.html#logger,Variable Hasal.lib.helper.resultHelper.logger=Hasal.lib.helper.resultHelper-module.html#logger,Variable Hasal.lib.helper.uploadAgentHelper.logger=Hasal.lib.helper.uploadAgentHelper-module.html#logger,Variable Hasal.lib.perfBaseTest.logger=Hasal.lib.perfBaseTest-module.html#logger,Variable Hasal.lib.profiler.geckoProfiler.logger=Hasal.lib.profiler.geckoProfiler-module.html#logger,Variable Hasal.lib.profiler.harProfiler.logger=Hasal.lib.profiler.harProfiler-module.html#logger,Variable Hasal.lib.profiler.mitmDumpProfiler.logger=Hasal.lib.profiler.mitmDumpProfiler-module.html#logger,Variable Hasal.lib.validator.fileExistValidator.logger=Hasal.lib.validator.fileExistValidator-module.html#logger,Variable Hasal.lib.validator.fpsValidator.logger=Hasal.lib.validator.fpsValidator-module.html#logger,Variable Hasal.lib.webdriverBaseTest.logger=Hasal.lib.webdriverBaseTest-module.html#logger"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-17', 'logger', 'link-17');">logger</a></tt> <tt class="py-op">=</tt> <tt id="link-18" class="py-name"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-18', 'get_logger', 'link-16');">get_logger</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">)</tt> </tt>
+<a name="InputLatencyAnimationDctGenerator"></a><div id="InputLatencyAnimationDctGenerator-def"><a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt> <a class="py-toggle" href="#" id="InputLatencyAnimationDctGenerator-toggle" onclick="return toggle('InputLatencyAnimationDctGenerator');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html">InputLatencyAnimationDctGenerator</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="InputLatencyAnimationDctGenerator-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="InputLatencyAnimationDctGenerator-expanded"><a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line">    <tt id="link-19" class="py-name" targets="Variable Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT=Hasal.lib.common.environment.Environment-class.html#SEARCH_TARGET_VIEWPORT,Variable Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT=Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator-class.html#SEARCH_TARGET_VIEWPORT,Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#SEARCH_TARGET_VIEWPORT,Variable Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT=Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#SEARCH_TARGET_VIEWPORT"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-19', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'viewport'</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line">    <tt id="link-20" class="py-name" targets="Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#SEARCH_TARGET_ORIGINAL,Variable Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SEARCH_TARGET_ORIGINAL=Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html#SEARCH_TARGET_ORIGINAL"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SEARCH_TARGET_ORIGINAL" class="py-name" href="#" onclick="return doclink('link-20', 'SEARCH_TARGET_ORIGINAL', 'link-20');">SEARCH_TARGET_ORIGINAL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'original'</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">    <tt id="link-21" class="py-name" targets="Variable Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SKIP_STATUS_BAR_FRACTION=Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator-class.html#SKIP_STATUS_BAR_FRACTION,Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SKIP_STATUS_BAR_FRACTION=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#SKIP_STATUS_BAR_FRACTION,Variable Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SKIP_STATUS_BAR_FRACTION=Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html#SKIP_STATUS_BAR_FRACTION,Variable Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SKIP_STATUS_BAR_FRACTION=Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#SKIP_STATUS_BAR_FRACTION"><a title="Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SKIP_STATUS_BAR_FRACTION" class="py-name" href="#" onclick="return doclink('link-21', 'SKIP_STATUS_BAR_FRACTION', 'link-21');">SKIP_STATUS_BAR_FRACTION</a></tt> <tt class="py-op">=</tt> <tt class="py-number">1.0</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">    <tt id="link-22" class="py-name" targets="Variable Hasal.lib.common.environment.Environment.BROWSER_VISUAL_EVENT_POINTS=Hasal.lib.common.environment.Environment-class.html#BROWSER_VISUAL_EVENT_POINTS,Variable Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS=Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS,Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS,Variable Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS=Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS,Variable Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.BROWSER_VISUAL_EVENT_POINTS=Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS"><a title="Hasal.lib.common.environment.Environment.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.BROWSER_VISUAL_EVENT_POINTS" class="py-name" href="#" onclick="return doclink('link-22', 'BROWSER_VISUAL_EVENT_POINTS', 'link-22');">BROWSER_VISUAL_EVENT_POINTS</a></tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line">        <tt class="py-string">'backward_search'</tt><tt class="py-op">:</tt> <tt class="py-op">[</tt><tt class="py-op">{</tt><tt class="py-string">'event'</tt><tt class="py-op">:</tt> <tt class="py-string">'end'</tt><tt class="py-op">,</tt> <tt class="py-string">'search_target'</tt><tt class="py-op">:</tt> <tt id="link-23" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-23', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt><tt class="py-op">,</tt> <tt class="py-string">'fraction'</tt><tt class="py-op">:</tt> <tt id="link-24" class="py-name"><a title="Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SKIP_STATUS_BAR_FRACTION" class="py-name" href="#" onclick="return doclink('link-24', 'SKIP_STATUS_BAR_FRACTION', 'link-21');">SKIP_STATUS_BAR_FRACTION</a></tt><tt class="py-op">,</tt> <tt class="py-string">'shift_result'</tt><tt class="py-op">:</tt> <tt class="py-name">True</tt><tt class="py-op">}</tt><tt class="py-op">,</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line">                            <tt class="py-op">{</tt><tt class="py-string">'event'</tt><tt class="py-op">:</tt> <tt class="py-string">'start'</tt><tt class="py-op">,</tt> <tt class="py-string">'search_target'</tt><tt class="py-op">:</tt> <tt id="link-25" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SEARCH_TARGET_ORIGINAL" class="py-name" href="#" onclick="return doclink('link-25', 'SEARCH_TARGET_ORIGINAL', 'link-20');">SEARCH_TARGET_ORIGINAL</a></tt><tt class="py-op">,</tt> <tt class="py-string">'fraction'</tt><tt class="py-op">:</tt> <tt id="link-26" class="py-name"><a title="Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SKIP_STATUS_BAR_FRACTION" class="py-name" href="#" onclick="return doclink('link-26', 'SKIP_STATUS_BAR_FRACTION', 'link-21');">SKIP_STATUS_BAR_FRACTION</a></tt><tt class="py-op">,</tt> <tt class="py-string">'shift_result'</tt><tt class="py-op">:</tt> <tt class="py-name">True</tt><tt class="py-op">}</tt><tt class="py-op">]</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line">    <tt class="py-op">}</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="InputLatencyAnimationDctGenerator.generate_sample_result"></a><div id="InputLatencyAnimationDctGenerator.generate_sample_result-def"><a name="L26"></a><tt class="py-lineno"> 26</tt> <a class="py-toggle" href="#" id="InputLatencyAnimationDctGenerator.generate_sample_result-toggle" onclick="return toggle('InputLatencyAnimationDctGenerator.generate_sample_result');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#generate_sample_result">generate_sample_result</a><tt class="py-op">(</tt><tt class="py-param">input_generator_name</tt><tt class="py-op">,</tt> <tt class="py-param">input_sample_dict</tt><tt class="py-op">,</tt> <tt class="py-param">input_sample_index</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="InputLatencyAnimationDctGenerator.generate_sample_result-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="InputLatencyAnimationDctGenerator.generate_sample_result-expanded"><a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">        <tt class="py-name">current_sample_data</tt> <tt class="py-op">=</tt> <tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">input_sample_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">        <tt class="py-name">input_sample_data</tt> <tt class="py-op">=</tt> <tt class="py-name">current_sample_data</tt><tt class="py-op">[</tt><tt class="py-name">input_sample_index</tt><tt class="py-op">]</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-name">sample_dct_obj</tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="Hasal.lib.common.imageTool.ImageTool.convert_to_dct
+Hasal.lib.common.imageUtil.convert_to_dct" class="py-name" href="#" onclick="return doclink('link-27', 'convert_to_dct', 'link-8');">convert_to_dct</a></tt><tt class="py-op">(</tt><tt class="py-name">input_sample_data</tt><tt class="py-op">[</tt><tt class="py-string">'fp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">        <tt class="py-name">return_result</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">:</tt> <tt class="py-op">{</tt><tt class="py-string">'dct'</tt><tt class="py-op">:</tt> <tt class="py-name">sample_dct_obj</tt><tt class="py-op">,</tt> <tt class="py-string">'crop_data'</tt><tt class="py-op">:</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">}</tt><tt class="py-op">}</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">        <tt class="py-comment"># crop sample data area</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">        <tt class="py-comment"># generate viewport crop area</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-28" class="py-name" targets="Class Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-28', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-29" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-29', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_sample_data</tt><tt class="py-op">:</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">            <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'crop_data'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt id="link-30" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-30', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-31" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-31', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">input_sample_data</tt><tt class="py-op">[</tt><tt id="link-32" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-32', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-33', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">            <tt class="py-name">viewport_value</tt> <tt class="py-op">=</tt> <tt id="link-34" class="py-name"><a title="Hasal.lib.common.imageTool.ImageTool.find_image_viewport
+Hasal.lib.thirdparty.visualmetrics.find_image_viewport" class="py-name" href="#" onclick="return doclink('link-34', 'find_image_viewport', 'link-13');">find_image_viewport</a></tt><tt class="py-op">(</tt><tt class="py-name">input_sample_data</tt><tt class="py-op">[</tt><tt class="py-string">'fp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">            <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'crop_data'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt id="link-35" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-35', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-36', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">viewport_value</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">            <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt id="link-37" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-37', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-38" class="py-name"><a title="Hasal.lib.common.environment.Environment.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT" class="py-name" href="#" onclick="return doclink('link-38', 'SEARCH_TARGET_VIEWPORT', 'link-19');">SEARCH_TARGET_VIEWPORT</a></tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">viewport_value</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">        <tt class="py-comment"># generate crop data</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">input_generator_name</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_sample_dict</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">            <tt class="py-name">crop_data_dict</tt> <tt class="py-op">=</tt> <tt id="link-39" class="py-name"><a title="Hasal.lib.common.imageUtil.generate_crop_data" class="py-name" href="#" onclick="return doclink('link-39', 'generate_crop_data', 'link-2');">generate_crop_data</a></tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">input_sample_data</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'crop_data'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">            <tt class="py-name">crop_data_dict</tt> <tt class="py-op">=</tt> <tt id="link-40" class="py-name"><a title="Hasal.lib.common.imageUtil.generate_crop_data" class="py-name" href="#" onclick="return doclink('link-40', 'generate_crop_data', 'link-2');">generate_crop_data</a></tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">input_sample_data</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_sample_dict</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'crop_data'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-comment"># crop images</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">        <tt id="link-41" class="py-name"><a title="Hasal.lib.common.imageUtil.crop_images" class="py-name" href="#" onclick="return doclink('link-41', 'crop_images', 'link-5');">crop_images</a></tt><tt class="py-op">(</tt><tt class="py-name">crop_data_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">        <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'event_tags'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">input_sample_index</tt> <tt class="py-op">==</tt> <tt class="py-number">2</tt><tt class="py-op">:</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">            <tt class="py-comment"># tag event to sample</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">event_obj</tt> <tt class="py-keyword">in</tt> <tt id="link-42" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-42', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-43" class="py-name"><a title="Hasal.lib.common.environment.Environment.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.BROWSER_VISUAL_EVENT_POINTS" class="py-name" href="#" onclick="return doclink('link-43', 'BROWSER_VISUAL_EVENT_POINTS', 'link-22');">BROWSER_VISUAL_EVENT_POINTS</a></tt><tt class="py-op">[</tt><tt class="py-string">'backward_search'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">event_obj</tt><tt class="py-op">[</tt><tt class="py-string">'search_target'</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt id="link-44" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator" class="py-name" href="#" onclick="return doclink('link-44', 'InputLatencyAnimationDctGenerator', 'link-28');">InputLatencyAnimationDctGenerator</a></tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SEARCH_TARGET_ORIGINAL" class="py-name" href="#" onclick="return doclink('link-45', 'SEARCH_TARGET_ORIGINAL', 'link-20');">SEARCH_TARGET_ORIGINAL</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">                    <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'event_tags'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">event_obj</tt><tt class="py-op">[</tt><tt class="py-string">'event'</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">sample_dct_obj</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">                    <tt class="py-name">search_target_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">crop_data_dict</tt><tt class="py-op">[</tt><tt class="py-name">event_obj</tt><tt class="py-op">[</tt><tt class="py-string">'search_target'</tt><tt class="py-op">]</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'fp_list'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'output_fp'</tt><tt class="py-op">]</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">                    <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">input_generator_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'event_tags'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">event_obj</tt><tt class="py-op">[</tt><tt class="py-string">'event'</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt id="link-46" class="py-name"><a title="Hasal.lib.common.imageTool.ImageTool.convert_to_dct
+Hasal.lib.common.imageUtil.convert_to_dct" class="py-name" href="#" onclick="return doclink('link-46', 'convert_to_dct', 'link-8');">convert_to_dct</a></tt><tt class="py-op">(</tt><tt class="py-name">search_target_fp</tt><tt class="py-op">,</tt> <tt class="py-name">event_obj</tt><tt class="py-op">[</tt><tt class="py-string">'fraction'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">return_result</tt> </tt>
+</div><a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles"></a><div id="InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles-def"><a name="L62"></a><tt class="py-lineno"> 62</tt> <a class="py-toggle" href="#" id="InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles-toggle" onclick="return toggle('InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#crop_images_based_on_samplefiles">crop_images_based_on_samplefiles</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">input_data</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles-expanded"><a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-comment"># compare source image list</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-name">input_image_list</tt> <tt class="py-op">=</tt> <tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'converter_result'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-comment"># generate image list</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">image_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">image_fn</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'converter_result'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">            <tt class="py-name">image_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'converter_result'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">image_fn</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-comment"># generate crop data for all images</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">crop_data_dict</tt> <tt class="py-op">=</tt> <tt id="link-47" class="py-name"><a title="Hasal.lib.common.imageUtil.generate_crop_data" class="py-name" href="#" onclick="return doclink('link-47', 'generate_crop_data', 'link-2');">generate_crop_data</a></tt><tt class="py-op">(</tt><tt class="py-name">image_list</tt><tt class="py-op">,</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                                            <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'sample_result'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__class__</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'crop_data'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-comment"># crop images</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">        <tt class="py-name">start_time</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt id="link-48" class="py-name"><a title="Hasal.lib.common.imageUtil.crop_images" class="py-name" href="#" onclick="return doclink('link-48', 'crop_images', 'link-5');">crop_images</a></tt><tt class="py-op">(</tt><tt class="py-name">crop_data_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">        <tt class="py-name">last_end</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">        <tt class="py-name">elapsed_time</tt> <tt class="py-op">=</tt> <tt class="py-name">last_end</tt> <tt class="py-op">-</tt> <tt class="py-name">start_time</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt id="link-49" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-49', 'logger', 'link-17');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Crop Image Time Elapsed: [%s]"</tt> <tt class="py-op">%</tt> <tt class="py-name">elapsed_time</tt><tt class="py-op">)</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-comment"># merge crop data and convert data</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">crop_target_name</tt> <tt class="py-keyword">in</tt> <tt class="py-name">crop_data_dict</tt><tt class="py-op">:</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">crop_img_obj</tt> <tt class="py-keyword">in</tt> <tt class="py-name">crop_data_dict</tt><tt class="py-op">[</tt><tt class="py-name">crop_target_name</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'fp_list'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                <tt class="py-name">image_fn</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">basename</tt><tt class="py-op">(</tt><tt class="py-name">crop_img_obj</tt><tt class="py-op">[</tt><tt class="py-string">'input_fp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">                <tt class="py-name">input_image_list</tt><tt class="py-op">[</tt><tt class="py-name">image_fn</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">crop_target_name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">crop_img_obj</tt><tt class="py-op">[</tt><tt class="py-string">'output_fp'</tt><tt class="py-op">]</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-comment"># merge crop data and convert data</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">image_fn</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_image_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">            <tt class="py-name">input_image_list</tt><tt class="py-op">[</tt><tt class="py-name">image_fn</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-50" class="py-name"><a title="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SEARCH_TARGET_ORIGINAL" class="py-name" href="#" onclick="return doclink('link-50', 'SEARCH_TARGET_ORIGINAL', 'link-20');">SEARCH_TARGET_ORIGINAL</a></tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">input_image_list</tt><tt class="py-op">[</tt><tt class="py-name">image_fn</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'fp'</tt><tt class="py-op">]</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">input_image_list</tt> </tt>
+</div><a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"> </tt>
+<a name="InputLatencyAnimationDctGenerator.generate_result"></a><div id="InputLatencyAnimationDctGenerator.generate_result-def"><a name="L94"></a><tt class="py-lineno"> 94</tt> <a class="py-toggle" href="#" id="InputLatencyAnimationDctGenerator.generate_result-toggle" onclick="return toggle('InputLatencyAnimationDctGenerator.generate_result');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#generate_result">generate_result</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">input_data</tt><tt class="py-op">,</tt> <tt class="py-param">input_global_result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="InputLatencyAnimationDctGenerator.generate_result-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="InputLatencyAnimationDctGenerator.generate_result-expanded"><a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring">        @param input_data:</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-docstring">        @return:</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-name">compare_result</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">        <tt class="py-name">input_image_list</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-51" class="py-name" targets="Method Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.crop_images_based_on_samplefiles()=Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator-class.html#crop_images_based_on_samplefiles,Method Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles()=Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#crop_images_based_on_samplefiles,Method Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.crop_images_based_on_samplefiles()=Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#crop_images_based_on_samplefiles"><a title="Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.crop_images_based_on_samplefiles
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.crop_images_based_on_samplefiles
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.crop_images_based_on_samplefiles" class="py-name" href="#" onclick="return doclink('link-51', 'crop_images_based_on_samplefiles', 'link-51');">crop_images_based_on_samplefiles</a></tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-name">compare_result</tt><tt class="py-op">[</tt><tt class="py-string">'merged_crop_image_list'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">input_image_list</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">        <tt class="py-name">compare_setting</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">            <tt class="py-string">'default_fps'</tt><tt class="py-op">:</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'index_config'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'video-recording-fps'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">            <tt class="py-string">'event_points'</tt><tt class="py-op">:</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-52" class="py-name"><a title="Hasal.lib.common.environment.Environment.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.BROWSER_VISUAL_EVENT_POINTS
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.BROWSER_VISUAL_EVENT_POINTS" class="py-name" href="#" onclick="return doclink('link-52', 'BROWSER_VISUAL_EVENT_POINTS', 'link-22');">BROWSER_VISUAL_EVENT_POINTS</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">            <tt class="py-string">'generator_name'</tt><tt class="py-op">:</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__class__</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">            <tt class="py-string">'skip_status_bar_fraction'</tt><tt class="py-op">:</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-53" class="py-name"><a title="Hasal.lib.generator.frameThroughputDctGenerator.FrameThroughputDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator.SKIP_STATUS_BAR_FRACTION
+Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator.SKIP_STATUS_BAR_FRACTION" class="py-name" href="#" onclick="return doclink('link-53', 'SKIP_STATUS_BAR_FRACTION', 'link-21');">SKIP_STATUS_BAR_FRACTION</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">            <tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">:</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-string">'threshold'</tt><tt class="py-op">:</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'index_config'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'compare-threshold'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">            <tt class="py-string">'search_margin'</tt><tt class="py-op">:</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'index_config'</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'search-margin'</tt><tt class="py-op">]</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">        <tt class="py-op">}</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">        <tt class="py-name">compare_result</tt><tt class="py-op">[</tt><tt class="py-string">'running_time_result'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt id="link-54" class="py-name"><a title="Hasal.lib.common.imageTool.ImageTool.compare_with_sample_image_multi_process
+Hasal.lib.common.imageUtil.compare_with_sample_image_multi_process" class="py-name" href="#" onclick="return doclink('link-54', 'compare_with_sample_image_multi_process', 'link-11');">compare_with_sample_image_multi_process</a></tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'sample_result'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">                                                                                        <tt class="py-name">input_image_list</tt><tt class="py-op">,</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">                                                                                        <tt class="py-name">compare_setting</tt><tt class="py-op">)</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">compare_result</tt> </tt>
+</div></div><a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/Mozilla-TWQA/Hasal">Hasal</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Apr 19 03:57:01 2017
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

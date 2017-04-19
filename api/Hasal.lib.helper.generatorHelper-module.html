@@ -139,27 +139,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="output_waveform_info"></a><span class="summary-sig-name">output_waveform_info</span>(<span class="summary-sig-arg">result_data</span>,
-        <span class="summary-sig-arg">waveform_fp</span>,
-        <span class="summary-sig-arg">img_dp</span>,
-        <span class="summary-sig-arg">video_fp</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.helper.generatorHelper-pysrc.html#output_waveform_info">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="output_video"></a><span class="summary-sig-name">output_video</span>(<span class="summary-sig-arg">result_data</span>,
-        <span class="summary-sig-arg">video_fp</span>)</span></td>
+        <span class="summary-sig-arg">video_fp</span>,
+        <span class="summary-sig-arg">index_config</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.helper.generatorHelper-pysrc.html#output_video">source&nbsp;code</a></span>
             
@@ -185,7 +167,8 @@
         <span class="summary-sig-arg">web_app_name</span>,
         <span class="summary-sig-arg">revision</span>,
         <span class="summary-sig-arg">pkg_platform</span>,
-        <span class="summary-sig-arg">test_output</span>)</span></td>
+        <span class="summary-sig-arg">test_output</span>,
+        <span class="summary-sig-arg">drop_outlier_flag</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.helper.generatorHelper-pysrc.html#output_result">source&nbsp;code</a></span>
             
@@ -219,12 +202,13 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="Hasal.lib.helper.generatorHelper-module.html#calculate" class="summary-sig-name">calculate</a>(<span class="summary-sig-arg">env</span>,
-        <span class="summary-sig-arg">crop_data</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calc_si</span>=<span class="summary-sig-default">0</span>,
-        <span class="summary-sig-arg">waveform</span>=<span class="summary-sig-default">0</span>,
-        <span class="summary-sig-arg">revision</span>=<span class="summary-sig-default">&quot;&quot;</span>,
-        <span class="summary-sig-arg">pkg_platform</span>=<span class="summary-sig-default">&quot;&quot;</span>,
-        <span class="summary-sig-arg">suite_upload_dp</span>=<span class="summary-sig-default">&quot;&quot;</span>)</span><br />
+        <span class="summary-sig-arg">global_config</span>,
+        <span class="summary-sig-arg">exec_config</span>,
+        <span class="summary-sig-arg">index_config</span>,
+        <span class="summary-sig-arg">firefox_config</span>,
+        <span class="summary-sig-arg">online_config</span>,
+        <span class="summary-sig-arg">suite_upload_dp</span>=<span class="summary-sig-default">&quot;&quot;</span>,
+        <span class="summary-sig-arg">crop_data</span>=<span class="summary-sig-default">None</span>)</span><br />
       Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.helper.generatorHelper-pysrc.html#calculate">source&nbsp;code</a></span>
@@ -265,80 +249,6 @@
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
         <a name="RET_SUCCESSS"></a><span class="summary-name">RET_SUCCESSS</span> = <code title="0">0</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_FPS_VALIDATOR_NAME"></a><span class="summary-name">DEFAULT_FPS_VALIDATOR_NAME</span> = <code title="'FPSValidator'">'FPSValidator'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_FILEEXIST_VALIDATOR_NAME"></a><span class="summary-name">DEFAULT_FILEEXIST_VALIDATOR_NAME</span> = <code title="'FileExistValidator'">'FileExistValidator'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_DCTRUNTIME_GENERATOR_NAME"></a><span class="summary-name">DEFAULT_DCTRUNTIME_GENERATOR_NAME</span> = <code title="'DctRunTimeGenerator'">'DctRunTimeGenerator'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_SPEEDINDEX_GENERATOR_NAME"></a><span class="summary-name">DEFAULT_SPEEDINDEX_GENERATOR_NAME</span> = <code title="'SpeedIndexGenerator'">'SpeedIndexGenerator'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_FFMPEG_CONVERTER_NAME"></a><span class="summary-name">DEFAULT_FFMPEG_CONVERTER_NAME</span> = <code title="'FfmpegConverter'">'FfmpegConverter'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_CV2_CONVERTER_NAME"></a><span class="summary-name">DEFAULT_CV2_CONVERTER_NAME</span> = <code title="'Cv2Converter'">'Cv2Converter'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_SAMPLE_CONVERTER_NAME"></a><span class="summary-name">DEFAULT_SAMPLE_CONVERTER_NAME</span> = <code title="'SampleConverter'">'SampleConverter'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.helper.generatorHelper-module.html#DEFAULT_VALIDATOR_SETTINGS" class="summary-name">DEFAULT_VALIDATOR_SETTINGS</a> = <code title="{'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsVa\
-lidator'}, DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.f\
-ileExistValidator'}}}">{'modules': {DEFAULT_FPS_VALIDATO<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.helper.generatorHelper-module.html#DEFAULT_CONVERTER_SETTINGS" class="summary-name">DEFAULT_CONVERTER_SETTINGS</a> = <code title="{'modules': {DEFAULT_CV2_CONVERTER_NAME: {'path': 'lib.converter.cv2Co\
-nverter'}}}">{'modules': {DEFAULT_CV2_CONVERTE<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.helper.generatorHelper-module.html#DEFAULT_SAMPLE_CONVERTER_SETTINGS" class="summary-name">DEFAULT_SAMPLE_CONVERTER_SETTINGS</a> = <code title="{'modules': {DEFAULT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.sa\
-mpleConverter'}}}">{'modules': {DEFAULT_SAMPL<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 </table>
@@ -447,12 +357,13 @@ mpleConverter'}}}">{'modules': {DEFAULT_SAMPL<code class="variable-ellipsis">...
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">calculate</span>(<span class="sig-arg">env</span>,
-        <span class="sig-arg">crop_data</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calc_si</span>=<span class="sig-default">0</span>,
-        <span class="sig-arg">waveform</span>=<span class="sig-default">0</span>,
-        <span class="sig-arg">revision</span>=<span class="sig-default">&quot;&quot;</span>,
-        <span class="sig-arg">pkg_platform</span>=<span class="sig-default">&quot;&quot;</span>,
-        <span class="sig-arg">suite_upload_dp</span>=<span class="sig-default">&quot;&quot;</span>)</span>
+        <span class="sig-arg">global_config</span>,
+        <span class="sig-arg">exec_config</span>,
+        <span class="sig-arg">index_config</span>,
+        <span class="sig-arg">firefox_config</span>,
+        <span class="sig-arg">online_config</span>,
+        <span class="sig-arg">suite_upload_dp</span>=<span class="sig-default">&quot;&quot;</span>,
+        <span class="sig-arg">crop_data</span>=<span class="sig-default">None</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="Hasal.lib.helper.generatorHelper-pysrc.html#calculate">source&nbsp;code</a></span>&nbsp;
@@ -466,88 +377,12 @@ mpleConverter'}}}">{'modules': {DEFAULT_SAMPL<code class="variable-ellipsis">...
         <li><strong class="pname"><code>env</code></strong> - from lib.common.environment.py</li>
         <li><strong class="pname"><code>crop_data</code></strong> - sample crop data area</li>
         <li><strong class="pname"><code>calc_si</code></strong> - '1' or '0'</li>
-        <li><strong class="pname"><code>waveform</code></strong> - '1' or '0'</li>
+        <li><strong class="pname"><code>waveform</code></strong> - 0~3</li>
         <li><strong class="pname"><code>revision</code></strong> - upload to perfherder revision</li>
         <li><strong class="pname"><code>pkg_platform</code></strong> - upload to perfherder pkg platform name</li>
         <li><strong class="pname"><code>suite_upload_dp</code></strong> - folder consolidate all execution result</li>
+        <li><strong class="pname"><code>viewport</code></strong> - browser viewport region</li>
     </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<br />
-<!-- ==================== VARIABLES DETAILS ==================== -->
-<a name="section-VariablesDetails"></a>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Variables Details</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-VariablesDetails"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-</table>
-<a name="DEFAULT_VALIDATOR_SETTINGS"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">DEFAULT_VALIDATOR_SETTINGS</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-{'modules': {DEFAULT_FPS_VALIDATOR_NAME: {'path': 'lib.validator.fpsVa<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-lidator'}, DEFAULT_FILEEXIST_VALIDATOR_NAME: {'path': 'lib.validator.f<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ileExistValidator'}}}
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="DEFAULT_CONVERTER_SETTINGS"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">DEFAULT_CONVERTER_SETTINGS</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-{'modules': {DEFAULT_CV2_CONVERTER_NAME: {'path': 'lib.converter.cv2Co<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-nverter'}}}
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="DEFAULT_SAMPLE_CONVERTER_SETTINGS"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">DEFAULT_SAMPLE_CONVERTER_SETTINGS</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-{'modules': {DEFAULT_SAMPLE_CONVERTER_NAME: {'path': 'lib.converter.sa<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-mpleConverter'}}}
-</pre></td></tr></table>
-</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -580,7 +415,7 @@ mpleConverter'}}}
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Apr 19 03:37:41 2017
+    Generated by Epydoc 3.0.1 on Wed Apr 19 03:57:00 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

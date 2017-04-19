@@ -60,18 +60,316 @@
 </table>
 <h1 class="epydoc">Source Code for <a href="Hasal.lib.common.commonUtil-module.html">Module Hasal.lib.common.commonUtil</a></h1>
 <pre class="py-src">
-<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
-<a name="CommonUtil"></a><div id="CommonUtil-def"><a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
-<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"> </tt>
-<a name="L4"></a><tt class="py-lineno"> 4</tt> <a class="py-toggle" href="#" id="CommonUtil-toggle" onclick="return toggle('CommonUtil');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html">CommonUtil</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="CommonUtil-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="CommonUtil-expanded"><a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
-<a name="CommonUtil.atoi"></a><div id="CommonUtil.atoi-def"><a name="L6"></a><tt class="py-lineno"> 6</tt> <a class="py-toggle" href="#" id="CommonUtil.atoi-toggle" onclick="return toggle('CommonUtil.atoi');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#atoi">atoi</a><tt class="py-op">(</tt><tt class="py-param">text</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="CommonUtil.atoi-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="CommonUtil.atoi-expanded"><a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> <tt class="py-keyword">if</tt> <tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">isdigit</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">text</tt> </tt>
-</div><a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
-<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
-<a name="CommonUtil.natural_keys"></a><div id="CommonUtil.natural_keys-def"><a name="L10"></a><tt class="py-lineno">10</tt> <a class="py-toggle" href="#" id="CommonUtil.natural_keys-toggle" onclick="return toggle('CommonUtil.natural_keys');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#natural_keys">natural_keys</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">text</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="CommonUtil.natural_keys-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="CommonUtil.natural_keys-expanded"><a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-name">cls</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Static Method Hasal.lib.common.commonUtil.CommonUtil.atoi()=Hasal.lib.common.commonUtil.CommonUtil-class.html#atoi"><a title="Hasal.lib.common.commonUtil.CommonUtil.atoi" class="py-name" href="#" onclick="return doclink('link-0', 'atoi', 'link-0');">atoi</a></tt><tt class="py-op">(</tt><tt class="py-name">c</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">c</tt> <tt class="py-keyword">in</tt> <tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'(\d+)'</tt><tt class="py-op">,</tt> <tt class="py-name">text</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
-</div></div><a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">json</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">datetime</tt> <tt class="py-keyword">import</tt> <tt class="py-name">datetime</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module Hasal.lib.common.environment=Hasal.lib.common.environment-module.html"><a title="Hasal.lib.common.environment" class="py-name" href="#" onclick="return doclink('link-0', 'environment', 'link-0');">environment</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class Hasal.lib.common.environment.Environment=Hasal.lib.common.environment.Environment-class.html"><a title="Hasal.lib.common.environment.Environment" class="py-name" href="#" onclick="return doclink('link-1', 'Environment', 'link-1');">Environment</a></tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-2" class="py-name" targets="Module Hasal.lib.common.logConfig=Hasal.lib.common.logConfig-module.html"><a title="Hasal.lib.common.logConfig" class="py-name" href="#" onclick="return doclink('link-2', 'logConfig', 'link-2');">logConfig</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Function Hasal.lib.common.logConfig.get_logger()=Hasal.lib.common.logConfig-module.html#get_logger"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-3', 'get_logger', 'link-3');">get_logger</a></tt> </tt>
+<a name="load_json_file"></a><div id="load_json_file-def"><a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt> <a class="py-toggle" href="#" id="load_json_file-toggle" onclick="return toggle('load_json_file');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil-module.html#load_json_file">load_json_file</a><tt class="py-op">(</tt><tt class="py-param">fp</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="load_json_file-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="load_json_file-expanded"><a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">fp</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line">        <tt class="py-keyword">with</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">fp</tt><tt class="py-op">)</tt> <tt class="py-keyword">as</tt> <tt class="py-name">fh</tt><tt class="py-op">:</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">json</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method Hasal.agent.agent.MainRunner.load()=Hasal.agent.agent.MainRunner-class.html#load"><a title="Hasal.agent.agent.MainRunner.load" class="py-name" href="#" onclick="return doclink('link-4', 'load', 'link-4');">load</a></tt><tt class="py-op">(</tt><tt class="py-name">fh</tt><tt class="py-op">)</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+</div><a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="StatusRecorder"></a><div id="StatusRecorder-def"><a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt> <a class="py-toggle" href="#" id="StatusRecorder-toggle" onclick="return toggle('StatusRecorder');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.StatusRecorder-class.html">StatusRecorder</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StatusRecorder-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="StatusRecorder-expanded"><a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">    <tt id="link-5" class="py-name" targets="Variable Hasal.lib.common.commonUtil.StatusRecorder.ERROR_CANT_FIND_STATUS_FILE=Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_CANT_FIND_STATUS_FILE"><a title="Hasal.lib.common.commonUtil.StatusRecorder.ERROR_CANT_FIND_STATUS_FILE" class="py-name" href="#" onclick="return doclink('link-5', 'ERROR_CANT_FIND_STATUS_FILE', 'link-5');">ERROR_CANT_FIND_STATUS_FILE</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"ERROR_CANT_FIND_STATUS_FILE"</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line">    <tt id="link-6" class="py-name" targets="Variable Hasal.lib.common.commonUtil.StatusRecorder.ERROR_FPS_STAT_ABNORMAL=Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_FPS_STAT_ABNORMAL"><a title="Hasal.lib.common.commonUtil.StatusRecorder.ERROR_FPS_STAT_ABNORMAL" class="py-name" href="#" onclick="return doclink('link-6', 'ERROR_FPS_STAT_ABNORMAL', 'link-6');">ERROR_FPS_STAT_ABNORMAL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"ERROR_FPS_STAT_ABNORMAL"</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">    <tt id="link-7" class="py-name" targets="Variable Hasal.lib.common.commonUtil.StatusRecorder.ERROR_ROUND_STAT_ABNORMAL=Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_ROUND_STAT_ABNORMAL"><a title="Hasal.lib.common.commonUtil.StatusRecorder.ERROR_ROUND_STAT_ABNORMAL" class="py-name" href="#" onclick="return doclink('link-7', 'ERROR_ROUND_STAT_ABNORMAL', 'link-7');">ERROR_ROUND_STAT_ABNORMAL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"ERROR_ROUND_STAT_ABNORMAL"</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line">    <tt id="link-8" class="py-name" targets="Variable Hasal.lib.common.commonUtil.StatusRecorder.ERROR_COMPARING_IMAGE_FAILED=Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_COMPARING_IMAGE_FAILED"><a title="Hasal.lib.common.commonUtil.StatusRecorder.ERROR_COMPARING_IMAGE_FAILED" class="py-name" href="#" onclick="return doclink('link-8', 'ERROR_COMPARING_IMAGE_FAILED', 'link-8');">ERROR_COMPARING_IMAGE_FAILED</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"ERROR_COMPARING_IMAGE_FAILED"</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line">    <tt id="link-9" class="py-name" targets="Variable Hasal.lib.common.commonUtil.StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION=Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_LOOP_TEST_RAISE_EXCEPTION"><a title="Hasal.lib.common.commonUtil.StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION" class="py-name" href="#" onclick="return doclink('link-9', 'ERROR_LOOP_TEST_RAISE_EXCEPTION', 'link-9');">ERROR_LOOP_TEST_RAISE_EXCEPTION</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"ERROR_LOOP_TEST_RAISE_EXCEPTION"</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="StatusRecorder.__init__"></a><div id="StatusRecorder.__init__-def"><a name="L24"></a><tt class="py-lineno"> 24</tt> <a class="py-toggle" href="#" id="StatusRecorder.__init__-toggle" onclick="return toggle('StatusRecorder.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">status_fp</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StatusRecorder.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="StatusRecorder.__init__-expanded"><a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">status_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">status_fp</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_status</tt> <tt class="py-op">=</tt> <tt id="link-10" class="py-name" targets="Function Hasal.lib.common.commonUtil.load_json_file()=Hasal.lib.common.commonUtil-module.html#load_json_file"><a title="Hasal.lib.common.commonUtil.load_json_file" class="py-name" href="#" onclick="return doclink('link-10', 'load_json_file', 'link-10');">load_json_file</a></tt><tt class="py-op">(</tt><tt class="py-name">status_fp</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="StatusRecorder.record_status"></a><div id="StatusRecorder.record_status-def"><a name="L28"></a><tt class="py-lineno"> 28</tt> <a class="py-toggle" href="#" id="StatusRecorder.record_status-toggle" onclick="return toggle('StatusRecorder.record_status');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#record_status">record_status</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">case_name</tt><tt class="py-op">,</tt> <tt class="py-param">status</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StatusRecorder.record_status-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="StatusRecorder.record_status-expanded"><a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">case_name</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_status</tt><tt class="py-op">:</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_status</tt><tt class="py-op">[</tt><tt class="py-name">case_name</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">                <tt class="py-op">{</tt><tt class="py-string">'time_seq'</tt><tt class="py-op">:</tt> <tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">strftime</tt><tt class="py-op">(</tt><tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">now</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'%Y%m%d%H%M%S'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'status'</tt><tt class="py-op">:</tt> <tt class="py-name">status</tt><tt class="py-op">,</tt> <tt class="py-string">'value'</tt><tt class="py-op">:</tt> <tt class="py-name">value</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_status</tt><tt class="py-op">[</tt><tt class="py-name">case_name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">                <tt class="py-op">{</tt><tt class="py-string">'time_seq'</tt><tt class="py-op">:</tt> <tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">strftime</tt><tt class="py-op">(</tt><tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">now</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'%Y%m%d%H%M%S'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'status'</tt><tt class="py-op">:</tt> <tt class="py-name">status</tt><tt class="py-op">,</tt> <tt class="py-string">'value'</tt><tt class="py-op">:</tt> <tt class="py-name">value</tt><tt class="py-op">}</tt><tt class="py-op">]</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-keyword">with</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">status_fp</tt><tt class="py-op">,</tt> <tt class="py-string">"w+"</tt><tt class="py-op">)</tt> <tt class="py-keyword">as</tt> <tt class="py-name">fh</tt><tt class="py-op">:</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">            <tt class="py-name">json</tt><tt class="py-op">.</tt><tt class="py-name">dump</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">current_status</tt><tt class="py-op">,</tt> <tt class="py-name">fh</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="CommonUtil"></a><div id="CommonUtil-def"><a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt> <a class="py-toggle" href="#" id="CommonUtil-toggle" onclick="return toggle('CommonUtil');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html">CommonUtil</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="CommonUtil-expanded"><a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">    <tt id="link-11" class="py-name" targets="Variable Hasal.lib.common.commonUtil.CommonUtil.RECORDER_LIST=Hasal.lib.common.commonUtil.CommonUtil-class.html#RECORDER_LIST"><a title="Hasal.lib.common.commonUtil.CommonUtil.RECORDER_LIST" class="py-name" href="#" onclick="return doclink('link-11', 'RECORDER_LIST', 'link-11');">RECORDER_LIST</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt id="link-12" class="py-name"><a title="Hasal.lib.common.environment.Environment" class="py-name" href="#" onclick="return doclink('link-12', 'Environment', 'link-1');">Environment</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Variable Hasal.lib.common.environment.Environment.PROFILER_FLAG_AVCONV=Hasal.lib.common.environment.Environment-class.html#PROFILER_FLAG_AVCONV"><a title="Hasal.lib.common.environment.Environment.PROFILER_FLAG_AVCONV" class="py-name" href="#" onclick="return doclink('link-13', 'PROFILER_FLAG_AVCONV', 'link-13');">PROFILER_FLAG_AVCONV</a></tt><tt class="py-op">,</tt> <tt class="py-op">]</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">    <tt id="link-14" class="py-name" targets="Variable Hasal.agent.agent.logger=Hasal.agent.agent-module.html#logger,Variable Hasal.agent.iskakalunan.logger=Hasal.agent.iskakalunan-module.html#logger,Variable Hasal.lib.baseTest.logger=Hasal.lib.baseTest-module.html#logger,Variable Hasal.lib.browser.base.logger=Hasal.lib.browser.base-module.html#logger,Variable Hasal.lib.browser.firefox.logger=Hasal.lib.browser.firefox-module.html#logger,Variable Hasal.lib.browser.webdriverFirefox.logger=Hasal.lib.browser.webdriverFirefox-module.html#logger,Variable Hasal.lib.common.commonUtil.CommonUtil.logger=Hasal.lib.common.commonUtil.CommonUtil-class.html#logger,Variable Hasal.lib.common.environment.logger=Hasal.lib.common.environment-module.html#logger,Variable Hasal.lib.common.imageTool.logger=Hasal.lib.common.imageTool-module.html#logger,Variable Hasal.lib.common.imageUtil.logger=Hasal.lib.common.imageUtil-module.html#logger,Variable Hasal.lib.common.pyDriveUtil.logger=Hasal.lib.common.pyDriveUtil-module.html#logger,Variable Hasal.lib.common.recordscreen.logger=Hasal.lib.common.recordscreen-module.html#logger,Variable Hasal.lib.common.videoFluency.logger=Hasal.lib.common.videoFluency-module.html#logger,Variable Hasal.lib.common.windowController.logger=Hasal.lib.common.windowController-module.html#logger,Variable Hasal.lib.converter.cv2Converter.logger=Hasal.lib.converter.cv2Converter-module.html#logger,Variable Hasal.lib.converter.ftSampleConverter.logger=Hasal.lib.converter.ftSampleConverter-module.html#logger,Variable Hasal.lib.converter.sampleConverter.logger=Hasal.lib.converter.sampleConverter-module.html#logger,Variable Hasal.lib.generator.frameThroughputDctGenerator.logger=Hasal.lib.generator.frameThroughputDctGenerator-module.html#logger,Variable Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger=Hasal.lib.generator.inputLatencyAnimationDctGenerator-module.html#logger,Variable Hasal.lib.generator.inputLatencyDctGenerator.logger=Hasal.lib.generator.inputLatencyDctGenerator-module.html#logger,Variable Hasal.lib.generator.runTimeDctGenerator.logger=Hasal.lib.generator.runTimeDctGenerator-module.html#logger,Variable Hasal.lib.generator.speedIndexGenerator.logger=Hasal.lib.generator.speedIndexGenerator-module.html#logger,Variable Hasal.lib.helper.desktopHelper.logger=Hasal.lib.helper.desktopHelper-module.html#logger,Variable Hasal.lib.helper.firefoxProfileCreator.logger=Hasal.lib.helper.firefoxProfileCreator-module.html#logger,Variable Hasal.lib.helper.generatorHelper.logger=Hasal.lib.helper.generatorHelper-module.html#logger,Variable Hasal.lib.helper.resultHelper.logger=Hasal.lib.helper.resultHelper-module.html#logger,Variable Hasal.lib.helper.uploadAgentHelper.logger=Hasal.lib.helper.uploadAgentHelper-module.html#logger,Variable Hasal.lib.perfBaseTest.logger=Hasal.lib.perfBaseTest-module.html#logger,Variable Hasal.lib.profiler.geckoProfiler.logger=Hasal.lib.profiler.geckoProfiler-module.html#logger,Variable Hasal.lib.profiler.harProfiler.logger=Hasal.lib.profiler.harProfiler-module.html#logger,Variable Hasal.lib.profiler.mitmDumpProfiler.logger=Hasal.lib.profiler.mitmDumpProfiler-module.html#logger,Variable Hasal.lib.validator.fileExistValidator.logger=Hasal.lib.validator.fileExistValidator-module.html#logger,Variable Hasal.lib.validator.fpsValidator.logger=Hasal.lib.validator.fpsValidator-module.html#logger,Variable Hasal.lib.webdriverBaseTest.logger=Hasal.lib.webdriverBaseTest-module.html#logger"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-14', 'logger', 'link-14');">logger</a></tt> <tt class="py-op">=</tt> <tt id="link-15" class="py-name"><a title="Hasal.lib.common.logConfig.get_logger" class="py-name" href="#" onclick="return doclink('link-15', 'get_logger', 'link-3');">get_logger</a></tt><tt class="py-op">(</tt><tt class="py-name">__file__</tt><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="CommonUtil.atoi"></a><div id="CommonUtil.atoi-def"><a name="L45"></a><tt class="py-lineno"> 45</tt> <a class="py-toggle" href="#" id="CommonUtil.atoi-toggle" onclick="return toggle('CommonUtil.atoi');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#atoi">atoi</a><tt class="py-op">(</tt><tt class="py-param">text</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil.atoi-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CommonUtil.atoi-expanded"><a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> <tt class="py-keyword">if</tt> <tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">isdigit</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">text</tt> </tt>
+</div><a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="CommonUtil.natural_keys"></a><div id="CommonUtil.natural_keys-def"><a name="L49"></a><tt class="py-lineno"> 49</tt> <a class="py-toggle" href="#" id="CommonUtil.natural_keys-toggle" onclick="return toggle('CommonUtil.natural_keys');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#natural_keys">natural_keys</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">text</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil.natural_keys-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CommonUtil.natural_keys-expanded"><a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-name">cls</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Static Method Hasal.lib.common.commonUtil.CommonUtil.atoi()=Hasal.lib.common.commonUtil.CommonUtil-class.html#atoi"><a title="Hasal.lib.common.commonUtil.CommonUtil.atoi" class="py-name" href="#" onclick="return doclink('link-16', 'atoi', 'link-16');">atoi</a></tt><tt class="py-op">(</tt><tt class="py-name">c</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">c</tt> <tt class="py-keyword">in</tt> <tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'(\d+)'</tt><tt class="py-op">,</tt> <tt class="py-name">text</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="CommonUtil._find_recorder_stat"></a><div id="CommonUtil._find_recorder_stat-def"><a name="L53"></a><tt class="py-lineno"> 53</tt> <a class="py-toggle" href="#" id="CommonUtil._find_recorder_stat-toggle" onclick="return toggle('CommonUtil._find_recorder_stat');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#_find_recorder_stat">_find_recorder_stat</a><tt class="py-op">(</tt><tt class="py-param">total_recorder_settings</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil._find_recorder_stat-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CommonUtil._find_recorder_stat-expanded"><a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">        <tt class="py-name">recorder_name_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-name">total_recorder_flags</tt> <tt class="py-op">=</tt> <tt class="py-name">dict</tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-name">item</tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt id="link-17" class="py-name" targets="Class Hasal.lib.common.commonUtil.CommonUtil=Hasal.lib.common.commonUtil.CommonUtil-class.html"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-17', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-18" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil.RECORDER_LIST" class="py-name" href="#" onclick="return doclink('link-18', 'RECORDER_LIST', 'link-11');">RECORDER_LIST</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">k</tt> <tt class="py-keyword">in</tt> <tt class="py-name">total_recorder_flags</tt><tt class="py-op">.</tt><tt class="py-name">keys</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">            <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">total_recorder_settings</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">k</tt><tt class="py-op">,</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">v</tt><tt class="py-op">:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">                <tt class="py-name">is_enabled</tt> <tt class="py-op">=</tt> <tt class="py-name">v</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'enable'</tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">                <tt class="py-name">total_recorder_flags</tt><tt class="py-op">[</tt><tt class="py-name">k</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">is_enabled</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">is_enabled</tt><tt class="py-op">:</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">                    <tt class="py-name">recorder_name_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">k</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt id="link-19" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-19', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-20', 'logger', 'link-14');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">'Enabled Recorders: {}'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">recorder_name_list</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">recorder_name_list</tt><tt class="py-op">,</tt> <tt class="py-name">total_recorder_flags</tt> </tt>
+</div><a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="CommonUtil.is_video_recording"></a><div id="CommonUtil.is_video_recording-def"><a name="L67"></a><tt class="py-lineno"> 67</tt> <a class="py-toggle" href="#" id="CommonUtil.is_video_recording-toggle" onclick="return toggle('CommonUtil.is_video_recording');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#is_video_recording">is_video_recording</a><tt class="py-op">(</tt><tt class="py-param">settings</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil.is_video_recording-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CommonUtil.is_video_recording-expanded"><a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-docstring">        Checking the Video Recording settings.</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-docstring">        @return: True if there is one Recorder, False if there is no Recorder. Raise exception when there are multiple Recorders.</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-comment"># TODO: load recorder settings from firefox_config now, it might be changed...</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-name">total_recorder_settings</tt> <tt class="py-op">=</tt> <tt class="py-name">settings</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'extensions'</tt><tt class="py-op">,</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-name">recorder_name_list</tt><tt class="py-op">,</tt> <tt class="py-name">total_recorder_flags</tt> <tt class="py-op">=</tt> <tt id="link-21" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-21', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Static Method Hasal.lib.common.commonUtil.CommonUtil._find_recorder_stat()=Hasal.lib.common.commonUtil.CommonUtil-class.html#_find_recorder_stat"><a title="Hasal.lib.common.commonUtil.CommonUtil._find_recorder_stat" class="py-name" href="#" onclick="return doclink('link-22', '_find_recorder_stat', 'link-22');">_find_recorder_stat</a></tt><tt class="py-op">(</tt><tt class="py-name">total_recorder_settings</tt><tt class="py-op">)</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt class="py-name">recording_enable_amount</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-name">map</tt><tt class="py-op">(</tt><tt class="py-name">bool</tt><tt class="py-op">,</tt> <tt class="py-name">total_recorder_flags</tt><tt class="py-op">.</tt><tt class="py-name">values</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">recording_enable_amount</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">            <tt id="link-23" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-23', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-24', 'logger', 'link-14');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'No Recorder.'</tt><tt class="py-op">)</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">recording_enable_amount</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">            <tt id="link-25" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-25', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-26', 'logger', 'link-14');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Enabled Recorder: {}'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">recorder_name_list</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">recording_enable_amount</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">            <tt id="link-27" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-27', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-28', 'logger', 'link-14');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">'More than one Recorder.'</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">'More than one video recorders are enabled.\n{}'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">total_recorder_flags</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="CommonUtil.is_validate_fps"></a><div id="CommonUtil.is_validate_fps-def"><a name="L89"></a><tt class="py-lineno"> 89</tt> <a class="py-toggle" href="#" id="CommonUtil.is_validate_fps-toggle" onclick="return toggle('CommonUtil.is_validate_fps');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="Hasal.lib.common.commonUtil.CommonUtil-class.html#is_validate_fps">is_validate_fps</a><tt class="py-op">(</tt><tt class="py-param">settings</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CommonUtil.is_validate_fps-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CommonUtil.is_validate_fps-expanded"><a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring">        Checking the FPS validation settings.</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring">        @return: True if FPS validation is enabled, False if FPS validation is disabled</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-29" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-29', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Static Method Hasal.lib.common.commonUtil.CommonUtil.is_video_recording()=Hasal.lib.common.commonUtil.CommonUtil-class.html#is_video_recording"><a title="Hasal.lib.common.commonUtil.CommonUtil.is_video_recording" class="py-name" href="#" onclick="return doclink('link-30', 'is_video_recording', 'link-30');">is_video_recording</a></tt><tt class="py-op">(</tt><tt class="py-name">settings</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">                <tt class="py-name">total_recorder_settings</tt> <tt class="py-op">=</tt> <tt class="py-name">settings</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'extensions'</tt><tt class="py-op">,</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">                <tt class="py-name">recorder_name_list</tt><tt class="py-op">,</tt> <tt class="py-name">_</tt> <tt class="py-op">=</tt> <tt id="link-31" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-31', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil._find_recorder_stat" class="py-name" href="#" onclick="return doclink('link-32', '_find_recorder_stat', 'link-22');">_find_recorder_stat</a></tt><tt class="py-op">(</tt><tt class="py-name">total_recorder_settings</tt><tt class="py-op">)</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">recorder_name_list</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                    <tt class="py-name">recorder_name</tt> <tt class="py-op">=</tt> <tt class="py-name">recorder_name_list</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">                    <tt class="py-name">recorder_setting</tt> <tt class="py-op">=</tt> <tt class="py-name">total_recorder_settings</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">recorder_name</tt><tt class="py-op">,</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">                    <tt id="link-33" class="py-name" targets="Static Method Hasal.lib.common.commonUtil.CommonUtil.is_validate_fps()=Hasal.lib.common.commonUtil.CommonUtil-class.html#is_validate_fps"><a title="Hasal.lib.common.commonUtil.CommonUtil.is_validate_fps" class="py-name" href="#" onclick="return doclink('link-33', 'is_validate_fps', 'link-33');">is_validate_fps</a></tt> <tt class="py-op">=</tt> <tt class="py-name">recorder_setting</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'validate-fps'</tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">                    <tt id="link-34" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil" class="py-name" href="#" onclick="return doclink('link-34', 'CommonUtil', 'link-17');">CommonUtil</a></tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.recordscreen.logger
+Hasal.lib.common.videoFluency.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyDctGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.generator.speedIndexGenerator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.resultHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-35', 'logger', 'link-14');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'The validate-fps of {} Recorder: {}.'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">recorder_name</tt><tt class="py-op">,</tt> <tt id="link-36" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil.is_validate_fps" class="py-name" href="#" onclick="return doclink('link-36', 'is_validate_fps', 'link-33');">is_validate_fps</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">                    <tt class="py-keyword">return</tt> <tt id="link-37" class="py-name"><a title="Hasal.lib.common.commonUtil.CommonUtil.is_validate_fps" class="py-name" href="#" onclick="return doclink('link-37', 'is_validate_fps', 'link-33');">is_validate_fps</a></tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">                    <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+</div></div><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
 // -->
@@ -106,7 +404,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Apr 19 03:37:41 2017
+    Generated by Epydoc 3.0.1 on Wed Apr 19 03:57:01 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
