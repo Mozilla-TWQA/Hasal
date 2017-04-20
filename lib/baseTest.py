@@ -26,17 +26,18 @@ class BaseTest(unittest.TestCase):
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
 
-        # Get Terminal Window Object here when it still active
+        # Get current platform and its release version
         self.current_platform_name = sys.platform
+        self.current_platform_ver = platform.release()
+
+        # Get Terminal Window Object here when it still active
         if self.current_platform_name == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
-            self.current_platform_ver = platform.mac_ver()[0]
         elif self.current_platform_name == 'win32':
             terminal_title = ['cmd', 'Command Prompt', 'runtest.py']
-            self.current_platform_ver = platform.win32_ver()[0]
         else:
-            self.current_platform_ver = platform.platform.linux_distribution()[1]
             terminal_title = ['Hasal']
+
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
 
@@ -88,13 +89,11 @@ class BaseTest(unittest.TestCase):
                         height_offset = 20
                         terminal_height = 60
                     elif self.current_platform_name == 'win32':
-                        import platform
-                        release_version = platform.release()
-                        if release_version == '10':
+                        if self.current_platform_ver == '10':
                             logger.info("Move terminal window for Windows 10.")
                             height_offset = -4
                             terminal_height = 100
-                        elif release_version == '7':
+                        elif self.current_platform_ver == '7':
                             logger.info("Move terminal window for Windows 7.")
                             height_offset = 0
                             terminal_height = 80
@@ -137,16 +136,24 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
-    def set_configs(self, config_variable_name, config_value, update=False):
+    def _platform_dep_settings_handler(self, config_value):
+        if self.current_platform_name in config_value:
+            if self.current_platform_ver in config_value[self.current_platform_name]:
+                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
+            else:
+                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][''])
+            config_value.update(platform_dep_variables)
+            return platform_dep_variables
+        return {}
+
+    def set_configs(self, config_variable_name, config_value):
         default_platform_dep_settings_key = "platform-dep-settings"
         if default_platform_dep_settings_key in config_value:
-            if self.current_platform_name in config_value[default_platform_dep_settings_key]:
-                platform_dep_variables = copy.deepcopy(
-                    config_value[default_platform_dep_settings_key][self.current_platform_name])
-                config_value.update(platform_dep_variables)
+            platform_dep_variables = self._platform_dep_settings_handler(config_value[default_platform_dep_settings_key])
+            config_value.update(platform_dep_variables)
             config_value.pop(default_platform_dep_settings_key)
 
-        if update:
+        if hasattr(self, config_variable_name):
             getattr(self, config_variable_name).update(config_value)
 
         setattr(self, config_variable_name, config_value)

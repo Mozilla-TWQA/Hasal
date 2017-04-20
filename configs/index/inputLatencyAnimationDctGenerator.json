@@ -13,19 +13,35 @@
   "drop-outlier-flag"       : false,
   "platform-dep-settings"   : {
     "darwin":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.005,
-      "search-margin"           : 1
+      "": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      }
     },
-    "win32":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.005,
-      "search-margin"           : 1
+    "win32": {
+      "7": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      },
+      "10": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      },
+      "": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      }
     },
     "linux2":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.01,
-      "search-margin"           : 1
+      "": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 1
+      }
     }
   }
 }
