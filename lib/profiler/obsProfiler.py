@@ -20,6 +20,10 @@ class ObsProfiler(BaseProfiler):
     Only support Windows 7 and Windows 10 currently.
     Please download "OBS-Studio-18.0.1-Full-Installer.exe" from https://github.com/jp9000/obs-studio/releases/tag/18.0.1 link,
     and then install into "C:\Program Files (x86)\" folder.
+
+    Note: if there is error message "missing MSVCP120.dll",
+    please download and install Visual C++ Redistributable Packages for Visual Studio 2013 from
+    https://www.microsoft.com/en-us/download/details.aspx?id=40784
     """
     OBS_SETTINGS_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio'
     OBS_SETTINGS_FN = 'global.ini'
@@ -116,6 +120,19 @@ class ObsProfiler(BaseProfiler):
         if os.path.exists(ObsProfiler.OBS_SETTINGS_DIR_PATH) and os.path.exists(obs_global_fp):
             global_config = self._get_obs_config_ini(obs_global_fp)
             global_config.set('General', 'Language', 'en-US')
+
+            # License Accepted
+            try:
+                is_licenseaccepted = global_config.get('General', 'LicenseAccepted')
+            except:
+                is_licenseaccepted = False
+            if not is_licenseaccepted:
+                logger.info('\n** Important **\n'
+                            'When you use OBS to record the video for Hasal,'
+                            ' you have to accept the OBS license before running cases.')
+                raise Exception('Having to accept the OBS license agreement before running cases')
+
+            # start OBS in system tray
             try:
                 is_sys_tray = global_config.get('BasicWindow', 'SysTrayWhenStarted')
             except:
