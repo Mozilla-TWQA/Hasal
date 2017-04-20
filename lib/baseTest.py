@@ -141,6 +141,7 @@ class BaseTest(unittest.TestCase):
             with open(os.getenv(config_env_name)) as fh:
                 config_value = json.load(fh)
             if default_platform_dep_settings_key in config_value:
+                # Load the index config's settings under "platform-dep-settings" base on platform
                 if current_platform_name in config_value[default_platform_dep_settings_key]:
                     platform_dep_variables = copy.deepcopy(config_value[default_platform_dep_settings_key][current_platform_name])
                     config_value.update(platform_dep_variables)

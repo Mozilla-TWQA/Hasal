@@ -17,7 +17,11 @@ gd.wait_for_loaded()
 setAutoWaitTimeout(10)
 sample1_fp = os.path.join(sys.argv[4], sys.argv[5])
 sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2'))
-os.remove(sample1_fp)
+if os.path.isfile(sample1_fp):
+    try:
+        os.remove(sample1_fp)
+    except:
+        pass
 
 sleep(2)
 capture_width = int(sys.argv[6])
