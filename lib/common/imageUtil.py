@@ -4,6 +4,7 @@ import time
 import copy
 import heapq
 import numpy as np
+import pprint
 import threading
 from PIL import Image
 from multiprocessing import Process, Manager
@@ -233,8 +234,8 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
     for event, img_and_diff in diff_rate_by_event.items():
         # data format (img_fn_key, diff_rate), find 3 smallest by diff_rate
         top_3_smallest_diff_list = heapq.nsmallest(3, img_and_diff, key=lambda val_tuple: val_tuple[1])
-        logger.info('Top 3 Smallest Difference of Event [{event}]: {min_diff_rate}'.
-                    format(event=event, min_diff_rate=top_3_smallest_diff_list))
+        logger.info('Top 3 Smallest Difference of Event [{event}]:\n{min_diff_rate}'.
+                    format(event=event, min_diff_rate=pprint.pformat(top_3_smallest_diff_list)))
 
     return map_result_list
 
