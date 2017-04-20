@@ -220,7 +220,17 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
         logger.info('Images miss with sample.')
     else:
         logger.info('Images HIT with sample!')
-    logger.info('Minimal Difference (Mismatch Rate): {min_diff_rate}'.format(min_diff_rate=min(diff_rate_list)))
+
+    # the data in diff_rate_list will be (event_name, diff_rate)
+    diff_rate_by_event = {}
+    for event_name, diff_val in diff_rate_list:
+        if event_name not in diff_rate_by_event:
+            diff_rate_by_event[event_name] = list()
+        diff_rate_by_event[event_name].append(diff_val)
+    for event, event_diff_list in diff_rate_by_event.items():
+        logger.info('Minimal Difference of Event {event}: {min_diff_rate}'.format(event=event,
+                                                                                  min_diff_rate=min(event_diff_list)))
+
     return map_result_list
 
 
@@ -310,7 +320,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct)
 
                     # record the diff_rate
-                    diff_rate_list.append(diff_rate)
+                    diff_rate_list.append((event_name, diff_rate))
 
                     if compare_result:
                         if img_index == start_index:
