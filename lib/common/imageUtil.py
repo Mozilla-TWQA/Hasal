@@ -2,6 +2,7 @@ import os
 import cv2
 import time
 import copy
+import heapq
 import numpy as np
 import threading
 from PIL import Image
@@ -221,15 +222,19 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
     else:
         logger.info('Images HIT with sample!')
 
-    # the data in diff_rate_list will be (event_name, diff_rate)
+    # the data in diff_rate_list will be (event_name, img_fn_key, diff_rate)
     diff_rate_by_event = {}
-    for event_name, diff_val in diff_rate_list:
+    for event_name, img_fn_key, diff_val in diff_rate_list:
         if event_name not in diff_rate_by_event:
             diff_rate_by_event[event_name] = list()
-        diff_rate_by_event[event_name].append(diff_val)
-    for event, event_diff_list in diff_rate_by_event.items():
-        logger.info('Minimal Difference of Event {event}: {min_diff_rate}'.format(event=event,
-                                                                                  min_diff_rate=min(event_diff_list)))
+        # append (img_fn_key, diff_rate) into event's diff_rate list
+        diff_rate_by_event[event_name].append((img_fn_key, diff_val))
+
+    for event, img_and_diff in diff_rate_by_event.items():
+        # data format (img_fn_key, diff_rate), find 3 smallest by diff_rate
+        top_3_smallest_diff_list = heapq.nsmallest(3, img_and_diff, key=lambda val_tuple: val_tuple[1])
+        logger.info('Top 3 Smallest Difference of Event [{event}]: {min_diff_rate}'.
+                    format(event=event, min_diff_rate=top_3_smallest_diff_list))
 
     return map_result_list
 
@@ -320,7 +325,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct)
 
                     # record the diff_rate
-                    diff_rate_list.append((event_name, diff_rate))
+                    diff_rate_list.append((event_name, img_fn_key, diff_rate))
 
                     if compare_result:
                         if img_index == start_index:
