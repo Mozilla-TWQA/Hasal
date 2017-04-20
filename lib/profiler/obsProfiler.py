@@ -205,12 +205,12 @@ class ObsProfiler(BaseProfiler):
 
     def pywin32_ctrl_q(self):
         # try to move window after window launched
-        for counter in range(10):
+        for counter in range(50):
             win32gui.EnumWindows(self.pywin32_ctrl_q_cb, None)
             if self.callback_ret:
                 self.callback_ret = None
                 return True
-            time.sleep(1)
+            time.sleep(0.1)
         print('Cannot found one of [{}] for closing.'.format(self.obs_window_name))
         return False
 
@@ -225,11 +225,11 @@ class ObsProfiler(BaseProfiler):
 
     def pywin32_return(self):
         # try to move window after window launched
-        for counter in range(10):
+        for counter in range(50):
             win32gui.EnumWindows(self.pywin32_return_cb, None)
             if self.callback_ret:
                 self.callback_ret = None
                 return True
-            time.sleep(1)
+            time.sleep(0.1)
         print('Cannot found one of [{}] for press Enter.'.format(self.obs_window_name))
         return False
