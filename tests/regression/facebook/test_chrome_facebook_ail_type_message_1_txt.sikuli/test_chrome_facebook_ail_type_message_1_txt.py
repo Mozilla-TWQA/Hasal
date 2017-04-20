@@ -21,8 +21,8 @@ fb.wait_for_loaded()
 
 sleep(2)
 setAutoWaitTimeout(10)
-type("a", Key.CTRL)
-type(Key.BACKSPACE)
+com.select_all()
+com.delete()
 
 sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2'))
 
