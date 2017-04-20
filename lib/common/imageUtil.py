@@ -204,17 +204,33 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
     """
     manager = Manager()
     result_list = manager.list()
+    diff_rate_list = manager.list()
     p_list = []
     for search_direction in input_settings['event_points'].keys():
         parallel_run_settings = copy.deepcopy(input_settings)
         parallel_run_settings['search_direction'] = search_direction
-        args = [input_sample_data, input_image_data, parallel_run_settings, result_list]
+        args = [input_sample_data, input_image_data, parallel_run_settings, result_list, diff_rate_list]
         p_list.append(Process(target=parallel_compare_image, args=args))
         p_list[-1].start()
     for p in p_list:
         p.join()
     map_result_list = sorted(map(dict, result_list), key=lambda k: k['time_seq'])
     logger.info(map_result_list)
+    if len(map_result_list) == 0:
+        logger.info('Images miss with sample.')
+    else:
+        logger.info('Images HIT with sample!')
+
+    # the data in diff_rate_list will be (event_name, diff_rate)
+    diff_rate_by_event = {}
+    for event_name, diff_val in diff_rate_list:
+        if event_name not in diff_rate_by_event:
+            diff_rate_by_event[event_name] = list()
+        diff_rate_by_event[event_name].append(diff_val)
+    for event, event_diff_list in diff_rate_by_event.items():
+        logger.info('Minimal Difference of Event {event}: {min_diff_rate}'.format(event=event,
+                                                                                  min_diff_rate=min(event_diff_list)))
+
     return map_result_list
 
 
@@ -241,7 +257,7 @@ def get_search_range(input_time_stamp, input_fps, input_image_list_len=0, input_
     return search_range
 
 
-def parallel_compare_image(input_sample_data, input_image_data, input_settings, result_list):
+def parallel_compare_image(input_sample_data, input_image_data, input_settings, result_list, diff_rate_list):
     # init value
     sample_dct = None
     image_fn_list = copy.deepcopy(input_image_data.keys())
@@ -299,9 +315,12 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                     current_img_dct = convert_to_dct(input_image_data[img_fn_key][search_target], skip_status_bar_fraction)
                     # assign customized threshold to comparison function if its in settings list
                     if 'threshold' in input_settings:
-                        compare_result = compare_two_images(sample_dct, current_img_dct, input_settings['threshold'])
+                        compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct, input_settings['threshold'])
                     else:
-                        compare_result = compare_two_images(sample_dct, current_img_dct)
+                        compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct)
+
+                    # record the diff_rate
+                    diff_rate_list.append((event_name, diff_rate))
 
                     if compare_result:
                         if img_index == start_index:
@@ -353,9 +372,9 @@ def compare_two_images(dct_obj_1, dct_obj_2, threshold=0.0003):
         row2, cols2 = dct_obj_2.shape
 
         if (row1 == row2) and (cols1 == cols2):
-            mismatch_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
-            if mismatch_rate <= threshold:
+            diff_rate = np.sum(np.absolute(np.subtract(dct_obj_1, dct_obj_2))) / (row1 * cols1)
+            if diff_rate <= threshold:
                 match = True
     except Exception as e:
         logger.error(e)
-    return match
+    return match, diff_rate
