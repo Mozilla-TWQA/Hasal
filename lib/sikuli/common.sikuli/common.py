@@ -51,6 +51,12 @@ class General():
     def paste(self):
         type("v", self.control)
 
+    def delete(self):
+        if self.os.lower() == 'mac':
+            type(Key.DELETE)
+        else:
+            type(Key.BACKSPACE)
+
     def capLock(self, lock):
         if lock != Key.isLockOn(Key.CAPS_LOCK):
             type(Key.CAPS_LOCK)

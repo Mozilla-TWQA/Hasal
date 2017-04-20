@@ -274,14 +274,17 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
 
     exec_timestamp_list = get_json_data(env.DEFAULT_TIMESTAMP, env.INITIAL_TIMESTAMP_NAME)
     if validate_result['validate_result']:
+        if not validate_result.get(global_config['default-fps-validator-name']):
+            current_fps_value = index_config['video-recording-fps']
+        else:
+            current_fps_value = validate_result[global_config['default-fps-validator-name']]['output_result']
         # using different converter will introduce different time seq,
         # the difference range will between 0.000000000002 to 0.000000000004 ms (cv2 is lower than ffmpeg)
         converter_settings = {'modules': {index_config['image-converter-name']: {'path': index_config['image-converter-path']}}}
         converter_data = {
             index_config['image-converter-name']: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
                                                    'convert_fmt': index_config['image-converter-format'],
-                                                   'current_fps': validate_result[global_config['default-fps-validator-name']][
-                                                       'output_result'],
+                                                   'current_fps': current_fps_value,
                                                    'exec_timestamp_list': exec_timestamp_list}}
         converter_result = run_modules(converter_settings, converter_data[index_config['image-converter-name']])
 
@@ -304,29 +307,31 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
             if generator_result[generator_name]:
                 calculator_result.update(generator_result[generator_name])
 
-        # output sikuli status to static file
-        with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
-            stat_data = json.load(fh)
-            if validate_result[global_config['default-fps-validator-name']]['validate_result']:
-                stat_data['fps_stat'] = 0
-            else:
-                stat_data['fps_stat'] = 1
-            fh.seek(0)
-            fh.write(json.dumps(stat_data))
+    # output sikuli status to static file
+    with open(env.DEFAULT_STAT_RESULT, "r+") as fh:
+        stat_data = json.load(fh)
+        if not validate_result.get(global_config['default-fps-validator-name']):
+            stat_data['fps_stat'] = 0
+        elif validate_result[global_config['default-fps-validator-name']]['validate_result']:
+            stat_data['fps_stat'] = 0
+        else:
+            stat_data['fps_stat'] = 1
+        fh.seek(0)
+        fh.write(json.dumps(stat_data))
 
-        if calculator_result is not None:
-            output_result(env.test_name, calculator_result, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT,
-                          env.test_method_doc, exec_config['max-run'], env.video_output_fp,
-                          env.web_app_name, online_config['perfherder-revision'], online_config['perfherder-pkg-platform'], env.output_name, index_config['drop-outlier-flag'])
-            start_time = time.time()
-            output_video(calculator_result, env.converted_video_output_fp, index_config)
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+    if calculator_result is not None:
+        output_result(env.test_name, calculator_result, env.DEFAULT_TEST_RESULT, env.DEFAULT_STAT_RESULT,
+                      env.test_method_doc, exec_config['max-run'], env.video_output_fp,
+                      env.web_app_name, online_config['perfherder-revision'], online_config['perfherder-pkg-platform'], env.output_name, index_config['drop-outlier-flag'])
+        start_time = time.time()
+        output_video(calculator_result, env.converted_video_output_fp, index_config)
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
-            upload_case_name = "_".join(env.output_name.split("_")[2:-1])
-            upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
-            if os.path.exists(upload_case_dp) is False:
-                os.mkdir(upload_case_dp)
-            if os.path.exists(env.converted_video_output_fp):
-                shutil.move(env.converted_video_output_fp, upload_case_dp)
+        upload_case_name = "_".join(env.output_name.split("_")[2:-1])
+        upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
+        if os.path.exists(upload_case_dp) is False:
+            os.mkdir(upload_case_dp)
+        if os.path.exists(env.converted_video_output_fp):
+            shutil.move(env.converted_video_output_fp, upload_case_dp)

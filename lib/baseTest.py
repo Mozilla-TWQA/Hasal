@@ -149,6 +149,7 @@ class BaseTest(unittest.TestCase):
     def set_configs(self, config_variable_name, config_value):
         default_platform_dep_settings_key = "platform-dep-settings"
         if default_platform_dep_settings_key in config_value:
+            # Load the index config's settings under "platform-dep-settings" base on platform
             platform_dep_variables = self._platform_dep_settings_handler(config_value[default_platform_dep_settings_key])
             config_value.update(platform_dep_variables)
             config_value.pop(default_platform_dep_settings_key)
