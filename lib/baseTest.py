@@ -10,6 +10,7 @@ import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
 import helper.generatorHelper as generatorHelper
+from common.configName import ConfigName
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
@@ -136,7 +137,7 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
-    def _platform_dep_settings_handler(self, config_value):
+    def platform_dep_settings_handler(self, config_value):
         if self.current_platform_name in config_value:
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
@@ -147,21 +148,30 @@ class BaseTest(unittest.TestCase):
         return {}
 
     def set_configs(self, config_variable_name, config_value):
+        # only the config in the following list can be created or updated
+        acceptable_config_list = [ConfigName.EXEC, ConfigName.INDEX, ConfigName.GLOBAL, ConfigName.FIREFOX, ConfigName.ONLINE]
+        if config_variable_name not in acceptable_config_list:
+            raise Exception('Invalid configuration name {config_name}: {config_value}'
+                            .format(config_name=config_variable_name, config_value=config_value))
+
         default_platform_dep_settings_key = "platform-dep-settings"
         if default_platform_dep_settings_key in config_value:
             # Load the index config's settings under "platform-dep-settings" base on platform
-            platform_dep_variables = self._platform_dep_settings_handler(config_value[default_platform_dep_settings_key])
+            platform_dep_variables = self.platform_dep_settings_handler(config_value[default_platform_dep_settings_key])
             config_value.update(platform_dep_variables)
             config_value.pop(default_platform_dep_settings_key)
 
         if hasattr(self, config_variable_name):
             # getattr is a way to get variable by reference and doesn't need to be set back
-            getattr(self, config_variable_name).update(config_value)
+            new_config_value = getattr(self, config_variable_name)
+            new_config_value.update(config_value)
+            setattr(self, config_variable_name, new_config_value)
         else:
             setattr(self, config_variable_name, config_value)
 
     def load_configs(self):
-        config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+        config_fp_list = [ConfigName.EXEC_FP, ConfigName.INDEX_FP, ConfigName.GLOBAL_FP,
+                          ConfigName.FIREFOX_FP, ConfigName.ONLINE_FP]
 
         for config_env_name in config_fp_list:
             config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
