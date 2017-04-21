@@ -13,7 +13,7 @@
   "drop-outlier-flag"       : false,
   "platform-dep-settings"   : {
     "darwin":{
-      "": {
+      "default": {
         "video-recording-fps": 90,
         "compare-threshold": 0.005,
         "search-margin": 1
@@ -30,14 +30,14 @@
         "compare-threshold": 0.005,
         "search-margin": 1
       },
-      "": {
+      "default": {
         "video-recording-fps": 90,
         "compare-threshold": 0.005,
         "search-margin": 1
       }
     },
     "linux2":{
-      "": {
+      "default": {
         "video-recording-fps": 90,
         "compare-threshold": 0.01,
         "search-margin": 1

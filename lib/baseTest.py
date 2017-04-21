@@ -145,7 +145,7 @@ class BaseTest(unittest.TestCase):
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
             else:
-                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][''])
+                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
             config_value.update(platform_dep_variables)
             return platform_dep_variables
         return {}

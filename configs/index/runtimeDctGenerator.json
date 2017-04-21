@@ -13,17 +13,17 @@
   "drop-outlier-flag"       : true,
   "platform-dep-settings"   : {
     "darwin":{
-      "": {
+      "default": {
         "video-recording-fps": 60
       }
     },
     "win32":{
-      "": {
+      "default": {
         "video-recording-fps": 60
       }
     },
     "linux2":{
-      "": {
+      "default": {
         "video-recording-fps": 60
       }
     }

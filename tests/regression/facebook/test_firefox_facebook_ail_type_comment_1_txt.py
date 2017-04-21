@@ -1,4 +1,5 @@
 from lib.perfBaseTest import PerfBaseTest
+from lib.common.configName import ConfigName
 
 
 class TestSikuli(PerfBaseTest):
