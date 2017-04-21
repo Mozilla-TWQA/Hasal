@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_10_PAGE_CONTENT_WITH_TXT)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-10-page-content-with-txt'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_ail_type_10p_txt(self):

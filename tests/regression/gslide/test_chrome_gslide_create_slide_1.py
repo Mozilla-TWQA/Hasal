@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_SLIDE_1_PAGE_BLANK)
+        self.set_variable(test_target=self.global_config['gsuite']['gslide-1-page-blank'])
         super(TestSikuli, self).setUp()
 
     def test_chrome_gslide_create_slide_1(self):

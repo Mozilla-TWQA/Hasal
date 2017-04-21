@@ -4,8 +4,8 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_1000R_NUMBER_ENCHAR)
-        self.set_variable(target_folder=self.env.GSHEET_TEST_TARGET_FOLDER_URI)
+        self.set_variable(test_target=self.global_config['gsuite']['gsheet-1000r-number-enchar'])
+        self.set_variable(target_folder=self.global_config['gsuite']['gsheet-test-target-folder-uri'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gsheet_1000r_number_chars_deleteallcell(self):

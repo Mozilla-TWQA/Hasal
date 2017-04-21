@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_3_FIND_REPLACE)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-3-find-replace'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_findr3_read(self):
