@@ -155,9 +155,10 @@ class BaseTest(unittest.TestCase):
             config_value.pop(default_platform_dep_settings_key)
 
         if hasattr(self, config_variable_name):
-            config_value = getattr(self, config_variable_name).update(config_value)
-
-        setattr(self, config_variable_name, config_value)
+            # getattr is a way to get variable by reference and doesn't need to be set back
+            getattr(self, config_variable_name).update(config_value)
+        else:
+            setattr(self, config_variable_name, config_value)
 
     def load_configs(self):
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
