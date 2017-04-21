@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_1_PAGE_CONTENT_WITH_UTF8_TXT)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-1-page-content-with-utf8-txt'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_read_utf8_txt_1(self):

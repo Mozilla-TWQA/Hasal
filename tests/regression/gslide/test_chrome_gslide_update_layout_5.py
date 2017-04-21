@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_SLIDE_5_PAGE_MIX_CONTENT)
+        self.set_variable(test_target=self.global_config['gsuite']['gslide-5-page-mix-content'])
         super(TestSikuli, self).setUp()
 
     def test_chrome_gslide_update_layout_5(self):

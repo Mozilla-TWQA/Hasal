@@ -3,9 +3,9 @@ import sys
 import importlib
 import subprocess
 from ..common.windowController import WindowObject
-from ..common.imageTool import ImageTool
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
+from ..common.visualmetricsWrapper import find_image_viewport
 
 logger = get_logger(__name__)
 
@@ -123,9 +123,8 @@ def minimize_window():
 
 
 def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
-    img_obj = ImageTool()
     img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = img_obj.find_image_viewport(img_sample_fp)
+    viewport = find_image_viewport(img_sample_fp)
     height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
     width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
     height, width = lock_window_pos(browser_type, height_adjustment, width_adjustment)
@@ -135,9 +134,8 @@ def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
 def check_browser_show_up(img_sample_dp, img_sample_name):
     width_fraction = 0.95
     height_fraction = 0.8
-    img_obj = ImageTool()
     img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = img_obj.find_image_viewport(img_sample_fp)
+    viewport = find_image_viewport(img_sample_fp)
     if viewport['width'] > Environment.DEFAULT_BROWSER_WIDTH * width_fraction and \
             viewport['height'] > Environment.DEFAULT_BROWSER_HEIGHT * height_fraction:
         return True
