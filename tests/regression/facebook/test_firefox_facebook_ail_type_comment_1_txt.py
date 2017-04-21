@@ -5,7 +5,7 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         super(TestSikuli, self).setUp()
-        self.set_configs("index_config", self.platform_dep_settings_handler({"win32": {"": {"compare-threshold": 0.003}}}))
+        self.set_configs(ConfigName.INDEX, self.extract_platform_dep_settings({"win32": {"": {"compare-threshold": 0.003}}}))
 
     def test_firefox_facebook_ail_type_comment_1_txt(self):
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.env.TEST_FB_HOME,

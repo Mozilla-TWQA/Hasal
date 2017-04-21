@@ -1,0 +1,11 @@
+class ConfigName(object):
+    EXEC_FP = 'EXEC_CONFIG_FP'
+    INDEX_FP = 'INDEX_CONFIG_FP'
+    GLOBAL_FP = 'GLOBAL_CONFIG_FP'
+    FIREFOX_FP = 'FIREFOX_CONFIG_FP'
+    ONLINE_FP = 'ONLINE_CONFIG_FP'
+    EXEC = 'exec_config'
+    INDEX = 'index_config'
+    GLOBAL = 'global_config'
+    FIREFOX = 'firefox_config'
+    ONLINE = 'online_config'

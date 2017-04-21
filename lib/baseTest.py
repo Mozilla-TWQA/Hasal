@@ -137,7 +137,7 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
-    def platform_dep_settings_handler(self, config_value):
+    def extract_platform_dep_settings(self, config_value):
         if self.current_platform_name in config_value:
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
@@ -147,6 +147,7 @@ class BaseTest(unittest.TestCase):
             return platform_dep_variables
         return {}
 
+    # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
         # only the config in the following list can be created or updated
         acceptable_config_list = [ConfigName.EXEC, ConfigName.INDEX, ConfigName.GLOBAL, ConfigName.FIREFOX, ConfigName.ONLINE]
@@ -157,7 +158,7 @@ class BaseTest(unittest.TestCase):
         default_platform_dep_settings_key = "platform-dep-settings"
         if default_platform_dep_settings_key in config_value:
             # Load the index config's settings under "platform-dep-settings" base on platform
-            platform_dep_variables = self.platform_dep_settings_handler(config_value[default_platform_dep_settings_key])
+            platform_dep_variables = self.extract_platform_dep_settings(config_value[default_platform_dep_settings_key])
             config_value.update(platform_dep_variables)
             config_value.pop(default_platform_dep_settings_key)
 
