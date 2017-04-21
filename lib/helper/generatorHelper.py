@@ -5,7 +5,6 @@ import shutil
 import tempfile
 import importlib
 import numpy as np
-from lib.common.environment import Environment
 from lib.common.commonUtil import CommonUtil
 from lib.common.outlier import outlier
 from lib.common.dumpDataToJsonFile import dump_data_to_json_file
@@ -92,8 +91,9 @@ def output_video(result_data, video_fp, index_config):
     if not start_fp or not end_fp:
         return None
     else:
-        if os.path.exists(os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)):
-            source_dp = os.path.join(os.path.dirname(start_fp), Environment.SEARCH_TARGET_BROWSER)
+        browser_folder_name = "browser"
+        if os.path.exists(os.path.join(os.path.dirname(start_fp), browser_folder_name)):
+            source_dp = os.path.join(os.path.dirname(start_fp), browser_folder_name)
         else:
             source_dp = os.path.dirname(start_fp)
         img_list = os.listdir(source_dp)

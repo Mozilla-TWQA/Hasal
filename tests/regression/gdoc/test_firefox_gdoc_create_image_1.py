@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_BLANK_PAGE)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-blank-page'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_create_image_1(self):

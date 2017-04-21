@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_10_FORMAT)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-10-format'])
         super(TestSikuli, self).setUp()
 
     def test_chrome_gdoc_format10_read(self):

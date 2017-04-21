@@ -25,6 +25,9 @@ class BaseTest(unittest.TestCase):
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
 
+        # load all settings into self object
+        self.load_configs()
+
         # Get Terminal Window Object here when it still active
         if sys.platform == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
@@ -150,15 +153,12 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
 
-        # load all settings into self object
-        self.load_configs()
-
         # Original profiler list was substitute by self.env.firefox_settings_extensions
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
 
         # init target helper
-        self.target_helper = targetHelper.TagetHelper(self.env)
+        self.target_helper = targetHelper.TagetHelper(self.env, self.global_config)
 
         # Init sikuli status for webdriver/sikuli
         self.round_status = 0
