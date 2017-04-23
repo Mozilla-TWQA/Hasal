@@ -10,7 +10,6 @@ import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
 import helper.generatorHelper as generatorHelper
-from common.configName import ConfigName
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
@@ -20,9 +19,23 @@ logger = get_logger(__name__)
 
 
 class BaseTest(unittest.TestCase):
+    class ConfigName(object):
+        EXEC_FP = 'EXEC_CONFIG_FP'
+        INDEX_FP = 'INDEX_CONFIG_FP'
+        GLOBAL_FP = 'GLOBAL_CONFIG_FP'
+        FIREFOX_FP = 'FIREFOX_CONFIG_FP'
+        ONLINE_FP = 'ONLINE_CONFIG_FP'
+        EXEC = 'exec_config'
+        INDEX = 'index_config'
+        GLOBAL = 'global_config'
+        FIREFOX = 'firefox_config'
+        ONLINE = 'online_config'
 
     def __init__(self, *args, **kwargs):
         super(BaseTest, self).__init__(*args, **kwargs)
+
+        # Init config name inner class
+        self.config_name = self.ConfigName()
 
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
@@ -153,7 +166,8 @@ class BaseTest(unittest.TestCase):
     # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
         # only the config in the following list can be created or updated
-        acceptable_config_list = [ConfigName.EXEC, ConfigName.INDEX, ConfigName.GLOBAL, ConfigName.FIREFOX, ConfigName.ONLINE]
+        acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
+                                  self.config_name.FIREFOX, self.config_name.ONLINE]
         if config_variable_name not in acceptable_config_list:
             raise Exception('Invalid configuration name {config_name}: {config_value}'
                             .format(config_name=config_variable_name, config_value=config_value))
@@ -174,8 +188,8 @@ class BaseTest(unittest.TestCase):
             setattr(self, config_variable_name, config_value)
 
     def load_configs(self):
-        config_fp_list = [ConfigName.EXEC_FP, ConfigName.INDEX_FP, ConfigName.GLOBAL_FP,
-                          ConfigName.FIREFOX_FP, ConfigName.ONLINE_FP]
+        config_fp_list = [self.config_name.EXEC_FP, self.config_name.INDEX_FP, self.config_name.GLOBAL_FP,
+                          self.config_name.FIREFOX_FP, self.config_name.ONLINE_FP]
 
         for config_env_name in config_fp_list:
             config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
