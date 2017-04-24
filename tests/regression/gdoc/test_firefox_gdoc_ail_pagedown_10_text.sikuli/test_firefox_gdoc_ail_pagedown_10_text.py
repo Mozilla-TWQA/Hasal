@@ -2,6 +2,7 @@
 # otherwise, you either add it to system path before you run or hard coded it in here.
 sys.path.append(sys.argv[2])
 import os
+import sys
 import gdoc
 import common
 import shutil
@@ -28,7 +29,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  TYPE "#PDOWN."')
+sys.stdout.write('[log]  TYPE "#PDOWN."\n')
 type(Key.PAGE_DOWN)
 sleep(1)
 

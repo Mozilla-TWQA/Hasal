@@ -3,6 +3,7 @@
 # win7 threshold 0.003
 sys.path.append(sys.argv[2])
 import os
+import sys
 import common
 import facebook
 import shutil
@@ -33,7 +34,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  Scroll 1 Step')
+sys.stdout.write('[log]  Scroll 1 Step\n')
 chrome.scroll_down(1)
 sleep(1)
 t2 = time.time()
