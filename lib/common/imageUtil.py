@@ -273,7 +273,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     search_margin = input_settings.get('search_margin', 10)
     search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
                                     len(input_image_data), search_margin)
-    total_search_range = input_settings['default_fps'] * 20
+    total_search_range = input_settings['default_fps'] * search_margin * 2
     if input_settings['search_direction'] == 'backward_search':
         start_index = search_range[1] - 1
         end_index = max(search_range[0], start_index - total_search_range)
@@ -320,10 +320,8 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                 if search_target in input_image_data[img_fn_key]:
                     current_img_dct = convert_to_dct(input_image_data[img_fn_key][search_target], skip_status_bar_fraction)
                     # assign customized threshold to comparison function if its in settings list
-                    if 'threshold' in input_settings:
-                        compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct, input_settings['threshold'])
-                    else:
-                        compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct)
+                    threshold_value = input_settings.get('threshold', 0.0003)
+                    compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct, threshold_value)
 
                     # record the diff_rate
                     diff_rate_list.append((event_name, img_fn_key, diff_rate))
@@ -371,7 +369,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         img_index -= 1
 
 
-def compare_two_images(dct_obj_1, dct_obj_2, threshold=0.0003):
+def compare_two_images(dct_obj_1, dct_obj_2, threshold):
     match = False
     try:
         row1, cols1 = dct_obj_1.shape

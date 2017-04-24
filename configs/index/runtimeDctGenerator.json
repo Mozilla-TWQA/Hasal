@@ -11,6 +11,7 @@
   "snapshot-base-sample2"   : true,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : true,
+  "calculate-speed-index"   : false,
   "platform-dep-settings"   : {
     "darwin":{
       "default": {
