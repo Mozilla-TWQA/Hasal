@@ -13,19 +13,25 @@
   "drop-outlier-flag"       : false,
   "platform-dep-settings"   : {
     "darwin":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.01,
-      "search-margin"           : 10
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 10
+      }
     },
     "win32":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.01,
-      "search-margin"           : 10
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 10
+      }
     },
     "linux2":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.01,
-      "search-margin"           : 10
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 10
+      }
     }
   }
 }
