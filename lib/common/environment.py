@@ -130,6 +130,7 @@ class Environment(object):
                 self.firefox_settings_extensions = firefox_settings_obj.get('extensions', {})
                 self.firefox_settings_cookies = firefox_settings_obj.get('cookies', {})
         self.firefox_profile_path = os.getenv('FIREFOX_PROFILE_PATH')
+        self.chrome_profile_path = os.getenv('CHROME_PROFILE_PATH')
 
         if self.firefox_settings_env:
             for k, v in self.firefox_settings_env.items():

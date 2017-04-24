@@ -1,5 +1,8 @@
 from base import BrowserBase
 import subprocess
+from ..common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class BrowserChrome(BrowserBase):
@@ -26,6 +29,13 @@ class BrowserChrome(BrowserBase):
             self.launch_cmd.extend([self.windows_language_postfix])
         elif self.current_platform_name == "linux2":
             self.test_env['LANGUAGE'] = "en-US"
+
+        profile_path = kwargs.get('profile_path', '')
+        if profile_path:
+            logger.info('Running Chrome with profile: {}'.format(profile_path))
+            self.launch_cmd.extend(["--user-data-dir=%s" % profile_path])
+        else:
+            logger.info('Running Chrome with default profile.')
 
         if "tracing_path" in kwargs:
             self.launch_cmd.extend(["--trace-startup", "--trace-startup-file=" + kwargs['tracing_path'],

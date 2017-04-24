@@ -38,8 +38,10 @@ def launch_browser(browser_type, **kwargs):
 
     if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
         if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
+            profile_path = env.chrome_profile_path
             browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                       tracing_path=env.chrome_tracing_file_fp)
+                                       tracing_path=env.chrome_tracing_file_fp,
+                                       profile_path=profile_path)
         else:
             profile_path = env.firefox_profile_path
             browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
@@ -50,14 +52,16 @@ def launch_browser(browser_type, **kwargs):
             browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
                                         profile_path=profile_path)
         else:
-            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            profile_path = env.chrome_profile_path
+            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
     else:
         if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
             profile_path = env.firefox_profile_path
             browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
                                         profile_path=profile_path)
         else:
-            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            profile_path = env.chrome_profile_path
+            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, profile_path=profile_path)
 
     browser_obj.launch()
     return browser_obj, profile_path
