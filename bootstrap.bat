@@ -196,6 +196,29 @@ del sikuli*.jar
 @echo on
 
 
+@REM Installing OBS
+
+IF "%APPVEYOR%"=="True" GOTO SkipOBS
+
+IF NOT EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
+    ECHO [INFO] Downloading OBS ...
+    pushd thirdParty
+    del OBS-Studio-18.0.1-Full.zip
+    curl -kLO https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip
+    ECHO [INFO] Installing OBS ...
+    7z x OBS-Studio-18.0.1-Full.zip -o"C:\Program Files (x86)\obs-studio"
+    popd
+    ECHO [INFO] OBS is installed.
+) ELSE (
+    ECHO [INFO] OBS had been installed.
+)
+
+:SkipOBS
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping OBS in CI
+)
+
+
 @REM Installing Miniconda
 
 IF "%APPVEYOR%"=="True" GOTO SkipConda
@@ -223,6 +246,7 @@ conda config --set always_yes yes --set changeps1 no
 conda install psutil
 ECHO [INFO] Creating Miniconda virtualenv (It might take some time to finish.)
 conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip
+
 
 ::::::::::::::::::::
 ::    Browsers    ::
@@ -265,6 +289,33 @@ IF "%APPVEYOR%"=="True" (
     @REM Installing mitmproxy & opencv2 & Hasal
     activate env-python & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
 )
+
+
+:::::::::::::::::::::::::
+::  User Interactions  ::
+:::::::::::::::::::::::::
+
+IF "%APPVEYOR%"=="True" GOTO SkipUserInteractions
+
+
+@REM OBS License Agreement
+IF EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
+    pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
+    ECHO [INFO] Launching OBS for License Agreement.
+    ECHO.
+    ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
+    obs32.exe
+    popd
+) ELSE (
+    ECHO [WARN] Can not find OBS binary file.
+)
+
+
+:SkipUserInteractions
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping SkipUser Interactions
+)
+
 
 ::::::::::::::::::::
 ::    Finished    ::
