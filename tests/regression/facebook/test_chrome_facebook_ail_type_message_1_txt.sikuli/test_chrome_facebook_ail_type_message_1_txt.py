@@ -18,6 +18,7 @@ fb = facebook.facebook()
 chrome.clickBar()
 chrome.enterLink(sys.argv[3])
 fb.wait_for_loaded()
+fb.wait_for_messenger_loaded()
 
 sleep(2)
 setAutoWaitTimeout(10)

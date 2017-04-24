@@ -43,6 +43,7 @@ class facebook():
         self.share_menu = Pattern("pics/facebook_share_menu.png").similar(0.70)
         self.save_button = Pattern("pics/facebook_save_button.png").similar(0.70)
         self.club_post_menu_delete = Pattern("pics/facebook_club_post_menu_delete.png").similar(0.70)
+        self.messenger_header = Pattern("pics/facebook_messenger_header.png").similar(0.70)
 
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
 
@@ -50,6 +51,12 @@ class facebook():
         default_timeout = getAutoWaitTimeout()
         setAutoWaitTimeout(10)
         wait(self.fb_logo)
+        setAutoWaitTimeout(default_timeout)
+
+    def wait_for_messenger_loaded(self):
+        default_timeout = getAutoWaitTimeout()
+        setAutoWaitTimeout(10)
+        wait(self.messenger_header)
         setAutoWaitTimeout(default_timeout)
 
     def focus_window(self):
