@@ -155,25 +155,23 @@ IF NOT "%APPVEYOR%"=="True" (
 )
 
 
-mkdir -p ./thirdParty/geckodriver/
-tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
-chmod a+x ./thirdParty/geckodriver/geckodriver
-
-
 @REM Installing ffmpeg
-ECHO [INFO] Downloading FFMPEG.
-IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
-    ECHO [INFO] Found cached ffmpeg-20160527-git-d970f7b-win32-static.7z
+IF NOT EXIST "%CD%"\ffmpeg\bin\ffmpeg.exe (
+    ECHO [INFO] Downloading FFMPEG ...
+    pushd thirdParty
+    curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+    popd
+    ECHO [INFO] Installing FFMPEG ...
+    7z x thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z
+    move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
+    del thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z
+    ECHO [INFO] FFMPEG is installed.
 ) ELSE (
-    ECHO [INFO] Downloading FFMPEG.
-    thirdParty\curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+    ECHO [INFO] FFMPEG had been installed.
 )
-ECHO [INFO] Installing FFMPEG.
-7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
-move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
+
 IF NOT "%APPVEYOR%"=="True" (
     SETX PATH "%CD%\ffmpeg\bin\;%PATH%" /m
-    del ffmpeg-20160527-git-d970f7b-win32-static.7z
 )
 SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
