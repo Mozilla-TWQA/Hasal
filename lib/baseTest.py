@@ -4,6 +4,7 @@ import sys
 import copy
 import time
 import json
+import platform
 import unittest
 import helper.desktopHelper as desktopHelper
 import lib.helper.videoHelper as videoHelper
@@ -18,23 +19,37 @@ logger = get_logger(__name__)
 
 
 class BaseTest(unittest.TestCase):
+    class ConfigName(object):
+        EXEC = 'exec_config'
+        INDEX = 'index_config'
+        GLOBAL = 'global_config'
+        FIREFOX = 'firefox_config'
+        ONLINE = 'online_config'
 
     def __init__(self, *args, **kwargs):
         super(BaseTest, self).__init__(*args, **kwargs)
 
+        # Init config name inner class
+        self.config_name = self.ConfigName()
+
         # Init environment variables
         self.env = Environment(self._testMethodName, self._testMethodDoc)
+
+        # Get current platform and its release version
+        self.current_platform_name = sys.platform
+        self.current_platform_ver = platform.release()
 
         # load all settings into self object
         self.load_configs()
 
         # Get Terminal Window Object here when it still active
-        if sys.platform == 'darwin':
+        if self.current_platform_name == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
-        elif sys.platform == 'win32':
+        elif self.current_platform_name == 'win32':
             terminal_title = ['cmd', 'Command Prompt', 'runtest.py']
         else:
             terminal_title = ['Hasal']
+
         # Linux will get current by wmctrl_get_current_window_id() method if current is True
         self.terminal_window_obj = WindowObject(terminal_title, current=True)
 
@@ -82,17 +97,15 @@ class BaseTest(unittest.TestCase):
                     height_offset = 0
                     terminal_width = width_browser
                     terminal_height = 60
-                    if sys.platform == 'linux2':
+                    if self.current_platform_name == 'linux2':
                         height_offset = 20
                         terminal_height = 60
-                    elif sys.platform == 'win32':
-                        import platform
-                        release_version = platform.release()
-                        if release_version == '10':
+                    elif self.current_platform_name == 'win32':
+                        if self.current_platform_ver == '10':
                             logger.info("Move terminal window for Windows 10.")
                             height_offset = -4
                             terminal_height = 100
-                        elif release_version == '7':
+                        elif self.current_platform_ver == '7':
                             logger.info("Move terminal window for Windows 7.")
                             height_offset = 0
                             terminal_height = 80
@@ -100,7 +113,7 @@ class BaseTest(unittest.TestCase):
                             logger.info("Move terminal window for Windows.")
                             height_offset = 0
                             terminal_height = 80
-                    elif sys.platform == 'darwin':
+                    elif self.current_platform_name == 'darwin':
                         # TODO: This offset settings only be tested on Mac Book Air
                         height_offset = 25
                         terminal_height = 80
@@ -135,21 +148,50 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
-    def load_configs(self):
+    def extract_platform_dep_settings(self, config_value):
+        if self.current_platform_name in config_value:
+            if self.current_platform_ver in config_value[self.current_platform_name]:
+                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
+            else:
+                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
+            config_value.update(platform_dep_variables)
+            return platform_dep_variables
+        return {}
+
+    # This will set new configs into variables and update if the variables already exist
+    def set_configs(self, config_variable_name, config_value):
+        # only the config in the following list can be created or updated
+        acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
+                                  self.config_name.FIREFOX, self.config_name.ONLINE]
+        if config_variable_name not in acceptable_config_list:
+            raise Exception('Invalid configuration name {config_name}: {config_value}'
+                            .format(config_name=config_variable_name, config_value=config_value))
+
         default_platform_dep_settings_key = "platform-dep-settings"
-        config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP', 'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
-        current_platform_name = sys.platform
+        if default_platform_dep_settings_key in config_value:
+            # Load the index config's settings under "platform-dep-settings" base on platform
+            platform_dep_variables = self.extract_platform_dep_settings(config_value[default_platform_dep_settings_key])
+            config_value.update(platform_dep_variables)
+            config_value.pop(default_platform_dep_settings_key)
+
+        if hasattr(self, config_variable_name):
+            # getattr is a way to get variable by reference and doesn't need to be set back
+            new_config_value = getattr(self, config_variable_name)
+            new_config_value.update(config_value)
+            setattr(self, config_variable_name, new_config_value)
+        else:
+            setattr(self, config_variable_name, config_value)
+
+    def load_configs(self):
+        config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP',
+                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+
         for config_env_name in config_fp_list:
-            config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
+            config_variable_name = config_env_name.rsplit('_', 1)[0].lower()
             with open(os.getenv(config_env_name)) as fh:
                 config_value = json.load(fh)
-            if default_platform_dep_settings_key in config_value:
-                # Load the index config's settings under "platform-dep-settings" base on platform
-                if current_platform_name in config_value[default_platform_dep_settings_key]:
-                    platform_dep_variables = copy.deepcopy(config_value[default_platform_dep_settings_key][current_platform_name])
-                    config_value.update(platform_dep_variables)
-                config_value.pop(default_platform_dep_settings_key)
-            setattr(self, config_variable_name, config_value)
+
+            self.set_configs(config_variable_name, config_value)
 
     def setUp(self):
 
