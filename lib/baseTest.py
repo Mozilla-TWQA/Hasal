@@ -192,7 +192,7 @@ class BaseTest(unittest.TestCase):
                           self.config_name.FIREFOX_FP, self.config_name.ONLINE_FP]
 
         for config_env_name in config_fp_list:
-            config_variable_name = "_".join(config_env_name.split("_")[:2]).lower()
+            config_variable_name = config_env_name.rsplit('_', 1)[0].lower()
             with open(os.getenv(config_env_name)) as fh:
                 config_value = json.load(fh)
 
