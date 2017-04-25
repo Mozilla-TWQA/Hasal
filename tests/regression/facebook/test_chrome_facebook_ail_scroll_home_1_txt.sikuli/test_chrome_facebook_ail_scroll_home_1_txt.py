@@ -33,7 +33,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  Scroll 1 Step')
+com.system_print('[log]  Scroll 1 Step')
 chrome.scroll_down(1)
 sleep(1)
 t2 = time.time()

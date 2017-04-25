@@ -28,7 +28,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  TYPE "a"')
+com.system_print('[log]  TYPE "a"')
 type('a')
 # In normal condition, a should appear within 100ms, but if lag happened, that could lead the show up after 100 ms, and that will cause the calculation of AIL much smaller than expected.
 sleep(0.1)

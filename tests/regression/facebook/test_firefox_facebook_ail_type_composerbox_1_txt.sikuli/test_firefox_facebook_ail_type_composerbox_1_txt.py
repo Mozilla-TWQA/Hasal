@@ -32,7 +32,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  TYPE "a"')
+com.system_print('[log]  TYPE "a"')
 type("a")
 sleep(1)
 t2 = time.time()

@@ -30,7 +30,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-print('[log]  TYPE "#PDOWN."')
+com.system_print('[log]  TYPE "#PDOWN."')
 type(Key.PAGE_DOWN)
 sleep(1)
 
