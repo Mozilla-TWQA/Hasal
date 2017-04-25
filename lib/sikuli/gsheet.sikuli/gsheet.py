@@ -22,10 +22,7 @@ class gSheet():
         self.gsheet_1st_cell = Pattern("pics/column_header.png").similar(0.70).targetOffset(0, 80)
 
     def wait_for_loaded(self):
-        default_timeout = getAutoWaitTimeout()
-        setAutoWaitTimeout(10)
-        wait(self.gsheet_tab_icon)
-        setAutoWaitTimeout(default_timeout)
+        wait(self.gsheet_tab_icon, 10)
 
     def modify_highlight_cell(self, input_txt):
         click(self.gsheet_modify_highlight_cell)

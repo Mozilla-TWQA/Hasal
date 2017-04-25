@@ -48,22 +48,13 @@ class facebook():
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
 
     def wait_for_loaded(self):
-        default_timeout = getAutoWaitTimeout()
-        setAutoWaitTimeout(10)
-        wait(self.fb_logo)
-        setAutoWaitTimeout(default_timeout)
+        wait(self.fb_logo, 15)
 
     def wait_for_messenger_loaded(self):
-        default_timeout = getAutoWaitTimeout()
-        setAutoWaitTimeout(10)
-        wait(self.messenger_header)
-        setAutoWaitTimeout(default_timeout)
+        wait(self.messenger_header, 15)
 
     def focus_window(self):
-        default_timeout = getAutoWaitTimeout()
-        setAutoWaitTimeout(10)
-        click(self.fb_logo.targetOffset(0, 15))
-        setAutoWaitTimeout(default_timeout)
+        click(self.fb_logo.targetOffset(0, 15), 10)
 
     def post_content(self, location=None, content_type=None, input_string=None):
         if not location or not input_string or not content_type:
