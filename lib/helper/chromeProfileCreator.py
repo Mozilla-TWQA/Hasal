@@ -35,6 +35,7 @@ class ChromeProfileCreator(object):
         tmp_profile_dir = tempfile.mkdtemp(prefix='chromeprofile_')
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
         self._chrome_profile_path = tmp_profile_dir
+        # TODO: need to fix mac OS always on background and cannot return issue in the future
         os.system('{} --no-startup-window --user-data-dir={}'.format(self.chrome_cmd, tmp_profile_dir))
         logger.info('Creating Profile success: {}'.format(self._chrome_profile_path))
         return self._chrome_profile_path
