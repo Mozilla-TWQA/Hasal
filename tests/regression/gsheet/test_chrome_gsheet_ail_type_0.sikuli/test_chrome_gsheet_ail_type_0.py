@@ -2,7 +2,6 @@
 # otherwise, you either add it to system path before you run or hard coded it in here.
 sys.path.append(sys.argv[2])
 import os
-import sys
 import gsheet
 import common
 import shutil
@@ -31,7 +30,8 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-sys.stdout.write('[log]  TYPE "9"\n')
+com.system_print('[log]  TYPE "9"')
+sys.stdout.flush()
 type('9')
 # In normal condition, a should appear within 100ms, but if lag happened, that could lead the show up after 100 ms, and that will cause the calculation of AIL much smaller than expected.
 sleep(0.1)

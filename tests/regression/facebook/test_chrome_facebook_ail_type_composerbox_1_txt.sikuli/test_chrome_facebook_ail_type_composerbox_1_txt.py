@@ -2,7 +2,6 @@
 # otherwise, you either add it to system path before you run or hard coded it in here.
 sys.path.append(sys.argv[2])
 import os
-import sys
 import common
 import facebook
 import shutil
@@ -33,7 +32,7 @@ capture_height = int(sys.argv[7])
 t1 = time.time()
 capimg2 = capture(0, 0, capture_width, capture_height)
 
-sys.stdout.write('[log]  TYPE "a"\n')
+com.system_print('[log]  TYPE "a"')
 type("a")
 sleep(1)
 t2 = time.time()
