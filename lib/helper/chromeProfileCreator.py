@@ -2,12 +2,9 @@ import os
 import sys
 import time
 import shutil
-import psutil
 import tempfile
-import subprocess
 from lib.common.logConfig import get_logger
 from lib.common.pyDriveUtil import PyDriveUtil
-from lib.helper.desktopHelper import close_browser
 
 logger = get_logger(__name__)
 
@@ -37,19 +34,9 @@ class ChromeProfileCreator(object):
     def _create_chrome_profile(self):
         tmp_profile_dir = tempfile.mkdtemp(prefix='chromeprofile_')
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
-        self.chrome_cmd = '{} --user-data-dir={}'.format(self.chrome_cmd, tmp_profile_dir)
-        subprocess.Popen(self.chrome_cmd)
         self._chrome_profile_path = tmp_profile_dir
-        for _ in range(10):
-            if os.path.exists(self._chrome_profile_path):
-                logger.info('Creating Profile success: {}'.format(self._chrome_profile_path))
-                break
-            else:
-                time.sleep(1)
-        close_browser(self.browser_type)
-        for proc in psutil.process_iter():
-            if proc.name().lower() == self.process_name:
-                time.sleep(1)
+        os.system('{} --no-startup-window --user-data-dir={}'.format(self.chrome_cmd, tmp_profile_dir))
+        logger.info('Creating Profile success: {}'.format(self._chrome_profile_path))
         return self._chrome_profile_path
 
     def _download_cookies(self, cookies_settings={}):
