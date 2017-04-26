@@ -11,7 +11,7 @@ function Add-EnvPath {
     # Do it for global Path (like SETX but no restriction over 1024 characters)
     if(!($env:Path -like "*$Path*")) {
         "[INFO] Adding $Path to system path!"
-        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path /t REG_SZ /d "$env:Path;$Path" /f
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /f /v Path /t REG_SZ /d "$env:Path;$Path;"
     } else {
         "[INFO] $Path is already in system path."
     }
@@ -232,7 +232,6 @@ If (Test-Path C:\Miniconda2\) {
 
 # OBS License Agreement
 If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
-    Add-EnvPath "C:\Program Files (x86)\obs-studio\bin\32bit\"
     pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
     "[INFO] Launching OBS for License Agreement."
     ""
