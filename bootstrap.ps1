@@ -76,6 +76,20 @@ If ($lastexitcode -notmatch 0) {
     "[INFO] Git found in current system. Not going to install it."
 }
 
+
+# Install OBS Studio
+"[INFO] Downloading OBS ..."
+pushd thirdParty
+If (Test-Path OBS-Studio-18.0.1-Full.zip) {
+    Remove-Item OBS-Studio-18.0.1-Full.zip
+}
+CMD /C curl -kLO https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip
+"[INFO] Installing OBS ..."
+Expand-Archive -LiteralPath OBS-Studio-18.0.1-Full.zip -DestinationPath "C:\Program Files (x86)\obs-studio"
+popd
+"[INFO] OBS is installed."
+
+
 # installation of Hasal prerequisite
 $tmp = & CMD /C java -version >$null 2>&1
 If ($lastexitcode -notmatch 0) {
@@ -188,4 +202,23 @@ If (Test-Path C:\Miniconda2\) {
     CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" setup.py install
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
+}
+
+
+########################
+#                      #
+#   User Interactions  #
+#                      #
+########################
+
+# OBS License Agreement
+If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
+    pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
+    "[INFO] Launching OBS for License Agreement."
+    ""
+    "[INFO] ** Please CLOSE OBS after accepting License Agreement **"
+    CMD /C obs32.exe
+    popd
+} ELSE {
+    "[WARN] Can not find OBS binary file."
 }
