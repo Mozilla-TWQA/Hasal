@@ -76,7 +76,7 @@ def get_browser_name_list(browser_type):
             return ['Mozilla Firefox', 'Nightly']
     elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
         if sys.platform == 'darwin':
-            return ['Chrome.app']
+            return ['Google Chrome.app', 'Chrome.app']
         else:
             return ['Google Chrome']
     else:
