@@ -1,31 +1,53 @@
 import os
 import re
 import json
+import platform
+import subprocess
+import numpy as np
 from datetime import datetime
 from environment import Environment
 from logConfig import get_logger
 
 
-def load_json_file(fp):
-    if os.path.exists(fp):
-        with open(fp) as fh:
-            return json.load(fh)
-    else:
-        return {}
-
-
 class StatusRecorder(object):
+    PASS_IMG_COMPARE_RESULT = "PASS_IMG_COMPARE_RESULT"
+
     ERROR_CANT_FIND_STATUS_FILE = "ERROR_CANT_FIND_STATUS_FILE"
     ERROR_FPS_STAT_ABNORMAL = "ERROR_FPS_STAT_ABNORMAL"
     ERROR_ROUND_STAT_ABNORMAL = "ERROR_ROUND_STAT_ABNORMAL"
     ERROR_COMPARING_IMAGE_FAILED = "ERROR_COMPARING_IMAGE_FAILED"
     ERROR_LOOP_TEST_RAISE_EXCEPTION = "ERROR_LOOP_TEST_RAISE_EXCEPTION"
+    ERROR_EVENT_IMAGE_LESS_THAN_2 = "ERROR_EVENT_IMAGE_LESS_THAN_2"
+    ERROR_EVENT_IMAGE_BOTH_SAME = "ERROR_EVENT_IMAGE_BOTH_SAME"
+    ERROR_COMPARE_RESULT_IS_NONE = "ERROR_COMPARE_RESULT_IS_NONE"
+
+    STATUS_IMG_COMPARE_RESULT = "status_img_compare_result"
+    STATUS_SIKULI_RUNNING_VALIDATION = "sikuli_running_stat"
+    STATUS_FPS_VALIDATION = "fps_stat"
+    STATUS_TIME_LIST_COUNTER = "time_list_counter"
+    STATUS_VALIDATOR_RESULT = "validator_result"
+
+    STATUS_FPS_VALIDATION_NORMAL = 0
+    STATUS_FPS_VALIDATION_ABNORMAL = 1
 
     def __init__(self, status_fp):
         self.status_fp = status_fp
-        self.current_status = load_json_file(status_fp)
+        self.current_status = CommonUtil.load_json_file(status_fp)
+
+    def get_current_status(self):
+        return self.current_status['current_status']
+
+    def record_current_status(self, input_status_dict):
+        self.current_status = CommonUtil.load_json_file(self.status_fp)
+        if 'current_status' in self.current_status:
+            self.current_status['current_status'].update(input_status_dict)
+        else:
+            self.current_status['current_status'] = input_status_dict
+        with open(self.status_fp, "w+") as fh:
+            json.dump(self.current_status, fh)
 
     def record_status(self, case_name, status, value):
+        self.current_status = CommonUtil.load_json_file(self.status_fp)
         if case_name in self.current_status:
             self.current_status[case_name].append(
                 {'time_seq': datetime.strftime(datetime.now(), '%Y%m%d%H%M%S'), 'status': status, 'value': value})
@@ -36,10 +58,228 @@ class StatusRecorder(object):
             json.dump(self.current_status, fh)
 
 
+class CalculationUtil(object):
+
+    @staticmethod
+    def runtime_calculation_event_point_base(input_running_time_result):
+        run_time = -1
+        comparing_time_data = {}
+        for event_data in input_running_time_result:
+            for time_point in ['start', 'end']:
+                if time_point in event_data:
+                    comparing_time_data[time_point] = event_data['time_seq']
+                    break
+        event_time_dict = dict()
+        if len(comparing_time_data.keys()) == 2:
+            run_time = comparing_time_data['end'] - comparing_time_data['start']
+            if run_time > 0:
+                for event_data in input_running_time_result:
+                    for event_name in event_data:
+                        if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                            event_time_dict[event_name] = np.absolute(
+                                event_data['time_seq'] - comparing_time_data['start'])
+        return run_time, event_time_dict
+
+    @staticmethod
+    def Q_MooreMcCabe(seq):
+        seq_len = len(seq)
+        if seq_len % 2:
+            if (seq_len + 1) % 4:
+                Q1 = float((seq[(seq_len + 1) / 4] + seq[(seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 1) / 4 - 1])
+            if (3 * seq_len + 3) % 4:
+                Q3 = float((seq[(3 * seq_len + 3) / 4] + seq[(3 * seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 3) / 4 - 1])
+        else:
+            if (seq_len + 2) % 4:
+                Q1 = float((seq[(seq_len + 2) / 4] + seq[(seq_len + 2) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 2) / 4 - 1])
+            if (3 * seq_len + 2) % 4:
+                Q3 = float((seq[(3 * seq_len + 2) / 4] + seq[(3 * seq_len + 2) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 2) / 4 - 1])
+        return [Q1, Q3]
+
+    @staticmethod
+    def Q_Tukey(seq):
+        seq_len = len(seq)
+        if seq_len % 2:
+            if (seq_len + 1) % 4:
+                Q1 = float((seq[(seq_len + 3) / 4] + seq[(seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 3) / 4 - 1])
+            if (3 * seq_len + 3) % 4:
+                Q3 = float((seq[(3 * seq_len + 1) / 4] + seq[(3 * seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 1) / 4 - 1])
+        else:
+            if (seq_len + 2) % 4:
+                Q1 = float((seq[(seq_len + 2) / 4] + seq[(seq_len + 2) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 2) / 4 - 1])
+            if (3 * seq_len + 2) % 4:
+                Q3 = float((seq[(3 * seq_len + 2) / 4] + seq[(3 * seq_len + 2) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 2) / 4 - 1])
+        return [Q1, Q3]
+
+    @staticmethod
+    def Q_FreundPerles(seq):
+        seq_len = len(seq)
+        if seq_len % 2:
+            if (seq_len + 1) % 4:
+                Q1 = float((seq[(seq_len + 3) / 4] + seq[(seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 3) / 4 - 1])
+            if (3 * seq_len + 3) % 4:
+                Q3 = float((seq[(3 * seq_len + 1) / 4] + seq[(3 * seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 1) / 4 - 1])
+        else:
+            if (seq_len + 2) % 4:
+                Q1 = float((seq[(seq_len + 3) / 4] + seq[(seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 3) / 4 - 1])
+            if (3 * seq_len + 2) % 4:
+                Q3 = float((seq[(3 * seq_len + 1) / 4] + seq[(3 * seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 1) / 4 - 1])
+        return [Q1, Q3]
+
+    @staticmethod
+    def Q_Minitab(seq):
+        seq_len = len(seq)
+        if seq_len % 2:
+            if (seq_len + 1) % 4:
+                Q1 = float((seq[(seq_len + 1) / 4] + seq[(seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 1) / 4 - 1])
+            if (3 * seq_len + 3) % 4:
+                Q3 = float((seq[(3 * seq_len + 3) / 4] + seq[(3 * seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 3) / 4 - 1])
+        else:
+            if (seq_len + 2) % 4:
+                Q1 = float((seq[(seq_len + 1) / 4] + seq[(seq_len + 1) / 4 - 1])) / 2
+            else:
+                Q1 = float(seq[(seq_len + 1) / 4 - 1])
+            if (3 * seq_len + 2) % 4:
+                Q3 = float((seq[(3 * seq_len + 3) / 4] + seq[(3 * seq_len + 3) / 4 - 1])) / 2
+            else:
+                Q3 = float(seq[(3 * seq_len + 3) / 4 - 1])
+        return [Q1, Q3]
+
+    @staticmethod
+    def drop_outlier_value(seq, outliers):
+        for outlier in outliers:
+            seq.remove(outlier)
+        return seq
+
+    @staticmethod
+    def remove_outlier(input_list, key_name, method=1):
+        outliers = []
+        outliers_value = []
+        sorted_list = sorted(input_list, key=lambda k: k[key_name])
+        seq_value = [d[key_name] for d in sorted_list]
+        if len(input_list) >= 3:
+                # Default using Moore and McCabe method to calculate quartile value
+                Q_Calculation = {
+                    '1': CalculationUtil.Q_MooreMcCabe,
+                    '2': CalculationUtil.Q_Tukey,
+                    '3': CalculationUtil.Q_FreundPerles,
+                    '4': CalculationUtil.Q_Minitab
+                }
+                [Q1, Q3] = Q_Calculation.setdefault(str(method), CalculationUtil.Q_MooreMcCabe)(seq_value)
+                IQR = Q3 - Q1
+                lower = Q1 - 1.5 * IQR
+                upper = Q3 + 1.5 * IQR
+                for data in sorted_list:
+                    if data[key_name] < lower or data[key_name] > upper:
+                        outliers.append(data)
+                        outliers_value.append(data[key_name])
+                sorted_list = CalculationUtil.drop_outlier_value(sorted_list, outliers)
+        return sorted_list, outliers
+
+    @staticmethod
+    def get_median_avg_sigma_value(input_list, key_name):
+        sorted_list = sorted(input_list, key=lambda k: k[key_name])
+        seq_value = [d[key_name] for d in sorted_list]
+        if len(sorted_list) == 0:
+            median_time_index = 0
+            mean = 0
+            median = 0
+            sigma = 0
+            min = 0
+            max = 0
+        elif len(sorted_list) == 1:
+            median_time_index = 0
+            mean = float(sorted_list[median_time_index][key_name])
+            median = float(sorted_list[median_time_index][key_name])
+            sigma = 0
+            min = seq_value[0]
+            max = seq_value[0]
+        else:
+            if len(sorted_list) % 2:
+                median_time_index = (len(input_list) - 1) / 2
+                median = float(sorted_list[median_time_index][key_name])
+                mean = np.mean(seq_value)
+                sigma = np.std(seq_value)
+            else:
+                median_time_index = len(input_list) / 2 - 1
+                median = float(sorted_list[median_time_index][key_name] + sorted_list[median_time_index + 1][key_name]) / 2
+                mean = np.mean(seq_value)
+                sigma = np.std(seq_value)
+            min = seq_value[0]
+            max = seq_value[-1]
+        return sorted_list, median_time_index, median, mean, sigma, min, max
+
+    @staticmethod
+    def generate_statistics_value_for_server(input_list, enable_remove_outlier=True):
+        if enable_remove_outlier:
+            tmp_list, outliers = CalculationUtil.remove_outlier(input_list, 'run_time')
+        else:
+            outliers = []
+            tmp_list = input_list
+        sorted_list, median_time_index, median_value, mean_value, sigma_value, min_value, max_value = CalculationUtil.get_median_avg_sigma_value(tmp_list, 'run_time')
+        if len(sorted_list) % 2:
+            si_value = input_list[median_time_index]['si']
+            psi_value = input_list[median_time_index]['psi']
+        else:
+            si_value = (input_list[median_time_index]['si'] + input_list[median_time_index + 1]['si']) / 2
+            psi_value = (input_list[median_time_index]['psi'] + input_list[median_time_index + 1]['psi']) / 2
+        return mean_value, median_value, sigma_value, tmp_list, outliers, si_value, psi_value
+
+
 class CommonUtil(object):
 
     RECORDER_LIST = [Environment.PROFILER_FLAG_AVCONV, Environment.PROFILER_FLAG_OBS]
     logger = get_logger(__file__)
+
+    @staticmethod
+    def get_mac_os_display_channel():
+        if platform.system().lower() == "darwin":
+            proc = subprocess.Popen(
+                ['ffmpeg', '-f', 'avfoundation', '-list_devices', 'true', '-i', '""'],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout = proc.stdout.read()
+            if "Capture screen" in stdout:
+                display_channel = stdout[stdout.index('Capture screen') - 3]
+                if display_channel in [str(i) for i in range(10)]:
+                    return display_channel
+            return "1"
+        else:
+            return ":0.0"
+
+    @staticmethod
+    def load_json_file(fp):
+        if os.path.exists(fp):
+            with open(fp) as fh:
+                return json.load(fh)
+        else:
+            return {}
 
     @staticmethod
     def atoi(text):

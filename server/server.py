@@ -16,8 +16,7 @@ from logging import handlers  # NOQA
 import operator
 import urlparse
 from threading import Lock
-
-from lib.common.outlier import outlier
+from lib.common.commonUtil import CalculationUtil
 from perfherder_uploader import PerfherderUploader
 
 
@@ -397,7 +396,6 @@ class HasalServer:
     storage = {}
     perfherder_mode = False
 
-    _calculator = outlier()
     _config = storage_handler.load_config()
     _config_test_times = _config.get('test_times', 30)
     _config_perfherder_protocol = _config.get('perfherder_protocol', 'http')
@@ -663,7 +661,7 @@ class HasalServer:
         origin_seq = [{'run_time': item[0], 'si': item[1], 'psi': item[2]} for item in current_test_obj['origin_values']]
 
         # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
-        mean, median, sigma, _, outliers, si, psi = HasalServer._calculator.detect(origin_seq)
+        mean, median, sigma, _, outliers, si, psi = CalculationUtil.generate_statistics_value_for_server(origin_seq)
         current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(current_test_obj['origin_values'], outliers)
         values_list = current_test_obj['origin_values']
 

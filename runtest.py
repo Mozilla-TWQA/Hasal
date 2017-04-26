@@ -22,7 +22,6 @@ import platform
 import subprocess
 from docopt import docopt
 from datetime import datetime
-from lib.common.commonUtil import load_json_file
 from lib.common.commonUtil import StatusRecorder
 from lib.common.commonUtil import CommonUtil
 from lib.helper.uploadAgentHelper import UploadAgent
@@ -59,7 +58,7 @@ class RunTest(object):
         self.global_config_fp = os.path.abspath(kwargs['global_config'])
         self.chrome_config_fp = os.path.abspath(kwargs['chrome_config'])
         for variable_name in kwargs.keys():
-            setattr(self, variable_name, load_json_file(kwargs[variable_name]))
+            setattr(self, variable_name, CommonUtil.load_json_file(kwargs[variable_name]))
 
         # init logger
         self.logger = get_logger(__file__, self.exec_config['advance'])
@@ -167,47 +166,47 @@ class RunTest(object):
     def run_test_result_analyzer(self, test_case_module_name, test_name, current_run, current_retry, video_result):
         run_result = None
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
-        if os.path.exists(self.global_config['default-current-running-status-fn']):
-            with open(self.global_config['default-current-running-status-fn']) as stat_fh:
-                run_result = json.load(stat_fh)
-                round_status = int(run_result.get("round_status", -1))
-                fps_stat = int(run_result.get("fps_stat", -1))
-                if round_status == 0 and fps_stat == 0:
-                    if self.online_config['enable']:
-                        # Online mode handling
-                        upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
-                        if upload_result:
-                            self.logger.info("===== upload success =====")
-                            self.logger.info(upload_result)
-                            video_result['ip'] = upload_result['ip']
-                            video_result['video_path'] = upload_result['video']
-                            video_result['test_name'] = test_name
-                            self.logger.info("===== upload success =====")
-                            if "current_test_times" in upload_result:
-                                current_run = upload_result["current_test_times"]
-                                self.exec_config['max-run'] = upload_result['config_test_times']
-                            else:
-                                current_run += 1
+        if os.path.exists(self.global_config['default-running-statistics-fn']):
+            run_result = objStatusRecorder.get_current_status()
+            round_status = int(run_result.get(objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION, -1))
+            fps_stat = int(run_result.get(objStatusRecorder.STATUS_FPS_VALIDATION, -1))
+            if round_status == 0 and fps_stat == 0:
+                if self.online_config['enable']:
+                    # Online mode handling
+                    upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
+                    if upload_result:
+                        self.logger.info("===== upload success =====")
+                        self.logger.info(upload_result)
+                        video_result['ip'] = upload_result['ip']
+                        video_result['video_path'] = upload_result['video']
+                        video_result['test_name'] = test_name
+                        self.logger.info("===== upload success =====")
+                        if "current_test_times" in upload_result:
+                            current_run = upload_result["current_test_times"]
+                            self.exec_config['max-run'] = upload_result['config_test_times']
                         else:
-
                             current_run += 1
                     else:
-                        if run_result.get("comparing_image_missing", False):
-                            if "time_list_counter" in run_result:
-                                current_run = int(run_result['time_list_counter'])
-                            else:
-                                current_run += 1
-                        else:
-                            objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_COMPARING_IMAGE_FAILED, None)
-                            current_retry += 1
+
+                        current_run += 1
                 else:
-                    if round_status != 0:
-                        objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL,
-                                                        round_status)
-                    if fps_stat != 0:
-                        objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL,
-                                                        round_status)
-                    current_retry += 1
+                    if run_result.get("comparing_image_missing", False):
+                        if "time_list_counter" in run_result:
+                            current_run = int(run_result['time_list_counter'])
+                        else:
+                            current_run += 1
+                    else:
+                        objStatusRecorder.record_status(test_case_module_name,
+                                                        StatusRecorder.ERROR_COMPARING_IMAGE_FAILED, None)
+                        current_retry += 1
+            else:
+                if round_status != 0:
+                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL,
+                                                    round_status)
+                if fps_stat != 0:
+                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL,
+                                                    round_status)
+                current_retry += 1
         else:
             self.logger.error("test could raise exception during execution!!")
             objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_CANT_FIND_STATUS_FILE, None)

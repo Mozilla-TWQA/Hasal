@@ -14,6 +14,7 @@ from common.environment import Environment
 from common.logConfig import get_logger
 from common.windowController import WindowObject
 from common.commonUtil import CommonUtil
+from common.commonUtil import StatusRecorder
 
 logger = get_logger(__name__)
 
@@ -224,9 +225,8 @@ class BaseTest(unittest.TestCase):
         self.remove_test_file()
 
         # output status to static file
-        with open(self.env.DEFAULT_STAT_RESULT, "w") as fh:
-            stat_data = {'round_status': str(self.round_status)}
-            json.dump(stat_data, fh)
+        self.objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
+        self.objStatusRecorder.record_current_status({self.objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION: str(self.round_status)})
 
         # output result
         if self.round_status == 0:

@@ -11,6 +11,7 @@
   "default-file-exist-validator-name"        : "FileExistValidator",
   "default-file-exist-validator-module-path" : "lib.validator.fileExistValidator",
   "default-user-simulation-tool-webdriver"   : "webdriver",
+  "default-search-target-browser"            : "browser",
   "gsuite": {
     "default-test-target-folder-uri"                        : "0B6LePZQnd-uOTHhJNEhTN1pqYm8",
     "gsheet-test-target-folder-uri"                         : "0B6LePZQnd-uOdkNVTkItaG96WkU",
