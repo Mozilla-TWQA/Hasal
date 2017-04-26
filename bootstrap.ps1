@@ -1,4 +1,5 @@
 function Add-EnvPath {
+    # Get parameters
     param(
         [Parameter(Mandatory=$true)]
         [string] $Path,
@@ -6,7 +7,16 @@ function Add-EnvPath {
         [ValidateSet('Machine', 'User', 'Session')]
         [string] $Container = 'Session'
     )
+    
+    # Do it for global Path (like SETX but no restriction over 1024 characters)
+    if(!($env:Path -like "*$Path*")) {
+        "[INFO] Adding $Path to system path!"
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /f /v Path /t REG_SZ /d "$env:Path;$Path;"
+    } else {
+        "[INFO] $Path is already in system path."
+    }
 
+    # Do it for current $env:Path
     if ($Container -ne 'Session') {
         $containerMapping = @{
             Machine = [EnvironmentVariableTarget]::Machine
@@ -27,6 +37,9 @@ function Add-EnvPath {
         $env:Path = $envPaths -join ';'
     }
 }
+
+# back up the current environment variables
+"$env:Path" | Out-File "Path-Backup-$(Get-Date -format yyyyMMddHHmmss).txt"
 
 ########################
 #                      #
@@ -70,8 +83,7 @@ If ($lastexitcode -notmatch 0) {
         "[ERROR] There were problems when installing git."
         Exit
     }
-    SETX PATH "C:\Program Files\Git\bin;$env:Path" /m
-    Add-EnvPath "C:\Program Files\Git\bin;"
+    Add-EnvPath "C:\Program Files\Git\bin"
 } Else {
     "[INFO] Git found in current system. Not going to install it."
 }
@@ -99,8 +111,7 @@ If ($lastexitcode -notmatch 0) {
         "[ERROR] There were problems when installing jre8."
         Exit
     }
-    SETX PATH "C:\Program Files\Java\jre1.8.0_121\bin;$env:Path" /m
-    Add-EnvPath "C:\Program Files\Java\jre1.8.0_121\bin;"
+    Add-EnvPath "C:\Program Files\Java\jre1.8.0_121\bin"
 } Else {
     "[INFO] Java found in current system. Not going to install it."
 }
@@ -114,8 +125,7 @@ If ($lastexitcode -notmatch 0) {
         "[ERROR] There were problems when installing ffmpeg."
         Exit
     }
-    SETX PATH "C:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg-3.2.2-win32-static\bin\;$env:Path" /m
-    Add-EnvPath "C:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg-3.2.2-win32-static\bin\;"
+    Add-EnvPath "C:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg-3.2.2-win32-static\bin\"
 } Else {
     "[INFO] FFMPEG found in current system. Not going to install it."
 }
@@ -128,8 +138,8 @@ If ($lastexitcode -notmatch 0) {
         "[ERROR] There were problems when installing miniconda."
         Exit
     }
-    SETX PATH "C:\Program Files\Miniconda2\Scripts\;C:\Program Files\Miniconda2\;$env:Path" /m
-    Add-EnvPath "C:\Program Files\Miniconda2\Scripts\;C:\Program Files\Miniconda2\;"
+    Add-EnvPath "C:\Program Files\Miniconda2\Scripts\"
+    Add-EnvPath "C:\Program Files\Miniconda2\"
 } Else {
     "[INFO] MiniConda found in current system. Not going to install it."
 }
@@ -143,7 +153,10 @@ If ($lastexitcode -notmatch 0) {
     Exit
 }
 "[INFO] Removing VCForPython27.msi"
-Remove-Item VCForPython27.msi
+If (Test-Path "VCForPython27.msi") {
+    Remove-Item VCForPython27.msi
+}
+
 
 # installation of browsers
 "[INFO] Installing Chrome"
@@ -152,9 +165,12 @@ If ($lastexitcode -notmatch 0) {
     "[ERROR] There were problems when installing Chrome"
     Exit
 }
-SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;$env:Path" /m
-Add-EnvPath "C:\Program Files\Google\Chrome\Application\;"
-Add-EnvPath "C:\Program Files (x86)\Google\Chrome\Application\;"
+
+If (Test-Path "C:\Program Files\Google\Chrome\Application\") {
+    Add-EnvPath "C:\Program Files\Google\Chrome\Application\"
+} ElseIf (Test-Path "C:\Program Files (x86)\Google\Chrome\Application\") {
+    Add-EnvPath "C:\Program Files (x86)\Google\Chrome\Application\"
+}
 
 "[INFO] Installing Firefox"
 choco install firefox -y
@@ -162,9 +178,12 @@ If ($lastexitcode -notmatch 0) {
     "[ERROR] There were problems when installing Firefox"
     Exit
 }
-SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;$env:Path" /m
-Add-EnvPath "C:\Program Files\Mozilla Firefox;"
-Add-EnvPath "C:\Program Files (x86)\Mozilla Firefox;"
+
+If (Test-Path "C:\Program Files\Mozilla Firefox") {
+    Add-EnvPath "C:\Program Files\Mozilla Firefox"
+} ElseIf (Test-Path "C:\Program Files (x86)\Mozilla Firefox") {
+    Add-EnvPath "C:\Program Files (x86)\Mozilla Firefox"
+}
 
 # installation of sikuli
 "[INFO] Installing SikuliX 1.1.0"
@@ -216,9 +235,13 @@ If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
     pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
     "[INFO] Launching OBS for License Agreement."
     ""
+    "[INFO] If there is error message about missing MSVCP120.dll,"
+    "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
     "[INFO] ** Please CLOSE OBS after accepting License Agreement **"
     CMD /C obs32.exe
     popd
 } ELSE {
     "[WARN] Can not find OBS binary file."
 }
+
+"[INFO] You will need to restart the computer so that the PATH will be effective"
