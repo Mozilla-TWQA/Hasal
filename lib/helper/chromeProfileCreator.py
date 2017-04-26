@@ -40,7 +40,7 @@ class ChromeProfileCreator(object):
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
         self._chrome_profile_path = tmp_profile_dir
         if self.current_platform_name == 'darwin':
-            launch_cmd = [self.chrome_cmd, '--user-data-dir={}'.format(tmp_profile_dir)]
+            launch_cmd = [self.chrome_cmd, '--user-data-dir={}'.format(tmp_profile_dir), '--no-first-run']
             subprocess.Popen(launch_cmd)
             # wait for folder creation
             for _ in range(10):
