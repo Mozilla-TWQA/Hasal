@@ -1,7 +1,7 @@
 """runtest.
 
 Usage:
-  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>]
+  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>] [--chrome-config=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -11,6 +11,7 @@ Options:
   --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
   --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
   --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
+  --chrome-config=<str>           Specify the test Chrome config file; [default: configs/chrome/default.json]
 
 """
 import os
@@ -27,6 +28,7 @@ from lib.common.commonUtil import CommonUtil
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
+from lib.helper.chromeProfileCreator import ChromeProfileCreator
 
 if platform.system().lower() == "linux":
     DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
@@ -55,6 +57,7 @@ class RunTest(object):
         self.index_config_fp = os.path.abspath(kwargs['index_config'])
         self.online_config_fp = os.path.abspath(kwargs['online_config'])
         self.global_config_fp = os.path.abspath(kwargs['global_config'])
+        self.chrome_config_fp = os.path.abspath(kwargs['chrome_config'])
         for variable_name in kwargs.keys():
             setattr(self, variable_name, load_json_file(kwargs[variable_name]))
 
@@ -78,6 +81,11 @@ class RunTest(object):
             extensions_settings=self.extensions_settings)
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
 
+        # chrome config
+        self.chrome_profile_creator = ChromeProfileCreator()
+        self.chrome_cookies_settings = self.chrome_config.get('cookies', {})
+        self._chrome_profile_path = self.chrome_profile_creator.get_chrome_profile(cookies_settings=self.chrome_cookies_settings)
+
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
 
@@ -100,8 +108,12 @@ class RunTest(object):
             self.clean_up_output_data()
         if self.exec_config['advance']:
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
-        elif os.path.isdir(self._firefox_profile_path):
-            self.firefox_profile_creator.remove_firefox_profile()
+            self.logger.debug('Skip removing profile: {}'.format(self._chrome_profile_path))
+        else:
+            if os.path.isdir(self._firefox_profile_path):
+                self.firefox_profile_creator.remove_firefox_profile()
+            if os.path.isdir(self._chrome_profile_path):
+                self.chrome_profile_creator.remove_chrome_profile()
         if os.path.exists(self.default_result_fp):
             shutil.copy(self.default_result_fp, self.suite_result_dp)
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
@@ -138,6 +150,7 @@ class RunTest(object):
         result['ONLINE_CONFIG_FP'] = self.online_config_fp
         result['SUITE_RESULT_DP'] = str(self.suite_result_dp)
         result['FIREFOX_PROFILE_PATH'] = self._firefox_profile_path
+        result['CHROME_PROFILE_PATH'] = self._chrome_profile_path
 
         if self.online_config['perfherder-revision']:
             result['PERFHERDER_REVISION'] = self.online_config['perfherder-revision']
@@ -298,7 +311,7 @@ def main():
     arguments = docopt(__doc__)
     run_test_obj = RunTest(exec_config=arguments['--exec-config'], firefox_config=arguments['--firefox-config'],
                            index_config=arguments['--index-config'], online_config=arguments['--online-config'],
-                           global_config=arguments['--global-config'])
+                           global_config=arguments['--global-config'], chrome_config=arguments['--chrome-config'])
     run_test_obj.run()
 
 if __name__ == '__main__':
