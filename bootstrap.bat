@@ -206,6 +206,7 @@ IF NOT EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
     ECHO [INFO] Installing OBS ...
     7z x OBS-Studio-18.0.1-Full.zip -o"C:\Program Files (x86)\obs-studio"
     popd
+    SET FIRST_OBS=True
     ECHO [INFO] OBS is installed.
 ) ELSE (
     ECHO [INFO] OBS had been installed.
@@ -297,15 +298,19 @@ IF "%APPVEYOR%"=="True" GOTO SkipUserInteractions
 
 
 @REM OBS License Agreement
-IF EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
-    pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
-    ECHO [INFO] Launching OBS for License Agreement.
-    ECHO.
-    ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
-    obs32.exe
-    popd
-) ELSE (
-    ECHO [WARN] Can not find OBS binary file.
+IF "%FIRST_OBS%"=="True" (
+    IF EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
+        pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
+        ECHO [INFO] Launching OBS for License Agreement.
+        ECHO.
+        ECHO "[INFO] If there is error message about missing MSVCP120.dll,"
+        ECHO "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
+        ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
+        obs32.exe
+        popd
+    ) ELSE (
+        ECHO [WARN] Can not find OBS binary file.
+    )
 )
 
 

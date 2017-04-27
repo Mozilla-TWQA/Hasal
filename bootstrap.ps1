@@ -90,16 +90,21 @@ If ($lastexitcode -notmatch 0) {
 
 
 # Install OBS Studio
-"[INFO] Downloading OBS ..."
-pushd thirdParty
-If (Test-Path OBS-Studio-18.0.1-Full.zip) {
-    Remove-Item OBS-Studio-18.0.1-Full.zip
+If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
+    "[INFO] OBS had been installed."
+} Else {
+    "[INFO] Downloading OBS ..."
+    pushd thirdParty
+    If (Test-Path "OBS-Studio-18.0.1-Full.zip") {
+        Remove-Item "OBS-Studio-18.0.1-Full.zip"
+    }
+    CMD /C curl -kLO https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip
+    "[INFO] Installing OBS ..."
+    Expand-Archive -LiteralPath OBS-Studio-18.0.1-Full.zip -DestinationPath "C:\Program Files (x86)\obs-studio"
+    popd
+    $FIRST_OBS = $TRUE
+    "[INFO] OBS is installed."
 }
-CMD /C curl -kLO https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip
-"[INFO] Installing OBS ..."
-Expand-Archive -LiteralPath OBS-Studio-18.0.1-Full.zip -DestinationPath "C:\Program Files (x86)\obs-studio"
-popd
-"[INFO] OBS is installed."
 
 
 # installation of Hasal prerequisite
@@ -231,17 +236,19 @@ If (Test-Path C:\Miniconda2\) {
 ########################
 
 # OBS License Agreement
-If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
-    pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
-    "[INFO] Launching OBS for License Agreement."
-    ""
-    "[INFO] If there is error message about missing MSVCP120.dll,"
-    "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
-    "[INFO] ** Please CLOSE OBS after accepting License Agreement **"
-    CMD /C obs32.exe
-    popd
-} ELSE {
-    "[WARN] Can not find OBS binary file."
+IF ($FIRST_OBS) {
+    If (Test-Path "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe") {
+        pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
+        "[INFO] Launching OBS for License Agreement."
+        ""
+        "[INFO] If there is error message about missing MSVCP120.dll,"
+        "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
+        "[INFO] ** Please CLOSE OBS after accepting License Agreement **"
+        CMD /C obs32.exe
+        popd
+    } ELSE {
+        "[WARN] Can not find OBS binary file."
+    }
 }
 
 "[INFO] You will need to restart the computer so that the PATH will be effective"
