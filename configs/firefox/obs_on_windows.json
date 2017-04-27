@@ -1,4 +1,5 @@
 {
+  "enable_create_new_profile": true,
   "env": {
     "JSGC_DISABLE_POISONING": 1
   },
