@@ -164,12 +164,12 @@ class RunTest(object):
         return result
 
     def run_test_result_analyzer(self, test_case_module_name, test_name, current_run, current_retry, video_result):
-        run_result = None
+        status_result = None
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
         if os.path.exists(self.global_config['default-running-statistics-fn']):
-            run_result = objStatusRecorder.get_current_status()
-            round_status = int(run_result.get(objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION, -1))
-            fps_stat = int(run_result.get(objStatusRecorder.STATUS_FPS_VALIDATION, -1))
+            status_result = objStatusRecorder.get_current_status()
+            round_status = int(status_result.get(objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION, -1))
+            fps_stat = int(status_result.get(objStatusRecorder.STATUS_FPS_VALIDATION, -1))
             if round_status == 0 and fps_stat == 0:
                 if self.online_config['enable']:
                     # Online mode handling
@@ -190,14 +190,21 @@ class RunTest(object):
 
                         current_run += 1
                 else:
-                    if run_result.get("comparing_image_missing", False):
-                        if "time_list_counter" in run_result:
-                            current_run = int(run_result['time_list_counter'])
+                    if objStatusRecorder.STATUS_IMG_COMPARE_RESULT in status_result:
+                        if status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT] == objStatusRecorder.PASS_IMG_COMPARE_RESULT:
+                            # check the field status_img_compare_result of current status in running_statistics.json
+                            # only continue when status equal to PASS otherwise retry count plus one
+                            if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
+                                current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
+                            else:
+                                current_run += 1
                         else:
-                            current_run += 1
+                            objStatusRecorder.record_status(test_case_module_name,
+                                                            status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
+                            current_retry += 1
                     else:
                         objStatusRecorder.record_status(test_case_module_name,
-                                                        StatusRecorder.ERROR_COMPARING_IMAGE_FAILED, None)
+                                                        StatusRecorder.ERROR_MISSING_FIELD_IMG_COMPARE_RESULT, None)
                         current_retry += 1
             else:
                 if round_status != 0:
