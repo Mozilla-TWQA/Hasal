@@ -21,9 +21,10 @@ class ChromeProfileCreator(object):
             self.process_name = "Google Chrome"
         elif self.current_platform_name == "linux2":
             self.chrome_cmd = 'google-chrome'
-            self.process_name = "chrome.exe"
+            self.process_name = "Chrome"
         else:
             self.chrome_cmd = 'chrome'
+            self.process_name = "chrome.exe"
         self._chrome_profile_path = chrome_profile_path
 
     def get_chrome_profile(self, cookies_settings={}):
