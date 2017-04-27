@@ -135,6 +135,8 @@ class BaseTest(unittest.TestCase):
 
     def clone_test_file(self):
         if hasattr(self, "test_target"):
+            # init target helper
+            self.target_helper = targetHelper.TagetHelper(self.env, self.global_config)
             if hasattr(self, "target_folder"):
                 self.test_url, self.test_url_id = self.target_helper.clone_target(self.test_target,
                                                                                   self.env.output_name,
@@ -199,9 +201,6 @@ class BaseTest(unittest.TestCase):
         # Original profiler list was substitute by self.env.firefox_settings_extensions
         # We set the original profiler path variable in the variable
         self.set_profiler_path()
-
-        # init target helper
-        self.target_helper = targetHelper.TagetHelper(self.env, self.global_config)
 
         # Init sikuli status for webdriver/sikuli
         self.round_status = 0

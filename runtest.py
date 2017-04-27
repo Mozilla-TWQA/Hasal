@@ -69,21 +69,27 @@ class RunTest(object):
                 'Loading Settings from {}:\n{}\n'.format(v_name, json.dumps(getattr(self, v_name), indent=4)))
 
         # init values
-        self.firefox_profile_creator = FirefoxProfileCreator()
-        self.settings_prefs = self.firefox_config.get('prefs', {})
-        self.cookies_settings = self.firefox_config.get('cookies', {})
-        self.extensions_settings = self.firefox_config.get('extensions', {})
         self.suite_result_dp = ''
-        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
-            prefs=self.settings_prefs,
-            cookies_settings=self.cookies_settings,
-            extensions_settings=self.extensions_settings)
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
+        if self.firefox_config.get('enable_create_new_profile', False):
+            self.firefox_profile_creator = FirefoxProfileCreator()
+            settings_prefs = self.firefox_config.get('prefs', {})
+            cookies_settings = self.firefox_config.get('cookies', {})
+            extensions_settings = self.firefox_config.get('extensions', {})
+            self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
+                prefs=settings_prefs,
+                cookies_settings=cookies_settings,
+                extensions_settings=extensions_settings)
+        else:
+            self._firefox_profile_path = ""
 
         # chrome config
-        self.chrome_profile_creator = ChromeProfileCreator()
-        self.chrome_cookies_settings = self.chrome_config.get('cookies', {})
-        self._chrome_profile_path = self.chrome_profile_creator.get_chrome_profile(cookies_settings=self.chrome_cookies_settings)
+        if self.chrome_config.get('enable_create_new_profile', False):
+            self.chrome_profile_creator = ChromeProfileCreator()
+            chrome_cookies_settings = self.chrome_config.get('cookies', {})
+            self._chrome_profile_path = self.chrome_profile_creator.get_chrome_profile(cookies_settings=chrome_cookies_settings)
+        else:
+            self._chrome_profile_path = ""
 
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
