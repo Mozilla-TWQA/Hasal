@@ -14,11 +14,11 @@ class PyDriveUtil(object):
         if settings is None:
             settings = {"settings_file": None, "local_cred_file": "mycreds.txt"}
         if os.path.exists(settings['local_cred_file']):
-            self.gauth = self.get_gauth(settings)
-            self.drive = GoogleDrive(self.gauth)
+            gauth = self.get_gauth(settings)
+            self.drive = GoogleDrive(gauth)
         else:
             raise Exception(
-                "Your current working dir didn't inculde the client certificate file [%s], please make sure the firefox/chrome profile creation is turned off, online mode is disabled and not running the test cases of GSuite and FB!")
+                "Your current working dir doesn't include the client certificate file [%s]. Please make sure firefox/chrome profile creation is turned off, online mode is disabled, and GSuite and FB cases are not test targets!" % settings['local_cred_file'])
 
     def get_file_object(self, folder_uri, file_name):
         search_string = "'%s' in parents and trashed=false" % folder_uri
