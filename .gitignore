@@ -38,6 +38,7 @@ appveyor.yml
 thirdParty/*
 # creds files
 client_secrets.json
+github.json
 mycreds.txt
 client_secret_mozhasalvideo.json
 mozhasalvideo.yaml
