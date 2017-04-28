@@ -153,7 +153,6 @@ class BaseGenerator(object):
                 CommonUtil.execute_runipy_cmd(input_ipynb_template_fp, output_ipynb_fp, input_data_fp=case_result_fp,
                                               input_fig_number=fig_number)
 
-
     @staticmethod
     def output_suite_result(global_config, index_config, exec_config, output_result_dir):
         # generate ipynb file

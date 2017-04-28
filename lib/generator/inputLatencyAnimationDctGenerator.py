@@ -158,4 +158,3 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             current_time = time.time()
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
-
