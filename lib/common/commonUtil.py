@@ -262,6 +262,15 @@ class CommonUtil(object):
     logger = get_logger(__file__)
 
     @staticmethod
+    def execute_runipy_cmd(input_template_fp, output_ipynb_fp, **kwargs):
+        default_runipy_cmd = 'runipy'
+        ipynb_env = os.environ.copy()
+        for variable_name in kwargs.keys():
+            ipynb_env[variable_name] = str(kwargs[variable_name])
+        cmd_list = [default_runipy_cmd, input_template_fp, output_ipynb_fp]
+        return subprocess.call(cmd_list, env=ipynb_env)
+
+    @staticmethod
     def get_mac_os_display_channel():
         if platform.system().lower() == "darwin":
             proc = subprocess.Popen(

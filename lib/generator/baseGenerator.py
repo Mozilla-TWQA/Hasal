@@ -1,4 +1,5 @@
 import os
+import json
 import copy
 import shutil
 import tempfile
@@ -123,3 +124,48 @@ class BaseGenerator(object):
             os.mkdir(upload_case_dp)
         if os.path.exists(self.env.converted_video_output_fp):
             shutil.move(self.env.converted_video_output_fp, upload_case_dp)
+
+    @staticmethod
+    def output_ipynb_file(global_config, index_config, output_result_dir):
+
+        # init result fp and ipynb template fp
+        input_result_fp = global_config['default-result-fn']
+        input_ipynb_template_fp = os.path.join(os.path.abspath(global_config['ipynb-template-default-dn']), index_config['ipynb-template-name'])
+        result_data = CommonUtil.load_json_file(input_result_fp)
+        converted_format_dict = {}
+
+        # store result by case_name
+        if result_data:
+            for case_full_name in result_data:
+                case_name = case_full_name.split("_", 2)[-1]
+                if case_name in converted_format_dict:
+                    converted_format_dict[case_name].update({case_full_name: result_data[case_full_name]})
+                else:
+                    converted_format_dict[case_name] = {case_full_name: result_data[case_full_name]}
+            for c_name in converted_format_dict:
+                case_result_fp = os.path.join(output_result_dir, c_name, c_name + ".json")
+                output_ipynb_fp = os.path.join(output_result_dir, c_name, c_name + ".ipynb")
+                with open(case_result_fp, 'w') as fh:
+                    json.dump(converted_format_dict[c_name], fh)
+                fig_number = len(converted_format_dict[c_name].keys())
+
+                # output ipynb file
+                CommonUtil.execute_runipy_cmd(input_ipynb_template_fp, output_ipynb_fp, input_data_fp=case_result_fp,
+                                              input_fig_number=fig_number)
+
+
+    @staticmethod
+    def output_suite_result(global_config, index_config, exec_config, output_result_dir):
+        # generate ipynb file
+        if exec_config['output-result-ipynb-file']:
+            BaseGenerator.output_ipynb_file(global_config, index_config, output_result_dir)
+
+        # move statistics file to result folder
+        running_statistics_fp = os.path.join(os.getcwd(), global_config['default-running-statistics-fn'])
+        if os.path.exists(running_statistics_fp):
+            shutil.move(running_statistics_fp, output_result_dir)
+
+        # copy current result file to result folder
+        result_fp = os.path.join(os.getcwd(), global_config['default-result-fn'])
+        if os.path.exists(result_fp):
+            shutil.copy(result_fp, output_result_dir)

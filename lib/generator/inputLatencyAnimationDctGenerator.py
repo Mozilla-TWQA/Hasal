@@ -152,11 +152,10 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
         else:
             self.status_recorder.record_current_status({self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_COMPARE_RESULT_IS_NONE})
 
-        start_time = time.time()
-        self.output_runtime_result_video(self.compare_result['running_time_result'], suite_upload_dp)
-        current_time = time.time()
-        elapsed_time = current_time - start_time
-        logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+        if self.exec_config['output-result-video-file']:
+            start_time = time.time()
+            self.output_runtime_result_video(self.compare_result['running_time_result'], suite_upload_dp)
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
-    def output_suite_result(self):
-        pass

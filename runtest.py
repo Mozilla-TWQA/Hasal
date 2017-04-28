@@ -20,6 +20,7 @@ import copy
 import shutil
 import platform
 import subprocess
+import importlib
 from docopt import docopt
 from datetime import datetime
 from lib.common.commonUtil import StatusRecorder
@@ -109,6 +110,11 @@ class RunTest(object):
             self.upload_agent_obj = UploadAgent(svr_config=self.online_config['svr-config'], test_comment=self.exec_config['comment'])
 
     def suite_teardown(self):
+        # run generator's output suite result
+        generator_class = getattr(importlib.import_module(self.index_config['module-path']), self.index_config['module-name'])
+        generator_class.output_suite_result(self.global_config, self.index_config, self.exec_config, self.suite_result_dp)
+
+        # do action when online mode is enabled
         if self.online_config['enable']:
             self.clean_up_output_data()
         if self.exec_config['advance']:
@@ -119,8 +125,6 @@ class RunTest(object):
                 self.firefox_profile_creator.remove_firefox_profile()
             if os.path.isdir(self._chrome_profile_path):
                 self.chrome_profile_creator.remove_chrome_profile()
-        if os.path.exists(self.default_result_fp):
-            shutil.copy(self.default_result_fp, self.suite_result_dp)
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
