@@ -8,19 +8,27 @@ import common
 class gMail(object):
 
     GMAIL_COMPOSE = [
+        [os.path.join('pics', 'compose_btn_win.png'), 0, 0],
         [os.path.join('pics', 'compose_btn_mac.png'), 0, 0],
     ]
 
     GMAIL_REPLY = [
+        [os.path.join('pics', 'reply_btn_win.png'), 0, 0],
         [os.path.join('pics', 'reply_btn_mac.png'), 0, 0],
     ]
 
     GMAIL_SEND = [
+        [os.path.join('pics', 'send_btn_win.png'), 0, 0],
         [os.path.join('pics', 'send_btn_mac.png'), 0, 0],
     ]
 
     GMAIL_FIRST_MAIL = [
+        [os.path.join('pics', 'more_btn_win.png'), 0, 40],
         [os.path.join('pics', 'more_btn_mac.png'), 0, 40],
+    ]
+
+    GMAIL_REPLY_DEL = [
+        [os.path.join('pics', 'reply_del_btn_win.png'), -30, -5],
     ]
 
     def __init__(self):
