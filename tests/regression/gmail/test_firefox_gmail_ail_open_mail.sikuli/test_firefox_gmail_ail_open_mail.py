@@ -31,7 +31,7 @@ capture_width = int(INPUT_RECORD_WIDTH)
 capture_height = int(INPUT_RECORD_HEIGHT)
 
 # Launch browser
-my_browser = browser.Chrome()
+my_browser = browser.Firefox()
 
 # Access link and wait
 my_browser.clickBar()
