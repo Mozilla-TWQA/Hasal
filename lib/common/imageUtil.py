@@ -289,9 +289,22 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
         forward_search = True
     else:
         forward_search = False
+    logger.info('Starting {forward_backward} Comparing, from {start} to {end} ...'
+                .format(forward_backward='Forward' if forward_search else 'Backward',
+                        start=start_index,
+                        end=end_index))
+
     for event_point in input_settings['event_points'][input_settings['search_direction']]:
         event_name = event_point['event']
         search_target = event_point['search_target']
+
+        logger.info('Comapre event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
+                    .format(event_name=event_name,
+                            search_target=search_target,
+                            forward_backward='Forward' if forward_search else 'Backward',
+                            start=start_index,
+                            end=end_index))
+
         shift_result_flag = event_point.get('shift_result', False)
         # get corresponding dct by event name
         for sample_index in input_sample_data:
@@ -327,6 +340,9 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                     diff_rate_list.append((event_name, img_fn_key, diff_rate))
 
                     if compare_result:
+                        logger.debug('Match {img_index} {img_filename}'.format(img_index=img_index,
+                                                                               img_filename=img_fn_key))
+
                         if img_index == start_index:
                             logger.debug(
                                 "Find matched file in boundary of search range, event point might out of search range.")
@@ -335,20 +351,26 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                                 if start_index == search_range[0]:
                                     break
                                 start_index = max(img_index - total_search_range / 2, search_range[0])
+                                logger.debug('Change start: {start}'.format(start=start_index))
                             else:
                                 # if start index is already at boundary then break
                                 if start_index == search_range[3] - 1:
                                     break
                                 start_index = min(img_index + total_search_range / 2, search_range[3] - 1)
+                                logger.debug('Change start: {start}'.format(start=start_index))
                             img_index = start_index
                         else:
                             # shift one index to avoid boundary matching two events at the same time
                             if forward_search:
                                 start_index = img_index - 1
                                 end_index = min(search_range[3] - 1, start_index + total_search_range)
+                                logger.debug('Change start: {start}; end: {end}'.format(start=start_index,
+                                                                                        end=end_index))
                             else:
                                 start_index = img_index + 1
                                 end_index = max(search_range[0], start_index - total_search_range)
+                                logger.debug('Change start: {start}; end: {end}'.format(start=start_index,
+                                                                                        end=end_index))
 
                             # using shifted image index as result if search result's flag is set
                             if shift_result_flag:
