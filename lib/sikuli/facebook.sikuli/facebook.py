@@ -46,6 +46,7 @@ class facebook():
         self.messenger_header = Pattern("pics/facebook_messenger_header.png").similar(0.70)
         self.right_panel_contact = Pattern("pics/facebook_contact.png").similar(0.70)
         self.chat_tab_close_button = Pattern("pics/facebook_chat_tab_close_button.png").similar(0.70)
+        self.chat_tab_emoji_button = Pattern("pics/facebook_chat_tab_emoji_button.png").similar(0.70)
 
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
 
