@@ -75,10 +75,12 @@ class RunTest(object):
             self.firefox_profile_creator = FirefoxProfileCreator()
             settings_prefs = self.firefox_config.get('prefs', {})
             cookies_settings = self.firefox_config.get('cookies', {})
+            profile_files_settings = self.firefox_config.get('profile_files', {})
             extensions_settings = self.firefox_config.get('extensions', {})
             self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
                 prefs=settings_prefs,
                 cookies_settings=cookies_settings,
+                profile_files_settings=profile_files_settings,
                 extensions_settings=extensions_settings)
         else:
             self._firefox_profile_path = ""
