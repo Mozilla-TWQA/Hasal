@@ -10,7 +10,7 @@ class TestSikuli(PerfBaseTest):
                                                                        '10': {'compare-threshold': 0.003}}}))
 
     def test_chrome_gmail_ail_type_in_reply_field(self):
-        self.test_url = self.global_config['gsuite']['gmail']['test-url']
+        self.test_url = self.global_config['gsuite']['gmail']['test-reply-url']
 
         self.round_status = self.sikuli.run_test(self.env.test_name,
                                                  self.env.output_name,
