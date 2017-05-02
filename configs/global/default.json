@@ -5,6 +5,7 @@
   "default-running-statistics-fn"            : "running_statistics.json",
   "default-case-complete-artifact-store-dn"  : "result",
   "default-case-temp-artifact-store-dn"      : "temp",
+  "ipynb-template-default-dn"                : "thirdParty/ipynbTemplates",
   "default-error-case-list"                  : "error_case_list.txt",
   "default-fps-validator-name"               : "FPSValidator",
   "default-fps-validator-module-path"        : "lib.validator.fpsValidator",

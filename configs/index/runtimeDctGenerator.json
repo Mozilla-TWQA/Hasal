@@ -7,6 +7,7 @@
   "image-converter-path"    : "lib.converter.cv2Converter",
   "image-converter-format"  : "bmp",
   "case-type"               : "re",
+  "ipynb-template-name"     : "report-input-latency.ipynb",
   "snapshot-base-sample1"   : true,
   "snapshot-base-sample2"   : true,
   "supported-suite-fp"      : "",
