@@ -138,7 +138,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
 
         # record fps_stat
         objStatusRecorder = StatusRecorder(global_config['default-running-statistics-fn'])
-        if validate_result[global_config['default-fps-validator-name']]['validate_result']:
+        if validate_result.get(global_config['default-fps-validator-name'], {}).get('validate_result', True):
             objStatusRecorder.record_current_status({objStatusRecorder.STATUS_FPS_VALIDATION: 0})
         else:
             objStatusRecorder.record_current_status({objStatusRecorder.STATUS_FPS_VALIDATION: 1})
