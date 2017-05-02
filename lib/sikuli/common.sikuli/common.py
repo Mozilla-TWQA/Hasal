@@ -70,9 +70,14 @@ class General():
     def page_start(self):
         type(Key.HOME, self.control)
 
+    # default value of actionlogs and infologs is 1 (Enable)
     def infolog_enable(self, choice=1):
         Settings.ActionLogs = choice
         Settings.InfoLogs = choice
+
+    # default value of mouse movement delay is 0.5second
+    def set_mouse_delay(self, sec=0.5):
+        Settings.MoveMouseDelay = sec
 
     def system_print(self, content):
         sys.stdout.write(content + '\n')

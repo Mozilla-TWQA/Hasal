@@ -77,6 +77,12 @@ class Environment(object):
     TEST_FB_VIDEO_POST = "https://goo.gl/z3iwyh"
     TEST_FB_URL_POST = "https://goo.gl/fxja5z"
 
+    TEST_GOOGLE_HOME = "https://www.google.com/"
+    TEST_GOOGLE_SEARCH_ENGLISH = urljoin(TEST_GOOGLE_HOME, "?hl=en")
+    TEST_GOOGLE_IMAGE = urljoin(TEST_GOOGLE_HOME, "imghp")
+    TEST_GOOGLE_IMAGE_ENGLISH = urljoin(TEST_GOOGLE_IMAGE, "?hl=en&tbm=isch")
+    TEST_GOOGLE_IMAGE_CATS = urljoin(TEST_GOOGLE_HOME, "search?hl=en&tbm=isch&q=cats")
+
     def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
         self.time_stamp = str(int(time.time()))
         self.test_method_name = test_method_name
