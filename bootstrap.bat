@@ -159,12 +159,12 @@ IF NOT "%APPVEYOR%"=="True" (
 IF NOT EXIST "%CD%"\ffmpeg\bin\ffmpeg.exe (
     ECHO [INFO] Downloading FFMPEG ...
     pushd thirdParty
-    curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+    curl -kLO "https://github.com/ypwalter/ffmpeg/blob/master/ffmpeg-20160527-git-d970f7b-win32-static.7z?raw=true"
     popd
     ECHO [INFO] Installing FFMPEG ...
-    7z x thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z
+    7z x "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
     move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
-    del thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z
+    del "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
     ECHO [INFO] FFMPEG is installed.
 ) ELSE (
     ECHO [INFO] FFMPEG had been installed.
@@ -196,13 +196,13 @@ del sikuli*.jar
 
 @REM Installing OBS
 
-IF "%APPVEYOR%"=="True" GOTO SkipOBS
+IF "%APPVEYOR%"=="True" GOTO SkipConda
 
 IF NOT EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
     ECHO [INFO] Downloading OBS ...
     pushd thirdParty
     del OBS-Studio-18.0.1-Full.zip
-    curl -kLO https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip
+    curl -kLO "https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip"
     ECHO [INFO] Installing OBS ...
     7z x OBS-Studio-18.0.1-Full.zip -o"C:\Program Files (x86)\obs-studio"
     popd
@@ -212,22 +212,15 @@ IF NOT EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
     ECHO [INFO] OBS had been installed.
 )
 
-:SkipOBS
-IF "%APPVEYOR%"=="True" (
-    ECHO [INFO] Skipping OBS in CI
-)
-
 
 @REM Installing Miniconda
-
-IF "%APPVEYOR%"=="True" GOTO SkipConda
 
 where conda.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have conda in windows system.
 ) ELSE (
     ECHO [INFO] Downloading Miniconda.
-    thirdParty\curl -kLO https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe
+    thirdParty\curl -kLO "https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe"
     ECHO [INFO] Installing Miniconda.
     Miniconda2-latest-Windows-x86.exe /InstallationType=JustMe /RegisterPython=0 /S /D=C:\Miniconda2\
     SETX PATH "C:\Miniconda2\;C:\Miniconda2\Scripts\;%PATH%" /m
@@ -238,6 +231,7 @@ IF %ERRORLEVEL% EQU 0 (
 :SkipConda
 IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of conda in CI
+    ECHO [INFO] Skipping OBS in CI
 )
 
 @REM Configuring Miniconda and Virtualenv
