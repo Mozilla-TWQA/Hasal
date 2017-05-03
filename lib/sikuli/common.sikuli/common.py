@@ -74,8 +74,8 @@ class General():
         """
         Enable `Settings.ActionLogs` and `Settings.InfoLogs` when choice is True or 1.
         Disable when choice is False or 0.
-        @param choice: True or False
-        @return: True for enable, False for disable
+        @param choice: True or False.
+        @return: True for enable, False for disable.
         """
         value = 1 if bool(choice) else 0
         Settings.ActionLogs = value
@@ -85,7 +85,7 @@ class General():
     def is_infolog_enabled(self):
         """
         Return True if any one of `Settings.ActionLogs` and `Settings.InfoLogs` is 1 (enabled).
-        @return: True or False
+        @return: True or False.
         """
         return bool(Settings.ActionLogs) or bool(Settings.InfoLogs)
 
@@ -139,13 +139,20 @@ class WebApp(object):
             for pic, offset_x, offset_y in component:
                 p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
                 if exists(p, 0.1):
-                    self.common.system_print(action_name)
+                    if not self.common.is_infolog_enabled():
+                        self.common.system_print(action_name)
                     click(p)
                     loc = find(p).getTarget()
                     return loc
         raise Exception('Cannot {action}'.format(action=action_name))
 
-    def _il_click(self, action_name, component, width, height, similarity=0.70):
+    # specify the Input Latency capture points
+    CAPTURE_BEFORE_MOUSEDOWN = 1
+    CAPTURE_BEFORE_MOUSEUP = 2
+    CAPTURE_AFTER_MOUSEUP = 3
+
+    def _il_click(self, action_name, component, width, height,
+                  similarity=0.70, action_point=WebApp.CAPTURE_BEFORE_MOUSEUP):
         """
         This `_il_click` method is written for detecting Input Latency.
         It will break down the `click` to `hover`, `mousedown`, `log`, and `mouseup`
@@ -155,6 +162,7 @@ class WebApp(object):
         @param width: the screen capture width.
         @param height: the screen capture height.
         @param similarity: The similarity of image. Default: 0.70.
+        @param action_point: Currently have three: `CAPTURE_BEFORE_MOUSEDOWN`, `CAPTURE_BEFORE_MOUSEUP`, and `CAPTURE_AFTER_MOUSEUP`.
         @return: location, screenshot for input latency, timestamp between mousedown and mouseup.
         """
         for counter in range(50):
@@ -163,21 +171,44 @@ class WebApp(object):
                 if exists(p, 0.1):
                     # Hover
                     hover(p)
+
+                    if self.CAPTURE_BEFORE_MOUSEDOWN == action_point:
+                        # Screenshot and get time for Input Latency
+                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
+
                     # Mouse Down
                     mouseDown(Button.LEFT)
 
-                    # Screenshot and get time for Input Latency
-                    screenshot = capture(0, 0, width, height)
-                    current_time = time.time()
-
-                    # Print log message for recording
-                    self.common.system_print(action_name)
-
+                    if self.CAPTURE_BEFORE_MOUSEUP == action_point:
+                        # Screenshot and get time for Input Latency
+                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
                     # Mouse Up
                     mouseUp(Button.LEFT)
+
+
+                    if self.CAPTURE_AFTER_MOUSEUP == action_point:
+                        # Screenshot and get time for Input Latency
+                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
+
                     # Get location
                     loc = find(p).getTarget()
 
                     # Return location, screenshot, and time
                     return loc, screenshot, current_time
         raise Exception('Cannot {action}'.format(action=action_name))
+
+    def _screenshot_and_time(self, width, height, action_name='Task Screenshot and Get Current Timestamp'):
+        """
+        Take the screen shot and current timestamp, and return.
+        @param width: the screen capture width.
+        @param height: the screen capture height.
+        @return: screenshot and current timestamp.
+        """
+        # Screenshot and get time for Input Latency
+        screenshot = capture(0, 0, width, height)
+        current_time = time.time()
+
+        # Print log message for recording
+        self.common.system_print(action_name)
+
+        return screenshot, current_time
