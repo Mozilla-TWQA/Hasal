@@ -20,7 +20,7 @@ import time
 
 # Disable Sikuli action and info log
 com = common.General()
-com.infolog_enable(0)
+com.infolog_enable(False)
 Settings.MoveMouseDelay = 0
 
 # Prepare
