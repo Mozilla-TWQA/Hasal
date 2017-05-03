@@ -11,7 +11,6 @@ skip_commits:
 
 cache:
   - sikulixsetup-1.1.0.jar
-  - ffmpeg-20160527-git-d970f7b-win32-static.7z
   - VCForPython27.msi
 build: false
 
@@ -37,4 +36,4 @@ test_script:
 on_success:
   - cmd: echo AppVeyor run was successful!
 on_failure:
-  - cmd: echo AppVeyor run FAILED!
+  - ps: echo AppVeyor run FAILED!
