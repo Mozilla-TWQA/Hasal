@@ -105,7 +105,7 @@ class WebApp(object):
     """
 
     def __init__(self):
-        self.common = common.General()
+        self.common = General()
         # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
         self.os = str(Env.getOS()).lower()
 
@@ -146,13 +146,14 @@ class WebApp(object):
                     return loc
         raise Exception('Cannot {action}'.format(action=action_name))
 
-    # specify the Input Latency capture points
-    CAPTURE_BEFORE_MOUSEDOWN = 1
-    CAPTURE_BEFORE_MOUSEUP = 2
-    CAPTURE_AFTER_MOUSEUP = 3
+    class CapturePoints(object):
+        # specify the Input Latency capture points
+        BEFORE_MOUSEDOWN = 1
+        BEFORE_MOUSEUP = 2
+        AFTER_MOUSEUP = 3
 
     def _il_click(self, action_name, component, width, height,
-                  similarity=0.70, action_point=WebApp.CAPTURE_BEFORE_MOUSEUP):
+                  similarity=0.70, action_point=CapturePoints.BEFORE_MOUSEUP):
         """
         This `_il_click` method is written for detecting Input Latency.
         It will break down the `click` to `hover`, `mousedown`, `log`, and `mouseup`
@@ -172,23 +173,22 @@ class WebApp(object):
                     # Hover
                     hover(p)
 
-                    if self.CAPTURE_BEFORE_MOUSEDOWN == action_point:
+                    if self.CapturePoints.BEFORE_MOUSEDOWN == action_point:
                         # Screenshot and get time for Input Latency
-                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
+                        screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
 
                     # Mouse Down
                     mouseDown(Button.LEFT)
 
-                    if self.CAPTURE_BEFORE_MOUSEUP == action_point:
+                    if self.CapturePoints.BEFORE_MOUSEUP == action_point:
                         # Screenshot and get time for Input Latency
-                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
+                        screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
                     # Mouse Up
                     mouseUp(Button.LEFT)
 
-
-                    if self.CAPTURE_AFTER_MOUSEUP == action_point:
+                    if self.CapturePoints.AFTER_MOUSEUP == action_point:
                         # Screenshot and get time for Input Latency
-                        self._screenshot_and_time(width=width, height=height, action_name=action_name)
+                        screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
 
                     # Get location
                     loc = find(p).getTarget()

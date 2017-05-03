@@ -1,8 +1,6 @@
 import os
-import time
 
 from sikuli import *  # NOQA
-import common
 from common import WebApp
 
 
@@ -45,17 +43,6 @@ class gMail(WebApp):
         [os.path.join('pics', 'reply_del_btn_win.png'), -30, -5],
         [os.path.join('pics', 'reply_del_btn_mac.png'), -28, 0],
     ]
-
-    def __init__(self):
-        self.common = common.General()
-        # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
-        self.os = str(Env.getOS()).lower()
-
-        if self.os == 'mac':
-            self.control = Key.CMD
-        else:
-            self.control = Key.CTRL
-            self.alt = Key.ALT
 
     def wait_for_loaded(self, similarity=0.70):
         """
