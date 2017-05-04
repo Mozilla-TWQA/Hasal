@@ -153,11 +153,15 @@ class BaseTest(unittest.TestCase):
 
     def extract_platform_dep_settings(self, config_value):
         if self.current_platform_name in config_value:
+            # get current platform value or try to see if there is an default value
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
-            else:
+            elif 'default' in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
-            config_value.update(platform_dep_variables)
+            # if not value doesn't match customized platform in test case return {}
+            else:
+                return {}
+
             return platform_dep_variables
         return {}
 
