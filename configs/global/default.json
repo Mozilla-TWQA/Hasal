@@ -65,6 +65,10 @@
     "gslide-10-page-utf8-text"                              : "1_g4xl1lSLNQQPYsaJt7mK3NH727SsD3GRdy0NIebF2A",
     "gslide-10-page-mix-content"                            : "1XLZRP0IQ5RoG7AdgaU2mMq6LAkFcggQRTLSMdGH6Yxo",
     "gslide-30-page-mix-content"                            : "1j3jzuxNYqsbbja31R3ozPOqGg-D6vStr97G5EYS8RhY",
-    "gslide-50-page-mix-content"                            : "1weuhf0CT_z-R1yxQm9HoKiNHBNOMoeaGi4LxE1JOYOo"
+    "gslide-50-page-mix-content"                            : "1weuhf0CT_z-R1yxQm9HoKiNHBNOMoeaGi4LxE1JOYOo",
+    "gmail": {
+      "test-url"                                            : "https://mail.google.com/mail/u/0/#label/GMail_TEST",
+      "test-reply-url"                                      : "https://mail.google.com/mail/u/0/#label/GMail_TEST_Reply"
+    }
   }
 }

@@ -35,6 +35,12 @@
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
     "filename": "cookies_gsuite_fb.sqlite"
   },
+  "profile_files": {
+    "DisableStatusBar": {
+      "filename": "userChrome.css",
+      "destination": "chrome"
+    }
+  },
   "extensions": {
     "AvconvProfiler": {
       "enable": true,

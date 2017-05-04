@@ -27,6 +27,12 @@
     "intl.accept_languages": "en-US, en",
     "gfx.downloadable_fonts.otl_validation": false
   },
+  "profile_files": {
+    "DisableStatusBar": {
+      "filename": "userChrome.css",
+      "destination": "chrome"
+    }
+  },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
     "filename": "cookies_gsuite_fb.sqlite"
