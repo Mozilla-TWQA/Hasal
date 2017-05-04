@@ -25,16 +25,17 @@ class ObsProfiler(BaseProfiler):
     please download and install Visual C++ Redistributable Packages for Visual Studio 2013 from
     https://www.microsoft.com/en-us/download/details.aspx?id=40784
     """
-    OBS_SETTINGS_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio'
+    OBS_SETTINGS_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio')
     OBS_SETTINGS_FN = 'global.ini'
 
     OBS_COLLECTION_TEMPLATE_PATH = os.path.join(os.getcwd(), 'thirdparty', 'obsConfigs', 'collection')
-    OBS_COLLECTION_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio\basic\scenes'
+    OBS_COLLECTION_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio', 'basic', 'scenes')
     OBS_COLLECTION_NAME = 'hasal'
     OBS_COLLECTION_FN = OBS_COLLECTION_NAME + '.json'
 
     OBS_PROFILE_TEMPLATE_PATH = os.path.join(os.getcwd(), 'thirdparty', 'obsConfigs', 'profile')
-    OBS_PROFILE_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio\basic\profiles'
+    OBS_PROFILE_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio', 'basic', 'profiles')
+
     OBS_32BIT_BIN_DIR_PATH = r'C:\Program Files (x86)\obs-studio\bin\32bit'
     OBS_32BIT_BIN_PATH = r'C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe'
 
@@ -42,7 +43,7 @@ class ObsProfiler(BaseProfiler):
     OBS_PROFILE_BASIC_INI_FN = 'basic.ini'
     OBS_PROFILE_NAME = 'Hasal'
     OBS_RECORDING_FMT = 'mp4'
-    OBS_VIDEO_OUTPUT_DIR_PATH = r'C:\Users\user\Videos\hasal'
+    OBS_VIDEO_OUTPUT_DIR_PATH = os.path.join(CommonUtil.get_user_dir(), 'Videos', '\hasal')
 
     def __init__(self, input_env, input_index_config, input_browser_type=None, input_sikuli_obj=None):
         super(ObsProfiler, self).__init__(input_env, input_index_config, input_browser_type, input_sikuli_obj)
