@@ -95,7 +95,6 @@ class BaseTest(unittest.TestCase):
                     logger.debug("Browser shown, adjust viewport by setting.")
                     height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
                                                                                   self.env.img_sample_dp,
-
                                                                                   self.env.img_output_sample_1_fn,
                                                                                   self.exec_config)
                     # get the terminal location
