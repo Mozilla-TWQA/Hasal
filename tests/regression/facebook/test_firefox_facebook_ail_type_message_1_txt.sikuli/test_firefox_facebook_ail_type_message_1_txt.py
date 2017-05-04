@@ -11,7 +11,6 @@ import time
 # Disable Sikuli action and info log
 com = common.General()
 com.infolog_enable(0)
-Settings.MoveMouseDelay = 0
 
 ff = browser.Firefox()
 fb = facebook.facebook()
