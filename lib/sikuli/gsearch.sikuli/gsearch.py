@@ -1,6 +1,4 @@
 from sikuli import *  # NOQA
-import os
-import sys
 import common
 
 
@@ -9,10 +7,10 @@ class Gsearch():
         self.common = common.General()
         self.gsearch_image_header = Pattern("pics/gsearch_image_header.png")
         self.gsearch_homepage_buttons = Pattern("pics/gsearch_homepage_buttons.png")
-        
+
     def wait_gsearch_loaded(self):
         wait(self.gsearch_homepage_buttons, 15)
-        
+
     def wait_gimage_loaded(self):
         wait(self.gsearch_image_header, 15)
 
