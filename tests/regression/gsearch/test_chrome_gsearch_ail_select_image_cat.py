@@ -7,7 +7,9 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
 
     def test_chrome_gsearch_ail_select_image_cat(self):
-        self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.env.TEST_GOOGLE_IMAGE_CATS,
+        self.test_url = self.global_config['gsearch']['gsearch-image-english-cats']
+        self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name,
+                                                 test_target=self.test_url,
                                                  script_dp=self.env.test_script_py_dp,
                                                  args_list=[self.env.img_sample_dp, self.env.img_output_sample_1_fn,
                                                             self.env.DEFAULT_VIDEO_RECORDING_WIDTH,
