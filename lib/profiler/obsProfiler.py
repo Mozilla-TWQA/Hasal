@@ -45,8 +45,8 @@ class ObsProfiler(BaseProfiler):
     OBS_RECORDING_FMT = 'mp4'
     OBS_VIDEO_OUTPUT_DIR_PATH = os.path.join(CommonUtil.get_user_dir(), 'Videos', '\hasal')
 
-    def __init__(self, input_env, input_index_config, input_browser_type=None, input_sikuli_obj=None):
-        super(ObsProfiler, self).__init__(input_env, input_index_config, input_browser_type, input_sikuli_obj)
+    def __init__(self, input_env, input_index_config, input_exec_config, input_browser_type=None, input_sikuli_obj=None):
+        super(ObsProfiler, self).__init__(input_env, input_index_config, input_exec_config, input_browser_type, input_sikuli_obj)
         self.process = None
         self.fh = None
         self.t1_time = None
@@ -183,10 +183,10 @@ class ObsProfiler(BaseProfiler):
                 profile_settings_dict = {
                     'Video': {
                         'FPSInt': self.video_recording_fps,
-                        'BaseCX': str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH),
-                        'BaseCY': str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT),
-                        'OutputCX': str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH),
-                        'OutputCY': str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT)
+                        'BaseCX': str(self.exec_config['video-recording-width']),
+                        'BaseCY': str(self.exec_config['video-recording-height']),
+                        'OutputCX': str(self.exec_config['video-recording-width']),
+                        'OutputCY': str(self.exec_config['video-recording-height'])
                     },
                     'SimpleOutput': {
                         'RecFormat': ObsProfiler.OBS_RECORDING_FMT,
@@ -205,9 +205,9 @@ class ObsProfiler(BaseProfiler):
                 self.process = subprocess.Popen(cmd_str, cwd=ObsProfiler.OBS_32BIT_BIN_DIR_PATH, bufsize=-1, stdout=self.fh, stderr=self.fh)
                 self._wait_obs_vidoe_file_creation()
             elif platform.system().lower() == "darwin":
-                self.process = subprocess.Popen(["ffmpeg", "-f", "avfoundation", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", CommonUtil.get_mac_os_display_channel(), "-filter:v", "crop=" + str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + ":" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT) + ":0:0", "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
+                self.process = subprocess.Popen(["ffmpeg", "-f", "avfoundation", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.exec_config['video-recording-width']) + "*" + str(self.exec_config['video-recording-height']), "-i", CommonUtil.get_mac_os_display_channel(), "-filter:v", "crop=" + str(self.exec_config['video-recording-width']) + ":" + str(self.exec_config['video-recording-height']) + ":0:0", "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
             else:
-                self.process = subprocess.Popen(["ffmpeg", "-f", "x11grab", "-draw_mouse", "0", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", CommonUtil.get_mac_os_display_channel(), "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
+                self.process = subprocess.Popen(["ffmpeg", "-f", "x11grab", "-draw_mouse", "0", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.exec_config['video-recording-width']) + "*" + str(self.exec_config['video-recording-height']), "-i", CommonUtil.get_mac_os_display_channel(), "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
 
     def stop_recording(self, **kwargs):
         if platform.system().lower() == "windows":

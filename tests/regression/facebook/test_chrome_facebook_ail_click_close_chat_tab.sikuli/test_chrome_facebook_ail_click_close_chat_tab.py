@@ -19,12 +19,8 @@ chrome.clickBar()
 chrome.enterLink(sys.argv[3])
 fb.wait_for_loaded()
 
-sleep(2)
-setAutoWaitTimeout(10)
-
 sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2'))
-
-sleep(5)
+sleep(2)
 capture_width = int(sys.argv[6])
 capture_height = int(sys.argv[7])
 

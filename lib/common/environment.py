@@ -76,6 +76,7 @@ class Environment(object):
     TEST_FB_MIX_CONTENT_POST = "https://goo.gl/PZNikF"
     TEST_FB_VIDEO_POST = "https://goo.gl/z3iwyh"
     TEST_FB_URL_POST = "https://goo.gl/fxja5z"
+    TEST_FB_PHOTO_VIEWER = "https://goo.gl/qI1qQ0"
 
     def __init__(self, test_method_name, test_method_doc, sikuli_script_name=None):
         self.time_stamp = str(int(time.time()))
