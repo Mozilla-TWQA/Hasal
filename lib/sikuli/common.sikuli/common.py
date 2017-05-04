@@ -89,6 +89,10 @@ class General():
         """
         return bool(Settings.ActionLogs) or bool(Settings.InfoLogs)
 
+    # default value of mouse movement delay is 0.5second
+    def set_mouse_delay(self, sec=0.5):
+        Settings.MoveMouseDelay = sec
+
     def system_print(self, content):
         sys.stdout.write(content + '\n')
         sys.stdout.flush()
