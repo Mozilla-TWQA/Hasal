@@ -6,6 +6,9 @@ import tempfile
 from ..common.commonUtil import CommonUtil
 from ..common.commonUtil import CalculationUtil
 from ..common.commonUtil import StatusRecorder
+from ..common.logConfig import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseGenerator(object):
@@ -143,15 +146,23 @@ class BaseGenerator(object):
                 else:
                     converted_format_dict[case_name] = {case_full_name: result_data[case_full_name]}
             for c_name in converted_format_dict:
-                case_result_fp = os.path.join(output_result_dir, c_name, c_name + ".json")
-                output_ipynb_fp = os.path.join(output_result_dir, c_name, c_name + ".ipynb")
-                with open(case_result_fp, 'w') as fh:
-                    json.dump(converted_format_dict[c_name], fh)
-                fig_number = len(converted_format_dict[c_name].keys())
+                case_result_dp = os.path.join(output_result_dir, c_name)
+                case_result_fp = os.path.join(case_result_dp, c_name + '.json')
+                output_ipynb_fp = os.path.join(case_result_dp, c_name + '.ipynb')
+                try:
+                    # create the directories of case output files
+                    if not os.path.exists(case_result_dp):
+                        os.makedirs(case_result_dp)
+                    # dump case result json
+                    with open(case_result_fp, 'w') as fh:
+                        json.dump(converted_format_dict[c_name], fh)
+                    fig_number = len(converted_format_dict[c_name].keys())
 
-                # output ipynb file
-                CommonUtil.execute_runipy_cmd(input_ipynb_template_fp, output_ipynb_fp, input_data_fp=case_result_fp,
-                                              input_fig_number=fig_number)
+                    # output ipynb file
+                    CommonUtil.execute_runipy_cmd(input_ipynb_template_fp, output_ipynb_fp, input_data_fp=case_result_fp,
+                                                  input_fig_number=fig_number)
+                except Exception as e:
+                    logger.warn(e)
 
     @staticmethod
     def output_suite_result(global_config, index_config, exec_config, output_result_dir):
