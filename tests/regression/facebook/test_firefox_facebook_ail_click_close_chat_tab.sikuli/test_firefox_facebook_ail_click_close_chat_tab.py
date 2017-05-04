@@ -12,11 +12,11 @@ import time
 com = common.General()
 com.infolog_enable(0)
 
-chrome = browser.Chrome()
+ff = browser.Firefox()
 fb = facebook.facebook()
 
-chrome.clickBar()
-chrome.enterLink(sys.argv[3])
+ff.clickBar()
+ff.enterLink(sys.argv[3])
 fb.wait_for_loaded()
 
 sleep(2)
@@ -30,18 +30,18 @@ capture_height = int(sys.argv[7])
 
 # Set mouse move delay time to 0 for immediately action requirement
 Settings.MoveMouseDelay = 0
-hover(fb.right_panel_contact.targetOffset(0, 15))
+click(fb.right_panel_contact.targetOffset(0, 15))
+wait(fb.chat_tab_close_button)
+
+hover(fb.chat_tab_close_button)
+sleep(1)
 mouseDown(Button.LEFT)
 capimg2 = capture(0, 0, capture_width, capture_height)
 t1 = time.time()
 
 com.system_print('[log] Mouse Click - Button Up')
 mouseUp(Button.LEFT)
-mouseMove(fb.right_panel_contact.targetOffset(0, 50))
 sleep(0.1)
 t2 = time.time()
 com.updateJson({'t1': t1, 't2': t2}, sys.argv[8])
 shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
-click(fb.chat_tab_close_button)
-if not waitVanish(fb.chat_tab_close_button):
-    exit(1)

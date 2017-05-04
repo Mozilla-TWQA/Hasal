@@ -35,7 +35,7 @@ mouseDown(Button.LEFT)
 capimg2 = capture(0, 0, capture_width, capture_height)
 t1 = time.time()
 
-print '[log] Mouse Click - Button Up'
+com.system_print('[log] Mouse Click - Button Up')
 mouseUp(Button.LEFT)
 mouseMove(fb.right_panel_contact.targetOffset(0, 50))
 sleep(0.1)
