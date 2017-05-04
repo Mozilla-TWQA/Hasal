@@ -96,6 +96,10 @@ class ObsProfiler(BaseProfiler):
             profile_config = self._get_obs_config_ini(basic_ini_src_fp)
             for section in input_settings:
                 for option in input_settings[section]:
+                    # create section if need
+                    if not profile_config.has_section(section):
+                        profile_config.add_section(section)
+                    # set option
                     profile_config.set(section, option, input_settings[section][option])
             self._write_obs_config_ini(profile_config, basic_ini_dst_fp)
             logger.info('Create Profile: {}'.format(basic_ini_dst_fp))
@@ -119,7 +123,12 @@ class ObsProfiler(BaseProfiler):
         obs_global_fp = os.path.join(ObsProfiler.OBS_SETTINGS_DIR_PATH, ObsProfiler.OBS_SETTINGS_FN)
         if os.path.exists(ObsProfiler.OBS_SETTINGS_DIR_PATH) and os.path.exists(obs_global_fp):
             global_config = self._get_obs_config_ini(obs_global_fp)
-            global_config.set('General', 'Language', 'en-US')
+            # create 'General' section if need
+            section_name = 'General'
+            if not global_config.has_section(section_name):
+                global_config.add_section(section_name)
+                # set Language option
+            global_config.set(section_name, 'Language', 'en-US')
 
             # License Accepted
             try:
@@ -140,7 +149,11 @@ class ObsProfiler(BaseProfiler):
             if is_sys_tray:
                 logger.debug('SysTrayWhenStarted was True: {}'.format(obs_global_fp))
             else:
-                global_config.set('BasicWindow', 'SysTrayWhenStarted', True)
+                # Creating 'BasicWindow' section if it not exists, or set() will raise NoSectionError.
+                section_name = 'BasicWindow'
+                if not global_config.has_section(section_name):
+                    global_config.add_section(section_name)
+                global_config.set(section_name, 'SysTrayWhenStarted', True)
                 self._write_obs_config_ini(global_config, obs_global_fp)
                 logger.info('Enable SysTrayWhenStarted: {}'.format(obs_global_fp))
         else:
