@@ -16,6 +16,7 @@ from common.logConfig import get_logger
 from common.windowController import WindowObject
 from common.commonUtil import CommonUtil
 from common.commonUtil import StatusRecorder
+from common.visualmetricsWrapper import find_image_viewport
 
 logger = get_logger(__name__)
 
@@ -84,35 +85,46 @@ class BaseTest(unittest.TestCase):
         recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
 
         if recording_enabled:
+            viewport_ref_fp = os.path.join(self.env.img_sample_dp, self.env.img_output_sample_1_fn)
+            is_expected_viewport = False
             for i in range(10):
                 time.sleep(1)
                 logger.debug("Check browser show up %d time(s)." % (i + 1))
-                desktopHelper.lock_window_pos(self.browser_type, self.exec_config)
-                videoHelper.capture_screen(self.env, self.index_config, self.exec_config, self.env.video_output_sample_1_fp,
-                                           self.env.img_sample_dp,
-                                           self.env.img_output_sample_1_fn)
-                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn, self.exec_config):
-                    logger.debug("Browser shown, adjust viewport by setting.")
-                    height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
-                                                                                  self.env.img_sample_dp,
-                                                                                  self.env.img_output_sample_1_fn,
-                                                                                  self.exec_config)
-                    # get the terminal location
-                    terminal_location = terminalHelper.get_terminal_location(0, 0, width_browser, height_browser)
-                    terminal_x = terminal_location.get('x', 0)
-                    terminal_y = terminal_location.get('y', 0)
-                    terminal_width = terminal_location.get('width', 0)
-                    terminal_height = terminal_location.get('height', 0)
+                if desktopHelper.lock_window_pos(self.browser_type, self.exec_config):
+                    for j in range(10):
+                        time.sleep(1)
+                        videoHelper.capture_screen(self.env, self.index_config, self.exec_config,
+                                                   self.env.video_output_sample_1_fp,
+                                                   self.env.img_sample_dp,
+                                                   self.env.img_output_sample_1_fn)
+                        logger.debug("Browser shown, adjust viewport by setting %d time(s)." % (j + 1))
+                        height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
+                                                                                      viewport_ref_fp,
+                                                                                      self.exec_config)
+                        # get the terminal location
+                        terminal_location = terminalHelper.get_terminal_location(0, 0, width_browser, height_browser)
+                        terminal_x = terminal_location.get('x', 0)
+                        terminal_y = terminal_location.get('y', 0)
+                        terminal_width = terminal_location.get('width', 0)
+                        terminal_height = terminal_location.get('height', 0)
 
-                    logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
-                                                                                      terminal_y,
-                                                                                      terminal_width,
-                                                                                      terminal_height))
-                    self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
-                                                             pos_y=terminal_y,
-                                                             window_width=terminal_width,
-                                                             window_height=terminal_height)
-                    break
+                        logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
+                                                                                          terminal_y,
+                                                                                          terminal_width,
+                                                                                          terminal_height))
+                        self.terminal_window_obj.move_window_pos(pos_x=terminal_x,
+                                                                 pos_y=terminal_y,
+                                                                 window_width=terminal_width,
+                                                                 window_height=terminal_height)
+                        is_expected_viewport = desktopHelper.is_expected_viewport(viewport_ref_fp, self.exec_config)
+                        if is_expected_viewport:
+                            break
+                    # TODO: Doesn't support runtime viewport adjustment now thus won't verify expected viewport size
+                    if is_expected_viewport or sys.platform == 'linux2':
+                        break
+                    else:
+                        viewport = find_image_viewport(viewport_ref_fp)
+                        raise Exception('[ERROR] Viewport size is not expected: {}'.format(viewport))
         else:
             time.sleep(3)
             desktopHelper.lock_window_pos(self.browser_type, self.exec_config)

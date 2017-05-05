@@ -99,13 +99,19 @@ def get_browser_version(browser_type):
 def lock_window_pos(browser_type, exec_config={}, height_adjustment=0, width_adjustment=0):
     window_title_list = get_browser_name_list(browser_type)
     # Moving window by strings from window_title
-    if not exec_config:
-        height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
-        width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
-    else:
-        height = exec_config['browser-height'] + height_adjustment
-        width = exec_config['browser-width'] + width_adjustment
     window_obj = WindowObject(window_title_list)
+    if window_obj.get_window_rect():
+        browser_width = window_obj.rect[2]
+        browser_height = window_obj.rect[3]
+        height = browser_height + height_adjustment
+        width = browser_width + width_adjustment
+    else:
+        if not exec_config:
+            height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
+            width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
+        else:
+            height = exec_config['browser-height'] + height_adjustment
+            width = exec_config['browser-width'] + width_adjustment
     window_obj.move_window_pos(0, 0, window_height=height, window_width=width)
     return height, width
 
@@ -122,22 +128,17 @@ def minimize_window():
                 break
 
 
-def adjust_viewport(browser_type, img_sample_dp, img_sample_name, exec_config):
-    img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = find_image_viewport(img_sample_fp)
+def adjust_viewport(browser_type, viewport_ref_fp, exec_config):
+    viewport = find_image_viewport(viewport_ref_fp)
     height_adjustment = exec_config['viewport-height'] - viewport['height']
     width_adjustment = exec_config['viewport-width'] - viewport['width']
     height, width = lock_window_pos(browser_type, exec_config, height_adjustment, width_adjustment)
     return height, width
 
 
-def check_browser_show_up(img_sample_dp, img_sample_name, exec_config):
-    width_fraction = 0.95
-    height_fraction = 0.8
-    img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = find_image_viewport(img_sample_fp)
-    if viewport['width'] > exec_config['browser-width'] * width_fraction and \
-            viewport['height'] > exec_config['browser-height'] * height_fraction:
+def is_expected_viewport(viewport_ref_fp, exec_config):
+    viewport = find_image_viewport(viewport_ref_fp)
+    if viewport['height'] == exec_config['viewport-height'] and viewport['width'] == exec_config['viewport-width']:
         return True
     else:
         return False

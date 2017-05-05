@@ -107,6 +107,26 @@ class WindowObject(object):
         logger.warning('Cannot found one of [{}] for moving position.'.format(self.window_name_list))
         return False
 
+    def _get_window_rect_cb(self, hwnd, extra):
+        window_title = win32gui.GetWindowText(hwnd)
+        for name in self.window_name_list:
+            if name in window_title:
+                logger.info('Found [{}] for get rect.'.format(name))
+                self.rect = win32gui.GetWindowRect(hwnd)
+                self.callback_ret = True
+                break
+
+    def _get_window_rect_win(self):
+        # try to get window size after window launched
+        for counter in range(10):
+            win32gui.EnumWindows(self._get_window_rect_cb, None)
+            if self.callback_ret:
+                self.callback_ret = None
+                return True
+            time.sleep(1)
+        logger.warning('Cannot found one of [{}] for get rect.'.format(self.window_name_list))
+        return False
+
     def _close_window_win32_cb(self, hwnd, extra):
         window_title = win32gui.GetWindowText(hwnd)
         for name in self.window_name_list:
@@ -127,6 +147,29 @@ class WindowObject(object):
                 return True
             time.sleep(1)
         logger.warning('Cannot found one of [{}] for closing.'.format(self.window_name_list))
+        return False
+
+    def _get_window_rect_darwin(self):
+        # try to get window size after window launched
+        for counter in range(10):
+            for app_ref in app('System Events').processes.file.get():
+                for name in self.window_name_list:
+                    if name in app_ref.name.get():
+                        application_obj = app(app_ref.name.get())
+                        logger.info('Found [{}] for get rect.'.format(name))
+                        for _ in range(10):
+                            if application_obj.isrunning():
+                                # move window position
+                                # Reference: https://www.macosxautomation.com/applescript/firsttutorial/11.html
+                                rect = application_obj.windows.bounds.get()
+                                LL = rect[0]
+                                TT = rect[1]
+                                LR = rect[2]
+                                TB = rect[3]
+                                self.rect = [LL, TT, LR - LL, TB - TT]
+                                return True
+                            time.sleep(1)
+        logger.warning('Cannot found one of [{}] for get rect.'.format(self.window_name_list))
         return False
 
     def _close_window_darwin(self):
@@ -194,6 +237,18 @@ class WindowObject(object):
             return self._move_window_darwin()
         else:
             logger.warning('Doesn\'t support moving window [{}] on platform [{}].'.format(self.window_name_list, self.window_type))
+            return False
+
+    def get_window_rect(self):
+        if self.window_type == 'linux2':
+            return False
+        elif self.window_type == 'win32':
+            return self._get_window_rect_win()
+        elif self.window_type == 'darwin':
+            return self._get_window_rect_darwin()
+        else:
+            logger.warning('Doesn\'t support get window rect [{}] on platform [{}].'.format(self.window_name_list,
+                                                                                            self.window_type))
             return False
 
     def close_window(self):
