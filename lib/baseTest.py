@@ -151,15 +151,18 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
+    # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
     def extract_platform_dep_settings(self, config_value):
+        platform_dep_variables = {}
+        # get current platform value or default value of it
         if self.current_platform_name in config_value:
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
-            else:
+            elif 'default' in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
-            config_value.update(platform_dep_variables)
-            return platform_dep_variables
-        return {}
+
+        # return {} if no matching system platform and no default value
+        return platform_dep_variables
 
     # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
