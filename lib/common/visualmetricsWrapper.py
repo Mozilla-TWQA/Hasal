@@ -69,6 +69,12 @@ def find_terminal_view(input_file, viewport):
         # get Terminal location
         terminal_location = get_terminal_location(base_x, base_y, base_width, base_height)
 
+        # Adjust the height (do not over the image height)
+        terminal_y = terminal_location.get('y')
+        bottom = min(im_height, terminal_y + terminal_location.get('height') + 25)
+        adj_terminal_height = bottom - terminal_y
+        terminal_location['height'] = adj_terminal_height
+
     except Exception as e:
         logger.error(e)
         terminal_location = None
