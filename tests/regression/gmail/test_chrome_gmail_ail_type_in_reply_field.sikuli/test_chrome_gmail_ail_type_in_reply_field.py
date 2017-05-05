@@ -39,13 +39,13 @@ my_browser.enterLink(INPUT_TEST_TARGET)
 app.wait_for_loaded()
 
 # Wait for stable
-sleep(5)
+sleep(2)
 
 # PRE ACTIONS
 app.click_first_mail()
 sleep(2)
 app.click_reply_btn()
-sleep(2)
+sleep(3)
 
 # Record T1, and capture the snapshot image
 # Input Latency Action
