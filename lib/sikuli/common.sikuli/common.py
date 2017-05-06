@@ -125,11 +125,25 @@ class WebApp(object):
         @param component: The waiting component
         @param similarity: The similarity of component. Default: 0.70.
         """
+        is_exists = False
         for counter in range(50):
+            if is_exists:
+                break
             for pic, _, _ in component:
                 if exists(Pattern(pic).similar(similarity), 0.1):
                     break
         wait(Pattern(pic).similar(0.70), 1)
+
+    def il_type(self, message, width, height, wait_component=None):
+        # wait component exists
+        if not wait_component:
+            self._wait_for_loaded(wait_component)
+
+        # Screenshot and get time for Input Latency
+        action_name = '[log]  TYPE "{}"'.format(message)
+        screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
+        type(message)
+        return screenshot, current_time
 
     def _click(self, action_name, component, similarity=0.70):
         """

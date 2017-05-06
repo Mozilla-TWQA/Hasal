@@ -39,21 +39,17 @@ my_browser.enterLink(INPUT_TEST_TARGET)
 app.wait_for_loaded()
 
 # Wait for stable
-sleep(5)
+sleep(2)
 
 # PRE ACTIONS
 app.click_first_mail()
 sleep(2)
 app.click_reply_btn()
-sleep(2)
+sleep(3)
 
 # Record T1, and capture the snapshot image
 # Input Latency Action
-t1 = time.time()
-screenshot = capture(0, 0, capture_width, capture_height)
-
-com.system_print('[log]  TYPE "a"')
-type('a')
+screenshot, t1 = app.il_type('a', capture_width, capture_height, wait_component=app.GMAIL_SEND)
 
 # In normal condition, a should appear within 100ms,
 # but if lag happened, that could lead the show up after 100 ms,
