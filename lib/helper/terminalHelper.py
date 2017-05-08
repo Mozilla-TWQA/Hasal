@@ -1,5 +1,6 @@
 import sys
 import platform
+from PIL import Image
 from ..common.logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -53,3 +54,42 @@ def get_terminal_location(browser_x, browser_y, browser_w, browser_h):
 
     location = {'x': terminal_x, 'y': terminal_y, 'width': terminal_width, 'height': terminal_height}
     return location
+
+
+def find_terminal_view(input_file, viewport):
+    """
+    Find the Region of imageUtil.CropRegion.TERMINAL.
+    @param input_file: image file.
+    @param viewport: {x, y', width, height} of VIEWPORT.
+    @return: {x, y', width, height}
+    """
+    try:
+        im = Image.open(input_file)
+        im_width, im_height = im.size
+
+        base_x = int(viewport.get('x', 0))
+        base_y = int(viewport.get('y', 0))
+        base_width = int(viewport.get('width', im_width))
+        base_height = int(viewport.get('height', 0))
+
+        # get Terminal location
+        terminal_location = get_terminal_location(base_x, base_y, base_width, base_height)
+
+        """
+        The base for cropping is VIEWPORT now, it has the difference y-axis offset from Browser-base.
+        Ref:
+        `baseTest.py`
+        - terminal_location = terminalHelper.get_terminal_location(0, 0, width_browser, height_browser)
+        """
+        offset_y = 25
+
+        # Adjust the height (do not over the image height)
+        terminal_y = terminal_location.get('y')
+        bottom = min(im_height, terminal_y + terminal_location.get('height') + offset_y)
+        adj_terminal_height = bottom - terminal_y
+        terminal_location['height'] = adj_terminal_height
+
+    except Exception as e:
+        logger.error(e)
+        terminal_location = None
+    return terminal_location

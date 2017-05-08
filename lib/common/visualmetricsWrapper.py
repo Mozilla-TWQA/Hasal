@@ -28,7 +28,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
 import copy
 from commonUtil import CommonUtil
-from ..helper.terminalHelper import get_terminal_location  # NOQA
 from ..thirdparty.visualmetrics import *  # NOQA
 from PIL import Image
 from logConfig import get_logger
@@ -48,37 +47,6 @@ def colors_are_similar(a, b, threshold=30):
         similar = False
 
     return similar
-
-
-def find_terminal_view(input_file, viewport):
-    """
-    Find the Region of imageUtil.CropRegion.TERMINAL.
-    @param input_file: image file.
-    @param viewport: {x, y', width, height} of VIEWPORT.
-    @return: {x, y', width, height}
-    """
-    try:
-        im = Image.open(input_file)
-        im_width, im_height = im.size
-
-        base_x = int(viewport.get('x', 0))
-        base_y = int(viewport.get('y', 0))
-        base_width = int(viewport.get('width', im_width))
-        base_height = int(viewport.get('height', 0))
-
-        # get Terminal location
-        terminal_location = get_terminal_location(base_x, base_y, base_width, base_height)
-
-        # Adjust the height (do not over the image height)
-        terminal_y = terminal_location.get('y')
-        bottom = min(im_height, terminal_y + terminal_location.get('height') + 25)
-        adj_terminal_height = bottom - terminal_y
-        terminal_location['height'] = adj_terminal_height
-
-    except Exception as e:
-        logger.error(e)
-        terminal_location = None
-    return terminal_location
 
 
 def find_tab_view(input_file, viewport):

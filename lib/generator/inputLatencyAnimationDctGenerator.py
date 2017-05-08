@@ -3,6 +3,7 @@ import json
 import time
 import copy
 from baseGenerator import BaseGenerator
+from ..helper.terminalHelper import find_terminal_view
 from ..common.commonUtil import CommonUtil
 from ..common.commonUtil import CalculationUtil
 from ..common.imageUtil import generate_crop_data
@@ -11,7 +12,6 @@ from ..common.imageUtil import convert_to_dct
 from ..common.imageUtil import compare_with_sample_image_multi_process
 from ..common.imageUtil import CropRegion
 from ..common.visualmetricsWrapper import find_image_viewport
-from ..common.visualmetricsWrapper import find_terminal_view
 from ..common.logConfig import get_logger
 
 logger = get_logger(__name__)
