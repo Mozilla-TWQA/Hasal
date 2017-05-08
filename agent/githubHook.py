@@ -1,6 +1,5 @@
 # -*- coding: utf-8
 import github3
-import json
 import os
 from getpass import getpass
 
@@ -11,22 +10,19 @@ STATE_PENDING = 'pending'
 
 class githubHook(object):
     def __init__(self):
-        user, password = self._get_credentials()
-        g = github3.login(user, password)
+        g = self._get_credentials()
+        if g is None:
+            return None
         self.hasal = g.repository('Mozilla-TWQA', 'Hasal')
 
     def _get_credentials(self):
         github_credential = 'github.json'
         if os.path.isfile(github_credential):
-            with open('github.json') as f:
-                gh = json.load(f)
+            with open('github.json', 'r') as f:
+                token = f.readline().strip()
+            return github3.login(token=token)
         else:
-            gh = {}
-            gh['user'] = raw_input("user: ").strip()
-            gh['password'] = getpass()
-            with open(github_credential, 'w') as f:
-                json.dump(gh, f)
-        return gh['user'], gh['password']
+            return False
 
     def update_job_result_by_pr_number(self, pr_number, result):
         pr = self.hasal.pull_request(str(pr_number))
@@ -51,3 +47,18 @@ class githubHook(object):
     def checkout_pr(pr):
         os.system('git fetch origin')
         os.system('git checkout pr/' + str(pr.number))
+
+if __name__ == '__main__':
+    if not os.path.isfile('github.json'):
+        try:
+            user = raw_input('User Account for Github: ')
+            password = getpass('Password: ')
+            scopes = ['user', 'repo']
+            note = 'Iskakalunan'
+            note_url = 'https://github.com/Mozilla-TWQA/Hasal'
+            auth = github3.authorize(user, password, scopes, note, note_url)
+            with open('github.json', 'w'):
+                f.write(auth.token + '\r\n')
+                f.write(str(auth.id))
+        except Exception as e:
+            print e
