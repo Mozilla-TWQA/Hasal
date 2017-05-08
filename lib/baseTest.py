@@ -7,6 +7,7 @@ import json
 import platform
 import unittest
 import helper.desktopHelper as desktopHelper
+import helper.terminalHelper as terminalHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
 import helper.generatorHelper as generatorHelper
@@ -86,40 +87,24 @@ class BaseTest(unittest.TestCase):
             for i in range(10):
                 time.sleep(1)
                 logger.debug("Check browser show up %d time(s)." % (i + 1))
-                desktopHelper.lock_window_pos(self.browser_type)
-                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
+                desktopHelper.lock_window_pos(self.browser_type, self.exec_config)
+                videoHelper.capture_screen(self.env, self.index_config, self.exec_config, self.env.video_output_sample_1_fp,
                                            self.env.img_sample_dp,
                                            self.env.img_output_sample_1_fn)
-                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn):
+                if desktopHelper.check_browser_show_up(self.env.img_sample_dp, self.env.img_output_sample_1_fn, self.exec_config):
                     logger.debug("Browser shown, adjust viewport by setting.")
                     height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
                                                                                   self.env.img_sample_dp,
-                                                                                  self.env.img_output_sample_1_fn)
-                    height_offset = 0
-                    terminal_width = width_browser
-                    terminal_height = 60
-                    if self.current_platform_name == 'linux2':
-                        height_offset = 20
-                        terminal_height = 60
-                    elif self.current_platform_name == 'win32':
-                        if self.current_platform_ver == '10':
-                            logger.info("Move terminal window for Windows 10.")
-                            height_offset = -4
-                            terminal_height = 100
-                        elif self.current_platform_ver == '7':
-                            logger.info("Move terminal window for Windows 7.")
-                            height_offset = 0
-                            terminal_height = 80
-                        else:
-                            logger.info("Move terminal window for Windows.")
-                            height_offset = 0
-                            terminal_height = 80
-                    elif self.current_platform_name == 'darwin':
-                        # TODO: This offset settings only be tested on Mac Book Air
-                        height_offset = 25
-                        terminal_height = 80
-                    terminal_x = 0
-                    terminal_y = height_browser + height_offset
+
+                                                                                  self.env.img_output_sample_1_fn,
+                                                                                  self.exec_config)
+                    # get the terminal location
+                    terminal_location = terminalHelper.get_terminal_location(0, 0, width_browser, height_browser)
+                    terminal_x = terminal_location.get('x', 0)
+                    terminal_y = terminal_location.get('y', 0)
+                    terminal_width = terminal_location.get('width', 0)
+                    terminal_height = terminal_location.get('height', 0)
+
                     logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
                                                                                       terminal_y,
                                                                                       terminal_width,
@@ -131,7 +116,7 @@ class BaseTest(unittest.TestCase):
                     break
         else:
             time.sleep(3)
-            desktopHelper.lock_window_pos(self.browser_type)
+            desktopHelper.lock_window_pos(self.browser_type, self.exec_config)
 
     def clone_test_file(self):
         if hasattr(self, "test_target"):
@@ -151,15 +136,18 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
+    # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
     def extract_platform_dep_settings(self, config_value):
+        platform_dep_variables = {}
+        # get current platform value or default value of it
         if self.current_platform_name in config_value:
             if self.current_platform_ver in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
-            else:
+            elif 'default' in config_value[self.current_platform_name]:
                 platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
-            config_value.update(platform_dep_variables)
-            return platform_dep_variables
-        return {}
+
+        # return {} if no matching system platform and no default value
+        return platform_dep_variables
 
     # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
@@ -195,6 +183,34 @@ class BaseTest(unittest.TestCase):
                 config_value = json.load(fh)
 
             self.set_configs(config_variable_name, config_value)
+        self.extract_screen_settings_from_env()
+
+    # TODO: these screen settings should be moved to exec config in the future
+    def extract_screen_settings_from_env(self):
+        screen_settings = {
+            'browser-pos-x': self.env.DEFAULT_BROWSER_POS_X,
+            'browser-pos-y': self.env.DEFAULT_BROWSER_POS_Y,
+            'browser-width': self.env.DEFAULT_BROWSER_WIDTH,
+            'browser-height': self.env.DEFAULT_BROWSER_HEIGHT,
+            'viewport-width': self.env.DEFAULT_VIEWPORT_WIDTH,
+            'viewport-height': self.env.DEFAULT_VIEWPORT_HEIGHT,
+            'video-recording-pos-x': self.env.DEFAULT_VIDEO_RECORDING_POS_X,
+            'video-recording-pos-y': self.env.DEFAULT_VIDEO_RECORDING_POS_Y,
+            'video-recording-width': self.env.DEFAULT_VIDEO_RECORDING_WIDTH,
+            'video-recording-height': self.env.DEFAULT_VIDEO_RECORDING_HEIGHT
+        }
+        self.set_configs(self.config_name.EXEC, screen_settings)
+
+    def get_new_recording_size(self):
+        recording_width = min(self.exec_config['browser-width'] + 100, 1920)
+        if platform.system().lower() == "darwin":
+            recording_height = min(self.exec_config['browser-height'] + 120, 900)
+        else:
+            recording_height = min(self.exec_config['browser-height'] + 180, 1080)
+        recording_setting = {'video-recording-width': recording_width,
+                             'video-recording-height': recording_height
+                             }
+        return recording_setting
 
     def setUp(self):
 

@@ -24,6 +24,10 @@ HasalServer.log.*
 stage/*
 docs/*
 appveyor.yml
+! thirdParty/userChrome.css
+! thirdParty/extensions
+! thirdParty/obsConfigs
+! thirdParty/ipynbTemplates
 
 # File types to ignore
 *.zip

@@ -25,16 +25,17 @@ class ObsProfiler(BaseProfiler):
     please download and install Visual C++ Redistributable Packages for Visual Studio 2013 from
     https://www.microsoft.com/en-us/download/details.aspx?id=40784
     """
-    OBS_SETTINGS_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio'
+    OBS_SETTINGS_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio')
     OBS_SETTINGS_FN = 'global.ini'
 
     OBS_COLLECTION_TEMPLATE_PATH = os.path.join(os.getcwd(), 'thirdparty', 'obsConfigs', 'collection')
-    OBS_COLLECTION_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio\basic\scenes'
+    OBS_COLLECTION_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio', 'basic', 'scenes')
     OBS_COLLECTION_NAME = 'hasal'
     OBS_COLLECTION_FN = OBS_COLLECTION_NAME + '.json'
 
     OBS_PROFILE_TEMPLATE_PATH = os.path.join(os.getcwd(), 'thirdparty', 'obsConfigs', 'profile')
-    OBS_PROFILE_DIR_PATH = r'C:\Users\user\AppData\Roaming\obs-studio\basic\profiles'
+    OBS_PROFILE_DIR_PATH = os.path.join(CommonUtil.get_appdata_dir(), 'obs-studio', 'basic', 'profiles')
+
     OBS_32BIT_BIN_DIR_PATH = r'C:\Program Files (x86)\obs-studio\bin\32bit'
     OBS_32BIT_BIN_PATH = r'C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe'
 
@@ -42,10 +43,10 @@ class ObsProfiler(BaseProfiler):
     OBS_PROFILE_BASIC_INI_FN = 'basic.ini'
     OBS_PROFILE_NAME = 'Hasal'
     OBS_RECORDING_FMT = 'mp4'
-    OBS_VIDEO_OUTPUT_DIR_PATH = r'C:\Users\user\Videos\hasal'
+    OBS_VIDEO_OUTPUT_DIR_PATH = os.path.join(CommonUtil.get_user_dir(), 'Videos', '\hasal')
 
-    def __init__(self, input_env, input_index_config, input_browser_type=None, input_sikuli_obj=None):
-        super(ObsProfiler, self).__init__(input_env, input_index_config, input_browser_type, input_sikuli_obj)
+    def __init__(self, input_env, input_index_config, input_exec_config, input_browser_type=None, input_sikuli_obj=None):
+        super(ObsProfiler, self).__init__(input_env, input_index_config, input_exec_config, input_browser_type, input_sikuli_obj)
         self.process = None
         self.fh = None
         self.t1_time = None
@@ -96,6 +97,10 @@ class ObsProfiler(BaseProfiler):
             profile_config = self._get_obs_config_ini(basic_ini_src_fp)
             for section in input_settings:
                 for option in input_settings[section]:
+                    # create section if need
+                    if not profile_config.has_section(section):
+                        profile_config.add_section(section)
+                    # set option
                     profile_config.set(section, option, input_settings[section][option])
             self._write_obs_config_ini(profile_config, basic_ini_dst_fp)
             logger.info('Create Profile: {}'.format(basic_ini_dst_fp))
@@ -119,7 +124,12 @@ class ObsProfiler(BaseProfiler):
         obs_global_fp = os.path.join(ObsProfiler.OBS_SETTINGS_DIR_PATH, ObsProfiler.OBS_SETTINGS_FN)
         if os.path.exists(ObsProfiler.OBS_SETTINGS_DIR_PATH) and os.path.exists(obs_global_fp):
             global_config = self._get_obs_config_ini(obs_global_fp)
-            global_config.set('General', 'Language', 'en-US')
+            # create 'General' section if need
+            section_name = 'General'
+            if not global_config.has_section(section_name):
+                global_config.add_section(section_name)
+                # set Language option
+            global_config.set(section_name, 'Language', 'en-US')
 
             # License Accepted
             try:
@@ -140,7 +150,11 @@ class ObsProfiler(BaseProfiler):
             if is_sys_tray:
                 logger.debug('SysTrayWhenStarted was True: {}'.format(obs_global_fp))
             else:
-                global_config.set('BasicWindow', 'SysTrayWhenStarted', True)
+                # Creating 'BasicWindow' section if it not exists, or set() will raise NoSectionError.
+                section_name = 'BasicWindow'
+                if not global_config.has_section(section_name):
+                    global_config.add_section(section_name)
+                global_config.set(section_name, 'SysTrayWhenStarted', True)
                 self._write_obs_config_ini(global_config, obs_global_fp)
                 logger.info('Enable SysTrayWhenStarted: {}'.format(obs_global_fp))
         else:
@@ -169,10 +183,10 @@ class ObsProfiler(BaseProfiler):
                 profile_settings_dict = {
                     'Video': {
                         'FPSInt': self.video_recording_fps,
-                        'BaseCX': str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH),
-                        'BaseCY': str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT),
-                        'OutputCX': str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH),
-                        'OutputCY': str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT)
+                        'BaseCX': str(self.exec_config['video-recording-width']),
+                        'BaseCY': str(self.exec_config['video-recording-height']),
+                        'OutputCX': str(self.exec_config['video-recording-width']),
+                        'OutputCY': str(self.exec_config['video-recording-height'])
                     },
                     'SimpleOutput': {
                         'RecFormat': ObsProfiler.OBS_RECORDING_FMT,
@@ -191,9 +205,9 @@ class ObsProfiler(BaseProfiler):
                 self.process = subprocess.Popen(cmd_str, cwd=ObsProfiler.OBS_32BIT_BIN_DIR_PATH, bufsize=-1, stdout=self.fh, stderr=self.fh)
                 self._wait_obs_vidoe_file_creation()
             elif platform.system().lower() == "darwin":
-                self.process = subprocess.Popen(["ffmpeg", "-f", "avfoundation", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", CommonUtil.get_mac_os_display_channel(), "-filter:v", "crop=" + str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + ":" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT) + ":0:0", "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
+                self.process = subprocess.Popen(["ffmpeg", "-f", "avfoundation", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.exec_config['video-recording-width']) + "*" + str(self.exec_config['video-recording-height']), "-i", CommonUtil.get_mac_os_display_channel(), "-filter:v", "crop=" + str(self.exec_config['video-recording-width']) + ":" + str(self.exec_config['video-recording-height']) + ":0:0", "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
             else:
-                self.process = subprocess.Popen(["ffmpeg", "-f", "x11grab", "-draw_mouse", "0", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.env.DEFAULT_VIDEO_RECORDING_WIDTH) + "*" + str(self.env.DEFAULT_VIDEO_RECORDING_HEIGHT), "-i", CommonUtil.get_mac_os_display_channel(), "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
+                self.process = subprocess.Popen(["ffmpeg", "-f", "x11grab", "-draw_mouse", "0", "-framerate", str(self.input_index_config['video-recording-fps']), "-video_size", str(self.exec_config['video-recording-width']) + "*" + str(self.exec_config['video-recording-height']), "-i", CommonUtil.get_mac_os_display_channel(), "-c:v", "libx264", "-r", str(self.input_index_config['video-recording-fps']), "-preset", "veryfast", "-g", "15", "-crf", "0", self.env.video_output_fp], bufsize=-1, stdout=self.fh, stderr=self.fh)
 
     def stop_recording(self, **kwargs):
         if platform.system().lower() == "windows":

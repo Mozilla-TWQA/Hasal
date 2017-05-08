@@ -8,6 +8,8 @@ from datetime import datetime
 from environment import Environment
 from logConfig import get_logger
 
+logger = get_logger(__name__)
+
 
 class StatusRecorder(object):
     # Result for STATUS_IMG_COMPARE_RESULT
@@ -260,6 +262,60 @@ class CommonUtil(object):
 
     RECORDER_LIST = [Environment.PROFILER_FLAG_AVCONV, Environment.PROFILER_FLAG_OBS]
     logger = get_logger(__file__)
+
+    @staticmethod
+    def get_username():
+        """
+        Get current username.
+        The UNIX platform will return the value of `pwd.getpwuid(os.getuid()).pw_name`.
+        The Windows platform will return 'USERNAME' of environ, or default username `user`.
+        @return: current username.
+        """
+        if platform.system().lower() == 'windows':
+            username = os.environ.get('USERNAME')
+            if not username:
+                # default user name
+                username = 'user'
+        else:
+            import pwd
+            username = pwd.getpwuid(os.getuid()).pw_name
+        return username
+
+    @staticmethod
+    def get_appdata_dir():
+        """
+        Get current user's AppData folder.
+
+        Availability: Windows.
+        @return: current user's AppData folder.
+        """
+        if platform.system().lower() == 'windows':
+            appdata_path = os.environ.get('APPDATA')
+            if not appdata_path:
+                # default user APPDATA folder
+                appdata_path = r'C:\Users\{username}\AppData\Roaming'.format(username=CommonUtil.get_username())
+        else:
+            logger.error('Doesn\'t support get APPDATA at platform {}.'.format(platform.system()))
+            appdata_path = ''
+        return appdata_path
+
+    @staticmethod
+    def get_user_dir():
+        """
+        Get current user's home folder.
+        The UNIX platform will return the value of `pwd.getpwuid(os.getuid()).pw_dir`.
+        The Windows platform will return 'USERPROFILE' of environ.
+        @return: current user's home folder.
+        """
+        if platform.system().lower() == 'windows':
+            user_dir = os.environ.get('USERPROFILE')
+            if not user_dir:
+                # default user dir
+                user_dir = r'C:\Users\{username}'.format(username=CommonUtil.get_username())
+        else:
+            import pwd
+            user_dir = pwd.getpwuid(os.getuid()).pw_dir
+        return user_dir
 
     @staticmethod
     def execute_runipy_cmd(input_template_fp, output_ipynb_fp, **kwargs):

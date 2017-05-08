@@ -19,12 +19,8 @@ chrome.clickBar()
 chrome.enterLink(sys.argv[3])
 fb.wait_for_loaded()
 
-sleep(2)
-setAutoWaitTimeout(10)
-
 sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2'))
-
-sleep(5)
+sleep(2)
 capture_width = int(sys.argv[6])
 capture_height = int(sys.argv[7])
 
@@ -35,7 +31,7 @@ mouseDown(Button.LEFT)
 capimg2 = capture(0, 0, capture_width, capture_height)
 t1 = time.time()
 
-print '[log] Mouse Click - Button Up'
+com.system_print('[log] Mouse Click - Button Up')
 mouseUp(Button.LEFT)
 mouseMove(fb.right_panel_contact.targetOffset(0, 50))
 sleep(0.1)

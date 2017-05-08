@@ -14,6 +14,37 @@ from logConfig import get_logger
 logger = get_logger(__name__)
 
 
+class CropRegion(object):
+    """
+    Here's the Crop Region Fig
+
+    |----------------------------------|  ---             ---
+    |        |                         |   ^               ^
+    | Tab  X |                         |   V <= TAB_VIEW   |
+    |----------------------------------|  ---              |
+    |                                  |   ^               |
+    |                                  |   |               |
+    |                                  |   |               |
+    |            Web Page              |   | <= VIEWPORT   | <= BROWSER
+    |                                  |   |               |
+    |                                  |   |               |
+    |                                  |   v               v
+    |----------------------------------|  ---             ---
+
+    |----------------------------------|  ---
+    | $ Terminal> _                    |   ^ <= TERMINAL
+    |                                  |   V
+    |----------------------------------|  ---
+    """
+    # Hasal do NOT crop the original
+    ORIGINAL = 'original'
+
+    VIEWPORT = 'viewport'
+    TAB_VIEW = 'tab_view'
+    BROWSER = 'browser'
+    TERMINAL = 'terminal'
+
+
 def crop_image(input_sample_fp, output_sample_fp, coord=[]):
     """
     For template region matching.

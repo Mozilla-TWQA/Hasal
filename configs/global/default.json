@@ -13,6 +13,11 @@
   "default-file-exist-validator-module-path" : "lib.validator.fileExistValidator",
   "default-user-simulation-tool-webdriver"   : "webdriver",
   "default-search-target-browser"            : "browser",
+  "gsearch": {
+    "gsearch-home-english"                   : "https://www.google.com/?hl=en",
+    "gsearch-image-english"                  : "https://www.google.com/imghp?hl=en&tbm=isch",
+    "gsearch-image-english-cats"             : "https://www.google.com/search?hl=en&tbm=isch&q=cats"
+  },
   "gsuite": {
     "default-test-target-folder-uri"                        : "0B6LePZQnd-uOTHhJNEhTN1pqYm8",
     "gsheet-test-target-folder-uri"                         : "0B6LePZQnd-uOdkNVTkItaG96WkU",

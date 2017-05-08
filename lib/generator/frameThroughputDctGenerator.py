@@ -63,8 +63,8 @@ class FrameThroughputDctGenerator(BaseGenerator):
             # based on variation to determine if frame is freeze and result in frame throughput related values
             start_target_fp = input_image_list[image_fn_list[start_event_index]][self.SEARCH_TARGET_VIEWPORT]
             start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
-            img_list_dct = [convert_to_dct(start_target_fp)]
-            weight, height = img_list_dct[-1].shape
+            current_img_dct_array = convert_to_dct(start_target_fp)
+            weight, height = current_img_dct_array.shape
 
             freeze_count = 0
             base_time_seq = start_target_time_seq
@@ -73,9 +73,11 @@ class FrameThroughputDctGenerator(BaseGenerator):
             for img_index in range(start_event_index + 1, end_event_index + 1):
                 image_fn = image_fn_list[img_index]
                 image_data = copy.deepcopy(input_image_list[image_fn])
-                img_list_dct.append(convert_to_dct(image_data[self.SEARCH_TARGET_VIEWPORT]))
-                mismatch_rate = np.sum(np.absolute(np.subtract(img_list_dct[-2], img_list_dct[-1]))) / (weight * height)
-                if not mismatch_rate:
+                previous_img_dct_array = copy.deepcopy(current_img_dct_array)
+                current_img_dct_array = convert_to_dct(image_data[self.SEARCH_TARGET_VIEWPORT])
+                mismatch_rate = np.sum(np.absolute(np.subtract(previous_img_dct_array, current_img_dct_array))) / (weight * height)
+                mismatch_rate_threshold = self.index_config.get('mismatch-rate-threshold', 0)
+                if mismatch_rate <= mismatch_rate_threshold:
                     freeze_count += 1
                     logger.debug("Image freeze from previous frame: %s", image_fn)
                 else:

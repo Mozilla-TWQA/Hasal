@@ -3,12 +3,14 @@ import json
 import time
 import copy
 from baseGenerator import BaseGenerator
+from ..helper.terminalHelper import find_terminal_view
 from ..common.commonUtil import CommonUtil
 from ..common.commonUtil import CalculationUtil
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
 from ..common.imageUtil import compare_with_sample_image_multi_process
+from ..common.imageUtil import CropRegion
 from ..common.visualmetricsWrapper import find_image_viewport
 from ..common.logConfig import get_logger
 
@@ -17,13 +19,11 @@ logger = get_logger(__name__)
 
 class InputLatencyAnimationDctGenerator(BaseGenerator):
 
-    SEARCH_TARGET_VIEWPORT = 'viewport'
-    SEARCH_TARGET_ORIGINAL = 'original'
     SKIP_STATUS_BAR_FRACTION = 1.0
 
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
-                            {'event': 'start', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]
+        'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]
     }
 
     @staticmethod
@@ -35,12 +35,26 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
 
         # crop sample data area
         # generate viewport crop area
-        if InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
-            return_result[input_generator_name]['crop_data'][InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT]
+        if CropRegion.VIEWPORT in input_sample_data:
+            # if already generated the data, reuse it.
+            return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT] = input_sample_data[CropRegion.VIEWPORT]
         else:
             viewport_value = find_image_viewport(input_sample_data['fp'])
-            return_result[input_generator_name]['crop_data'][InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
-            return_result[InputLatencyAnimationDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT] = viewport_value
+            return_result[CropRegion.VIEWPORT] = viewport_value
+
+        # generate terminal crop area
+        if CropRegion.TERMINAL in input_sample_data:
+            # if already generated the data, reuse it.
+            return_result[input_generator_name]['crop_data'][CropRegion.TERMINAL] = input_sample_data[CropRegion.TERMINAL]
+        else:
+            # TODO: we should replace the VIEWPORT location by BROWSER location in the future.
+            # (Currently Mike implement the Win and Mac, no Linux)
+            terminal_value = find_terminal_view(
+                input_sample_data['fp'],
+                return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT])
+            return_result[input_generator_name]['crop_data'][CropRegion.TERMINAL] = terminal_value
+            return_result[CropRegion.TERMINAL] = terminal_value
 
         # generate crop data
         if input_generator_name not in input_sample_dict[1]:
@@ -55,7 +69,7 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
         if input_sample_index == 2:
             # tag event to sample
             for event_obj in InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
-                if event_obj['search_target'] == InputLatencyAnimationDctGenerator.SEARCH_TARGET_ORIGINAL:
+                if event_obj['search_target'] == CropRegion.ORIGINAL:
                     return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
                 else:
                     search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']
@@ -91,7 +105,7 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
 
         # merge crop data and convert data
         for image_fn in input_image_list:
-            input_image_list[image_fn][self.SEARCH_TARGET_ORIGINAL] = input_image_list[image_fn]['fp']
+            input_image_list[image_fn][CropRegion.ORIGINAL] = input_image_list[image_fn]['fp']
 
         return input_image_list
 

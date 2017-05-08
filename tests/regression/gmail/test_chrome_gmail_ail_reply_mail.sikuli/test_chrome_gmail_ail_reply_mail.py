@@ -20,7 +20,7 @@ import time
 
 # Disable Sikuli action and info log
 com = common.General()
-com.infolog_enable(0)
+com.infolog_enable(False)
 Settings.MoveMouseDelay = 0
 
 # Prepare
@@ -39,11 +39,11 @@ my_browser.enterLink(INPUT_TEST_TARGET)
 app.wait_for_loaded()
 
 # Wait for stable
-sleep(5)
+sleep(2)
 
 # PRE ACTIONS
 app.click_first_mail()
-sleep(1)
+sleep(3)
 
 # Record T1, and capture the snapshot image
 # Input Latency Action
