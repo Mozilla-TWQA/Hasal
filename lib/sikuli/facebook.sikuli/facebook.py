@@ -1,19 +1,27 @@
 from sikuli import *  # NOQA
 import os
 import sys
-import common
+from common import WebApp
 
 
-class facebook():
+class facebook(WebApp):
+    # This is the new way of looping patterns of different operating systems.
+    FACEBOOK_MESSENGER_HEADER = [
+        [os.path.join('pics', 'facebook_messenger_header.png'), 0, 0],
+        [os.path.join('pics', 'facebook_messenger_header_win10.png'), 0, 0]
+    ]
+
     def __init__(self):
-        self.common = common.General()
+        # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
+        self.os = str(Env.getOS()).lower()
 
-        if sys.platform == 'darwin':
+        if self.os == 'mac':
             self.control = Key.CMD
         else:
             self.control = Key.CTRL
             self.alt = Key.ALT
 
+        # This is the old way for pattern matching, but pictures should work for different operating systems.
         self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.70)
         self.blue_bar = Pattern("pics/facebook_blue_bar.png").similar(0.70)
         self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.70)
@@ -43,17 +51,15 @@ class facebook():
         self.share_menu = Pattern("pics/facebook_share_menu.png").similar(0.70)
         self.save_button = Pattern("pics/facebook_save_button.png").similar(0.70)
         self.club_post_menu_delete = Pattern("pics/facebook_club_post_menu_delete.png").similar(0.70)
-        self.messenger_header = Pattern("pics/facebook_messenger_header.png").similar(0.40)
         self.right_panel_contact = Pattern("pics/facebook_contact.png").similar(0.70)
         self.chat_tab_close_button = Pattern("pics/facebook_chat_tab_close_button.png").similar(0.70)
-
         self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
 
     def wait_for_loaded(self):
         wait(self.fb_logo, 15)
 
     def wait_for_messenger_loaded(self):
-        wait(self.messenger_header, 15)
+        self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
 
     def focus_window(self):
         click(self.fb_logo.targetOffset(0, 15), 10)
