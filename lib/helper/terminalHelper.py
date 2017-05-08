@@ -25,27 +25,27 @@ def get_terminal_location(browser_x, browser_y, browser_w, browser_h):
     terminal_width = base_width
     terminal_height = 60
     if platform_name == 'linux2':
-        logger.info("Move terminal window for Linux.")
+        logger.info('Get terminal window offset for Linux.')
         height_offset = 20
         terminal_height = 60
 
     elif platform_name == 'win32':
         if platform_release == '10':
-            logger.info("Move terminal window for Windows 10.")
+            logger.info('Get terminal window offset for Windows 10.')
             height_offset = -4
             terminal_height = 100
         elif platform_release == '7':
-            logger.info("Move terminal window for Windows 7.")
+            logger.info('Get terminal window offset for Windows 7.')
             height_offset = 0
             terminal_height = 80
         else:
-            logger.info("Move terminal window for Windows.")
+            logger.info('Get terminal window offset for Windows.')
             height_offset = 0
             terminal_height = 80
 
     elif platform_name == 'darwin':
         # TODO: This offset settings only be tested on Mac Book Air
-        logger.info("Move terminal window for Mac OSX.")
+        logger.info('Get terminal window offset for Mac OSX.')
         height_offset = 25
         terminal_height = 80
 
