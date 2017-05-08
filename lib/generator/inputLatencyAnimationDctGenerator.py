@@ -2,10 +2,10 @@ import os
 import json
 import time
 import copy
+import numpy as np
 from baseGenerator import BaseGenerator
 from ..helper.terminalHelper import find_terminal_view
 from ..common.commonUtil import CommonUtil
-from ..common.commonUtil import CalculationUtil
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
@@ -134,7 +134,11 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             compare_setting)
 
         if self.compare_result.get('running_time_result', None):
-            run_time, event_time_dict = CalculationUtil.runtime_calculation_event_point_base(self.compare_result['running_time_result'])
+            # Calculate the Input Latency running time by InputLatencyCalcutionUtil class
+            run_time, event_time_dict = InputLatencyCalcutionUtil.calculate_runtime_base_on_event(
+                self.compare_result['running_time_result'],
+                self.index_config['video-recording-fps'])
+
             self.compare_result.update({'run_time': run_time, 'event_time_dict': event_time_dict})
         return self.compare_result
 
@@ -144,9 +148,9 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             self.record_runtime_current_status(self.compare_result['run_time'])
 
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
-            time_sequence = self.compare_result.get('time_sequence', [])
+            time_sequence = self.compare_result.get('time_seq', [])
             run_time_dict = {'run_time': self.compare_result['run_time'], 'folder': self.env.output_name,
-                             'time_sequence': time_sequence}
+                             'time_seq': time_sequence}
             run_time_dict.update(self.compare_result['event_time_dict'])
 
             # init result dict if not exist
@@ -172,3 +176,38 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             current_time = time.time()
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+
+
+class InputLatencyCalcutionUtil(object):
+    @staticmethod
+    def calculate_runtime_base_on_event(input_running_time_result, fps):
+        """
+        This method base on `commonUtil.CalculationUtil.runtime_calculation_event_point_base`.
+        However, when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
+
+        For example, if FPS is 90, the running time of 1 frame is 11.11111 ms.
+        When start and end at the same time, it will return 5.55555 ms ((1000 ms / 90 FPS) / 2).
+        @param input_running_time_result: the running_time_result after do comparison
+        @param fps: the current FPS
+        @return: (running time, the dict of all events' time sequence)
+        """
+        run_time = -1
+        comparing_time_data = {}
+        for event_data in input_running_time_result:
+            for time_point in ['start', 'end']:
+                if time_point in event_data:
+                    comparing_time_data[time_point] = event_data['time_seq']
+                    break
+        event_time_dict = dict()
+        if len(comparing_time_data.keys()) == 2:
+            run_time = comparing_time_data['end'] - comparing_time_data['start']
+            if run_time == 0:
+                # start and end at the same time, return the mid time between 0~1 frame
+                run_time = 1000.0 / fps / 2
+            if run_time > 0:
+                for event_data in input_running_time_result:
+                    for event_name in event_data:
+                        if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
+                            event_time_dict[event_name] = np.absolute(
+                                event_data['time_seq'] - comparing_time_data['start'])
+        return run_time, event_time_dict
