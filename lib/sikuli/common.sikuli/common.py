@@ -93,6 +93,9 @@ class General():
     def set_mouse_delay(self, sec=0.5):
         Settings.MoveMouseDelay = sec
 
+    def set_type_delay(self, sec=0):
+        Settings.TypeDelay = sec
+
     def system_print(self, content):
         sys.stdout.write(content + '\n')
         sys.stdout.flush()
