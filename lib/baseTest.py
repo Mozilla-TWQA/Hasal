@@ -7,6 +7,7 @@ import json
 import platform
 import unittest
 import helper.desktopHelper as desktopHelper
+import helper.terminalHelper as terminalHelper
 import lib.helper.videoHelper as videoHelper
 import lib.helper.targetHelper as targetHelper
 import helper.generatorHelper as generatorHelper
@@ -95,31 +96,13 @@ class BaseTest(unittest.TestCase):
                     height_browser, width_browser = desktopHelper.adjust_viewport(self.browser_type,
                                                                                   self.env.img_sample_dp,
                                                                                   self.env.img_output_sample_1_fn)
-                    height_offset = 0
-                    terminal_width = width_browser
-                    terminal_height = 60
-                    if self.current_platform_name == 'linux2':
-                        height_offset = 20
-                        terminal_height = 60
-                    elif self.current_platform_name == 'win32':
-                        if self.current_platform_ver == '10':
-                            logger.info("Move terminal window for Windows 10.")
-                            height_offset = -4
-                            terminal_height = 100
-                        elif self.current_platform_ver == '7':
-                            logger.info("Move terminal window for Windows 7.")
-                            height_offset = 0
-                            terminal_height = 80
-                        else:
-                            logger.info("Move terminal window for Windows.")
-                            height_offset = 0
-                            terminal_height = 80
-                    elif self.current_platform_name == 'darwin':
-                        # TODO: This offset settings only be tested on Mac Book Air
-                        height_offset = 25
-                        terminal_height = 80
-                    terminal_x = 0
-                    terminal_y = height_browser + height_offset
+                    # get the terminal location
+                    terminal_location = terminalHelper.get_terminal_location(0, 0, width_browser, height_browser)
+                    terminal_x = terminal_location.get('x', 0)
+                    terminal_y = terminal_location.get('y', 0)
+                    terminal_width = terminal_location.get('width', 0)
+                    terminal_height = terminal_location.get('height', 0)
+
                     logger.info('Move Terminal to (X,Y,W,H): ({}, {}, {}, {})'.format(terminal_x,
                                                                                       terminal_y,
                                                                                       terminal_width,

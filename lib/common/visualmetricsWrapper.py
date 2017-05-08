@@ -51,10 +51,10 @@ def colors_are_similar(a, b, threshold=30):
 
 def find_tab_view(input_file, viewport):
     """
-
-    @param file:
-    @param viewport:
-    @return:
+    Find the Region of imageUtil.CropRegion.TAB_VIEW.
+    @param file: image file.
+    @param viewport: {x, y', width, height} of VIEWPORT.
+    @return: {x, y', width, height}
     """
     try:
         im = Image.open(input_file)
@@ -164,6 +164,11 @@ def calculate_perceptual_speed_index(progress):
 
 
 def find_image_viewport(file):
+    """
+    Find the Region of imageUtil.CropRegion.VIEWPORT.
+    @param file: image file.
+    @return: {x, y', width, height}
+    """
     try:
         im = Image.open(file)
         width, height = im.size
