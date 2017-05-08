@@ -120,7 +120,7 @@ class BaseTest(unittest.TestCase):
                         if is_expected_viewport:
                             break
                     # TODO: Doesn't support runtime viewport adjustment now thus won't verify expected viewport size
-                    if is_expected_viewport or sys.platform == 'linux2':
+                    if is_expected_viewport or self.current_platform_name == 'linux2':
                         break
                     else:
                         viewport = find_image_viewport(viewport_ref_fp)
@@ -214,7 +214,7 @@ class BaseTest(unittest.TestCase):
 
     def get_new_recording_size(self):
         recording_width = min(self.exec_config['browser-width'] + 100, 1920)
-        if platform.system().lower() == "darwin":
+        if self.current_platform_name.lower() == "darwin":
             recording_height = min(self.exec_config['browser-height'] + 120, 900)
         else:
             recording_height = min(self.exec_config['browser-height'] + 180, 1080)

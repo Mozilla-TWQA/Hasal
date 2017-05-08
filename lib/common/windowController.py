@@ -21,6 +21,7 @@ class WindowObject(object):
         self.window_identity = None
         self.window_identity_name = None
         self.callback_ret = None
+        self.rect = None
 
         # default settings
         self.pos_x = pos_x
