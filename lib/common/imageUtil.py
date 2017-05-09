@@ -232,6 +232,11 @@ def crop_multiple_images(input_image_list, input_crop_area):
 def compare_with_sample_image_multi_process(input_sample_data, input_image_data, input_settings):
     """
     Compare sample images, return matching list.
+    return example:
+        [
+            {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+            {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+        ]
     @param input_sample_dp: input sample folder path
     @return: the matching result list
     """
@@ -407,7 +412,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                             if shift_result_flag:
                                 img_fn_key = image_fn_list[start_index]
                             search_count = 0
-                            result_list.append({event_name: input_image_data[img_fn_key]['fp'], 'time_seq': input_image_data[img_fn_key]['time_seq']})
+                            result_list.append({'event': event_name, 'file': input_image_data[img_fn_key]['fp'], 'time_seq': input_image_data[img_fn_key]['time_seq']})
                             logger.debug("Comparing %s point end %s" % (event_name, time.strftime("%c")))
                             break
                     else:
