@@ -8,5 +8,6 @@
   "webdriver-run-browser" : ["firefox"],
   "exec-suite-fp": "./suite.txt",
   "output-result-ipynb-file": false,
-  "output-result-video-file": true
+  "output-result-video-file": true,
+  "clean-unnecessary-images": true
 }

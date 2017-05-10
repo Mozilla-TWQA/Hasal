@@ -153,6 +153,43 @@ class BaseGenerator(object):
             filename = os.path.basename(self.env.converted_video_output_fp)
             return os.path.join(upload_case_dp, filename)
 
+    def clean_output_images(self, running_time_result, img_dp):
+        # get start point and end point from input data
+        start_event = self.get_event_data_in_result_list(running_time_result,
+                                                         self.EVENT_START)
+        end_event = self.get_event_data_in_result_list(running_time_result,
+                                                       self.EVENT_END)
+        start_fp = start_event.get('file', None)
+        end_fp = end_event.get('file', None)
+        if not start_fp or not end_fp:
+            return None
+        else:
+            try:
+                tempdir = tempfile.mkdtemp()
+                logger.debug('Create temp folder {}'.format(tempdir))
+                for root, dirs, files in os.walk(img_dp):
+                    start_fn = os.path.basename(start_fp)
+                    end_fn = os.path.basename(end_fp)
+                    start_index = max(0, files.index(start_fn) - 1)
+                    end_index = min(len(files) - 1, files.index(end_fn) + 1)
+                    if root == img_dp:
+                        cur_tempdir = tempdir
+                    else:
+                        cur_tempdir = os.path.join(tempdir, os.path.basename(root))
+                        os.mkdir(cur_tempdir)
+                    logger.debug('Copy necessary files from {} to {}'.format(root, cur_tempdir))
+                    for img_index in range(start_index, end_index + 1):
+                        img_fn = files[img_index]
+                        imf_fp = os.path.join(root, img_fn)
+                        new_img_fp = os.path.join(cur_tempdir, img_fn)
+                        shutil.copyfile(imf_fp, new_img_fp)
+                logger.debug('Remove original output image folder {}'.format(img_dp))
+                shutil.rmtree(img_dp)
+                logger.debug('Move temp folder {} to original output image folder {}'.format(tempdir, img_dp))
+                shutil.move(tempdir, img_dp)
+            except Exception as e:
+                logger.warn(e)
+
     @staticmethod
     def output_ipynb_file(global_config, index_config, output_result_dir):
 
