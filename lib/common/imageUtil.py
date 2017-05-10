@@ -232,6 +232,11 @@ def crop_multiple_images(input_image_list, input_crop_area):
 def compare_with_sample_image_multi_process(input_sample_data, input_image_data, input_settings):
     """
     Compare sample images, return matching list.
+    return example:
+        [
+            {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+            {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+        ]
     @param input_sample_dp: input sample folder path
     @return: the matching result list
     """
@@ -302,18 +307,30 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
 
     # generate search range
     search_margin = input_settings.get('search_margin', 10)
-    search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
-                                    len(input_image_data), search_margin)
+    search_range = get_search_range(input_settings['exec_timestamp_list'],
+                                    input_settings['default_fps'],
+                                    len(input_image_data),
+                                    search_margin)
     total_search_range = input_settings['default_fps'] * search_margin * 2
-    if input_settings['search_direction'] == 'backward_search':
+    search_direction = input_settings.get('search_direction', None)
+    if search_direction == 'backward_search':
         start_index = search_range[1] - 1
         end_index = max(search_range[0], start_index - total_search_range)
-    elif input_settings['search_direction'] == 'forward_search':
+    elif search_direction == 'forward_search':
         start_index = search_range[2] - 1
         end_index = min(search_range[3] - 1, start_index + total_search_range)
     else:
         start_index = 0
         end_index = 0
+
+    # raise exception when no search direction, or image data length is less then range
+    if not search_direction or (start_index == 0 and end_index == 0):
+        raise Exception('There is no search_direction. settings: {}'.format(input_settings))
+    if search_range[0] > len(input_image_data) or search_range[2] > len(input_image_data):
+        raise Exception('The image length is less then start of search range. '
+                        'Image Length: {img_len}, search range: {range}'
+                        .format(img_len=len(input_image_data), range=search_range))
+
     search_count = 0
     img_index = start_index
     if end_index > start_index:
@@ -325,11 +342,11 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         start=start_index,
                         end=end_index))
 
-    for event_point in input_settings['event_points'][input_settings['search_direction']]:
+    for event_point in input_settings['event_points'][search_direction]:
         event_name = event_point['event']
         search_target = event_point['search_target']
 
-        logger.info('Comapre event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
+        logger.info('Compare event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
                     .format(event_name=event_name,
                             search_target=search_target,
                             forward_backward='Forward' if forward_search else 'Backward',
@@ -389,6 +406,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                                     break
                                 start_index = min(img_index + total_search_range / 2, search_range[3] - 1)
                                 logger.debug('Change start: {start}'.format(start=start_index))
+                            # compare the same image, reset current image index from new start
                             img_index = start_index
                         else:
                             # shift one index to avoid boundary matching two events at the same time
@@ -407,8 +425,10 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                             if shift_result_flag:
                                 img_fn_key = image_fn_list[start_index]
                             search_count = 0
-                            result_list.append({event_name: input_image_data[img_fn_key]['fp'], 'time_seq': input_image_data[img_fn_key]['time_seq']})
+                            result_list.append({'event': event_name, 'file': input_image_data[img_fn_key]['fp'], 'time_seq': input_image_data[img_fn_key]['time_seq']})
                             logger.debug("Comparing %s point end %s" % (event_name, time.strftime("%c")))
+                            # compare next image, reset current image index from start
+                            img_index = start_index
                             break
                     else:
                         if forward_search:
@@ -424,6 +444,8 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
 
 def compare_two_images(dct_obj_1, dct_obj_2, threshold):
     match = False
+    # setup default diff rate
+    diff_rate = 2
     try:
         row1, cols1 = dct_obj_1.shape
         row2, cols2 = dct_obj_2.shape

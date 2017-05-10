@@ -159,12 +159,14 @@ class RunTimeDctGenerator(BaseGenerator):
             self.record_runtime_current_status(self.compare_result['run_time'])
 
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
-            time_sequence = self.compare_result.get('time_sequence', [])
+            event_time_dict = self.compare_result.get('event_time_dict', {})
             si_value = self.compare_result.get('speed_index', 0)
             psi_value = self.compare_result.get('perceptual_speed_index', 0)
-            run_time_dict = {'run_time': self.compare_result['run_time'], 'folder': self.env.output_name,
-                             'time_sequence': time_sequence, 'si': si_value, 'psi': psi_value}
-            run_time_dict.update(self.compare_result['event_time_dict'])
+            run_time_dict = {'run_time': self.compare_result['run_time'],
+                             'folder': self.env.output_name,
+                             'event_time': event_time_dict,
+                             'si': si_value,
+                             'psi': psi_value}
 
             # init result dict if not exist
             init_result_dict = self.init_result_dict_variable(

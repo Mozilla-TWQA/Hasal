@@ -65,24 +65,48 @@ class StatusRecorder(object):
 
 class CalculationUtil(object):
 
+    EVENT_START = 'start'
+    EVENT_END = 'end'
+
+    @staticmethod
+    def get_event_data_in_result_list(event_result_list, event_name):
+        """
+        Return the event object which
+        @param event_result_list: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
+        @param event_name: the event name
+        @return: return the object of event, ex: {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487}
+        """
+        ret_list = filter(lambda x: x.get('event') == event_name, event_result_list)
+        if len(ret_list) > 0:
+            return ret_list[0]
+        return None
+
     @staticmethod
     def runtime_calculation_event_point_base(input_running_time_result):
         run_time = -1
-        comparing_time_data = {}
-        for event_data in input_running_time_result:
-            for time_point in ['start', 'end']:
-                if time_point in event_data:
-                    comparing_time_data[time_point] = event_data['time_seq']
-                    break
         event_time_dict = dict()
-        if len(comparing_time_data.keys()) == 2:
-            run_time = comparing_time_data['end'] - comparing_time_data['start']
+
+        start_event = CalculationUtil.get_event_data_in_result_list(input_running_time_result,
+                                                                    CalculationUtil.EVENT_START)
+        end_event = CalculationUtil.get_event_data_in_result_list(input_running_time_result,
+                                                                  CalculationUtil.EVENT_END)
+        if start_event and end_event:
+            run_time = end_event.get('time_seq') - start_event.get('time_seq')
+            event_time_dict[CalculationUtil.EVENT_START] = 0
+            event_time_dict[CalculationUtil.EVENT_END] = run_time
+
             if run_time > 0:
-                for event_data in input_running_time_result:
-                    for event_name in event_data:
-                        if event_name != 'time_seq' and event_name != 'start' and event_name != 'end':
-                            event_time_dict[event_name] = np.absolute(
-                                event_data['time_seq'] - comparing_time_data['start'])
+                for custom_event in input_running_time_result:
+                    custom_event_name = custom_event.get('event')
+                    if custom_event_name != CalculationUtil.EVENT_START \
+                            and custom_event_name != CalculationUtil.EVENT_END:
+                        event_time_dict[custom_event_name] = custom_event.get('time_seq') - start_event.get('time_seq')
+
         return run_time, event_time_dict
 
     @staticmethod
