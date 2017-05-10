@@ -33,7 +33,12 @@ class FrameThroughputDctGenerator(BaseGenerator):
     def get_frame_throughput(self, result_list, input_image_list):
         """
 
-        @param result_list:
+        @param result_list: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
         @param input_image_list:
         @return:
         """
@@ -44,13 +49,12 @@ class FrameThroughputDctGenerator(BaseGenerator):
             image_fn_list.sort(key=CommonUtil.natural_keys)
 
             # get start point and end point from input data
-            start_event_fp = None
-            end_event_fp = None
-            for result in result_list:
-                if 'start' in result:
-                    start_event_fp = result['start']
-                if 'end' in result:
-                    end_event_fp = result['end']
+            start_event = CalculationUtil.get_event_data_in_result_list(result_list,
+                                                                        CalculationUtil.EVENT_START)
+            end_event = CalculationUtil.get_event_data_in_result_list(result_list,
+                                                                      CalculationUtil.EVENT_END)
+            start_event_fp = start_event.get('file', None)
+            end_event_fp = end_event.get('file', None)
             if not start_event_fp or not end_event_fp:
                 raise Exception('[ERROR] Cannot find either start point or end point!')
             else:
