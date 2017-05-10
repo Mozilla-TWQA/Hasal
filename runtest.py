@@ -245,7 +245,7 @@ class RunTest(object):
             except Exception as e:
                 self.logger.warn('Exception happend during running test!')
                 objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
-                objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION, e)
+                objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION, e.message)
                 current_retry += 1
 
             if current_retry >= self.exec_config['max-retry']:
