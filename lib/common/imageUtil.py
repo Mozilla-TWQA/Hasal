@@ -346,7 +346,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
         event_name = event_point['event']
         search_target = event_point['search_target']
 
-        logger.info('Comapre event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
+        logger.info('Compare event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
                     .format(event_name=event_name,
                             search_target=search_target,
                             forward_backward='Forward' if forward_search else 'Backward',
@@ -406,6 +406,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                                     break
                                 start_index = min(img_index + total_search_range / 2, search_range[3] - 1)
                                 logger.debug('Change start: {start}'.format(start=start_index))
+                            # compare the same image, reset current image index from new start
                             img_index = start_index
                         else:
                             # shift one index to avoid boundary matching two events at the same time
@@ -426,6 +427,8 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                             search_count = 0
                             result_list.append({'event': event_name, 'file': input_image_data[img_fn_key]['fp'], 'time_seq': input_image_data[img_fn_key]['time_seq']})
                             logger.debug("Comparing %s point end %s" % (event_name, time.strftime("%c")))
+                            # compare next image, reset current image index from start
+                            img_index = start_index
                             break
                     else:
                         if forward_search:
