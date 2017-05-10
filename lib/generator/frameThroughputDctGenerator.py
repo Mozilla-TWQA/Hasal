@@ -233,18 +233,21 @@ class FrameThroughputDctGenerator(BaseGenerator):
             self.record_runtime_current_status(self.compare_result['run_time'])
 
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
-            time_sequence = self.compare_result.get('time_sequence', [])
+            event_time_dict = self.compare_result.get('event_time_dict', {})
             long_frame = self.compare_result.get('long_frame', 0)
             frame_throughput = self.compare_result.get('frame_throughput', 0)
             freeze_frames = self.compare_result.get('freeze_frames', 0)
             expected_frames = self.compare_result.get('expected_frames', 0)
             actual_paint_frames = self.compare_result.get('actual_paint_frames', 0)
 
-            run_time_dict = {'run_time': self.compare_result['run_time'], 'folder': self.env.output_name,
-                             'freeze_frames': freeze_frames, 'long_frame': long_frame, 'frame_throughput': frame_throughput,
-                             'expected_frames': expected_frames, 'actual_paint_frames': actual_paint_frames,
-                             'time_sequence': time_sequence}
-            run_time_dict.update(self.compare_result['event_time_dict'])
+            run_time_dict = {'run_time': self.compare_result['run_time'],
+                             'folder': self.env.output_name,
+                             'freeze_frames': freeze_frames,
+                             'long_frame': long_frame,
+                             'frame_throughput': frame_throughput,
+                             'expected_frames': expected_frames,
+                             'actual_paint_frames': actual_paint_frames,
+                             'event_time': event_time_dict}
 
             # init result dict if not exist
             init_result_dict = self.init_result_dict_variable(

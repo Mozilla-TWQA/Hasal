@@ -307,18 +307,30 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
 
     # generate search range
     search_margin = input_settings.get('search_margin', 10)
-    search_range = get_search_range(input_settings['exec_timestamp_list'], input_settings['default_fps'],
-                                    len(input_image_data), search_margin)
+    search_range = get_search_range(input_settings['exec_timestamp_list'],
+                                    input_settings['default_fps'],
+                                    len(input_image_data),
+                                    search_margin)
     total_search_range = input_settings['default_fps'] * search_margin * 2
-    if input_settings['search_direction'] == 'backward_search':
+    search_direction = input_settings.get('search_direction', None)
+    if search_direction == 'backward_search':
         start_index = search_range[1] - 1
         end_index = max(search_range[0], start_index - total_search_range)
-    elif input_settings['search_direction'] == 'forward_search':
+    elif search_direction == 'forward_search':
         start_index = search_range[2] - 1
         end_index = min(search_range[3] - 1, start_index + total_search_range)
     else:
         start_index = 0
         end_index = 0
+
+    # raise exception when no search direction, or image data length is less then range
+    if not search_direction or (start_index == 0 and end_index == 0):
+        raise Exception('There is no search_direction. settings: {}'.format(input_settings))
+    if search_range[0] > len(input_image_data) or search_range[2] > len(input_image_data):
+        raise Exception('The image length is less then start of search range. '
+                        'Image Length: {img_len}, search range: {range}'
+                        .format(img_len=len(input_image_data), range=search_range))
+
     search_count = 0
     img_index = start_index
     if end_index > start_index:
@@ -330,7 +342,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                         start=start_index,
                         end=end_index))
 
-    for event_point in input_settings['event_points'][input_settings['search_direction']]:
+    for event_point in input_settings['event_points'][search_direction]:
         event_name = event_point['event']
         search_target = event_point['search_target']
 
@@ -429,6 +441,8 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
 
 def compare_two_images(dct_obj_1, dct_obj_2, threshold):
     match = False
+    # setup default diff rate
+    diff_rate = 2
     try:
         row1, cols1 = dct_obj_1.shape
         row2, cols2 = dct_obj_2.shape
