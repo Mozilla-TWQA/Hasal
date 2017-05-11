@@ -6,7 +6,6 @@ import numpy as np
 from baseGenerator import BaseGenerator
 from ..helper.terminalHelper import find_terminal_view
 from ..common.commonUtil import CommonUtil
-from ..common.commonUtil import CalculationUtil
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
@@ -135,8 +134,8 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             compare_setting)
 
         if self.compare_result.get('running_time_result', None):
-            # Calculate the Input Latency running time by InputLatencyCalcutionUtil class
-            run_time, event_time_dict = InputLatencyCalcutionUtil.calculate_runtime_base_on_event(
+            # Calculate the Input Latency running time by customized method
+            run_time, event_time_dict = self.calculate_runtime_base_on_event(
                 self.compare_result['running_time_result'],
                 self.index_config['video-recording-fps'])
 
@@ -178,13 +177,10 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
-
-class InputLatencyCalcutionUtil(CalculationUtil):
-
-    @staticmethod
-    def calculate_runtime_base_on_event(input_running_time_result, fps):
+    @classmethod
+    def calculate_runtime_base_on_event(cls, input_running_time_result, fps=90):
         """
-        This method base on `commonUtil.CalculationUtil.runtime_calculation_event_point_base`.
+        This customized method base on `baseGenerator.runtime_calculation_event_point_base`.
         However, when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
 
         For example, if FPS is 90, the running time of 1 frame is 11.11111 ms.
@@ -195,20 +191,20 @@ class InputLatencyCalcutionUtil(CalculationUtil):
                 {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
                 {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
             ]
-        @param fps: the current FPS.
+        @param fps: the current FPS. Default=90.
         @return: (running time, the dict of all events' time sequence).
         """
         run_time = -1
         event_time_dict = dict()
 
-        start_event = CalculationUtil.get_event_data_in_result_list(input_running_time_result,
-                                                                    CalculationUtil.EVENT_START)
-        end_event = CalculationUtil.get_event_data_in_result_list(input_running_time_result,
-                                                                  CalculationUtil.EVENT_END)
+        start_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                        cls.EVENT_START)
+        end_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                      cls.EVENT_END)
         if start_event and end_event:
             run_time = end_event.get('time_seq') - start_event.get('time_seq')
-            event_time_dict[CalculationUtil.EVENT_START] = 0
-            event_time_dict[CalculationUtil.EVENT_END] = run_time
+            event_time_dict[cls.EVENT_START] = 0
+            event_time_dict[cls.EVENT_END] = run_time
 
             # when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
             if run_time == 0:
@@ -217,8 +213,8 @@ class InputLatencyCalcutionUtil(CalculationUtil):
             if run_time > 0:
                 for custom_event in input_running_time_result:
                     custom_event_name = custom_event.get('event')
-                    if custom_event_name != CalculationUtil.EVENT_START \
-                            and custom_event_name != CalculationUtil.EVENT_END:
+                    if custom_event_name != cls.EVENT_START \
+                            and custom_event_name != cls.EVENT_END:
                         event_time_dict[custom_event_name] = np.absolute(
                             custom_event.get('time_seq') - start_event.get('time_seq'))
 
