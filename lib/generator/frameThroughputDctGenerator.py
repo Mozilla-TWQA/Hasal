@@ -23,8 +23,6 @@ class FrameThroughputDctGenerator(BaseGenerator):
 
     # This is for normal situation
     FULL_FRACTION = 1
-    # It is used only when you want to get rid of status bar or panel on bottom left
-    SKIP_STATUS_BAR_FRACTION = 0.95
 
     BROWSER_VISUAL_EVENT_POINTS = {
         'backward_search': [{'event': 'start', 'search_target': CropRegion.VIEWPORT, 'fraction': FULL_FRACTION}],
