@@ -3,7 +3,6 @@ import json
 import time
 import copy
 from baseGenerator import BaseGenerator
-from ..common.commonUtil import CalculationUtil
 from ..common.commonUtil import CommonUtil
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
@@ -143,7 +142,7 @@ class RunTimeDctGenerator(BaseGenerator):
             input_image_list,
             compare_setting)
         if self.compare_result.get('running_time_result', None):
-            run_time, event_time_dict = CalculationUtil.runtime_calculation_event_point_base(self.compare_result['running_time_result'])
+            run_time, event_time_dict = self.calculate_runtime_base_on_event(self.compare_result['running_time_result'])
             self.compare_result.update({'run_time': run_time, 'event_time_dict': event_time_dict})
 
             if self.index_config['calculate-speed-index']:

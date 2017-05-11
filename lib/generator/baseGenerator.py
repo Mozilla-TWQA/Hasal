@@ -13,6 +13,9 @@ logger = get_logger(__name__)
 
 class BaseGenerator(object):
 
+    EVENT_START = 'start'
+    EVENT_END = 'end'
+
     def __init__(self, index_config, exec_config, online_config, global_config, input_env):
         self.index_config = index_config
         self.exec_config = exec_config
@@ -179,3 +182,56 @@ class BaseGenerator(object):
         result_fp = os.path.join(os.getcwd(), global_config['default-result-fn'])
         if os.path.exists(result_fp):
             shutil.copy(result_fp, output_result_dir)
+
+    @staticmethod
+    def get_event_data_in_result_list(event_result_list, event_name):
+        """
+        Return the event object which
+        @param event_result_list: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
+        @param event_name: the event name
+        @return: return the object of event, ex: {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487}
+        """
+        ret_list = filter(lambda x: x.get('event') == event_name, event_result_list)
+        if len(ret_list) > 0:
+            return ret_list[0]
+        return None
+
+    @staticmethod
+    def calculate_runtime_base_on_event(input_running_time_result, **kwargs):
+        """
+        Calculate the running time base on input event result list.
+        The value comes from the "time_seq" of "start" and "end" event.
+        If the running time large than zero, it will also get all other event's running time base on "start" event, and store in event_time_dict.
+        @param input_running_time_result: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
+        @return: (running time, dictionary which store all events time base on start event)
+        """
+        run_time = -1
+        event_time_dict = dict()
+
+        start_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
+                                                                  BaseGenerator.EVENT_START)
+        end_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
+                                                                BaseGenerator.EVENT_END)
+        if start_event and end_event:
+            run_time = end_event.get('time_seq') - start_event.get('time_seq')
+            event_time_dict[BaseGenerator.EVENT_START] = 0
+            event_time_dict[BaseGenerator.EVENT_END] = run_time
+
+            if run_time > 0:
+                for custom_event in input_running_time_result:
+                    custom_event_name = custom_event.get('event')
+                    if custom_event_name != BaseGenerator.EVENT_START \
+                            and custom_event_name != BaseGenerator.EVENT_END:
+                        event_time_dict[custom_event_name] = custom_event.get('time_seq') - start_event.get('time_seq')
+
+        return run_time, event_time_dict

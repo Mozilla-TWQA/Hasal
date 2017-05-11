@@ -4,7 +4,6 @@ import time
 import copy
 import numpy as np
 from baseGenerator import BaseGenerator
-from ..common.commonUtil import CalculationUtil
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
@@ -49,10 +48,10 @@ class FrameThroughputDctGenerator(BaseGenerator):
             image_fn_list.sort(key=CommonUtil.natural_keys)
 
             # get start point and end point from input data
-            start_event = CalculationUtil.get_event_data_in_result_list(result_list,
-                                                                        CalculationUtil.EVENT_START)
-            end_event = CalculationUtil.get_event_data_in_result_list(result_list,
-                                                                      CalculationUtil.EVENT_END)
+            start_event = BaseGenerator.get_event_data_in_result_list(result_list,
+                                                                      BaseGenerator.EVENT_START)
+            end_event = BaseGenerator.get_event_data_in_result_list(result_list,
+                                                                    BaseGenerator.EVENT_END)
             start_event_fp = start_event.get('file', None)
             end_event_fp = end_event.get('file', None)
             if not start_event_fp or not end_event_fp:
@@ -225,7 +224,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
             compare_setting)
         # get frame throughput values
         if self.compare_result.get('running_time_result', None):
-            run_time, event_time_dict = CalculationUtil.runtime_calculation_event_point_base(self.compare_result['running_time_result'])
+            run_time, event_time_dict = self.calculate_runtime_base_on_event(self.compare_result['running_time_result'])
             self.compare_result.update({'run_time': run_time, 'event_time_dict': event_time_dict})
             self.compare_result.update(self.get_frame_throughput(self.compare_result['running_time_result'], self.compare_result['merged_crop_image_list']))
 
