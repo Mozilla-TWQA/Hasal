@@ -237,7 +237,19 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
             {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
             {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
         ]
-    @param input_sample_dp: input sample folder path
+    @param input_sample_data:
+    @param input_image_data:
+    @param input_settings: the comparing settings.
+            ex:
+            {
+                'default_fps',
+                'event_points',
+                'generator_name',
+                'skip_status_bar_fraction',
+                'exec_timestamp_list',
+                'threshold',
+                'search_margin'
+            }
     @return: the matching result list
     """
     manager = Manager()
@@ -253,6 +265,8 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
     for p in p_list:
         p.join()
     map_result_list = sorted(map(dict, result_list), key=lambda k: k['time_seq'])
+
+    logger.info('The threshold in comparing settings: {}'.format(input_settings.get('threshold', None)))
     logger.info(map_result_list)
     if len(map_result_list) == 0:
         logger.info('Images miss with sample.')
