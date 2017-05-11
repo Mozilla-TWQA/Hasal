@@ -21,7 +21,7 @@ class Iskakalunan(object):
         self.mail_handler = mailTask.MailTask()
         logging.info("Check github hooker credential")
         self.github_handler = githubHook.githubHook()
-        if github_handler is None:
+        if self.github_handler is None:
             logging.warning("Github authorization failed")
 
     def run(self):
