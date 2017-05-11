@@ -100,6 +100,14 @@ class General():
         sys.stdout.write(content + '\n')
         sys.stdout.flush()
 
+    def loop_type_key(self, key, loop_times, interval):
+        """
+        Loop to type specific key
+        """
+        for _ in range(loop_times):
+            type(key)
+            sleep(interval)
+
 
 class WebApp(object):
     """
@@ -157,6 +165,25 @@ class WebApp(object):
         wait(p, wait_sec)
         return p
 
+    def _wait_component_for_vanished(self, component, timeout=10):
+        """
+        Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
+        @param component: Specify the wait vanished component, which is an sikuli object pattern.
+        @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        """
+        is_exists = True
+        # get the loop time base on the pattern amount of component, min loop time is 10 times
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=1, total_second=timeout, each_check_second=wait_sec)
+        for counter in range(loop_time):
+            sleep(wait_sec)
+            if not exists(component, wait_sec):
+                is_exists = False
+                break
+        if is_exists:
+            raise Exception("Component {} doesn't vanish.".format(component))
+
     def il_type(self, message, width, height, similarity=0.70, timeout=10, wait_component=None):
         # wait component exists
         if wait_component:
@@ -166,6 +193,16 @@ class WebApp(object):
         action_name = '[log]  TYPE "{}"'.format(message)
         screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
         type(message)
+        return screenshot, current_time
+
+    def il_key_type(self, key, action_name, width, height, similarity=0.70, timeout=10, wait_component=None):
+        # wait component exists
+        if wait_component:
+            self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
+
+        # Screenshot and get time for Input Latency
+        screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
+        type(key)
         return screenshot, current_time
 
     def _click(self, action_name, component, similarity=0.70, timeout=10, wait_component=None):
@@ -271,3 +308,27 @@ class WebApp(object):
         self.common.system_print(action_name)
 
         return screenshot, current_time
+
+    def il_hover(self, action_name, component, width, height, similarity=0.70, timeout=10, wait_component=None):
+        # wait component exists
+        if wait_component:
+            self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
+
+        # get the loop time base on the pattern amount of component, min loop time is 10 times
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
+        for counter in range(loop_time):
+            for pic, offset_x, offset_y in component:
+                p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
+                if exists(p, 0.1):
+                    # Get location
+                    loc = find(p).getTarget()
+
+                    # Screenshot and get time for Input Latency
+                    screenshot, current_time = self._screenshot_and_time(width=width, height=height,
+                                                                         action_name=action_name)
+                    mouseMove(loc)
+
+                    # Return location, screenshot, and time
+                    return screenshot, current_time
+        raise Exception('Cannot {action}'.format(action=action_name))
