@@ -106,8 +106,8 @@ class MainRunner(object):
 
         else:  # Create new
             logger.info("Create new runner [%s]" % fp)
-            module_path = "hasalTask"
-            object_name = "hasalTask"
+            module_path = "iskakalunan"
+            object_name = "Iskakalunan"
             try:
                 runner_module = getattr(importlib.import_module(
                                         module_path), object_name)

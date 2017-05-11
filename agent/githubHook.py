@@ -40,8 +40,6 @@ class githubHook(object):
                     local_queue.append(pr)
                 elif state == STATE_PENDING:
                     local_queue.append(pr)
-            else:
-                self.hasal.create_status(pr.head.sha, STATE_SUCCESS, context='iskakalunan')
         return local_queue
 
     def checkout_pr(pr):
