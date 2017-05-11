@@ -201,8 +201,8 @@ class BaseGenerator(object):
             return ret_list[0]
         return None
 
-    @staticmethod
-    def calculate_runtime_base_on_event(input_running_time_result, **kwargs):
+    @classmethod
+    def calculate_runtime_base_on_event(cls, input_running_time_result):
         """
         Calculate the running time base on input event result list.
         The value comes from the "time_seq" of "start" and "end" event.
@@ -218,20 +218,20 @@ class BaseGenerator(object):
         run_time = -1
         event_time_dict = dict()
 
-        start_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
-                                                                  BaseGenerator.EVENT_START)
-        end_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
-                                                                BaseGenerator.EVENT_END)
+        start_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                        cls.EVENT_START)
+        end_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                      cls.EVENT_END)
         if start_event and end_event:
             run_time = end_event.get('time_seq') - start_event.get('time_seq')
-            event_time_dict[BaseGenerator.EVENT_START] = 0
-            event_time_dict[BaseGenerator.EVENT_END] = run_time
+            event_time_dict[cls.EVENT_START] = 0
+            event_time_dict[cls.EVENT_END] = run_time
 
             if run_time > 0:
                 for custom_event in input_running_time_result:
                     custom_event_name = custom_event.get('event')
-                    if custom_event_name != BaseGenerator.EVENT_START \
-                            and custom_event_name != BaseGenerator.EVENT_END:
+                    if custom_event_name != cls.EVENT_START \
+                            and custom_event_name != cls.EVENT_END:
                         event_time_dict[custom_event_name] = custom_event.get('time_seq') - start_event.get('time_seq')
 
         return run_time, event_time_dict

@@ -177,8 +177,8 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
-    @staticmethod
-    def calculate_runtime_base_on_event(input_running_time_result, fps):
+    @classmethod
+    def calculate_runtime_base_on_event(cls, input_running_time_result, fps=90):
         """
         This customized method base on `baseGenerator.runtime_calculation_event_point_base`.
         However, when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
@@ -191,20 +191,20 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
                 {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
                 {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
             ]
-        @param fps: the current FPS.
+        @param fps: the current FPS. Default=90.
         @return: (running time, the dict of all events' time sequence).
         """
         run_time = -1
         event_time_dict = dict()
 
-        start_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
-                                                                  BaseGenerator.EVENT_START)
-        end_event = BaseGenerator.get_event_data_in_result_list(input_running_time_result,
-                                                                BaseGenerator.EVENT_END)
+        start_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                        cls.EVENT_START)
+        end_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                      cls.EVENT_END)
         if start_event and end_event:
             run_time = end_event.get('time_seq') - start_event.get('time_seq')
-            event_time_dict[BaseGenerator.EVENT_START] = 0
-            event_time_dict[BaseGenerator.EVENT_END] = run_time
+            event_time_dict[cls.EVENT_START] = 0
+            event_time_dict[cls.EVENT_END] = run_time
 
             # when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
             if run_time == 0:
@@ -213,8 +213,8 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             if run_time > 0:
                 for custom_event in input_running_time_result:
                     custom_event_name = custom_event.get('event')
-                    if custom_event_name != BaseGenerator.EVENT_START \
-                            and custom_event_name != BaseGenerator.EVENT_END:
+                    if custom_event_name != cls.EVENT_START \
+                            and custom_event_name != cls.EVENT_END:
                         event_time_dict[custom_event_name] = np.absolute(
                             custom_event.get('time_seq') - start_event.get('time_seq'))
 

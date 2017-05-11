@@ -48,10 +48,10 @@ class FrameThroughputDctGenerator(BaseGenerator):
             image_fn_list.sort(key=CommonUtil.natural_keys)
 
             # get start point and end point from input data
-            start_event = BaseGenerator.get_event_data_in_result_list(result_list,
-                                                                      BaseGenerator.EVENT_START)
-            end_event = BaseGenerator.get_event_data_in_result_list(result_list,
-                                                                    BaseGenerator.EVENT_END)
+            start_event = self.get_event_data_in_result_list(result_list,
+                                                             self.EVENT_START)
+            end_event = self.get_event_data_in_result_list(result_list,
+                                                           self.EVENT_END)
             start_event_fp = start_event.get('file', None)
             end_event_fp = end_event.get('file', None)
             if not start_event_fp or not end_event_fp:
