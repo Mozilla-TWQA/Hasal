@@ -19,11 +19,12 @@ logger = get_logger(__name__)
 
 class InputLatencyAnimationDctGenerator(BaseGenerator):
 
-    SKIP_STATUS_BAR_FRACTION = 1.0
+    # This is for normal situation
+    FULL_FRACTION = 1
 
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
-                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]
+        'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': FULL_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': FULL_FRACTION, 'shift_result': True}]
     }
 
     @staticmethod

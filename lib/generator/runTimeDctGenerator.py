@@ -10,6 +10,7 @@ from ..common.imageUtil import convert_to_dct
 from ..common.visualmetricsWrapper import find_tab_view
 from ..common.imageUtil import find_browser_view
 from ..common.imageUtil import compare_with_sample_image_multi_process
+from ..common.imageUtil import CropRegion
 from ..common.visualmetricsWrapper import find_image_viewport
 from ..common.visualmetricsWrapper import calculate_progress_for_si
 from ..common.visualmetricsWrapper import calculate_speed_index
@@ -21,19 +22,17 @@ logger = get_logger(__name__)
 
 class RunTimeDctGenerator(BaseGenerator):
 
-    SEARCH_TARGET_VIEWPORT = 'viewport'
-    SEARCH_TARGET_TAB_VIEW = 'tab_view'
-    SEARCH_TARGET_BROWSER = 'browser'
+    # This is for normal situation
+    FULL_FRACTION = 1
+    # It is used only when you want to get rid of status bar or panel on bottom left
     SKIP_STATUS_BAR_FRACTION = 0.95
-    DEFAULT_CROP_TARGET_LIST = [SEARCH_TARGET_VIEWPORT, SEARCH_TARGET_TAB_VIEW, SEARCH_TARGET_BROWSER]
-    DEFAULT_SPEEDINDEX_GENERATOR_NAME = 'SpeedIndexGenerator'
 
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'first_paint', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION},
-                            {'event': 'start', 'search_target': SEARCH_TARGET_TAB_VIEW, 'fraction': 1.0}],
+        'backward_search': [{'event': 'first_paint', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION},
+                            {'event': 'start', 'search_target': CropRegion.TAB_VIEW, 'fraction': FULL_FRACTION}],
         'forward_search': [
-            {'event': 'viewport_visual_complete', 'search_target': SEARCH_TARGET_VIEWPORT, 'fraction': 1.0},
-            {'event': 'end', 'search_target': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}
+            {'event': 'viewport_visual_complete', 'search_target': CropRegion.VIEWPORT, 'fraction': FULL_FRACTION},
+            {'event': 'end', 'search_target': CropRegion.BROWSER, 'fraction': FULL_FRACTION}]}
 
     @staticmethod
     def generate_sample_result(input_generator_name, input_sample_dict, input_sample_index):
@@ -44,31 +43,31 @@ class RunTimeDctGenerator(BaseGenerator):
 
         # crop sample data area
         # generate viewport crop area
-        if RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT in input_sample_data:
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT] = input_sample_data[RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT]
+        if CropRegion.VIEWPORT in input_sample_data:
+            return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT] = input_sample_data[CropRegion.VIEWPORT]
         else:
             viewport_value = find_image_viewport(input_sample_data['fp'])
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
-            return_result[RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT] = viewport_value
+            return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT] = viewport_value
+            return_result[CropRegion.VIEWPORT] = viewport_value
 
         # generate tab_view crop area
-        if RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW in input_sample_data:
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW] = input_sample_data[RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW]
+        if CropRegion.TAB_VIEW in input_sample_data:
+            return_result[input_generator_name]['crop_data'][CropRegion.TAB_VIEW] = input_sample_data[CropRegion.TAB_VIEW]
         else:
             tabview_value = find_tab_view(input_sample_data['fp'], return_result[input_generator_name]['crop_data'][
-                RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT])
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
-            return_result[RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW] = tabview_value
+                CropRegion.VIEWPORT])
+            return_result[input_generator_name]['crop_data'][CropRegion.TAB_VIEW] = tabview_value
+            return_result[CropRegion.TAB_VIEW] = tabview_value
 
         # generate browser crop area
-        if RunTimeDctGenerator.SEARCH_TARGET_BROWSER in input_sample_data:
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_BROWSER] = input_sample_data[RunTimeDctGenerator.SEARCH_TARGET_BROWSER]
+        if CropRegion.BROWSER in input_sample_data:
+            return_result[input_generator_name]['crop_data'][CropRegion.BROWSER] = input_sample_data[CropRegion.BROWSER]
         else:
             browser_view_value = find_browser_view(
-                return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_VIEWPORT],
-                return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_TAB_VIEW])
-            return_result[input_generator_name]['crop_data'][RunTimeDctGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
-            return_result[RunTimeDctGenerator.SEARCH_TARGET_BROWSER] = browser_view_value
+                return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT],
+                return_result[input_generator_name]['crop_data'][CropRegion.TAB_VIEW])
+            return_result[input_generator_name]['crop_data'][CropRegion.BROWSER] = browser_view_value
+            return_result[CropRegion.BROWSER] = browser_view_value
 
         # generate crop data
         if input_generator_name not in input_sample_dict[1]:
