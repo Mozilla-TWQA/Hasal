@@ -123,14 +123,15 @@ class WebApp(object):
             self.alt = Key.ALT
 
     @staticmethod
-    def _get_loop_seconds(object_amount, total_second):
+    def _get_loop_times(object_amount, total_second, each_check_second):
         """
-        Getting the loop seconds base on the object_amount, min is 1 sec.
-        @param object_amount:
-        @param total_second:
+        Getting the loop time base on the object_amount, total wait second, and each checking second, min is 1 time.
+        @param object_amount: total checking objects amount
+        @param total_second: total waiting second
+        @param each_check_second: the wait second for each object
         @return:
         """
-        return max(int(total_second / object_amount), 1)
+        return max(int(total_second / object_amount / each_check_second), 1)
 
     def _wait_for_loaded(self, component, similarity=0.70, timeout=10):
         """
@@ -142,16 +143,18 @@ class WebApp(object):
         is_exists = False
         p = None
         # get the loop time base on the pattern amount of component, min loop time is 10 times
-        loop_time = self._get_loop_seconds(object_amount=len(component), total_second=timeout) * 10
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
         for counter in range(loop_time):
             if is_exists:
                 break
             for pic, offset_x, offset_y in component:
                 p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
-                if exists(p, 0.1):
+                if exists(p, wait_sec):
+                    is_exists = True
                     break
                 p = pic
-        wait(p, 1)
+        wait(p, wait_sec)
         return p
 
     def il_type(self, message, width, height, similarity=0.70, timeout=10, wait_component=None):
@@ -178,11 +181,12 @@ class WebApp(object):
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
         # get the loop time base on the pattern amount of component, min loop time is 10 times
-        loop_time = self._get_loop_seconds(object_amount=len(component), total_second=timeout) * 10
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
         for counter in range(loop_time):
             for pic, offset_x, offset_y in component:
                 p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
-                if exists(p, 0.1):
+                if exists(p, wait_sec):
                     if not self.common.is_infolog_enabled():
                         self.common.system_print(action_name)
                     click(p)
@@ -218,11 +222,12 @@ class WebApp(object):
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
         # get the loop time base on the pattern amount of component, min loop time is 10 times
-        loop_time = self._get_loop_seconds(object_amount=len(component), total_second=timeout) * 10
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
         for counter in range(loop_time):
             for pic, offset_x, offset_y in component:
                 p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
-                if exists(p, 0.1):
+                if exists(p, wait_sec):
                     # Hover
                     hover(p)
 
