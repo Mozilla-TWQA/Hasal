@@ -1,7 +1,8 @@
 import sys
 import platform
 from PIL import Image
-from ..common.logConfig import get_logger
+from lib.common.windowController import WindowObject
+from lib.common.logConfig import get_logger
 
 logger = get_logger(__name__)
 
@@ -93,3 +94,29 @@ def find_terminal_view(input_file, viewport):
         logger.error(e)
         terminal_location = None
     return terminal_location
+
+
+def get_terminal_window_object():
+    """
+    Get the WindowObject, the title will be set base on Platform.
+    - darwin: ['Terminal.app', 'iTerm.app']
+    - win32: ['runtest.py', 'agent.py', 'cmd', 'Command Prompt', 'python']
+    - linux2: ['Hasal']
+
+    Note: The Linux platform will get the handle of current window by "current=True".
+    @return: WindowObject of Terminal
+    """
+    current_platform = sys.platform
+    # Get Terminal Window Object here when it still active
+    if 'darwin' in current_platform:
+        terminal_title = ['Terminal.app', 'iTerm.app']
+    elif 'win32' in current_platform:
+        terminal_title = ['runtest.py', 'agent.py', 'cmd', 'Command Prompt', 'python']
+    elif 'linux2' in current_platform:
+        terminal_title = ['Hasal']
+    else:
+        terminal_title = ['Hasal']
+
+    # Linux will get current by wmctrl_get_current_window_id() method if current is True
+    terminal_window_obj = WindowObject(terminal_title, current=True)
+    return terminal_window_obj
