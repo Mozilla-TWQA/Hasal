@@ -49,7 +49,7 @@ class BaseTest(unittest.TestCase):
         if self.current_platform_name == 'darwin':
             terminal_title = ['Terminal.app', 'iTerm.app']
         elif self.current_platform_name == 'win32':
-            terminal_title = ['cmd', 'Command Prompt', 'runtest.py']
+            terminal_title = ['runtest.py', 'agent.py', 'cmd', 'Command Prompt', 'python']
         else:
             terminal_title = ['Hasal']
 
