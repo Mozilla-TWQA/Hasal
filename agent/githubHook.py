@@ -49,8 +49,8 @@ class githubHook(object):
 if __name__ == '__main__':
     if not os.path.isfile('github.json'):
         try:
-            user = raw_input('User Account for Github: ')
-            password = getpass('Password: ')
+            user = raw_input('User Account for Github: ').strip()
+            password = getpass('Password: ').strip()
             scopes = ['user', 'repo']
             note = 'Iskakalunan'
             note_url = 'https://github.com/Mozilla-TWQA/Hasal'
