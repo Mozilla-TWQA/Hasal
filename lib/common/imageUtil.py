@@ -44,6 +44,10 @@ class CropRegion(object):
     BROWSER = 'browser'
     TERMINAL = 'terminal'
 
+    # Fraction settings for simple height cut
+    FULL_REGION_FRACTION = 1.0
+    SKIP_STATUS_BAR_FRACTION = 0.95
+
 
 def crop_image(input_sample_fp, output_sample_fp, coord=[]):
     """
@@ -345,6 +349,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     for event_point in input_settings['event_points'][search_direction]:
         event_name = event_point['event']
         search_target = event_point['search_target']
+        fraction = event_point['fraction']
 
         logger.info('Compare event [{event_name}] at [{search_target}]: {forward_backward} from {start} to {end}'
                     .format(event_name=event_name,
@@ -364,11 +369,6 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
         if sample_dct is None:
             logger.error("Can't find the specify event[%s] in your sample data[%s]!" % (event_name, input_sample_data))
         else:
-            if event_name == 'first_paint':
-                skip_status_bar_fraction = input_settings['skip_status_bar_fraction']
-            else:
-                skip_status_bar_fraction = 1.0
-
             while search_count < total_search_range:
                 if forward_search and img_index > end_index:
                     break
@@ -379,7 +379,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
                 # transfer image index to image fn key
                 img_fn_key = image_fn_list[img_index]
                 if search_target in input_image_data[img_fn_key]:
-                    current_img_dct = convert_to_dct(input_image_data[img_fn_key][search_target], skip_status_bar_fraction)
+                    current_img_dct = convert_to_dct(input_image_data[img_fn_key][search_target], fraction)
                     # assign customized threshold to comparison function if its in settings list
                     threshold_value = input_settings.get('threshold', 0.0003)
                     compare_result, diff_rate = compare_two_images(sample_dct, current_img_dct, threshold_value)

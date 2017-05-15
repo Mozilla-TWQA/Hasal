@@ -19,11 +19,9 @@ logger = get_logger(__name__)
 
 class InputLatencyAnimationDctGenerator(BaseGenerator):
 
-    SKIP_STATUS_BAR_FRACTION = 1.0
-
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
-                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]
+        'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]
     }
 
     @staticmethod
@@ -124,7 +122,6 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             'default_fps': self.index_config['video-recording-fps'],
             'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
             'generator_name': self.__class__.__name__,
-            'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
             'exec_timestamp_list': input_data['exec_timestamp_list'],
             'threshold': self.index_config.get('compare-threshold', 0.0003),
             'search_margin': self.index_config.get('search-margin', 10)}
