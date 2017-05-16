@@ -26,12 +26,19 @@ class BaseGenerator(object):
 
     def record_runtime_current_status(self, input_runtime_value):
         if input_runtime_value == 0:
+            # The running time result is zero
             self.status_recorder.record_current_status(
                 {self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_EVENT_IMAGE_BOTH_SAME})
         elif input_runtime_value == -1:
+            # The running time result is -1, which is default value, means can not calculate the running time
             self.status_recorder.record_current_status(
                 {self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_EVENT_IMAGE_LESS_THAN_2})
+        elif input_runtime_value < 0:
+            # The running time result is less than zero, means the event comparing failed. Finding the start after end event.
+            self.status_recorder.record_current_status(
+                {self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_EVENT_IMAGE_START_AFTER_END})
         else:
+            # The running time result is larger than zero, pass!
             self.status_recorder.record_current_status(
                 {self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.PASS_IMG_COMPARE_RESULT})
 
