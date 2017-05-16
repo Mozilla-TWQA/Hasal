@@ -70,5 +70,9 @@
       "test-url"                                            : "https://mail.google.com/mail/u/0/#label/GMail_TEST",
       "test-reply-url"                                      : "https://mail.google.com/mail/u/0/#label/GMail_TEST_Reply"
     }
+  },
+  "amazon": {
+    "test-url"                                              : "https://www.amazon.com/",
+    "test-product-url"                                      : "https://www.amazon.com/Moana-Bonus-Content-Aulii-Cravalho/dp/B01MRNUJUO"
   }
 }

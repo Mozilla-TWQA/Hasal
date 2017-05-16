@@ -35,7 +35,7 @@ from logConfig import get_logger
 logger = get_logger(__name__)
 
 
-def colors_are_similar(a, b, threshold=30):
+def colors_are_similar(a, b, threshold=45):
     similar = True
     sum = 0
     for x in xrange(3):
