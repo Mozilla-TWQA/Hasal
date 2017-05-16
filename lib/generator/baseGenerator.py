@@ -85,13 +85,24 @@ class BaseGenerator(object):
         return sorted_list, median_time_index, update_result
 
     def output_runtime_result_video(self, running_time_result, suite_upload_dp):
-        start_fp = None
-        end_fp = None
-        for event_data in running_time_result:
-            if 'start' in event_data:
-                start_fp = event_data['start']
-            if 'end' in event_data:
-                end_fp = event_data['end']
+        """
+        Getting the video from START to END.
+        @param running_time_result: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
+        @param suite_upload_dp: The folder path under "result" folder which be named by timestamp.
+        @return: The video file path if it exists.
+        """
+        # get start point and end point from input data
+        start_event = self.get_event_data_in_result_list(running_time_result,
+                                                         self.EVENT_START)
+        end_event = self.get_event_data_in_result_list(running_time_result,
+                                                       self.EVENT_END)
+        start_fp = start_event.get('file', None)
+        end_fp = end_event.get('file', None)
         if not start_fp or not end_fp:
             return None
         else:
@@ -124,12 +135,16 @@ class BaseGenerator(object):
         os.system(command)
         shutil.rmtree(tempdir)
 
+        # remove "test_<browser>_" and "_<timestamp>" from "test_<browser>_foo_bar_xyz_<timestamp>"
         upload_case_name = "_".join(self.env.output_name.split("_")[2:-1])
+        # set the output folder name as "<suite_upload_dp>/foo_bar_xyz"
         upload_case_dp = os.path.join(suite_upload_dp, upload_case_name)
         if os.path.exists(upload_case_dp) is False:
             os.mkdir(upload_case_dp)
         if os.path.exists(self.env.converted_video_output_fp):
             shutil.move(self.env.converted_video_output_fp, upload_case_dp)
+            filename = os.path.basename(self.env.converted_video_output_fp)
+            return os.path.join(upload_case_dp, filename)
 
     @staticmethod
     def output_ipynb_file(global_config, index_config, output_result_dir):
