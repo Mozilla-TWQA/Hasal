@@ -13,7 +13,6 @@ import lib.helper.targetHelper as targetHelper
 import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
-from common.windowController import WindowObject
 from common.commonUtil import CommonUtil
 from common.commonUtil import StatusRecorder
 from common.visualmetricsWrapper import find_image_viewport
@@ -45,16 +44,8 @@ class BaseTest(unittest.TestCase):
         # load all settings into self object
         self.load_configs()
 
-        # Get Terminal Window Object here when it still active
-        if self.current_platform_name == 'darwin':
-            terminal_title = ['Terminal.app', 'iTerm.app']
-        elif self.current_platform_name == 'win32':
-            terminal_title = ['cmd', 'Command Prompt', 'runtest.py']
-        else:
-            terminal_title = ['Hasal']
-
-        # Linux will get current by wmctrl_get_current_window_id() method if current is True
-        self.terminal_window_obj = WindowObject(terminal_title, current=True)
+        # Get Terminal Window Object
+        self.terminal_window_obj = terminalHelper.get_terminal_window_object()
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
