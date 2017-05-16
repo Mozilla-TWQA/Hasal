@@ -6,7 +6,7 @@ class TestSikuli(PerfBaseTest):
     def setUp(self):
         super(TestSikuli, self).setUp()
         self.set_configs(self.config_name.INDEX,
-                         self.extract_platform_dep_settings({'win32': {'7': {'search-margin': 2},
+                         self.extract_platform_dep_settings({'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.007},
                                                                        '10': {'search-margin': 2, 'compare-threshold': 0.0064}}}))
 
     def test_chrome_amazon_ail_hover_related_product_thumbnail(self):
