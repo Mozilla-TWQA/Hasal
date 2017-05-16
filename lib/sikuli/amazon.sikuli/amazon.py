@@ -43,12 +43,6 @@ class Amazon(WebApp):
         """
         return self._wait_for_loaded(component=Amazon.AMAZON_FUNCTION_UNDER_SEARCH_FIELD, similarity=similarity)
 
-    def wait_for_suggestion_loaded(self, component):
-        """
-        @param component: the component to wait for vanished
-        """
-        self._wait_component_for_vanished(component=component)
-
     def click_search_field(self):
         """
         Click search field near the search button.

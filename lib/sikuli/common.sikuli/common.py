@@ -165,12 +165,11 @@ class WebApp(object):
         wait(p, wait_sec)
         return p
 
-    def _wait_component_for_vanished(self, component, timeout=10):
+    def wait_pattern_for_vanished(self, pattern, timeout=10):
         """
         Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
-        @param component: Specify the wait vanished component, which is an sikuli object pattern.
+        @param pattern: Specify the wait vanished pattern, which is an sikuli object pattern.
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
-        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
         """
         is_exists = True
         # get the loop time base on the pattern amount of component, min loop time is 10 times
@@ -178,11 +177,11 @@ class WebApp(object):
         loop_time = self._get_loop_times(object_amount=1, total_second=timeout, each_check_second=wait_sec)
         for counter in range(loop_time):
             sleep(wait_sec)
-            if not exists(component, wait_sec):
+            if not exists(pattern, wait_sec):
                 is_exists = False
                 break
         if is_exists:
-            raise Exception("Component {} doesn't vanish.".format(component))
+            raise Exception("Pattern {} doesn't vanish.".format(pattern))
 
     def il_type(self, message, width, height, similarity=0.70, timeout=10, wait_component=None):
         # wait component exists

@@ -36,7 +36,7 @@ my_browser = browser.Firefox()
 # Access link and wait
 my_browser.clickBar()
 my_browser.enterLink(INPUT_TEST_TARGET)
-component = app.wait_for_loaded()
+pattern = app.wait_for_loaded()
 
 # Wait for stable
 sleep(2)
@@ -45,7 +45,7 @@ sleep(2)
 app.click_search_field()
 sleep(1)
 type('m')
-app.wait_for_suggestion_loaded(component)
+com.wait_pattern_for_vanished(pattern=pattern)
 com.loop_type_key(Key.DOWN, 2, 0.5)
 
 # Record T1, and capture the snapshot image
