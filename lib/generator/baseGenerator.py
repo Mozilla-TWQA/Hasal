@@ -221,7 +221,7 @@ class BaseGenerator(object):
         ret_list = filter(lambda x: x.get('event') == event_name, event_result_list)
         if len(ret_list) > 0:
             return ret_list[0]
-        return None
+        return {}
 
     @classmethod
     def calculate_runtime_base_on_event(cls, input_running_time_result):
