@@ -4,103 +4,42 @@ import time
 import copy
 import numpy as np
 from baseGenerator import BaseGenerator
+from frameThroughputDctGenerator import FrameThroughputDctGenerator
+from ..helper.terminalHelper import find_terminal_view
+from ..common.visualmetricsWrapper import find_tab_view
+from ..common.visualmetricsWrapper import find_image_viewport
 from ..common.imageUtil import generate_crop_data
 from ..common.imageUtil import crop_images
 from ..common.imageUtil import convert_to_dct
-from ..common.visualmetricsWrapper import find_tab_view
 from ..common.imageUtil import find_browser_view
 from ..common.imageUtil import compare_with_sample_image_multi_process
-from ..common.visualmetricsWrapper import find_image_viewport
+from ..common.imageUtil import CropRegion
 from ..common.commonUtil import CommonUtil
 from ..common.logConfig import get_logger
-from ..common.imageUtil import CropRegion
 
 logger = get_logger(__name__)
 
 
-class FrameThroughputDctGenerator(BaseGenerator):
+class InputLatencyFrameThroughputGenerator(BaseGenerator):
+
+    # We should not skip fraction when it comes to terminal region
+    FULL_FRACTION = 1.0
+    # It is used only when you want to get rid of status bar or panel on bottom left
+    SKIP_STATUS_BAR_FRACTION = 0.95
 
     BROWSER_VISUAL_EVENT_POINTS = {
-        'backward_search': [{'event': 'start', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.FULL_REGION_FRACTION}],
-        'forward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.FULL_REGION_FRACTION}]}
-
-    def get_frame_throughput(self, result_list, input_image_list, start_event_name, end_event_name):
-        """
-
-        @param result_list: the running_time_result after do comparison.
-            ex:
-            [
-                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
-                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
-            ]
-        @param input_image_list:
-        @param start_event_name:
-        @param end_event_name:
-        @return:
-        """
-
-        return_result = dict()
-        try:
-            image_fn_list = copy.deepcopy(input_image_list.keys())
-            image_fn_list.sort(key=CommonUtil.natural_keys)
-
-            # get start point and end point from input data
-            start_event = self.get_event_data_in_result_list(result_list, start_event_name)
-            end_event = self.get_event_data_in_result_list(result_list, end_event_name)
-            start_event_fp = start_event.get('file', None)
-            end_event_fp = end_event.get('file', None)
-            if not start_event_fp or not end_event_fp:
-                raise Exception('[ERROR] Cannot find either start point or end point!')
-            else:
-                start_event_fn = os.path.basename(start_event_fp)
-                start_event_index = image_fn_list.index(start_event_fn)
-                end_event_fn = os.path.basename(end_event_fp)
-                end_event_index = image_fn_list.index(end_event_fn)
-
-            # calculate viewport variations between start point and end point
-            # based on variation to determine if frame is freeze and result in frame throughput related values
-            start_target_fp = input_image_list[image_fn_list[start_event_index]][CropRegion.VIEWPORT]
-            start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
-            current_img_dct_array = convert_to_dct(start_target_fp)
-            weight, height = current_img_dct_array.shape
-
-            freeze_count = 0
-            base_time_seq = start_target_time_seq
-            frame_throughput_time_seq = [start_target_time_seq]
-            long_frame_time_seq = []
-            for img_index in range(start_event_index + 1, end_event_index + 1):
-                image_fn = image_fn_list[img_index]
-                image_data = copy.deepcopy(input_image_list[image_fn])
-                previous_img_dct_array = copy.deepcopy(current_img_dct_array)
-                current_img_dct_array = convert_to_dct(image_data[CropRegion.VIEWPORT])
-                mismatch_rate = np.sum(np.absolute(np.subtract(previous_img_dct_array, current_img_dct_array))) / (weight * height)
-                mismatch_rate_threshold = self.index_config.get('mismatch-rate-threshold', 0)
-                if mismatch_rate <= mismatch_rate_threshold:
-                    freeze_count += 1
-                    logger.debug("Image freeze from previous frame: %s", image_fn)
-                else:
-                    current_long_frame = image_data['time_seq'] - base_time_seq
-                    frame_throughput_time_seq.append(image_data['time_seq'])
-                    long_frame_time_seq.append(current_long_frame)
-                    base_time_seq = image_data['time_seq']
-
-            long_frame = max(long_frame_time_seq)
-            expected_frames = end_event_index - start_event_index + 1
-            actual_paint_frames = expected_frames - freeze_count
-            frame_throughput = float(actual_paint_frames) / expected_frames
-
-            return_result = dict()
-            return_result['long_frame'] = long_frame
-            return_result['frame_throughput'] = frame_throughput
-            return_result['freeze_frames'] = freeze_count
-            return_result['expected_frames'] = expected_frames
-            return_result['actual_paint_frames'] = actual_paint_frames
-            return_result['time_sequence'] = frame_throughput_time_seq
-
-        except Exception as e:
-            logger.error(e)
-
-        return return_result
+        # (IL start) <--- time ---> ( FT Start = IL end )
+        'backward_search': [
+            {'event': 'il_end', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+            {'event': 'il_start', 'search_target': CropRegion.TERMINAL, 'fraction': FULL_FRACTION, 'shift_result': True}
+        ],
+        # ( FT Start = IL end ) <--- time ---> (FT end)
+        'forward_search': [
+            {'event': 'ft_end', 'search_target': CropRegion.VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}
+        ]
+        # Note: We used to use 'start' and 'end' as events. However, in this generator, we use 2 sets of them.
+        # il_start and il_end as 1 set and il_end and ft_end as another set.
+    }
 
     @staticmethod
     def generate_sample_result(input_generator_name, input_sample_dict, input_sample_index):
@@ -119,12 +58,24 @@ class FrameThroughputDctGenerator(BaseGenerator):
             return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT] = viewport_value
             return_result[CropRegion.VIEWPORT] = viewport_value
 
+        # generate terminal crop area
+        if CropRegion.TERMINAL in input_sample_data:
+            # if already generated the data, reuse it.
+            return_result[input_generator_name]['crop_data'][CropRegion.TERMINAL] = input_sample_data[CropRegion.TERMINAL]
+        else:
+            # TODO: we should replace the VIEWPORT location by BROWSER location in the future.
+            # (Currently Mike implement the Win and Mac, no Linux)
+            terminal_value = find_terminal_view(
+                input_sample_data['fp'],
+                return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT])
+            return_result[input_generator_name]['crop_data'][CropRegion.TERMINAL] = terminal_value
+            return_result[CropRegion.TERMINAL] = terminal_value
+
         # generate tab_view crop area
         if CropRegion.TAB_VIEW in input_sample_data:
             return_result[input_generator_name]['crop_data'][CropRegion.TAB_VIEW] = input_sample_data[CropRegion.TAB_VIEW]
         else:
-            tabview_value = find_tab_view(input_sample_data['fp'], return_result[input_generator_name]['crop_data'][
-                CropRegion.VIEWPORT])
+            tabview_value = find_tab_view(input_sample_data['fp'], return_result[input_generator_name]['crop_data'][CropRegion.VIEWPORT])
             return_result[input_generator_name]['crop_data'][CropRegion.TAB_VIEW] = tabview_value
             return_result[CropRegion.TAB_VIEW] = tabview_value
 
@@ -150,11 +101,11 @@ class FrameThroughputDctGenerator(BaseGenerator):
         # tag event to sample
         return_result[input_generator_name]['event_tags'] = {}
         if input_sample_index == 1:
-            for event_obj in FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
+            for event_obj in InputLatencyFrameThroughputGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
                 search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = convert_to_dct(search_target_fp, event_obj['fraction'])
         elif input_sample_index == 2:
-            for event_obj in FrameThroughputDctGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
+            for event_obj in InputLatencyFrameThroughputGenerator.BROWSER_VISUAL_EVENT_POINTS['forward_search']:
                 search_target_fp = crop_data_dict[event_obj['search_target']]['fp_list'][0]['output_fp']
                 return_result[input_generator_name]['event_tags'][event_obj['event']] = convert_to_dct(search_target_fp, event_obj['fraction'])
 
@@ -209,6 +160,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
         compare_setting = {'default_fps': self.index_config['video-recording-fps'],
                            'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
                            'generator_name': self.__class__.__name__,
+                           'skip_status_bar_fraction': self.SKIP_STATUS_BAR_FRACTION,
                            'exec_timestamp_list': input_data['exec_timestamp_list'],
                            'threshold': self.index_config.get('compare-threshold', 0.0003),
                            'search_margin': self.index_config.get('search-margin', 10)}
@@ -218,19 +170,73 @@ class FrameThroughputDctGenerator(BaseGenerator):
             compare_setting)
         # get frame throughput values
         if self.compare_result.get('running_time_result', None):
-            run_time, event_time_dict = self.calculate_runtime_base_on_event(self.compare_result['running_time_result'])
-            self.compare_result.update({'run_time': run_time, 'event_time_dict': event_time_dict})
-            self.compare_result.update(self.get_frame_throughput(self.compare_result['running_time_result'],
-                                                                 self.compare_result['merged_crop_image_list'],
-                                                                 self.EVENT_START,
-                                                                 self.EVENT_END))
+            ft_run_time, ft_event_time_dict = self.calculate_runtime_base_on_event(
+                self.compare_result['running_time_result'],
+                'il_end', 'ft_end', self.index_config['video-recording-fps'])
+
+            il_run_time, il_event_time_dict = self.calculate_runtime_base_on_event(
+                self.compare_result['running_time_result'],
+                'il_start', 'il_end', self.index_config['video-recording-fps'])
+
+            self.compare_result.update({
+                'ft_run_time': ft_run_time, 'ft_event_time_dict': ft_event_time_dict,
+                'il_run_time': il_run_time, 'il_event_time_dict': il_event_time_dict}
+            )
+
+            self.compare_result.update(FrameThroughputDctGenerator.get_frame_throughput(
+                                       self.compare_result['running_time_result'],
+                                       self.compare_result['merged_crop_image_list'],
+                                       'il_end', 'ft_end'))
 
         return self.compare_result
 
+    @classmethod
+    def calculate_runtime_base_on_event(cls, input_running_time_result, event_start, event_end, fps=90):
+        """
+        This customized method base on `baseGenerator.runtime_calculation_event_point_base`.
+        However, when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
+
+        For example, if FPS is 90, the running time of 1 frame is 11.11111 ms.
+        When start and end at the same time, it will return 5.55555 ms ((1000 ms / 90 FPS) / 2).
+        @param input_running_time_result: the running_time_result after do comparison.
+            ex:
+            [
+                {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+                {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+            ]
+        @param fps: the current FPS. Default=90.
+        @return: (running time, the dict of all events' time sequence).
+        """
+        run_time = -1
+        event_time_dict = dict()
+
+        start_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                        event_start)
+        end_event = cls.get_event_data_in_result_list(input_running_time_result,
+                                                      event_end)
+        if start_event and end_event:
+            run_time = end_event.get('time_seq') - start_event.get('time_seq')
+            event_time_dict[cls.EVENT_START] = 0
+            event_time_dict[cls.EVENT_END] = run_time
+
+            # when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
+            if run_time == 0:
+                run_time = 1000.0 / fps / 2
+
+            if run_time > 0:
+                for custom_event in input_running_time_result:
+                    custom_event_name = custom_event.get('event')
+                    if custom_event_name != cls.EVENT_START \
+                            and custom_event_name != cls.EVENT_END:
+                        event_time_dict[custom_event_name] = np.absolute(
+                            custom_event.get('time_seq') - start_event.get('time_seq'))
+
+        return run_time, event_time_dict
+
     def output_case_result(self, suite_upload_dp):
 
-        if self.compare_result.get('run_time', None):
-            self.record_runtime_current_status(self.compare_result['run_time'])
+        if self.compare_result.get('ft_run_time', None) and self.compare_result.get('il_run_time', None):
+            self.record_runtime_current_status(self.compare_result['ft_run_time'])
 
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
             event_time_dict = self.compare_result.get('event_time_dict', {})
@@ -240,7 +246,8 @@ class FrameThroughputDctGenerator(BaseGenerator):
             expected_frames = self.compare_result.get('expected_frames', 0)
             actual_paint_frames = self.compare_result.get('actual_paint_frames', 0)
 
-            run_time_dict = {'run_time': self.compare_result['run_time'],
+            run_time_dict = {'ft_run_time': self.compare_result['ft_run_time'],
+                             'il_run_time': self.compare_result['il_run_time'],
                              'folder': self.env.output_name,
                              'freeze_frames': freeze_frames,
                              'long_frame': long_frame,
@@ -255,7 +262,8 @@ class FrameThroughputDctGenerator(BaseGenerator):
             update_result = history_result_data.get(self.env.test_name, init_result_dict)
 
             # based on current result add the data to different field
-            history_result_data[self.env.test_name] = self.generate_update_result_for_ft(update_result, self.compare_result, run_time_dict)
+            history_result_data[self.env.test_name] = self.generate_update_result_for_combination(
+                                                                   update_result, self.compare_result, run_time_dict)
 
             # dump to json file
             with open(self.env.DEFAULT_TEST_RESULT, "wb") as fh:
