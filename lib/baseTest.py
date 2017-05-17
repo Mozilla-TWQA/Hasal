@@ -58,7 +58,7 @@ class BaseTest(unittest.TestCase):
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
-            if not name.startswith("chrome"):
+            if not name.lower().startswith("chrome"):
                 self.env.firefox_settings_extensions[name]['path'] = "lib.profiler." + name[0].lower() + name[1:]
 
     def set_variable(self, **kwargs):
