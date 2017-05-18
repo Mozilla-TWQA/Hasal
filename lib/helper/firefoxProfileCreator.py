@@ -97,8 +97,13 @@ class FirefoxProfileCreator(object):
                         data['addons'].append(new_data)
 
                         pos = len(data['addons']) - 1
-                        new_xpi_name = data['addons'][pos]['descriptor'].split("/")[-1].split("\\")[-1]
-                        data['addons'][pos]['descriptor'] = os.path.join(extensions_folder, new_xpi_name)
+                        # old add-ons using 'descriptor' to store location while new one is using 'path'
+                        if 'descriptor' in data['addons'][pos]:
+                            new_xpi_name = data['addons'][pos]['descriptor'].split("/")[-1].split("\\")[-1]
+                            data['addons'][pos]['descriptor'] = os.path.join(extensions_folder, new_xpi_name)
+                        elif 'path' in data['addons'][pos]:
+                            new_xpi_name = data['addons'][pos]['path'].split("/")[-1].split("\\")[-1]
+                            data['addons'][pos]['path'] = os.path.join(extensions_folder, new_xpi_name)
                         data['addons'][pos]['sourceURI'] = None
 
                     with open(extensions_json_file, 'w') as f:

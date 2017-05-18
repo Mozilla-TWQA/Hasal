@@ -44,12 +44,10 @@
       "XPI": []
     },
     "GeckoProfiler": {
-      "version": "Gecko Profiler (Hasal) 2.0.31",
+      "version": "Gecko Profiler Webextension 0.14",
       "enable": true,
       "XPI": [
-        "gecko_profiler",
-        "hotkeys",
-        "marker"
+        "gecko_profiler"
       ]
     },
     "HarProfiler": {
