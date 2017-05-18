@@ -33,10 +33,10 @@ class githubHook(object):
         for pr in self.hasal.pull_requests():
             issue = pr.issue()
             if KEY_LABEL in [x.name for x in issue.original_labels]:
-                status_list = [x.state for x in hasal.statuses(pr.head.sha)]
+                status_list = [x.state for x in self.hasal.statuses(pr.head.sha)]
                 state = '' if len(status_list) == 0 else status_list[0]
                 if state == '':
-                    hasal.crate_status(pr.head.sha, STATE_PENDING, context='iskakalunan')
+                    self.hasal.crate_status(pr.head.sha, STATE_PENDING, context='iskakalunan')
                     local_queue.append(pr)
                 elif state == STATE_PENDING:
                     local_queue.append(pr)
