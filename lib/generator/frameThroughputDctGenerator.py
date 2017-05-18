@@ -95,7 +95,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
             return_result['freeze_frames'] = freeze_count
             return_result['expected_frames'] = expected_frames
             return_result['actual_paint_frames'] = actual_paint_frames
-            return_result['time_sequence'] = frame_throughput_time_seq
+            return_result['non_freeze_frame_timestamps'] = frame_throughput_time_seq
 
         except Exception as e:
             logger.error(e)
@@ -231,6 +231,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
 
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
             event_time_dict = self.compare_result.get('event_time_dict', {})
+            non_freeze_frame_timestamps = self.compare_result.get('non_freeze_frame_timestamps', [])
             long_frame = self.compare_result.get('long_frame', 0)
             frame_throughput = self.compare_result.get('frame_throughput', 0)
             freeze_frames = self.compare_result.get('freeze_frames', 0)
@@ -244,7 +245,8 @@ class FrameThroughputDctGenerator(BaseGenerator):
                              'frame_throughput': frame_throughput,
                              'expected_frames': expected_frames,
                              'actual_paint_frames': actual_paint_frames,
-                             'event_time': event_time_dict}
+                             'event_time': event_time_dict,
+                             'non_freeze_frame_timestamps': non_freeze_frame_timestamps}
 
             # init result dict if not exist
             init_result_dict = self.init_result_dict_variable(
