@@ -66,7 +66,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
 
             freeze_count = 0
             base_time_seq = start_target_time_seq
-            frame_throughput_time_seq = [start_target_time_seq]
+            non_freeze_frame_timestamps = [start_target_time_seq]
             long_frame_time_seq = []
             for img_index in range(start_event_index + 1, end_event_index + 1):
                 image_fn = image_fn_list[img_index]
@@ -80,7 +80,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
                     logger.debug("Image freeze from previous frame: %s", image_fn)
                 else:
                     current_long_frame = image_data['time_seq'] - base_time_seq
-                    frame_throughput_time_seq.append(image_data['time_seq'])
+                    non_freeze_frame_timestamps.append(image_data['time_seq'])
                     long_frame_time_seq.append(current_long_frame)
                     base_time_seq = image_data['time_seq']
 
@@ -95,7 +95,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
             return_result['freeze_frames'] = freeze_count
             return_result['expected_frames'] = expected_frames
             return_result['actual_paint_frames'] = actual_paint_frames
-            return_result['non_freeze_frame_timestamps'] = frame_throughput_time_seq
+            return_result['non_freeze_frame_timestamps'] = non_freeze_frame_timestamps
 
         except Exception as e:
             logger.error(e)
