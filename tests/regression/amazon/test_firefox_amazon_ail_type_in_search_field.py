@@ -8,7 +8,7 @@ class TestSikuli(PerfBaseTest):
         self.set_configs(self.config_name.INDEX,
                          self.extract_platform_dep_settings(
                              {'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.006},
-                                        '10': {'search-margin': 2, 'compare-threshold': 0.007}}}))
+                                        '10': {'search-margin': 2, 'compare-threshold': 0.006}}}))
 
     def test_firefox_amazon_ail_type_in_search_field(self):
         self.test_url = self.global_config['amazon']['test-url']
