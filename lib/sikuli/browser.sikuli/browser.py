@@ -134,7 +134,8 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = [('pics/ff_urlbar_gray_win.png', -80, 0),
+        urlbar_pics = [('pics/ff_urlbar_gray_win10.png', 160, 0),
+                       ('pics/ff_urlbar_gray_win.png', -80, 0),
                        ('pics/ff_urlbar_gray_ubuntu.png', -80, 0),
                        ('pics/ff_urlbar_black.png', -80, 0),
                        ('pics/ff_urlbar_gray_focus_win.png', -80, 0),
