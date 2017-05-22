@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+import time
 import shutil
 import tempfile
 from ..common.commonUtil import CommonUtil
@@ -154,41 +155,53 @@ class BaseGenerator(object):
             return os.path.join(upload_case_dp, filename)
 
     def clean_output_images(self, running_time_result, img_dp):
-        # get start point and end point from input data
-        start_event = self.get_event_data_in_result_list(running_time_result,
-                                                         self.EVENT_START)
-        end_event = self.get_event_data_in_result_list(running_time_result,
-                                                       self.EVENT_END)
-        start_fp = start_event.get('file', None)
-        end_fp = end_event.get('file', None)
-        if not start_fp or not end_fp:
-            return None
+        # Start to clean image files only if flag enabled
+        if self.exec_config['clean-unnecessary-images']:
+            # get start point and end point from input data
+            start_event = self.get_event_data_in_result_list(running_time_result,
+                                                             self.EVENT_START)
+            end_event = self.get_event_data_in_result_list(running_time_result,
+                                                           self.EVENT_END)
+            start_fp = start_event.get('file', None)
+            end_fp = end_event.get('file', None)
+            if not start_fp or not end_fp:
+                logger.warning("Cannot get file path of either start event or end event, stop clean output images.")
+                return None
+            else:
+                try:
+                    tempdir = tempfile.mkdtemp()
+                    logger.debug('Create temp folder {}'.format(tempdir))
+                    start_time = time.time()
+
+                    # keep images from start event to end event and one frame as extension buffer
+                    for root, dirs, files in os.walk(img_dp):
+                        start_fn = os.path.basename(start_fp)
+                        end_fn = os.path.basename(end_fp)
+                        start_index = max(0, files.index(start_fn) - 1)
+                        end_index = min(len(files) - 1, files.index(end_fn) + 1)
+                        if root == img_dp:
+                            cur_tempdir = tempdir
+                        else:
+                            cur_tempdir = os.path.join(tempdir, os.path.basename(root))
+                            os.mkdir(cur_tempdir)
+                        logger.debug('Copy necessary files from {} to {}'.format(root, cur_tempdir))
+                        for img_index in range(start_index, end_index + 1):
+                            img_fn = files[img_index]
+                            imf_fp = os.path.join(root, img_fn)
+                            new_img_fp = os.path.join(cur_tempdir, img_fn)
+                            shutil.copyfile(imf_fp, new_img_fp)
+                    logger.debug('Remove original output image folder {}'.format(img_dp))
+                    shutil.rmtree(img_dp)
+                    logger.debug('Move temp folder {} to original output image folder {}'.format(tempdir, img_dp))
+                    shutil.move(tempdir, img_dp)
+
+                    current_time = time.time()
+                    elapsed_time = current_time - start_time
+                    logger.debug("Clean Output Images Elapsed: [%s]" % elapsed_time)
+                except Exception as e:
+                    logger.warn(e)
         else:
-            try:
-                tempdir = tempfile.mkdtemp()
-                logger.debug('Create temp folder {}'.format(tempdir))
-                for root, dirs, files in os.walk(img_dp):
-                    start_fn = os.path.basename(start_fp)
-                    end_fn = os.path.basename(end_fp)
-                    start_index = max(0, files.index(start_fn) - 1)
-                    end_index = min(len(files) - 1, files.index(end_fn) + 1)
-                    if root == img_dp:
-                        cur_tempdir = tempdir
-                    else:
-                        cur_tempdir = os.path.join(tempdir, os.path.basename(root))
-                        os.mkdir(cur_tempdir)
-                    logger.debug('Copy necessary files from {} to {}'.format(root, cur_tempdir))
-                    for img_index in range(start_index, end_index + 1):
-                        img_fn = files[img_index]
-                        imf_fp = os.path.join(root, img_fn)
-                        new_img_fp = os.path.join(cur_tempdir, img_fn)
-                        shutil.copyfile(imf_fp, new_img_fp)
-                logger.debug('Remove original output image folder {}'.format(img_dp))
-                shutil.rmtree(img_dp)
-                logger.debug('Move temp folder {} to original output image folder {}'.format(tempdir, img_dp))
-                shutil.move(tempdir, img_dp)
-            except Exception as e:
-                logger.warn(e)
+            logger.debug("Clean unnecessary images flag is disabled, thus don't need to clean output images.")
 
     @staticmethod
     def output_ipynb_file(global_config, index_config, output_result_dir):
