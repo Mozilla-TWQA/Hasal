@@ -83,7 +83,7 @@ def close_browser(browser_type):
 
 
 # TODO: need to finish webdriver way to get version
-def get_browser_version(browser_type):
+def get_browser_version(browser_type, engine_type='sikuli'):
     chrome_class, firefox_class = _load_browser_class(engine_type)
 
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:

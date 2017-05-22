@@ -662,7 +662,8 @@ class HasalServer:
 
         # mean, median, sigma, seq, outliers, si, psi = outlier().detect(seq)
         mean, median, sigma, _, outliers, si, psi = CalculationUtil.generate_statistics_value_for_server(origin_seq)
-        current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(current_test_obj['origin_values'], outliers)
+        # disable outlier calculation all values are counted
+        # current_test_obj['origin_values'] = HasalServer.remove_tuple_from_values(current_test_obj['origin_values'], outliers)
         values_list = current_test_obj['origin_values']
 
         if len(values_list) >= HasalServer._config_test_times:
