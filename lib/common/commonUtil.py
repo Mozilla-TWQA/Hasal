@@ -1,30 +1,63 @@
 import os
 import re
+import time
 import json
 import platform
 import subprocess
 import numpy as np
-from datetime import datetime
 from environment import Environment
 from logConfig import get_logger
-
+from datetime import datetime
 logger = get_logger(__name__)
 
 
 class StatusRecorder(object):
+    """
+    output sample 2017/05/22
+    {
+      "case_info": {
+        "case_time_stamp": "20170522144114",                       <= test case time stamp will renew when call loop_test func of runtest.py
+        "case_name": "test_firefox_gdoc_ail_pagedown_10_text"      <= current test case name
+      },
+      "current_status": {
+        "sikuli_running_stat": "0",                                <= return code of self.sikuli.run_test
+        "status_img_compare_result": "PASS_IMG_COMPARE_RESULT",    <= image compare result define in record_runtime_current_status of baseGenerator.py, will record the corresponse status according to the running time
+        "time_list_counter": "6",                                  <= current executed times
+        "fps_stat": 0,                                             <= current fps valdiation result (0: pass)
+        "validator_result": {
+          "validate_result": true,
+          "FileExistValidator": {
+            "output_result": null,
+            "validate_result": true
+          },
+          "FPSValidator": {
+            "output_result": 60,
+            "validate_result": true
+          }
+        }
+      },
+      "case_status_history": {
+        "test_firefox_gdoc_ail_pagedown_10_text": {
+          "20170522144114": {
+            "RUNNING_STATUS": "PASS_IMG_COMPARE_RESULT",
+            "TOTAL_EXEC_TIME": 106.55035996437073
+          }
+        }
+      }
+    }
+    """
     # Result for STATUS_IMG_COMPARE_RESULT
     PASS_IMG_COMPARE_RESULT = "PASS_IMG_COMPARE_RESULT"
+
     ERROR_EVENT_IMAGE_LESS_THAN_2 = "ERROR_EVENT_IMAGE_LESS_THAN_2"
     ERROR_EVENT_IMAGE_BOTH_SAME = "ERROR_EVENT_IMAGE_BOTH_SAME"
     ERROR_EVENT_IMAGE_START_AFTER_END = "ERROR_EVENT_IMAGE_START_AFTER_END"
     ERROR_MISSING_FIELD_IMG_COMPARE_RESULT = "ERROR_MISSING_FIELD_IMG_COMPARE_RESULT"
-
     ERROR_CANT_FIND_STATUS_FILE = "ERROR_CANT_FIND_STATUS_FILE"
     ERROR_FPS_STAT_ABNORMAL = "ERROR_FPS_STAT_ABNORMAL"
     ERROR_ROUND_STAT_ABNORMAL = "ERROR_ROUND_STAT_ABNORMAL"
     ERROR_COMPARING_IMAGE_FAILED = "ERROR_COMPARING_IMAGE_FAILED"
     ERROR_LOOP_TEST_RAISE_EXCEPTION = "ERROR_LOOP_TEST_RAISE_EXCEPTION"
-
     ERROR_COMPARE_RESULT_IS_NONE = "ERROR_COMPARE_RESULT_IS_NONE"
 
     STATUS_IMG_COMPARE_RESULT = "status_img_compare_result"
@@ -33,35 +66,76 @@ class StatusRecorder(object):
     STATUS_TIME_LIST_COUNTER = "time_list_counter"
     STATUS_VALIDATOR_RESULT = "validator_result"
 
+    DEFAULT_FIELD_CASE_NAME = "case_name"
+    DEFAULT_FIELD_CASE_TIME_STAMP = "case_time_stamp"
+
     STATUS_FPS_VALIDATION_NORMAL = 0
     STATUS_FPS_VALIDATION_ABNORMAL = 1
 
+    DEFAULT_FIELD_CURRENT_STATUS = "current_status"
+    DEFAULT_FIELD_CASE_STATUS_HISTORY = "case_status_history"
+    DEFAULT_FIELD_CASE_INFO = "case_info"
+
+    STATUS_DESC_CASE_TOTAL_EXEC_TIME = "TOTAL_EXEC_TIME"
+    STATUS_DESC_CASE_RUNNING_STATUS = "RUNNING_STATUS"
+
     def __init__(self, status_fp):
         self.status_fp = status_fp
-        self.current_status = CommonUtil.load_json_file(status_fp)
+        self.current_data = CommonUtil.load_json_file(status_fp)
 
     def get_current_status(self):
-        return self.current_status['current_status']
+        return self.current_data[self.DEFAULT_FIELD_CURRENT_STATUS]
+
+    def set_case_basic_info(self, case_name):
+        current_time_stamp = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
+        if self.DEFAULT_FIELD_CASE_INFO in self.current_data:
+            self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME] = case_name
+            self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_TIME_STAMP] = current_time_stamp
+        else:
+            self.current_data[self.DEFAULT_FIELD_CASE_INFO] = {self.DEFAULT_FIELD_CASE_NAME: case_name, self.DEFAULT_FIELD_CASE_TIME_STAMP: current_time_stamp}
+        with open(self.status_fp, "w+") as fh:
+            json.dump(self.current_data, fh)
 
     def record_current_status(self, input_status_dict):
-        self.current_status = CommonUtil.load_json_file(self.status_fp)
-        if 'current_status' in self.current_status:
-            self.current_status['current_status'].update(input_status_dict)
+        self.current_data = CommonUtil.load_json_file(self.status_fp)
+        if self.DEFAULT_FIELD_CURRENT_STATUS in self.current_data:
+            self.current_data[self.DEFAULT_FIELD_CURRENT_STATUS].update(input_status_dict)
         else:
-            self.current_status['current_status'] = input_status_dict
+            self.current_data[self.DEFAULT_FIELD_CURRENT_STATUS] = input_status_dict
         with open(self.status_fp, "w+") as fh:
-            json.dump(self.current_status, fh)
+            json.dump(self.current_data, fh)
 
-    def record_status(self, case_name, status, value):
-        self.current_status = CommonUtil.load_json_file(self.status_fp)
-        if case_name in self.current_status:
-            self.current_status[case_name].append(
-                {'time_seq': datetime.strftime(datetime.now(), '%Y%m%d%H%M%S'), 'status': status, 'value': value})
+    def create_current_case_status_history(self):
+        self.current_data = CommonUtil.load_json_file(self.status_fp)
+        current_case_time_stamp = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_TIME_STAMP]
+        current_case_name = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME]
+        if self.DEFAULT_FIELD_CASE_STATUS_HISTORY in self.current_data:
+            if current_case_name in self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY]:
+                if current_case_time_stamp not in self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name]:
+                    self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp] = {}
+            else:
+                self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name] = {current_case_time_stamp: {}}
         else:
-            self.current_status[case_name] = [
-                {'time_seq': datetime.strftime(datetime.now(), '%Y%m%d%H%M%S'), 'status': status, 'value': value}]
+            self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY] = {current_case_name: {current_case_time_stamp: {}}}
+
+    def record_case_status_history(self, status_desc, value=None):
+        self.create_current_case_status_history()
+        current_case_name = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME]
+        current_case_time_stamp = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_TIME_STAMP]
+        self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = value
         with open(self.status_fp, "w+") as fh:
-            json.dump(self.current_status, fh)
+            json.dump(self.current_data, fh)
+
+    def record_case_exec_time_history(self, status_desc):
+        self.create_current_case_status_history()
+        current_case_name = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME]
+        current_case_time_stamp = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_TIME_STAMP]
+        if status_desc in self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp]:
+            self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = time.time() - self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc]
+        else:
+            self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = time.time()
+        with open(self.status_fp, "w+") as fh:
+            json.dump(self.current_data, fh)
 
 
 class CalculationUtil(object):

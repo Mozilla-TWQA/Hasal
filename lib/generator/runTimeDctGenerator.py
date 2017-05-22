@@ -181,6 +181,9 @@ class RunTimeDctGenerator(BaseGenerator):
                         update_result['perceptual_speed_index'] = (sorted_list[median_time_index]['psi'] + sorted_list[median_time_index + 1]['psi']) / 2
             history_result_data[self.env.test_name] = update_result
 
+            # write fps to history_result_data
+            history_result_data['video-recording-fps'] = self.index_config['video-recording-fps']
+
             # dump to json file
             with open(self.env.DEFAULT_TEST_RESULT, "wb") as fh:
                 json.dump(history_result_data, fh, indent=2)

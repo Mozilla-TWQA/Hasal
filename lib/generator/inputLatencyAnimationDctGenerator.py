@@ -160,6 +160,9 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             _, _, update_result = self.generate_update_result_for_runtime(update_result, self.compare_result, run_time_dict)
             history_result_data[self.env.test_name] = update_result
 
+            # write fps to history_result_data
+            history_result_data['video-recording-fps'] = self.index_config['video-recording-fps']
+
             # dump to json file
             with open(self.env.DEFAULT_TEST_RESULT, "wb") as fh:
                 json.dump(history_result_data, fh, indent=2)
