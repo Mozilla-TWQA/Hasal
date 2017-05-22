@@ -6,7 +6,7 @@
 $ python agent.py --dirpath <CONFIG DIR PATH>
 ```
 
-The agent will be triggerred by json file, so you need to put the json file in <CONFIG DIR PATH> to make sure the agent is triggerred automatically.
+The agent can be triggered by a json format configuration file. You need to put the file path in to make sure the agent can be triggered automatically.
 
 
 ## Config
