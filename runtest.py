@@ -130,8 +130,7 @@ class RunTest(object):
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
-        if self.online_config['enable'] and os.path.exists(self.default_result_fp):
-            os.remove(self.default_result_fp)
+        pass
 
     def case_teardown(self, data):
         if self.online_config['enable']:
@@ -164,11 +163,11 @@ class RunTest(object):
         result['CHROME_PROFILE_PATH'] = self._chrome_profile_path
 
         if self.online_config['perfherder-revision']:
-            result['PERFHERDER_REVISION'] = self.online_config['perfherder-revision']
+            result['PERFHERDER_REVISION'] = str(self.online_config['perfherder-revision'])
         else:
             result['PERFHERDER_REVISION'] = ""
         if self.online_config['perfherder-pkg-platform']:
-            result['PERFHERDER_PKG_PLATFORM'] = self.online_config['perfherder-pkg-platform']
+            result['PERFHERDER_PKG_PLATFORM'] = str(self.online_config['perfherder-pkg-platform'])
         else:
             result['PERFHERDER_PKG_PLATFORM'] = ""
         for variable_name in kwargs.keys():
@@ -182,7 +181,11 @@ class RunTest(object):
             status_result = objStatusRecorder.get_current_status()
             round_status = int(status_result.get(objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION, -1))
             fps_stat = int(status_result.get(objStatusRecorder.STATUS_FPS_VALIDATION, -1))
-            if round_status == 0 and fps_stat == 0:
+            compare_img_result = status_result.get(objStatusRecorder.STATUS_IMG_COMPARE_RESULT, objStatusRecorder.ERROR_MISSING_FIELD_IMG_COMPARE_RESULT)
+
+            if round_status == 0 and fps_stat == 0 and compare_img_result == objStatusRecorder.PASS_IMG_COMPARE_RESULT:
+                # check the field status_img_compare_result of current status in running_statistics.json
+                # only continue when status equal to PASS otherwise retry count plus one
                 if self.online_config['enable']:
                     # Online mode handling
                     upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
@@ -199,32 +202,19 @@ class RunTest(object):
                         else:
                             current_run += 1
                     else:
-
                         current_run += 1
                 else:
-                    if objStatusRecorder.STATUS_IMG_COMPARE_RESULT in status_result:
-                        if status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT] == objStatusRecorder.PASS_IMG_COMPARE_RESULT:
-                            # check the field status_img_compare_result of current status in running_statistics.json
-                            # only continue when status equal to PASS otherwise retry count plus one
-                            if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
-                                current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
-                            else:
-                                current_run += 1
-                        else:
-                            objStatusRecorder.record_status(test_case_module_name,
-                                                            status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
-                            current_retry += 1
+                    if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
+                        current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
                     else:
-                        objStatusRecorder.record_status(test_case_module_name,
-                                                        StatusRecorder.ERROR_MISSING_FIELD_IMG_COMPARE_RESULT, None)
-                        current_retry += 1
+                        current_run += 1
             else:
+                if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
+                    objStatusRecorder.record_status(test_case_module_name, status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
                 if round_status != 0:
-                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL,
-                                                    round_status)
+                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
                 if fps_stat != 0:
-                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL,
-                                                    round_status)
+                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL, round_status)
                 current_retry += 1
         else:
             self.logger.error("test could raise exception during execution!!")
@@ -237,6 +227,9 @@ class RunTest(object):
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
+                # when online mode is enabled, the result file will be removed before trigger the runtest.py everytime.
+                if self.online_config['enable'] and os.path.exists(self.default_result_fp):
+                    os.remove(self.default_result_fp)
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
                 current_run, current_retry, return_result = self.run_test_result_analyzer(test_case_module_name,
@@ -249,6 +242,7 @@ class RunTest(object):
                 current_retry += 1
 
             if current_retry >= self.exec_config['max-retry']:
+                self.logger.warn("current retry [%s] exceed the max retry count [%s]" % (current_retry, self.exec_config['max-retry']))
                 break
         return return_result
 
