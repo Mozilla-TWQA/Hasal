@@ -45,7 +45,7 @@ sleep(2)
 app.click_search_field()
 sleep(1)
 type('m')
-com.wait_pattern_for_vanished(pattern=pattern)
+app.wait_pattern_for_vanished(pattern=pattern)
 com.loop_type_key(Key.DOWN, 2, 0.5)
 
 # Record T1, and capture the snapshot image

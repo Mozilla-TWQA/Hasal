@@ -43,13 +43,10 @@ sleep(2)
 # PRE ACTIONS
 app.click_search_field()
 sleep(1)
-type('m')
-app.wait_pattern_for_vanished(pattern=pattern)
-com.loop_type_key(Key.DOWN, 2, 0.5)
 
 # Record T1, and capture the snapshot image
 # Input Latency Action
-screenshot, t1 = app.il_type_key_down_search_suggestion(capture_width, capture_height)
+screenshot, t1 = app.il_type('m', capture_width, capture_height)
 
 # In normal condition, a should appear within 100ms,
 # but if lag happened, that could lead the show up after 100 ms,
@@ -60,7 +57,7 @@ sleep(0.1)
 t2 = time.time()
 
 # POST ACTIONS
-sleep(1)
+app.wait_pattern_for_vanished(pattern)
 
 # Write timestamp
 com.updateJson({'t1': t1, 't2': t2}, INPUT_TIMESTAMP_FILE_PATH)
