@@ -69,7 +69,7 @@ class HasalTask(object):
             with open(default_suite_fp) as fh:
                 case_list = fh.readlines()
         with open(jenkins_suite_fp, 'w') as write_fh:
-            write_fh.writelines(case_list)
+            write_fh.write('\n'.join(case_list) + '\n')
         return jenkins_suite_fp
 
     def create_online_config(self):
