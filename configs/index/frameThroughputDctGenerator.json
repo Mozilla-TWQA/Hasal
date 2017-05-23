@@ -8,7 +8,7 @@
   "image-converter-format"  : "bmp",
   "case-type"               : "re",
   "ipynb-template-name"     : "report-frame-throughput.ipynb",
-  "snapshot-base-sample1"   : false,
+  "snapshot-base-sample1"   : true,
   "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : false,
