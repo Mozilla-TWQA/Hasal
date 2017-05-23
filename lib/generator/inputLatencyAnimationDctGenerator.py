@@ -174,6 +174,8 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
+        self.clean_output_images(self.compare_result['running_time_result'], self.env.img_output_dp)
+
     @classmethod
     def calculate_runtime_base_on_event(cls, input_running_time_result, fps=90):
         """

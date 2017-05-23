@@ -267,3 +267,5 @@ class FrameThroughputDctGenerator(BaseGenerator):
             current_time = time.time()
             elapsed_time = current_time - start_time
             logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+
+        self.clean_output_images(self.compare_result['running_time_result'], self.env.img_output_dp)
