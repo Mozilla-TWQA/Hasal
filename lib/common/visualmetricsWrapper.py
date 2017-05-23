@@ -175,7 +175,9 @@ def find_image_viewport(file):
         x = int(math.floor(width / 4))
         y = int(math.floor(height / 4))
         pixels = im.load()
-        background = pixels[x, y]
+        white_rgb = (255, 255, 255)
+        # based on needs, set white color as target background
+        background = white_rgb
 
         # Find the left edge
         left = None
