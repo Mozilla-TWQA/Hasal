@@ -58,6 +58,20 @@ class SikuliCase(object):
 
         self.additional_args = self.sikuli_status.get(self.KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST, [])
 
+    def append_to_stat_json(self, key, value):
+        """
+        Append key-value pair into stat JSON file under "current_status/sikuli" path.
+        @param key: The key name.
+        @param value: value.
+        """
+        with open(self.INPUT_STAT_FILE, 'r') as stat_fh:
+            status = json.load(stat_fh)
+            current_status = status.get(self.KEY_NAME_CURRENT_STATUS, {})
+            sikuli_status = current_status.get(self.KEY_NAME_SIKULI, {})
+            sikuli_status[key] = value
+        with open(self.INPUT_STAT_FILE, 'w') as stat_fh:
+            json.dump(status, stat_fh)
+
     def _load_addtional_args(self):
         pass
 
