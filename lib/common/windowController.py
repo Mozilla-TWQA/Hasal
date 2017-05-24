@@ -162,12 +162,16 @@ class WindowObject(object):
                             if application_obj.isrunning():
                                 # move window position
                                 # Reference: https://www.macosxautomation.com/applescript/firsttutorial/11.html
-                                rect = application_obj.windows.bounds.get()
-                                LL = rect[0]
-                                TT = rect[1]
-                                LR = rect[2]
-                                TB = rect[3]
-                                self.rect = [LL, TT, LR - LL, TB - TT]
+                                if len(application_obj.windows.bounds.get()) >= 1:
+                                    rect = application_obj.windows.bounds.get()[0]
+                                    LL = rect[0]
+                                    TT = rect[1]
+                                    LR = rect[2]
+                                    TB = rect[3]
+                                    self.rect = [LL, TT, LR - LL, TB - TT]
+                                else:
+                                    logger.warning('Current list of windows bounds less than 1. [%s]' % application_obj.windows.bounds.get())
+                                    return False
                                 return True
                             time.sleep(1)
         logger.warning('Cannot found one of [{}] for get rect.'.format(self.window_name_list))

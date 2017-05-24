@@ -130,7 +130,8 @@ class RunTest(object):
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
-        pass
+        if self.online_config['enable'] and os.path.exists(self.default_result_fp):
+            os.remove(self.default_result_fp)
 
     def case_teardown(self, data):
         if self.online_config['enable']:
@@ -202,6 +203,7 @@ class RunTest(object):
                         else:
                             current_run += 1
                     else:
+
                         current_run += 1
                 else:
                     if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
@@ -210,23 +212,27 @@ class RunTest(object):
                         current_run += 1
             else:
                 if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
-                    objStatusRecorder.record_status(test_case_module_name, status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
+                    objStatusRecorder.record_case_status_history(status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
                 if round_status != 0:
-                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
+                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
                 if fps_stat != 0:
-                    objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL, round_status)
+                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_FPS_STAT_ABNORMAL, round_status)
                 current_retry += 1
         else:
             self.logger.error("test could raise exception during execution!!")
-            objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_CANT_FIND_STATUS_FILE, None)
+            objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
+                                                         StatusRecorder.ERROR_CANT_FIND_STATUS_FILE)
             current_retry += 1
         return current_run, current_retry, video_result
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
+        objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
+        objStatusRecorder.set_case_basic_info(test_name)
         return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
+                objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
                 # when online mode is enabled, the result file will be removed before trigger the runtest.py everytime.
                 if self.online_config['enable'] and os.path.exists(self.default_result_fp):
                     os.remove(self.default_result_fp)
@@ -235,10 +241,11 @@ class RunTest(object):
                 current_run, current_retry, return_result = self.run_test_result_analyzer(test_case_module_name,
                                                                                           test_name, current_run,
                                                                                           current_retry, return_result)
+                objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
             except Exception as e:
-                self.logger.warn('Exception happend during running test!')
-                objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
-                objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION, e.message)
+                self.logger.warn('Exception happend during running test!, error message: [%s]' % e.message)
+                objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
+                                                             StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION)
                 current_retry += 1
 
             if current_retry >= self.exec_config['max-retry']:
