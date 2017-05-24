@@ -43,6 +43,15 @@ class StatusRecorder(object):
     def get_current_status(self):
         return self.current_status['current_status']
 
+    def get_current_sikuli_status(self):
+        """
+        Get the "sikuli" status from current status.
+        @return: the status object of "current_status/sikuli".
+        """
+        # reference: "lib/sikuli.py"
+        KEY_NAME_SIKULI = 'sikuli'
+        return self.current_status.get('current_status', {}).get(KEY_NAME_SIKULI, {})
+
     def record_current_status(self, input_status_dict):
         self.current_status = CommonUtil.load_json_file(self.status_fp)
         if 'current_status' in self.current_status:
