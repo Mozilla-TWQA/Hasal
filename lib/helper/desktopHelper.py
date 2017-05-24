@@ -4,7 +4,6 @@ import subprocess
 from ..common.windowController import WindowObject
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
-from ..common.visualmetricsWrapper import find_image_viewport
 
 logger = get_logger(__name__)
 
