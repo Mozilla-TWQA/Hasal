@@ -79,9 +79,8 @@ class BaseTest(unittest.TestCase):
             viewport = dict()
             viewport_ref_fp = os.path.join(self.env.img_sample_dp, self.env.img_output_sample_1_fn)
             is_expected_viewport = False
-            time.sleep(3)
             desktopHelper.lock_window_pos(self.browser_type, self.exec_config)
-            for i in range(20):
+            for i in range(25):
                 time.sleep(1)
                 videoHelper.capture_screen(self.env, self.index_config, self.exec_config,
                                            self.env.video_output_sample_1_fp,
