@@ -96,6 +96,15 @@ class StatusRecorder(object):
         with open(self.status_fp, "w+") as fh:
             json.dump(self.current_data, fh)
 
+    def get_current_sikuli_status(self):
+        """
+        Get the "sikuli" status from current status.
+        @return: the status object of "current_status/sikuli".
+        """
+        # reference: "lib/sikuli.py"
+        KEY_NAME_SIKULI = 'sikuli'
+        return self.current_status.get('current_status', {}).get(KEY_NAME_SIKULI, {})
+
     def record_current_status(self, input_status_dict):
         self.current_data = CommonUtil.load_json_file(self.status_fp)
         if self.DEFAULT_FIELD_CURRENT_STATUS in self.current_data:

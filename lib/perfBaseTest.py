@@ -20,7 +20,8 @@ class PerfBaseTest(baseTest.BaseTest):
         super(PerfBaseTest, self).setUp()
 
         # init sikuli
-        self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
+        self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir,
+                                    running_statistics_file_path=self.global_config['default-running-statistics-fn'])
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.index_config, self.exec_config, self.browser_type, self.sikuli)
