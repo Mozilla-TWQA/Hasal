@@ -59,7 +59,7 @@ class facebook(WebApp):
     def wait_for_loaded(self):
         wait(self.fb_logo, 15)
 
-    def wait_for_messenger_loaded(self):
+    def wait_for_messenger_loaded(self, similarity=0.7):
         self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
 
     def focus_window(self):
