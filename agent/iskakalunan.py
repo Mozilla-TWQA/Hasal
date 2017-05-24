@@ -66,7 +66,7 @@ class Iskakalunan(object):
             subprocess.call(['python', 'runtest.py', '-h', '>', 'result'])
             return
 
-        subprocess.call(['git', 'checkout', 'master'])
+        subprocess.call(['git', 'checkout', 'dev'])
         # is there any new Mail request
         messages = self.mail_handler.get_requests()
         if messages:
