@@ -92,6 +92,8 @@ class UploadAgent(object):
         if os.path.exists(input_result_fp):
             with open(input_result_fp) as json_fh:
                 result_data = json.load(json_fh)
+            if 'video-recording-fps' in result_data:
+                result_data.pop('video-recording-fps')
             if len(result_data.keys()) != 1:
                 logger.error("current result file consist over 1 test case result!")
                 return None
