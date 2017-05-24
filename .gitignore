@@ -23,7 +23,6 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
-appveyor.yml
 ! thirdParty/userChrome.css
 ! thirdParty/extensions
 ! thirdParty/obsConfigs
