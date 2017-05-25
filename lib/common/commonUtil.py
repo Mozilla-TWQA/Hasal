@@ -408,8 +408,13 @@ class CommonUtil(object):
     @staticmethod
     def load_json_file(fp):
         if os.path.exists(fp):
-            with open(fp) as fh:
-                return json.load(fh)
+            try:
+                with open(fp) as fh:
+                    json_obj = json.load(fh)
+                return json_obj
+            except Exception as e:
+                print e
+                return {}
         else:
             return {}
 

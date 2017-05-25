@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 from lib.common.commonUtil import StatusRecorder
 
 
@@ -29,13 +28,8 @@ class Sikuli():
         return library_path
 
     def _check_status_recorder(self):
-        if not os.path.isfile(self.running_statistics_file_path):
-            with open(self.running_statistics_file_path, 'w+') as f:
-                data = {
-                    self.KEY_NAME_CURRENT_STATUS: {}
-                }
-                json.dump(data, f)
         self.status_recorder = StatusRecorder(self.running_statistics_file_path)
+        self.status_recorder.record_current_status({})
 
     def _load_current_status(self):
         if self.status_recorder:
