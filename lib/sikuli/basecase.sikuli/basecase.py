@@ -99,3 +99,9 @@ class SikuliInputLatencyCase(SikuliCase):
         self.INPUT_RECORD_WIDTH = self.additional_args[2]
         self.INPUT_RECORD_HEIGHT = self.additional_args[3]
         self.INPUT_TIMESTAMP_FILE_PATH = self.additional_args[4]
+
+
+class SikuliRunTimeCase(SikuliCase):
+    """
+    The base Sikuli case for Run Time cases.
+    """
