@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 from lib.common.commonUtil import StatusRecorder
 
 
