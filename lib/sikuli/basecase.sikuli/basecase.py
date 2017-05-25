@@ -7,6 +7,8 @@ class SikuliCase(object):
     The base Sikuli case for Hasal.
     It will parse sys.argv, which is [library path for running cases, running statistics file path.
 
+    Please implement your "run()" method for running your steps.
+
     After loading the stat file, it will prepare some default variables:
     - INPUT_LIB_PATH: the library path for running cases.
     - INPUT_STAT_FILE: the running statistics file, which is JSON format.
@@ -74,12 +76,6 @@ class SikuliCase(object):
 
     def _load_addtional_args(self):
         pass
-
-    def run(self):
-        """
-        Implement the case steps by override this method.
-        """
-        raise NotImplementedError()
 
 
 class SikuliInputLatencyCase(SikuliCase):
