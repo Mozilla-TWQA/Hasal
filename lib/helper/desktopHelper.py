@@ -1,9 +1,7 @@
-import os
 import sys
 import importlib
 import subprocess
 from ..common.windowController import WindowObject
-from ..common.imageTool import ImageTool
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
 
@@ -25,6 +23,7 @@ def _load_browser_class(type="sikuli"):
 
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
+    exec_config = kwargs['exec_config']
     # default set engine type as sikuli since type would not be specified in perfBaseTest
     if 'type' in kwargs:
         engine_type = kwargs['type']
@@ -36,28 +35,22 @@ def launch_browser(browser_type, **kwargs):
 
     chrome_class, firefox_class = _load_browser_class(engine_type)
 
-    if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
-        if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
-            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                       tracing_path=env.chrome_tracing_file_fp)
+    if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
+        profile_path = env.chrome_profile_path
+        if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
+            browser_obj = chrome_class(exec_config['browser-height'], exec_config['browser-width'],
+                                       tracing_path=env.chrome_tracing_file_fp,
+                                       profile_path=profile_path)
         else:
-            profile_path = env.firefox_profile_path
-            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
-                                        profile_path=profile_path)
-    elif env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
-        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            profile_path = env.firefox_profile_path
-            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH, tracelogger=True,
-                                        profile_path=profile_path)
-        else:
-            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
-    else:
-        if browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
-            profile_path = env.firefox_profile_path
-            browser_obj = firefox_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH,
+            browser_obj = chrome_class(exec_config['browser-height'], exec_config['browser-width'], profile_path=profile_path)
+    elif browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
+        profile_path = env.firefox_profile_path
+        if env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
+            browser_obj = firefox_class(exec_config['browser-height'], exec_config['browser-width'], tracelogger=True,
                                         profile_path=profile_path)
         else:
-            browser_obj = chrome_class(env.DEFAULT_BROWSER_HEIGHT, env.DEFAULT_BROWSER_WIDTH)
+            browser_obj = firefox_class(exec_config['browser-height'], exec_config['browser-width'],
+                                        profile_path=profile_path)
 
     browser_obj.launch()
     return browser_obj, profile_path
@@ -72,7 +65,7 @@ def get_browser_name_list(browser_type):
             return ['Mozilla Firefox', 'Nightly']
     elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
         if sys.platform == 'darwin':
-            return ['Chrome.app']
+            return ['Google Chrome.app', 'Chrome.app']
         else:
             return ['Google Chrome']
     else:
@@ -89,7 +82,7 @@ def close_browser(browser_type):
 
 
 # TODO: need to finish webdriver way to get version
-def get_browser_version(browser_type):
+def get_browser_version(browser_type, engine_type='sikuli'):
     chrome_class, firefox_class = _load_browser_class(engine_type)
 
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
@@ -100,12 +93,26 @@ def get_browser_version(browser_type):
     return return_version
 
 
-def lock_window_pos(browser_type, height_adjustment=0, width_adjustment=0):
+# TODO: external usage should be considered once all settings from environment are extracted
+def lock_window_pos(browser_type, exec_config={}, height_adjustment=0, width_adjustment=0):
     window_title_list = get_browser_name_list(browser_type)
     # Moving window by strings from window_title
-    height = Environment.DEFAULT_BROWSER_HEIGHT + height_adjustment
-    width = Environment.DEFAULT_BROWSER_WIDTH + width_adjustment
     window_obj = WindowObject(window_title_list)
+
+    # First launch or just move position only need to get browser size from settings
+    if not height_adjustment and not width_adjustment:
+        if not exec_config:
+            height = Environment.DEFAULT_BROWSER_HEIGHT
+            width = Environment.DEFAULT_BROWSER_WIDTH
+        else:
+            height = exec_config['browser-height']
+            width = exec_config['browser-width']
+    else:
+        window_obj.get_window_rect()
+        browser_width = window_obj.rect[2]
+        browser_height = window_obj.rect[3]
+        height = browser_height + height_adjustment
+        width = browser_width + width_adjustment
     window_obj.move_window_pos(0, 0, window_height=height, window_width=width)
     return height, width
 
@@ -122,24 +129,24 @@ def minimize_window():
                 break
 
 
-def adjust_viewport(browser_type, img_sample_dp, img_sample_name):
-    img_obj = ImageTool()
-    img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = img_obj.find_image_viewport(img_sample_fp)
-    height_adjustment = Environment.DEFAULT_VIEWPORT_HEIGHT - viewport['height']
-    width_adjustment = Environment.DEFAULT_VIEWPORT_WIDTH - viewport['width']
-    height, width = lock_window_pos(browser_type, height_adjustment, width_adjustment)
+def adjust_viewport(browser_type, viewport, exec_config):
+    height_adjustment = exec_config['viewport-height'] - viewport['height']
+    width_adjustment = exec_config['viewport-width'] - viewport['width']
+    height, width = lock_window_pos(browser_type, exec_config, height_adjustment, width_adjustment)
     return height, width
 
 
-def check_browser_show_up(img_sample_dp, img_sample_name):
-    width_fraction = 0.95
-    height_fraction = 0.8
-    img_obj = ImageTool()
-    img_sample_fp = os.path.join(img_sample_dp, img_sample_name)
-    viewport = img_obj.find_image_viewport(img_sample_fp)
-    if viewport['width'] > Environment.DEFAULT_BROWSER_WIDTH * width_fraction and \
-            viewport['height'] > Environment.DEFAULT_BROWSER_HEIGHT * height_fraction:
+def is_expected_viewport(viewport, exec_config):
+    if viewport['height'] == exec_config['viewport-height'] and viewport['width'] == exec_config['viewport-width']:
+        return True
+    else:
+        return False
+
+
+def is_above_half_viewport(viewport, exec_config):
+    half_viewport_height = exec_config['viewport-height'] * 0.5
+    half_viewport_width = exec_config['viewport-width'] * 0.5
+    if viewport['height'] >= half_viewport_height and viewport['width'] >= half_viewport_width:
         return True
     else:
         return False

@@ -1,0 +1,33 @@
+# index configuration readme 
+  * image-converter-path : ` ` 
+  * case-type : `re/pt` 
+  * platform-dep-settings : ` ` 
+    * win32 : ` ` 
+      * default : ` ` 
+        * video-recording-fps : ` ` 
+        * mismatch-rate-threshold : ` ` 
+        * compare-threshold : ` ` 
+        * search-margin : ` ` 
+    * linux2 : ` ` 
+      * default : ` ` 
+        * video-recording-fps : ` ` 
+        * mismatch-rate-threshold : ` ` 
+        * compare-threshold : ` ` 
+        * search-margin : ` ` 
+    * darwin : ` ` 
+      * default : ` ` 
+        * video-recording-fps : ` ` 
+        * mismatch-rate-threshold : ` ` 
+        * compare-threshold : ` ` 
+        * search-margin : ` ` 
+  * ipynb-template-name : ` ` 
+  * drop-outlier-flag : ` ` 
+  * sample-converter-path : ` ` 
+  * module-path : ` ` 
+  * image-converter-name : ` ` 
+  * sample-converter-name : ` ` 
+  * snapshot-base-sample1 : ` ` 
+  * snapshot-base-sample2 : ` ` 
+  * image-converter-format : ` ` 
+  * supported-suite-fp : ` ` 
+  * module-name : ` ` 

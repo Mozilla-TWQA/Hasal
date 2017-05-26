@@ -7,25 +7,42 @@
   "image-converter-path"    : "lib.converter.cv2Converter",
   "image-converter-format"  : "bmp",
   "case-type"               : "re",
+  "ipynb-template-name"     : "report-input-latency.ipynb",
   "snapshot-base-sample1"   : true,
   "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : false,
   "platform-dep-settings"   : {
     "darwin":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.005,
-      "search-margin"           : 1
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      }
     },
-    "win32":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.005,
-      "search-margin"           : 1
+    "win32": {
+      "7": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      },
+      "10": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      },
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 1
+      }
     },
     "linux2":{
-      "video-recording-fps"     : 90,
-      "compare-threshold"       : 0.01,
-      "search-margin"           : 1
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 1
+      }
     }
   }
 }

@@ -155,25 +155,23 @@ IF NOT "%APPVEYOR%"=="True" (
 )
 
 
-mkdir -p ./thirdParty/geckodriver/
-tar -xvzf ./thirdParty/geckodriver-v0.14.0.tar.gz -C ./thirdParty/geckodriver/
-chmod a+x ./thirdParty/geckodriver/geckodriver
-
-
 @REM Installing ffmpeg
-ECHO [INFO] Downloading FFMPEG.
-IF EXIST ffmpeg-20160527-git-d970f7b-win32-static.7z (
-    ECHO [INFO] Found cached ffmpeg-20160527-git-d970f7b-win32-static.7z
+IF NOT EXIST "%CD%"\ffmpeg\bin\ffmpeg.exe (
+    ECHO [INFO] Downloading FFMPEG ...
+    pushd thirdParty
+    curl -kLO "https://github.com/ypwalter/ffmpeg/blob/master/ffmpeg-20160527-git-d970f7b-win32-static.7z?raw=true"
+    popd
+    ECHO [INFO] Installing FFMPEG ...
+    7z x "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
+    move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
+    del "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
+    ECHO [INFO] FFMPEG is installed.
 ) ELSE (
-    ECHO [INFO] Downloading FFMPEG.
-    thirdParty\curl -kLO https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20160527-git-d970f7b-win32-static.7z
+    ECHO [INFO] FFMPEG had been installed.
 )
-ECHO [INFO] Installing FFMPEG.
-7z x ffmpeg-20160527-git-d970f7b-win32-static.7z
-move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
+
 IF NOT "%APPVEYOR%"=="True" (
     SETX PATH "%CD%\ffmpeg\bin\;%PATH%" /m
-    del ffmpeg-20160527-git-d970f7b-win32-static.7z
 )
 SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
@@ -196,16 +194,33 @@ del sikuli*.jar
 @echo on
 
 
-@REM Installing Miniconda
+@REM Installing OBS
 
 IF "%APPVEYOR%"=="True" GOTO SkipConda
+
+IF NOT EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
+    ECHO [INFO] Downloading OBS ...
+    pushd thirdParty
+    del OBS-Studio-18.0.1-Full.zip
+    curl -kLO "https://github.com/jp9000/obs-studio/releases/download/18.0.1/OBS-Studio-18.0.1-Full.zip"
+    ECHO [INFO] Installing OBS ...
+    7z x OBS-Studio-18.0.1-Full.zip -o"C:\Program Files (x86)\obs-studio"
+    popd
+    SET FIRST_OBS=True
+    ECHO [INFO] OBS is installed.
+) ELSE (
+    ECHO [INFO] OBS had been installed.
+)
+
+
+@REM Installing Miniconda
 
 where conda.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have conda in windows system.
 ) ELSE (
     ECHO [INFO] Downloading Miniconda.
-    thirdParty\curl -kLO https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe
+    thirdParty\curl -kLO "https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe"
     ECHO [INFO] Installing Miniconda.
     Miniconda2-latest-Windows-x86.exe /InstallationType=JustMe /RegisterPython=0 /S /D=C:\Miniconda2\
     SETX PATH "C:\Miniconda2\;C:\Miniconda2\Scripts\;%PATH%" /m
@@ -216,13 +231,15 @@ IF %ERRORLEVEL% EQU 0 (
 :SkipConda
 IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of conda in CI
+    ECHO [INFO] Skipping OBS in CI
 )
 
 @REM Configuring Miniconda and Virtualenv
 conda config --set always_yes yes --set changeps1 no
 conda install psutil
 ECHO [INFO] Creating Miniconda virtualenv (It might take some time to finish.)
-conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip
+conda create -q -n env-python python=2.7 numpy scipy nose pywin32 pip matplotlib==1.5.3 runipy==0.1.5
+
 
 ::::::::::::::::::::
 ::    Browsers    ::
@@ -258,13 +275,45 @@ SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Goo
 IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Setup in virtualenv
     activate env-python
+    pip install pywin32-ctypes==0.0.1
     pip install coverage mitmproxy
     pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     python setup.py install
 ) ELSE (
     @REM Installing mitmproxy & opencv2 & Hasal
-    activate env-python & pip install mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+    activate env-python & pip install pywin32-ctypes==0.0.1 mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
 )
+
+
+:::::::::::::::::::::::::
+::  User Interactions  ::
+:::::::::::::::::::::::::
+
+IF "%APPVEYOR%"=="True" GOTO SkipUserInteractions
+
+
+@REM OBS License Agreement
+IF "%FIRST_OBS%"=="True" (
+    IF EXIST "C:\Program Files (x86)\obs-studio\bin\32bit\obs32.exe" (
+        pushd "C:\Program Files (x86)\obs-studio\bin\32bit\"
+        ECHO [INFO] Launching OBS for License Agreement.
+        ECHO.
+        ECHO "[INFO] If there is error message about missing MSVCP120.dll,"
+        ECHO "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
+        ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
+        obs32.exe
+        popd
+    ) ELSE (
+        ECHO [WARN] Can not find OBS binary file.
+    )
+)
+
+
+:SkipUserInteractions
+IF "%APPVEYOR%"=="True" (
+    ECHO [INFO] Skipping SkipUser Interactions
+)
+
 
 ::::::::::::::::::::
 ::    Finished    ::

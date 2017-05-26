@@ -4,7 +4,7 @@ from lib.perfBaseTest import PerfBaseTest
 class TestSikuli(PerfBaseTest):
 
     def setUp(self):
-        self.set_variable(test_target=self.env.TEST_TARGET_ID_1_PAGE_CONTENT_WITH_IMAGE)
+        self.set_variable(test_target=self.global_config['gsuite']['gdoc-1-page-content-with-image'])
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_read_basic_image_1(self):

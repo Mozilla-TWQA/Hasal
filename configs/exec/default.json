@@ -6,5 +6,8 @@
   "comment"      : "<today>",
   "user-simulation-tool" : "sikuli",
   "webdriver-run-browser" : ["firefox"],
-  "exec-suite-fp": "./suite.txt"
+  "exec-suite-fp": "./suite.txt",
+  "output-result-ipynb-file": false,
+  "output-result-video-file": true,
+  "clean-unnecessary-images": true
 }

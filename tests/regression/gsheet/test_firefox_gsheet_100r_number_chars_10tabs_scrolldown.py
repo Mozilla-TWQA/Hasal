@@ -7,5 +7,5 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
 
     def test_firefox_gsheet_100r_number_chars_10tabs_scrolldown(self):
-        self.test_url = self.env.GSHEET_TEST_URL_SPEC % self.env.TEST_TARGET_ID_100R_NUMBER_ENCHAR_100FORMULA_10TABS
+        self.test_url = self.global_config['gsuite']['gsheet-test-url-spec'] % self.global_config['gsuite']['gsheet-100r-number-enchar-100formula-10tabs']
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.test_url, script_dp=self.env.test_script_py_dp)

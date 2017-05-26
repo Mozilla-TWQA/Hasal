@@ -19,7 +19,7 @@ class FirefoxProfileCreator(object):
             self.firefox_cmd = 'firefox'
         self._firefox_profile_path = firefox_profile_path
 
-    def get_firefox_profile(self, prefs={}, cookies_settings={}, extensions_settings={}):
+    def get_firefox_profile(self, prefs={}, cookies_settings={}, profile_files_settings={}, extensions_settings={}):
         if self._firefox_profile_path:
             logger.info('Get Profile: {}'.format(self._firefox_profile_path))
             return self._firefox_profile_path
@@ -27,6 +27,7 @@ class FirefoxProfileCreator(object):
             profile_path = self._create_firefox_profile()
             self._set_prefs(prefs=prefs)
             self._download_cookies(cookies_settings=cookies_settings)
+            self._copy_files(profile_files_settings=profile_files_settings)
             self._install_profile_extensions(extensions_settings=extensions_settings)
             return profile_path
 
@@ -96,8 +97,13 @@ class FirefoxProfileCreator(object):
                         data['addons'].append(new_data)
 
                         pos = len(data['addons']) - 1
-                        new_xpi_name = data['addons'][pos]['descriptor'].split("/")[-1].split("\\")[-1]
-                        data['addons'][pos]['descriptor'] = os.path.join(extensions_folder, new_xpi_name)
+                        # old add-ons using 'descriptor' to store location while new one is using 'path'
+                        path_name_key = ['path', 'descriptor']
+                        for key_name in path_name_key:
+                            if key_name in data['addons'][pos]:
+                                new_xpi_name = data['addons'][pos][key_name].split("/")[-1].split("\\")[-1]
+                                data['addons'][pos][key_name] = os.path.join(extensions_folder, new_xpi_name)
+                                break
                         data['addons'][pos]['sourceURI'] = None
 
                     with open(extensions_json_file, 'w') as f:
@@ -106,6 +112,22 @@ class FirefoxProfileCreator(object):
                     if not os.path.exists(extensions_folder):
                         os.makedirs(extensions_folder)
                     shutil.copyfile(xpi_loc, data['addons'][pos]['descriptor'])
+
+    def _copy_files(self, profile_files_settings={}):
+        if profile_files_settings:
+            thirdparty_folder = Environment.DEFAULT_THIRDPARTY_DIR
+
+            for name in profile_files_settings.keys():
+                f = profile_files_settings[name]
+                source = os.path.join(thirdparty_folder, f['filename'])
+                target_folder = os.path.join(self._firefox_profile_path, f['destination'])
+                target_path = os.path.join(target_folder, f['filename'])
+                logger.info('(' + name + ') Copying file to ' + target_path)
+
+                if not os.path.exists(target_folder):
+                    os.mkdir(target_folder)
+
+                shutil.copyfile(source, target_path)
 
     def remove_firefox_profile(self):
         if self._firefox_profile_path and os.path.isdir(self._firefox_profile_path):

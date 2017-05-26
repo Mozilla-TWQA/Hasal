@@ -35,7 +35,7 @@ from logConfig import get_logger
 logger = get_logger(__name__)
 
 
-def colors_are_similar(a, b, threshold=30):
+def colors_are_similar(a, b, threshold=45):
     similar = True
     sum = 0
     for x in xrange(3):
@@ -51,10 +51,10 @@ def colors_are_similar(a, b, threshold=30):
 
 def find_tab_view(input_file, viewport):
     """
-
-    @param file:
-    @param viewport:
-    @return:
+    Find the Region of imageUtil.CropRegion.TAB_VIEW.
+    @param file: image file.
+    @param viewport: {x, y', width, height} of VIEWPORT.
+    @return: {x, y', width, height}
     """
     try:
         im = Image.open(input_file)
@@ -164,13 +164,20 @@ def calculate_perceptual_speed_index(progress):
 
 
 def find_image_viewport(file):
+    """
+    Find the Region of imageUtil.CropRegion.VIEWPORT.
+    @param file: image file.
+    @return: {x, y', width, height}
+    """
     try:
         im = Image.open(file)
         width, height = im.size
         x = int(math.floor(width / 4))
         y = int(math.floor(height / 4))
         pixels = im.load()
-        background = pixels[x, y]
+        white_rgb = (255, 255, 255)
+        # based on needs, set white color as target background
+        background = white_rgb
 
         # Find the left edge
         left = None
