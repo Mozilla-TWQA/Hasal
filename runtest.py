@@ -22,6 +22,7 @@ import platform
 import subprocess
 import importlib
 from lib.helper.desktopHelper import close_browser
+import traceback
 from docopt import docopt
 from datetime import datetime
 from lib.common.commonUtil import StatusRecorder
@@ -215,7 +216,7 @@ class RunTest(object):
                         current_run += 1
             else:
                 if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
-                    objStatusRecorder.record_case_status_history(status_result[objStatusRecorder.STATUS_IMG_COMPARE_RESULT], None)
+                    objStatusRecorder.record_case_status_history(compare_img_result, None)
                 if round_status != 0:
                     objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
                 if fps_stat != 0:
@@ -245,8 +246,9 @@ class RunTest(object):
                                                                                           test_name, current_run,
                                                                                           current_retry, return_result)
                 objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
-            except Exception as e:
-                self.logger.warn('Exception happend during running test!, error message: [%s]' % e.message)
+            except:
+                self.logger.warn('Exception happened during running test!')
+                traceback.print_exc()
                 objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
                                                              StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION)
                 current_retry += 1
