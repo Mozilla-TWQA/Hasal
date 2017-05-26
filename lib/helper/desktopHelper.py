@@ -108,6 +108,7 @@ def lock_window_pos(browser_type, exec_config={}, height_adjustment=0, width_adj
             height = exec_config['browser-height']
             width = exec_config['browser-width']
     else:
+        window_obj.get_window_rect()
         browser_width = window_obj.rect[2]
         browser_height = window_obj.rect[3]
         height = browser_height + height_adjustment
