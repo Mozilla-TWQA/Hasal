@@ -21,6 +21,7 @@ import shutil
 import platform
 import subprocess
 import importlib
+from lib.helper.desktopHelper import close_browser
 from docopt import docopt
 from datetime import datetime
 from lib.common.commonUtil import StatusRecorder
@@ -31,15 +32,15 @@ from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
 from lib.helper.chromeProfileCreator import ChromeProfileCreator
 
 if platform.system().lower() == "linux":
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg"]
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
     DEFAULT_TASK_KILL_CMD = "taskkill /f /t /im "
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe", "obs32.exe", "obs64.exe"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "obs32.exe", "obs64.exe"]
     DEFAULT_EDITOR_CMD = "type "
 else:
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg"]
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "open -e "
 
@@ -145,6 +146,8 @@ class RunTest(object):
         for process_name in DEFAULT_TASK_KILL_LIST:
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
             os.system(cmd_str)
+        for broswer_type in ['firefox', 'chrome']:
+            close_browser(broswer_type)
 
     def clean_up_output_data(self):
         # clean output folder
