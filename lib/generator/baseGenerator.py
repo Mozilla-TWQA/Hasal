@@ -167,33 +167,27 @@ class BaseGenerator(object):
             if not start_fp or not end_fp:
                 logger.warning("Cannot get file path of either start event or end event, stop clean output images.")
                 return None
+            if start_fp > end_fp:
+                logger.warning("Start point is behind End point, stop clean output images.")
+                return None
             else:
                 try:
-                    tempdir = tempfile.mkdtemp()
-                    logger.debug('Create temp folder {}'.format(tempdir))
+                    extend_buffer = self.exec_config['clean-unnecessary-images-extend-buffer']
                     start_time = time.time()
 
-                    # keep images from start event to end event and one frame as extension buffer
+                    logger.info('Start clean output images based on compared result.')
+                    # keep images from start event to end event and remain extension buffer
                     for root, dirs, files in os.walk(img_dp):
                         start_fn = os.path.basename(start_fp)
                         end_fn = os.path.basename(end_fp)
-                        start_index = max(0, files.index(start_fn) - 1)
-                        end_index = min(len(files) - 1, files.index(end_fn) + 1)
-                        if root == img_dp:
-                            cur_tempdir = tempdir
-                        else:
-                            cur_tempdir = os.path.join(tempdir, os.path.basename(root))
-                            os.mkdir(cur_tempdir)
-                        logger.debug('Copy necessary files from {} to {}'.format(root, cur_tempdir))
-                        for img_index in range(start_index, end_index + 1):
-                            img_fn = files[img_index]
-                            imf_fp = os.path.join(root, img_fn)
-                            new_img_fp = os.path.join(cur_tempdir, img_fn)
-                            shutil.copyfile(imf_fp, new_img_fp)
-                    logger.debug('Remove original output image folder {}'.format(img_dp))
-                    shutil.rmtree(img_dp)
-                    logger.debug('Move temp folder {} to original output image folder {}'.format(tempdir, img_dp))
-                    shutil.move(tempdir, img_dp)
+                        start_index = max(0, files.index(start_fn) - extend_buffer)
+                        end_index = min(len(files) - 1, files.index(end_fn) + extend_buffer)
+
+                        logger.info('Cleaning {} ...'.format(root))
+                        for img_index in xrange(len(files)):
+                            if img_index < start_index or img_index > end_index:
+                                img_fp = os.path.join(root, files[img_index])
+                                os.remove(img_fp)
 
                     current_time = time.time()
                     elapsed_time = current_time - start_time

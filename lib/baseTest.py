@@ -107,6 +107,11 @@ class BaseTest(unittest.TestCase):
                                                              pos_y=terminal_y,
                                                              window_width=terminal_width,
                                                              window_height=terminal_height)
+                    videoHelper.capture_screen(self.env, self.index_config, self.exec_config,
+                                               self.env.video_output_sample_1_fp,
+                                               self.env.img_sample_dp,
+                                               self.env.img_output_sample_1_fn)
+                    viewport = find_image_viewport(viewport_ref_fp)
                     is_expected_viewport = desktopHelper.is_expected_viewport(viewport, self.exec_config)
                     if is_expected_viewport:
                         break

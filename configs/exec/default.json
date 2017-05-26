@@ -9,5 +9,6 @@
   "exec-suite-fp": "./suite.txt",
   "output-result-ipynb-file": false,
   "output-result-video-file": true,
-  "clean-unnecessary-images": true
+  "clean-unnecessary-images": true,
+  "clean-unnecessary-images-extend-buffer": 1
 }
