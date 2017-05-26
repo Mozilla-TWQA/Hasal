@@ -225,10 +225,35 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     if not self.common.is_infolog_enabled():
                         self.common.system_print(action_name)
-                    click(p)
                     loc = find(p).getTarget()
+                    click(p)
                     return loc
         raise Exception('Cannot {action}'.format(action=action_name))
+
+    def _click_without_exception(self, action_name, component, similarity=0.70, timeout=10, wait_component=None):
+        """
+        Same as click function but without raise exception if no match pattern
+        @param action_name: The action name, which will be printed to stdout before click.
+        @param component: The component you want to click. ex: GMAIL_REPLY.
+        @param similarity: The similarity of image. Default: 0.70.
+        @return: location
+        """
+        # wait component exists
+        if wait_component:
+            self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
+
+        # get the loop time base on the pattern amount of component, min loop time is 10 times
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
+        for counter in range(loop_time):
+            for pic, offset_x, offset_y in component:
+                p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
+                if exists(p, wait_sec):
+                    if not self.common.is_infolog_enabled():
+                        self.common.system_print(action_name)
+                    loc = find(p).getTarget()
+                    click(p)
+                    return loc
 
     class CapturePoints(object):
         # specify the Input Latency capture points
