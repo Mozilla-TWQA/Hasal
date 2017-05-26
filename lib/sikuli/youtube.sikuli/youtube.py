@@ -54,7 +54,7 @@ class Youtube(WebApp):
         """
         @param similarity: The similarity of YOUTUBE_SEARCH_SUGGESTION_REMOVE component. Default: 0.70.
         """
-        return self._wait_for_loaded(component=Youtube.YOUTUBE_SEARCH_SUGGESTION_REMOVE , similarity=similarity)
+        return self._wait_for_loaded(component=Youtube.YOUTUBE_SEARCH_SUGGESTION_REMOVE, similarity=similarity)
 
     def click_search_field(self):
         """
