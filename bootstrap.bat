@@ -140,7 +140,7 @@ SET "PATH=C:\7-Zip\;%PATH%"
 :7zip_CI
 IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Skipping checking of 7zip in CI
-    SET "PATH=C:\Program Files\7-Zip;%PATH%"
+    SET "PATH=C:\7-Zip\;%PATH%"
 )
 
 @REM fetching gechodriver 0.14
@@ -169,10 +169,12 @@ IF NOT EXIST "%CD%"\ffmpeg\bin\ffmpeg.exe (
     ECHO [INFO] FFMPEG had been installed.
 )
 
+
+mklink /d "C:\FFMPEG\" "%CD%\ffmpeg\bin\"
 IF NOT "%APPVEYOR%"=="True" (
-    SETX PATH "%CD%\ffmpeg\bin\;%PATH%" /m
+    SETX PATH "C:\FFMPEG\;%PATH%" /m
 )
-SET PATH=%CD%\ffmpeg\bin\;%PATH%
+SET PATH=C:\FFMPEG\;%PATH%
 
 
 @REM Installing Sikuli
