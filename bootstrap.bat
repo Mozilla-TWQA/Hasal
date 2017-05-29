@@ -78,11 +78,11 @@ FOR /f %%j IN ("java.exe") DO (
 )
 
 IF %JAVA_HOME%.==. (
-    ECHO [INFO] Downloading Java JDK 7u79.
-    thirdParty\curl -L -O -H "Cookie:oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe"
-    ECHO [INFO] Installing Java JDK 7u79.
-    jdk-7u79-windows-i586.exe /s
-    del jdk-7u79-windows-i586.exe
+    ECHO [INFO] Downloading Java JDK 8u131.
+    thirdParty\curl -o thirdParty\jdk.exe -L -O -H "Cookie:oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-i586.exe"
+    ECHO [INFO] Installing Java JDK 8u131.
+    thirdParty\jdk.exe /s
+    del thirdParty\jdk.exe
 ) ELSE (
     ECHO [INFO] Java JDK exists in the environment.
     ECHO JAVA_HOME = %JAVA_HOME%
@@ -99,14 +99,13 @@ IF "%APPVEYOR%"=="True" (
 ::::::::::::::::::::
 
 @REM Installing Microsoft VC++ for Python 2.7
-IF EXIST VCForPython27.msi (
+IF EXIST thirdParty\VCForPython27.msi (
     ECHO [INFO] Found cached VCForPython27.msi
 ) ELSE (
     ECHO [INFO] Downloading VCForPython27.msi
-    thirdParty\curl -kLO https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
+    thirdParty\curl -o thirdParty\VCForPython27.msi -kLO https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
     ECHO [INFO] Installing VCForPython27.msi
-    msiexec /i VCForPython27.msi /qn /quiet /norestart
-    del VCForPython27.msi
+    msiexec /i thirdParty\VCForPython27.msi /qn /quiet /norestart
 )
 
 @REM Checking and Installing 7zip
@@ -120,18 +119,23 @@ where 7z.exe >nul 2>&1
 IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have 7Zip in windows system.
 ) ELSE (
-    IF EXIST 7z1604.exe (
+    IF EXIST thirdParty\7z1604.exe (
         ECHO [INFO] Found cached 7z1604.exe
     ) ELSE (
         ECHO [INFO] Downloading 7Zip.
-        thirdParty\curl -kLO http://www.7-zip.org/a/7z1604.exe
-        ECHO [INFO] Installing 7Zip.
-        7z1604.exe /S
-        SETX PATH "C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%" /m
-        SET "PATH=C:\Program Files\7-Zip;C:\Program Files (x86)\7-Zip;%PATH%"
-        del 7z1604.exe
+        thirdParty\curl -o thirdParty\7z1604.exe -kLO http://www.7-zip.org/a/7z1604.exe
     )
+    ECHO [INFO] Installing 7Zip.
+    thirdParty\7z1604.exe /S
 )
+
+IF EXIST "C:\Program Files\7-Zip\" (
+    mklink /d "C:\7-Zip\" "C:\Program Files\7-Zip\"
+) ELSE (
+    mklink /d "C:\7-Zip\" "C:\Program Files (x86)\7-Zip\"
+)
+SETX PATH "C:\7-Zip\;%PATH%" /m
+SET "PATH=C:\7-Zip\;%PATH%"
 
 :7zip_CI
 IF "%APPVEYOR%"=="True" (
@@ -140,31 +144,26 @@ IF "%APPVEYOR%"=="True" (
 )
 
 @REM fetching gechodriver 0.14
-IF EXIST geckodriver-v0.14.0-win32.zip (
-    ECHO [INFO] Found cached geckodriver-v0.14.0-win32.zip
+IF EXIST thirdParty\geckodriver\geckodriver.exe (
+    ECHO [INFO] Found cached geckodriver
 ) ELSE (
     ECHO [INFO] Downloading geckodriver-v0.14.0-win32.zip
-    thirdParty\curl -kLO  https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win32.zip
-    7z x geckodriver-v0.14.0-win32.zip
+    thirdParty\curl -o thirdParty\geckodriver.zip -kLO  https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win32.zip
+    7z x thirdParty\geckodriver.zip
     mkdir thirdParty\geckodriver
-    move /Y geckodriver.exe thirdParty\geckodriver
-)
-
-IF NOT "%APPVEYOR%"=="True" (
-    del geckodriver-v0.14.0-win32.zip
+    move /Y thirdParty\geckodriver.exe thirdParty\geckodriver
+    del thirdParty\geckodriver.zip
 )
 
 
 @REM Installing ffmpeg
 IF NOT EXIST "%CD%"\ffmpeg\bin\ffmpeg.exe (
     ECHO [INFO] Downloading FFMPEG ...
-    pushd thirdParty
-    curl -kLO "https://github.com/ypwalter/ffmpeg/blob/master/ffmpeg-20160527-git-d970f7b-win32-static.7z?raw=true"
-    popd
+    thirdParty\curl -o thirdParty\ffmpeg.7z -kLO "https://github.com/ypwalter/ffmpeg/blob/master/ffmpeg-20160527-git-d970f7b-win32-static.7z?raw=true"
     ECHO [INFO] Installing FFMPEG ...
-    7z x "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
+    7z x "thirdParty\ffmpeg.7z"
     move /Y ffmpeg-20160527-git-d970f7b-win32-static ffmpeg
-    del "thirdParty\ffmpeg-20160527-git-d970f7b-win32-static.7z_raw=true"
+    del thirdParty\ffmpeg.7z
     ECHO [INFO] FFMPEG is installed.
 ) ELSE (
     ECHO [INFO] FFMPEG had been installed.
@@ -178,19 +177,17 @@ SET PATH=%CD%\ffmpeg\bin\;%PATH%
 
 @REM Installing Sikuli
 
-IF EXIST sikulixsetup-1.1.0.jar (
-    ECHO [INFO] Found cached sikulixsetup-1.1.0.jar
+IF EXIST thirdParty\sikulixsetup.jar (
+    ECHO [INFO] Found cached sikulixsetup.jar
 ) ELSE (
     ECHO [INFO] Downloading SikuliX 1.1.0
-    thirdParty\curl -kLO https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
+    thirdParty\curl -o thirdParty\sikulixsetup.jar -kLO https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 )
 ECHO [INFO] Installing SikuliX 1.1.0
-java -jar sikulixsetup-1.1.0.jar options 1.1 2
+"C:\Program Files\Java\jdk1.8.0_131\bin\java" -jar thirdParty\sikulixsetup.jar options 1.1 2
 copy runsikuli* thirdParty\
 copy sikuli*.jar thirdParty\
 copy scripts\runsikuli* thirdParty\
-del runsikuli*
-del sikuli*.jar
 @echo on
 
 
@@ -220,12 +217,12 @@ IF %ERRORLEVEL% EQU 0 (
     ECHO [INFO] You already have conda in windows system.
 ) ELSE (
     ECHO [INFO] Downloading Miniconda.
-    thirdParty\curl -kLO "https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe"
+    thirdParty\curl -o thirdParty\conda2.exe -kLO "https://repo.continuum.io/miniconda/Miniconda2-latest-Windows-x86.exe"
     ECHO [INFO] Installing Miniconda.
-    Miniconda2-latest-Windows-x86.exe /InstallationType=JustMe /RegisterPython=0 /S /D=C:\Miniconda2\
+    thirdParty\conda2.exe /InstallationType=JustMe /RegisterPython=0 /S /D=C:\Miniconda2\
     SETX PATH "C:\Miniconda2\;C:\Miniconda2\Scripts\;%PATH%" /m
     SET "PATH=C:\Miniconda2\Scripts\;C:\Miniconda2\;%PATH%"
-    del Miniconda2-latest-Windows-x86.exe
+    del thirdParty\conda2.exe
 )
 
 :SkipConda
@@ -263,10 +260,21 @@ IF NOT "%APPVEYOR%"=="True" (
     del googlechromestandaloneenterprise.msi
 )
 
-SETX PATH "C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%" /m
-SET "PATH=C:\Program Files\Mozilla Firefox;C:\Program Files (x86)\Mozilla Firefox;%PATH%"
-SETX PATH "C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%" /m
-SET "PATH=C:\Program Files\Google\Chrome\Application\;C:\Program Files (x86)\Google\Chrome\Application\;%PATH%"
+IF EXIST "C:\Program Files\Mozilla Firefox\" (
+    mklink /d "C:\Firefox\" "C:\Program Files\Mozilla Firefox\"
+) ELSE (
+    mklink /d "C:\Firefox\" "C:\Program Files (x86)\Mozilla Firefox\"
+)
+SETX PATH "C:\Firefox\;%PATH%" /m
+SET "PATH=C:\Firefox\;%PATH%"
+
+IF EXIST "C:\Program Files\Google\Chrome\Application\" (
+    mklink /d "C:\Chrome\" "C:\Program Files\Google\Chrome\Application\"
+) ELSE (
+    mklink /d "C:\Chrome\" "C:\Program Files (x86)\Google\Chrome\Application\"
+)
+SETX PATH "C:\Chrome\;%PATH%" /m
+SET "PATH=C:\Chrome\;%PATH%"
 
 ::::::::::::::::::::
 ::  Hasal  Setup  ::

@@ -11,8 +11,10 @@ skip_commits:
   message: /SkipCI.*/
 
 cache:
-  - sikulixsetup-1.1.0.jar
-  - VCForPython27.msi
+  - thirdParty\sikulixsetup.jar
+  - thirdParty\VCForPython27.msi
+  - thirdParty\7z1604.exe
+  - thirdParty\geckodriver\geckodriver.exe
 build: false
 
 environment:
