@@ -183,10 +183,13 @@ IF EXIST thirdParty\sikulixsetup.jar (
     ECHO [INFO] Downloading SikuliX 1.1.0
     thirdParty\curl -o thirdParty\sikulixsetup.jar -kLO https://launchpad.net/sikuli/sikulix/1.1.0/+download/sikulixsetup-1.1.0.jar
 )
+
 ECHO [INFO] Installing SikuliX 1.1.0
-"C:\Program Files\Java\jdk1.8.0_131\bin\java" -jar thirdParty\sikulixsetup.jar options 1.1 2
-copy runsikuli* thirdParty\
-copy sikuli*.jar thirdParty\
+IF NOT "%APPVEYOR%"=="True" (
+    "C:\Program Files\Java\jdk1.8.0_131\bin\java" -jar thirdParty\sikulixsetup.jar options 1.1 2
+) ELSE (
+    java -jar thirdParty\sikulixsetup.jar options 1.1 2
+)
 copy scripts\runsikuli* thirdParty\
 @echo on
 
