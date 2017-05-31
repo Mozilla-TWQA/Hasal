@@ -4,6 +4,7 @@ import copy
 import time
 import shutil
 import tempfile
+from lib.common.imageUtil import CropRegion
 from ..common.commonUtil import CommonUtil
 from ..common.commonUtil import CalculationUtil
 from ..common.commonUtil import StatusRecorder
@@ -24,6 +25,40 @@ class BaseGenerator(object):
         self.global_config = global_config
         self.status_recorder = StatusRecorder(global_config['default-running-statistics-fn'])
         self.env = input_env
+
+        # Loading Event Points settings for Customized Region
+        self.visual_event_points = self.BROWSER_VISUAL_EVENT_POINTS
+
+        sikuli_status = self.status_recorder.get_current_sikuli_status()
+        if StatusRecorder.SIKULI_KEY_REGION_OVERRIDE in sikuli_status:
+            self.visual_event_points = CropRegion.generate_customized_visual_event_points(sikuli_status,
+                                                                                          self.visual_event_points)
+
+    def generate_sample_result_template(self, input_generator_name, sample_dct_obj):
+        """
+        Generate the sample images information and cropping information.
+        @param input_generator_name:
+        @param sample_dct_obj:
+        @return:
+        """
+        ret = {
+            input_generator_name: {
+                'dct': sample_dct_obj,
+                'crop_data': {}
+            }
+        }
+        for direction, event_list in self.visual_event_points.items():
+            for event_obj in event_list:
+                if 'x' in event_obj and 'y' in event_obj and 'w' in event_obj and 'h' in event_obj:
+                    # The crop settings is {x, y, width, height}
+                    search_target = event_obj.get('search_target')
+                    ret[input_generator_name]['crop_data'][search_target] = {
+                        'x': event_obj.get('x'),
+                        'y': event_obj.get('y'),
+                        'width': event_obj.get('w'),
+                        'height': event_obj.get('h'),
+                    }
+        return ret
 
     def record_runtime_current_status(self, input_runtime_value):
         if input_runtime_value == 0:

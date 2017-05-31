@@ -7,6 +7,7 @@ import lib.helper.videoHelper as videoHelper
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
 from common.commonUtil import CommonUtil
+from common.commonUtil import StatusRecorder
 
 logger = get_logger(__name__)
 
@@ -22,6 +23,10 @@ class PerfBaseTest(baseTest.BaseTest):
         # init sikuli
         self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir,
                                     running_statistics_file_path=self.global_config['default-running-statistics-fn'])
+        # set up the Customized Region settings
+        if StatusRecorder.SIKULI_KEY_REGION in self.index_config:
+            logger.info('Set Sikuli Status for Customized Region')
+            self.sikuli.set_sikuli_status(StatusRecorder.SIKULI_KEY_REGION, self.index_config[StatusRecorder.SIKULI_KEY_REGION])
 
         # Start video recordings
         self.profilers = Profilers(self.env, self.index_config, self.exec_config, self.browser_type, self.sikuli)

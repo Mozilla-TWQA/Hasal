@@ -37,6 +37,11 @@ class SikuliCase(object):
     KEY_NAME_SIKULI_ARGS = 'args'
     KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST = 'additional_args'
 
+    # for loading region settings
+    KEY_REGION = 'region'
+    # for writing region settings
+    KEY_REGION_OVERRIDE = 'region_override'
+
     def __init__(self, argv):
         self.argv = argv
         self.INPUT_LIB_PATH = argv[1]
@@ -57,6 +62,8 @@ class SikuliCase(object):
         self.INPUT_TEST_TARGET = self.default_args.get('test_target', '')
 
         self.additional_args = self.sikuli_status.get(self.KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST, [])
+        # reset the data of Override Region
+        self.append_to_stat_json(self.KEY_REGION_OVERRIDE, {})
 
     def append_to_stat_json(self, key, value):
         """
@@ -74,6 +81,36 @@ class SikuliCase(object):
 
     def _load_addtional_args(self):
         pass
+
+    def set_override_region_settings(self, customized_region_name, sikuli_region_obj):
+        """
+        Set the region information from Sikuli case into Stat File.
+        It will append the Sikuli Region Object's x, y, w, h information for cropping images.
+        @param customized_region_name: the customized region name, which be defined in index-config file.
+        @param sikuli_region_obj: The Sikuli Region object. ex: find(Pattern('foo.png'))
+        @return:
+        """
+        region_dict = self.sikuli_status.get(self.KEY_REGION, {})
+        if customized_region_name in region_dict:
+            customized_region_dict = region_dict[customized_region_name]
+
+            customized_region_dict['x'] = sikuli_region_obj.x
+            customized_region_dict['y'] = sikuli_region_obj.y
+            customized_region_dict['w'] = sikuli_region_obj.w
+            customized_region_dict['h'] = sikuli_region_obj.h
+            customized_region = {
+                customized_region_name: customized_region_dict
+            }
+            self.append_to_stat_json(self.KEY_REGION_OVERRIDE, customized_region)
+            print('[INFO] Found [{r_name}] with [x,y,w,h]: [{x},{y},{w},{h}]'.format(r_name=customized_region_name,
+                                                                                     x=sikuli_region_obj.x,
+                                                                                     y=sikuli_region_obj.y,
+                                                                                     w=sikuli_region_obj.w,
+                                                                                     h=sikuli_region_obj.h))
+            return True
+        else:
+            print('[ERROR] Cannot find the settings [{r_name}] of Customized Region from index-config.'.format(r_name=customized_region_name))
+            return False
 
     def run(self):
         """

@@ -24,12 +24,11 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
                             {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]
     }
 
-    @staticmethod
-    def generate_sample_result(input_generator_name, input_sample_dict, input_sample_index):
+    def generate_sample_result(self, input_generator_name, input_sample_dict, input_sample_index):
         current_sample_data = copy.deepcopy(input_sample_dict)
         input_sample_data = current_sample_data[input_sample_index]
         sample_dct_obj = convert_to_dct(input_sample_data['fp'])
-        return_result = {input_generator_name: {'dct': sample_dct_obj, 'crop_data': {}}}
+        return_result = self.generate_sample_result_template(input_generator_name=input_generator_name, sample_dct_obj=sample_dct_obj)
 
         # crop sample data area
         # generate viewport crop area
@@ -66,7 +65,7 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
         return_result[input_generator_name]['event_tags'] = {}
         if input_sample_index == 2:
             # tag event to sample
-            for event_obj in InputLatencyAnimationDctGenerator.BROWSER_VISUAL_EVENT_POINTS['backward_search']:
+            for event_obj in self.visual_event_points['backward_search']:
                 if event_obj['search_target'] == CropRegion.ORIGINAL:
                     return_result[input_generator_name]['event_tags'][event_obj['event']] = sample_dct_obj
                 else:
@@ -120,7 +119,7 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
 
         compare_setting = {
             'default_fps': self.index_config['video-recording-fps'],
-            'event_points': self.BROWSER_VISUAL_EVENT_POINTS,
+            'event_points': self.visual_event_points,
             'generator_name': self.__class__.__name__,
             'exec_timestamp_list': input_data['exec_timestamp_list'],
             'threshold': self.index_config.get('compare-threshold', 0.0003),

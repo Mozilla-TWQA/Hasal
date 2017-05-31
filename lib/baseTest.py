@@ -21,6 +21,7 @@ logger = get_logger(__name__)
 
 
 class BaseTest(unittest.TestCase):
+
     class ConfigName(object):
         EXEC = 'exec_config'
         INDEX = 'index_config'

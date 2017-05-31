@@ -45,7 +45,13 @@ class Case(basecase.SikuliInputLatencyCase):
         app.click_first_mail()
         sleep(2)
         app.click_reply_btn()
-        sleep(3)
+        sleep(2)
+
+        # Customized Region
+        customized_region_name = 'end'
+        type_area = wait('type_area.png', 10)
+        self.set_override_region_settings(customized_region_name, type_area)
+        sleep(2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action

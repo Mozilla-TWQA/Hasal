@@ -119,7 +119,12 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
         sample_settings = {'modules': {index_config['sample-converter-name']: {'path': index_config['sample-converter-path']}}}
         sample_data = {'sample_dp': env.img_sample_dp,
                        'configuration': {'generator': {generator_name: {'path': generator_module_path}}},
-                       'orig_sample': env.img_output_sample_1_fn}
+                       'orig_sample': env.img_output_sample_1_fn,
+                       'index_config': index_config,
+                       'exec_config': exec_config,
+                       'online_config': online_config,
+                       'global_config': global_config,
+                       'input_env': env}
 
         # {1:{'fp': 'xxcxxxx', 'RunTimeDctGenerator': 'dctobj', 'SpeedIndexGenerator': None, },
         #  2:{'fp':'xxxxx', 'SpeedIndexGenerator': None, 'crop_fp': 'xxxxxxx', 'viewport':'xxxxx'},

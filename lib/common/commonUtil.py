@@ -79,6 +79,9 @@ class StatusRecorder(object):
     STATUS_DESC_CASE_TOTAL_EXEC_TIME = "TOTAL_EXEC_TIME"
     STATUS_DESC_CASE_RUNNING_STATUS = "RUNNING_STATUS"
 
+    SIKULI_KEY_REGION = 'region'
+    SIKULI_KEY_REGION_OVERRIDE = 'region_override'
+
     def __init__(self, status_fp):
         self.status_fp = status_fp
         self.current_data = CommonUtil.load_json_file(status_fp)
@@ -103,7 +106,7 @@ class StatusRecorder(object):
         """
         # reference: "lib/sikuli.py"
         KEY_NAME_SIKULI = 'sikuli'
-        return self.current_status.get('current_status', {}).get(KEY_NAME_SIKULI, {})
+        return self.current_data.get(self.DEFAULT_FIELD_CURRENT_STATUS, {}).get(KEY_NAME_SIKULI, {})
 
     def record_current_status(self, input_status_dict):
         self.current_data = CommonUtil.load_json_file(self.status_fp)

@@ -9,6 +9,7 @@ import threading
 from PIL import Image
 from multiprocessing import Process, Manager
 from commonUtil import CommonUtil
+from commonUtil import StatusRecorder
 from logConfig import get_logger
 
 logger = get_logger(__name__)
@@ -47,6 +48,70 @@ class CropRegion(object):
     # Fraction settings for simple height cut
     FULL_REGION_FRACTION = 1.0
     SKIP_STATUS_BAR_FRACTION = 0.95
+
+    @staticmethod
+    def generate_customized_visual_event_points(sikuli_status, visual_event_points):
+        """
+        Looping the visual_event_points object, for example:
+            {
+                'fordward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                                    {'event': 'foobar', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}],
+                'backward_search': [{'event': 'xyztest', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                                    {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]
+            }
+
+        And then checking with region_override from Sikuli status:
+            {
+                'end':                                  # reference event name key
+                {
+                    'event': 'end',                     # event name
+                    'direction': 'backward',            # no use now
+                    'search_target': 'end_region',      # customized region name
+                    'shift_result': true,               # shift one image base on direction
+                    'fraction': 1,                      # Full Fraction
+                    'x': 94,                            # x
+                    'y': 87,                            # y
+                    'w': 94,                            # width
+                    'h': 99                             # height
+                }
+            }
+        @param sikuli_status: the sikuli status dict object, which comes from stat JSON file.
+        @param visual_event_points: the visual_event_point dict object, which comes from Generator instance.
+        @return: new visual_event_points dict object.
+        """
+        region_override_dict = sikuli_status[StatusRecorder.SIKULI_KEY_REGION_OVERRIDE]
+
+        for direction, origin_event_list in visual_event_points.items():
+            is_override = False
+            new_event_list = []
+            for origin_event_obj in origin_event_list:
+                is_match = False
+                for sikuli_event_key, sikuli_event_obj in region_override_dict.items():
+                    if sikuli_event_obj.get('event', '') == origin_event_obj.get('event', ''):
+                        is_override = True
+                        is_match = True
+                        new_event_obj = copy.deepcopy(origin_event_obj)
+                        new_event_obj['search_target'] = sikuli_event_obj.get('search_target')
+                        new_event_obj['shift_result'] = sikuli_event_obj.get('shift_result')
+                        # We should compare full customized region
+                        new_event_obj['fraction'] = CropRegion.FULL_REGION_FRACTION
+                        new_event_obj['x'] = sikuli_event_obj.get('x')
+                        new_event_obj['y'] = sikuli_event_obj.get('y')
+                        new_event_obj['w'] = sikuli_event_obj.get('w')
+                        new_event_obj['h'] = sikuli_event_obj.get('h')
+                        break
+                if is_match:
+                    new_event_list.append(new_event_obj)
+                else:
+                    new_event_list.append(origin_event_obj)
+
+            if is_override:
+                visual_event_points[direction] = new_event_list
+                logger.debug('Replace Visual Event Point [{dir}] from\n {origin_evt_list}\nto\n {new_evt_list}'
+                             .format(dir=direction,
+                                     origin_evt_list=origin_event_list,
+                                     new_evt_list=new_event_list))
+        return visual_event_points
 
 
 def crop_image(input_sample_fp, output_sample_fp, coord=[]):

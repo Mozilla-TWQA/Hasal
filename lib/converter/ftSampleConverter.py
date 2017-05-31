@@ -42,7 +42,12 @@ class FTSampleConverter(object):
                 # based on assigned generator name create index value for each sample
                 for generator_name in input_data['configuration']['generator']:
                     generator_class = getattr(importlib.import_module(input_data['configuration']['generator'][generator_name]['path']), generator_name)
-                    return_result[sample_index].update(generator_class.generate_sample_result(generator_name, return_result, sample_index))
+                    generator_obj = generator_class(input_data['index_config'],
+                                                    input_data['exec_config'],
+                                                    input_data['online_config'],
+                                                    input_data['global_config'],
+                                                    input_data['input_env'])
+                    return_result[sample_index].update(generator_obj.generate_sample_result(generator_name, return_result, sample_index))
 
                 # base crop_data attribute will crop region for sample file, the output will be: rootname_crop.ext
                 if 'crop_data' in input_data['configuration']:
