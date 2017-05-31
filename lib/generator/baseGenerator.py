@@ -184,10 +184,9 @@ class BaseGenerator(object):
                         end_index = min(len(files) - 1, files.index(end_fn) + extend_buffer)
 
                         logger.info('Cleaning {} ...'.format(root))
-                        for img_index in xrange(len(files)):
-                            if img_index < start_index or img_index > end_index:
-                                img_fp = os.path.join(root, files[img_index])
-                                os.remove(img_fp)
+                        for img_index in range(start_index) + range(end_index + 1, len(files)):
+                            img_fp = os.path.join(root, files[img_index])
+                            os.remove(img_fp)
 
                     current_time = time.time()
                     elapsed_time = current_time - start_time
