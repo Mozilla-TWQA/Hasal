@@ -74,5 +74,8 @@
   "amazon": {
     "test-url"                                              : "https://www.amazon.com/",
     "test-product-url"                                      : "https://www.amazon.com/Moana-Bonus-Content-Aulii-Cravalho/dp/B01MRNUJUO"
+  },
+  "youtube": {
+    "test-url"                                              : "https://www.youtube.com/?hl=en&gl=US"
   }
 }
