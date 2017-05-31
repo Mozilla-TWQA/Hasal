@@ -1,39 +1,111 @@
+import os
 from sikuli import *  # NOQA
-import common
+from common import WebApp
 
 
-class gDoc():
-    def __init__(self):
-        self.com = common.General()
-        self.os = str(Env.getOS())
+class gDoc(WebApp):
+    """
+            The GDoc library for Sikuli cases.
+            The component structure:
+                <COMPONENT-NAME> = [
+                    [<COMPONENT-IMAGE-PLATFORM-FOO>, <OFFSET-X>, <OFFSET-Y>],
+                    [<COMPONENT-IMAGE-PLATFORM-BAR>, <OFFSET-X>, <OFFSET-Y>]
+                ]
+    """
 
-        if self.os.lower() == 'mac':
-            self.control = Key.CMD
-        else:
-            self.control = Key.CTRL
-            self.alt = Key.ALT
+    GDOC_FAVORITE_ICON = [
+        [os.path.join('pics', 'gdoc.png'), 0, 0]
+    ]
 
-    def wait_for_loaded(self):
-        wait(Pattern("pics/gdoc.png").similar(0.85), 60)
+    GDOC_PRINTER_ICON = [
+        [os.path.join('pics', 'printer.png'), 0, 0]
+    ]
+
+    GDOC_FOCUS_CONTENT = [
+        [os.path.join('pics', 'printer.png'), 50, 60]
+    ]
+
+    GDOC_DEFOCUS_CONTENT_IMAGE = [
+        [os.path.join('pics', 'defocus_content_window.png'), 0, 0]
+    ]
+
+    GDOC_DEFOCUS_CONTENT = [
+        [os.path.join('pics', 'defocus_content_window.png'), 0, 25]
+    ]
+
+    GDOC_TOOLBAR_INSERT = [
+        [os.path.join('pics', 'toolbar_insert.png'), 0, 0]
+    ]
+
+    GDOC_TOOLBAR_INSERT_TABLE = [
+        [os.path.join('pics', 'toolbar_insert_table.png'), 0, 0]
+    ]
+
+    GDOC_TOOLBAR_INSERT_TABLE_GRID = [
+        [os.path.join('pics', 'toolbar_insert_table_grid.png'), 0, 0]
+    ]
+
+    GDOC_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON = [
+        [os.path.join('pics', 'toolbar_insert_image_db_urlbar.png'), 0, 0]
+    ]
+
+    GDOC_CLICK_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON = [
+        [os.path.join('pics', 'toolbar_insert_image_db_urlbar.png'), 100, 0]
+    ]
+
+    GDOC_TOOLBAR_INSERT_IMAGE_DB = [
+        [os.path.join('pics', 'toolbar_insert_image_db.png'), 0, 0]
+    ]
+
+    GDOC_CLICK_TOOLBAR_INSERT_IMAGE_DB_URL = [
+        [os.path.join('pics', 'toolbar_insert_image_db.png'), 100, 0]
+    ]
+
+    GDOC_FINDANDPLACE_IMAGE = [
+        [os.path.join('pics', 'FindAndReplace.png'), 0, 0]
+    ]
+
+    GDOC_CLICK_FIND_FINDANDPLACE_INPUT = [
+        [os.path.join('pics', 'FindReplaceInput.png'), 98, -21]
+    ]
+
+    GDOC_CLICK_REPLACE_FINDANDPLACE_INPUT = [
+        [os.path.join('pics', 'FindReplaceInput.png'), 98, 26]
+    ]
+
+    GDOC_REPLACE_ICON = [
+        [os.path.join('pics', 'Replace.png'), 0, 0]
+    ]
+
+    GDOC_URL_CHECKED = [
+        [os.path.join('pics', 'url_checked.png'), 0, 0]
+    ]
+
+    GDOC_CONTENT_LEFT_TOP_PAGE_REGION = [
+        [os.path.join('pics', 'doc_content_left_top_page_region.png'), 0, 0]
+    ]
+
+    def wait_for_loaded(self, similarity=0.85):
+        return self._wait_for_loaded(component=gDoc.GDOC_FAVORITE_ICON, similarity=similarity, timeout=60)
         wait(3)
         self.focus_content()
 
-    def focus_content(self):
-        wait(Pattern("pics/printer.png").similar(0.60), 60)
-        click(Pattern("pics/printer.png").similar(0.60).targetOffset(50, 60))
+    def focus_content(self, similarity=0.60):
+        self._wait_for_loaded(component=gDoc.GDOC_PRINTER_ICON, similarity=similarity, timeout=60)
+        self._click(action_name='Focus content', component=gDoc.GDOC_FOCUS_CONTENT)
         wait(3)
 
     # Prevent cursor twinkling on screen
-    def deFoucsContentWindow(self):
-        wait(Pattern("pics/defocus_content_window.png").similar(0.7))
-        click(Pattern("pics/defocus_content_window.png").similar(0.7).targetOffset(0, 25))
+    def deFoucsContentWindow(self, similarity=0.70):
+        self._wait_for_loaded(component=gDoc.GDOC_DEFOCUS_CONTENT_IMAGE, similarity=similarity)
+        self._click(action_name='Defocus content', component=gDoc.GDOC_DEFOCUS_CONTENT)
 
     def create_table(self, row_no, col_no):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.8))
+        self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT, similarity=0.8)
         type("i", self.alt + Key.SHIFT)
-        wait(Pattern("pics/toolbar_insert_table.png").similar(0.55))
+        self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT_TABLE, similarity=0.55)
         type("t")
-        wait(Pattern("pics/toolbar_insert_table_grid.png").similar(0.55))
+        self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT_TABLE_GRID, similarity=0.55)
         for col_index in range(1, col_no):
             type(Key.RIGHT)
         for row_index in range(1, row_no):
@@ -41,20 +113,23 @@ class gDoc():
         type(Key.ENTER)
 
     def insert_image_url(self, img_url):
-        wait(Pattern("pics/toolbar_insert.png").similar(0.5))
+        self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT, similarity=0.5)
         type("i", self.alt + Key.SHIFT)
-        wait(Pattern("pics/toolbar_insert_image.png").similar(0.5))
+        self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT, similarity=0.5)
         type("i")
         for i in range(10):
             sleep(2)
-            if exists(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.6)):
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.6).targetOffset(100, 0))
+            if self._exists(gDoc.GDOC_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON, similarity=0.6):
+                self._click(action_name='Click toolbar insert image db urlbar', similarity=0.6,
+                            component=gDoc.GDOC_CLICK_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON)
             else:
-                wait(Pattern("pics/toolbar_insert_image_db.png").similar(0.6))
-                click(Pattern("pics/toolbar_insert_image_db_url.png").similar(0.6))
+                self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT_IMAGE_DB, similarity=0.5)
+                self._click(action_name='Click toolbar insert image db url', similarity=0.6,
+                            component=gDoc.GDOC_CLICK_TOOLBAR_INSERT_IMAGE_DB_URL)
                 sleep(1)
-                wait(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.6))
-                click(Pattern("pics/toolbar_insert_image_db_urlbar.png").similar(0.6).targetOffset(100, 0))
+                self._wait_for_loaded(component=gDoc.GDOC_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON, similarity=0.6)
+                self._click(action_name='Click toolbar insert image db urlbar', similarity=0.6,
+                            component=gDoc.GDOC_CLICK_TOOLBAR_INSERT_IMAGE_DB_URLBAR_ICON)
 
             self.com.select_all()
             paste(img_url)
@@ -65,8 +140,7 @@ class gDoc():
             sleep(1)
             self.com.paste()
             sleep(2)
-
-            if exists(Pattern("pics/url_checked.png").similar(0.6)):
+            if self._exists(gDoc.GDOC_URL_CHECKED, similarity=0.6):
                 type(Key.ENTER)
                 break
 
@@ -85,15 +159,17 @@ class gDoc():
             type(Key.ENTER, Key.CTRL)
 
     def text_replace(self, search_keyword, replace_keyword, replace_times):
-        type("h", Key.CTRL)
-        wait(Pattern("pics/FindAndReplace.png").similar(0.5))
-        click(Pattern("pics/FindReplaceInput.png").similar(0.5).targetOffset(98, -21))
+        type("h", self.control)
+        self._wait_for_loaded(component=gDoc.GDOC_FINDANDPLACE_IMAGE, similarity=0.5)
+        self._click(action_name='Click find button', similarity=0.5,
+                    component=gDoc.GDOC_CLICK_FIND_FINDANDPLACE_INPUT)
         type(search_keyword)
-        click(Pattern("pics/FindReplaceInput.png").similar(0.5).targetOffset(98, 26))
+        self._click(action_name='Click replace button', similarity=0.5,
+                    component=gDoc.GDOC_CLICK_REPLACE_FINDANDPLACE_INPUT)
         type(replace_keyword)
         for i in range(replace_times):
-            wait(Pattern("pics/Replace.png").similar(0.8))
-            click(Pattern("pics/Replace.png").similar(0.8))
+            self._wait_for_loaded(component=gDoc.GDOC_REPLACE_ICON, similarity=0.8)
+            self._click(action_name='Click replace button', similarity=0.8, component=gDoc.GDOC_REPLACE_ICON)
         wait(2)
         type(Key.ESC)
 
@@ -119,12 +195,7 @@ class gDoc():
         type("8", self.control + Key.SHIFT)
 
     def move_to_highlight_scroll(self, input_direction, scroll_down_size):
-        if self.os.lower() == 'mac':
-            if input_direction == WHEEL_DOWN:
-                direction = WHEEL_UP
-            else:
-                direction = WHEEL_DOWN
-        else:
-            direction = input_direction
-        mouseMove(Pattern("pics/doc_content_left_top_page_region.png").similar(0.85))
-        wheel(Pattern("pics/doc_content_left_top_page_region.png").similar(0.85), direction, scroll_down_size)
+        self._mouseMove(action_name='Mouse move to component', component=gDoc.GDOC_CONTENT_LEFT_TOP_PAGE_REGION,
+                        similarity=0.85)
+        self._wheel(action_name='Wheel mouse on component', component=gDoc.GDOC_CONTENT_LEFT_TOP_PAGE_REGION,
+                    input_direction=input_direction, input_wheel_size=scroll_down_size, similarity=0.85)

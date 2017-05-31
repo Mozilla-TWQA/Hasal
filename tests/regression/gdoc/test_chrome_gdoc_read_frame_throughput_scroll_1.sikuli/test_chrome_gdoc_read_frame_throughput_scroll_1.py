@@ -36,7 +36,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         t1 = time.time()
         capimg1 = capture(0, 0, capture_width, capture_height)
-        gd.move_to_highlight_scroll(WHEEL_DOWN, 1)
+        gd.move_to_highlight_scroll(gd.input_wheel_down_direction, 1)
         sleep(1)
         t2 = time.time()
         capimg2 = capture(0, 0, capture_width, capture_height)
