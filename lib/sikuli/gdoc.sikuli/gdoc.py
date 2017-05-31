@@ -169,8 +169,7 @@ class gDoc(WebApp):
         type(replace_keyword)
         for i in range(replace_times):
             self._wait_for_loaded(component=gDoc.GDOC_REPLACE_ICON, similarity=0.8)
-            self._click(action_name='Click replace button', similarity=0.8,
-                    component=gDoc.GDOC_REPLACE_ICON)
+            self._click(action_name='Click replace button', similarity=0.8, component=gDoc.GDOC_REPLACE_ICON)
         wait(2)
         type(Key.ESC)
 
