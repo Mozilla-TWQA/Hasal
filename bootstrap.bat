@@ -298,7 +298,9 @@ IF "%FIRST_OBS%"=="True" (
         ECHO [INFO] Launching OBS for License Agreement.
         ECHO.
         ECHO "[INFO] If there is error message about missing MSVCP120.dll,"
-        ECHO "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
+        ECHO "[INFO] please install Visual C++ Redistributable Packages, vcredist_x86.exe and vcredist_x64.exe, for 64 bits system"
+        ECHO "[INFO] from https://support.microsoft.com/zh-tw/help/3179560/update-for-visual-c-2013-and-visual-c-redistributable-package ."
+        ECHO "[INFO] For 32 bits system, only vcredist_x86.exe is required."
         ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
         obs32.exe
         popd
@@ -306,7 +308,6 @@ IF "%FIRST_OBS%"=="True" (
         ECHO [WARN] Can not find OBS binary file.
     )
 )
-
 
 :SkipUserInteractions
 IF "%APPVEYOR%"=="True" (
