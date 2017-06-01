@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import httplib2
+import urllib2
 import requests
 import os
 import sys
@@ -188,7 +189,7 @@ class MailTask(object):
                 zf.extractall()
             shutil.rmtree(FIREFOX_PATH)
             shutil.move('firefox', FIREFOX_PATH)
-        except Error as e:
+        except Exception as e:
             logger.error("Failed to grab builds for testing: %s" % e)
 
     def prepare_job(self, msg):

@@ -22,7 +22,7 @@ class githubHook(object):
                 token = f.readline().strip()
             return github3.login(token=token)
         else:
-            return False
+            return None
 
     def update_job_result_by_pr_number(self, pr_number, result):
         pr = self.hasal.pull_request(str(pr_number))
