@@ -312,7 +312,7 @@ IF "%FIRST_OBS%"=="True" (
         ECHO [INFO] Launching OBS for License Agreement.
         ECHO.
         ECHO "[INFO] If there is error message about missing MSVCP120.dll,"
-        ECHO "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=40784"
+        ECHO "[INFO] please install Visual C++ Redistributable Packages from https://www.microsoft.com/en-us/download/details.aspx?id=48145"
         ECHO [INFO] ** Please CLOSE OBS after accepting License Agreement **
         obs32.exe
         popd
