@@ -29,7 +29,9 @@
     "extensions.netmonitor.har.enableAutomation": true,
     "general.useragent.locale": "en-US",
     "intl.accept_languages": "en-US, en",
-    "gfx.downloadable_fonts.otl_validation": false
+    "gfx.downloadable_fonts.otl_validation": false,
+    "browser.urlbar.daysBeforeHidingSuggestionsPrompt": 0,
+    "browser.urlbar.timesBeforeHidingSuggestionsHint": 0
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
