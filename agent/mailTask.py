@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import httplib2
+import urllib2
 import requests
 import os
 import sys
@@ -188,7 +189,7 @@ class MailTask(object):
                 zf.extractall()
             shutil.rmtree(FIREFOX_PATH)
             shutil.move('firefox', FIREFOX_PATH)
-        except Error as e:
+        except Exception as e:
             logger.error("Failed to grab builds for testing: %s" % e)
 
     def prepare_job(self, msg):
@@ -215,7 +216,7 @@ class MailTask(object):
 
         return - True if a job is finished
         """
-        if os.path.isfile(os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER)), RESULT_JSON)):
+        if os.path.isdir(UPLOAD_FOLDER) and os.path.isfile(os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER)), RESULT_JSON)):
             if os.path.isfile(RESULT_ZIP):
                 os.remove(RESULT_ZIP)
             shutil.make_archive("result", 'zip', os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER))))
