@@ -55,7 +55,7 @@ if __name__ == '__main__':
             note = 'Iskakalunan'
             note_url = 'https://github.com/Mozilla-TWQA/Hasal'
             auth = github3.authorize(user, password, scopes, note, note_url)
-            with open('github.json', 'w'):
+            with open('github.json', 'w') as f:
                 f.write(auth.token + '\r\n')
                 f.write(str(auth.id))
         except Exception as e:
