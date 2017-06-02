@@ -60,6 +60,32 @@
 </table>
 <!-- ==================== MODULE DESCRIPTION ==================== -->
 <h1 class="epydoc">Module imageUtil</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html">source&nbsp;code</a></span></p>
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Hasal.lib.common.imageUtil.CropRegion-class.html" class="summary-name">CropRegion</a><br />
+      Here's the Crop Region Fig
+    </td>
+  </tr>
+</table>
 <!-- ==================== FUNCTIONS ==================== -->
 <a name="section-Functions"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -267,7 +293,8 @@
           <td><span class="summary-sig"><a name="parallel_compare_image"></a><span class="summary-sig-name">parallel_compare_image</span>(<span class="summary-sig-arg">input_sample_data</span>,
         <span class="summary-sig-arg">input_image_data</span>,
         <span class="summary-sig-arg">input_settings</span>,
-        <span class="summary-sig-arg">result_list</span>)</span></td>
+        <span class="summary-sig-arg">result_list</span>,
+        <span class="summary-sig-arg">diff_rate_list</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#parallel_compare_image">source&nbsp;code</a></span>
             
@@ -283,9 +310,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="compare_two_images"></a><span class="summary-sig-name">compare_two_images</span>(<span class="summary-sig-arg">dct_obj_1</span>,
+          <td><span class="summary-sig"><a href="Hasal.lib.common.imageUtil-module.html#compare_two_images" class="summary-sig-name">compare_two_images</a>(<span class="summary-sig-arg">dct_obj_1</span>,
         <span class="summary-sig-arg">dct_obj_2</span>,
-        <span class="summary-sig-arg">threshold</span>=<span class="summary-sig-default">0.0003</span>)</span></td>
+        <span class="summary-sig-arg">threshold</span>)</span><br />
+      Comparing two input DCT objects, if the difference rate less than 
+      threshold, then return True, otherwise False.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#compare_two_images">source&nbsp;code</a></span>
             
@@ -536,14 +565,62 @@
     </td>
   </tr></table>
   
-  <p>Compare sample images, return matching list.</p>
+  <pre class="literalblock">
+
+Compare sample images, return matching list.
+return example:
+    [
+        {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+        {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+    ]
+@param input_sample_data:
+@param input_image_data:
+@param input_settings: the comparing settings.
+        ex:
+        {
+            'default_fps',
+            'event_points',
+            'generator_name',
+            'skip_status_bar_fraction',
+            'exec_timestamp_list',
+            'threshold',
+            'search_margin'
+        }
+@return: the matching result list
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="compare_two_images"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">compare_two_images</span>(<span class="sig-arg">dct_obj_1</span>,
+        <span class="sig-arg">dct_obj_2</span>,
+        <span class="sig-arg">threshold</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#compare_two_images">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Comparing two input DCT objects, if the difference rate less than 
+  threshold, then return True, otherwise False.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>input_sample_dp</code></strong> - input sample folder path</li>
+        <li><strong class="pname"><code>dct_obj_1</code></strong> - input DCT object</li>
+        <li><strong class="pname"><code>dct_obj_2</code></strong> - input DCT object</li>
+        <li><strong class="pname"><code>threshold</code></strong> - the comparing threshold</li>
     </ul></dd>
     <dt>Returns:</dt>
-        <dd>the matching result list</dd>
+        <dd>(True/Fasle of match, the different rate of two input DCT 
+          objects)</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -576,7 +653,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:34 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:41 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

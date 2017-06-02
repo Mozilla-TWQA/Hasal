@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Hasal.lib.common.matPlot.MatPlot</title>
+  <title>Hasal.lib.common.imageUtil.CropRegion</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -42,8 +42,8 @@
         Package&nbsp;Hasal ::
         <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
         <a href="Hasal.lib.common-module.html">Package&nbsp;common</a> ::
-        <a href="Hasal.lib.common.matPlot-module.html">Module&nbsp;matPlot</a> ::
-        Class&nbsp;MatPlot
+        <a href="Hasal.lib.common.imageUtil-module.html">Module&nbsp;imageUtil</a> ::
+        Class&nbsp;CropRegion
       </span>
     </td>
     <td>
@@ -53,21 +53,35 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="Hasal.lib.common.matPlot.MatPlot-class.html"
+            >]&nbsp;|&nbsp;<a href="Hasal.lib.common.imageUtil.CropRegion-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class MatPlot</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class CropRegion</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#CropRegion">source&nbsp;code</a></span></p>
 <pre class="base-tree">
 object --+
          |
-        <strong class="uidshort">MatPlot</strong>
+        <strong class="uidshort">CropRegion</strong>
 </pre>
 
 <hr />
+<p>Here's the Crop Region Fig</p>
+  <p>|----------------------------------|  ---             --- |        |
+  |   ^               ^ | Tab  X |                         |   V &lt;= 
+  TAB_VIEW   | |----------------------------------|  ---              | |
+  |   ^               | |                                  |   |
+  | |                                  |   |               | |            
+  Web Page              |   | &lt;= VIEWPORT   | &lt;= BROWSER |
+  |   |               | |                                  |   |
+  | |                                  |   v               v 
+  |----------------------------------|  ---             ---</p>
+  <p>|----------------------------------|  --- | $ Terminal&gt; _
+  |   ^ &lt;= TERMINAL |                                  |   V 
+  |----------------------------------|  ---</p>
+
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -85,90 +99,6 @@ object --+
     </table>
   </td>
 </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="Hasal.lib.common.matPlot.MatPlot-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">f_data</span>,
-        <span class="summary-sig-arg">s_data</span>)</span><br />
-      x.__init__(...) initializes x; see help(type(x)) for signature</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.__init__">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="subplot_data_peaks"></a><span class="summary-sig-name">subplot_data_peaks</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.subplot_data_peaks">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="plot_peak_mapping"></a><span class="summary-sig-name">plot_peak_mapping</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_peak_mapping">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="plot_dtw_mapping"></a><span class="summary-sig-name">plot_dtw_mapping</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_dtw_mapping">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="Hasal.lib.common.matPlot.MatPlot-class.html#plot_dist" class="summary-sig-name">plot_dist</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Description: plot distance matrix and minimum cost path Input:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_dist">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
   <tr>
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
@@ -176,6 +106,7 @@ object --+
       <code>__format__</code>,
       <code>__getattribute__</code>,
       <code>__hash__</code>,
+      <code>__init__</code>,
       <code>__new__</code>,
       <code>__reduce__</code>,
       <code>__reduce_ex__</code>,
@@ -211,9 +142,17 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="plot_waveform"></a><span class="summary-sig-name">plot_waveform</span>(<span class="summary-sig-arg">waveform</span>)</span></td>
+          <td><span class="summary-sig"><a href="Hasal.lib.common.imageUtil.CropRegion-class.html#generate_customized_visual_event_points" class="summary-sig-name">generate_customized_visual_event_points</a>(<span class="summary-sig-arg">sikuli_status</span>,
+        <span class="summary-sig-arg">visual_event_points</span>)</span><br />
+      Looping the visual_event_points object, for example:
+    {
+        'fordward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'foobar', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}],
+        'backward_search': [{'event': 'xyztest', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]
+    }</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_waveform">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#CropRegion.generate_customized_visual_event_points">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -221,21 +160,71 @@ object --+
       
     </td>
   </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="plot_two_waveform"></a><span class="summary-sig-name">plot_two_waveform</span>(<span class="summary-sig-arg">f_waveform</span>,
-        <span class="summary-sig-arg">s_waveform</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_two_waveform">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
+        <a name="ORIGINAL"></a><span class="summary-name">ORIGINAL</span> = <code title="'original'">'original'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VIEWPORT"></a><span class="summary-name">VIEWPORT</span> = <code title="'viewport'">'viewport'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAB_VIEW"></a><span class="summary-name">TAB_VIEW</span> = <code title="'tab_view'">'tab_view'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BROWSER"></a><span class="summary-name">BROWSER</span> = <code title="'browser'">'browser'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TERMINAL"></a><span class="summary-name">TERMINAL</span> = <code title="'terminal'">'terminal'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="FULL_REGION_FRACTION"></a><span class="summary-name">FULL_REGION_FRACTION</span> = <code title="1.0">1.0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SKIP_STATUS_BAR_FRACTION"></a><span class="summary-name">SKIP_STATUS_BAR_FRACTION</span> = <code title="0.95">0.95</code>
     </td>
   </tr>
 </table>
@@ -282,56 +271,52 @@ object --+
   </td>
 </tr>
 </table>
-<a name="__init__"></a>
+<a name="generate_customized_visual_event_points"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">f_data</span>,
-        <span class="sig-arg">s_data</span>)</span>
-    <br /><em class="fname">(Constructor)</em>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_customized_visual_event_points</span>(<span class="sig-arg">sikuli_status</span>,
+        <span class="sig-arg">visual_event_points</span>)</span>
+    <br /><em class="fname">Static Method</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.__init__">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="Hasal.lib.common.imageUtil-pysrc.html#CropRegion.generate_customized_visual_event_points">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>x.__init__(...) initializes x; see help(type(x)) for signature</p>
-  <dl class="fields">
-    <dt>Overrides:
-        object.__init__
-        <dd><em class="note">(inherited documentation)</em></dd>
-    </dt>
-  </dl>
-</td></tr></table>
-</div>
-<a name="plot_dist"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">plot_dist</span>(<span class="sig-arg">self</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Hasal.lib.common.matPlot-pysrc.html#MatPlot.plot_dist">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Description: plot distance matrix and minimum cost path Input:</p>
-  <ul>
-    <li>
-      a distance matrix from Dynamic Time Warping(DTW)
-    </li>
-    <li>
-      path from Dynamic Time Warping(DTW), default won't plot path
-    </li>
-  </ul>
-  <p>Output: generate a window to plot result</p>
+  <pre class="literalblock">
+
+Looping the visual_event_points object, for example:
+    {
+        'fordward_search': [{'event': 'end', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'foobar', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}],
+        'backward_search': [{'event': 'xyztest', 'search_target': CropRegion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result': True},
+                            {'event': 'start', 'search_target': CropRegion.TERMINAL, 'fraction': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]
+    }
+
+And then checking with region_override from Sikuli status:
+    {
+        'end':                                  # reference event name key
+        {
+            'event': 'end',                     # event name
+            'direction': 'backward',            # no use now
+            'search_target': 'end_region',      # customized region name
+            'shift_result': true,               # shift one image base on direction
+            'fraction': 1,                      # Full Fraction
+            'x': 94,                            # x
+            'y': 87,                            # y
+            'w': 94,                            # width
+            'h': 99                             # height
+        }
+    }
+@param sikuli_status: the sikuli status dict object, which comes from stat JSON file.
+@param visual_event_points: the visual_event_point dict object, which comes from Generator instance.
+@return: new visual_event_points dict object.
+
+</pre>
   <dl class="fields">
   </dl>
 </td></tr></table>
@@ -365,7 +350,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:42 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

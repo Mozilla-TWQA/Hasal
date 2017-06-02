@@ -62,9 +62,11 @@
 <!-- ==================== CLASS DESCRIPTION ==================== -->
 <h1 class="epydoc">Class RunTimeDctGenerator</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator">source&nbsp;code</a></span></p>
 <pre class="base-tree">
-object --+
-         |
-        <strong class="uidshort">RunTimeDctGenerator</strong>
+                 object --+    
+                          |    
+<a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a> --+
+                              |
+                             <strong class="uidshort">RunTimeDctGenerator</strong>
 </pre>
 
 <hr />
@@ -91,6 +93,25 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="generate_sample_result"></a><span class="summary-sig-name">generate_sample_result</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">input_generator_name</span>,
+        <span class="summary-sig-arg">input_sample_dict</span>,
+        <span class="summary-sig-arg">input_sample_index</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator.generate_sample_result">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="crop_images_based_on_samplefiles"></a><span class="summary-sig-name">crop_images_based_on_samplefiles</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">input_data</span>)</span></td>
           <td align="right" valign="top">
@@ -109,8 +130,7 @@ object --+
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#generate_result" class="summary-sig-name">generate_result</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">input_data</span>,
-        <span class="summary-sig-arg">input_global_result</span>)</span><br />
+        <span class="summary-sig-arg">input_data</span>)</span><br />
       Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator.generate_result">source&nbsp;code</a></span>
@@ -121,14 +141,40 @@ object --+
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="output_case_result"></a><span class="summary-sig-name">output_case_result</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">suite_upload_dp</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator.output_case_result">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#__init__">__init__</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#clean_output_images">clean_output_images</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_sample_result_template">generate_sample_result_template</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_update_result_for_ft">generate_update_result_for_ft</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_update_result_for_runtime">generate_update_result_for_runtime</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#init_result_dict_variable">init_result_dict_variable</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_runtime_result_video">output_runtime_result_video</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#record_runtime_current_status">record_runtime_current_status</a></code>
+      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__delattr__</code>,
       <code>__format__</code>,
       <code>__getattribute__</code>,
       <code>__hash__</code>,
-      <code>__init__</code>,
       <code>__new__</code>,
       <code>__reduce__</code>,
       <code>__reduce_ex__</code>,
@@ -137,6 +183,31 @@ object --+
       <code>__sizeof__</code>,
       <code>__str__</code>,
       <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS METHODS ==================== -->
+<a name="section-ClassMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#calculate_runtime_base_on_event">calculate_runtime_base_on_event</a></code>
       </p>
     </td>
   </tr>
@@ -158,22 +229,13 @@ object --+
     </table>
   </td>
 </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="generate_sample_result"></a><span class="summary-sig-name">generate_sample_result</span>(<span class="summary-sig-arg">input_generator_name</span>,
-        <span class="summary-sig-arg">input_sample_dict</span>,
-        <span class="summary-sig-arg">input_sample_index</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator.generate_sample_result">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#get_event_data_in_result_list">get_event_data_in_result_list</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_ipynb_file">output_ipynb_file</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_suite_result">output_suite_result</a></code>
+      </p>
     </td>
   </tr>
 </table>
@@ -198,55 +260,21 @@ object --+
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="SEARCH_TARGET_VIEWPORT"></a><span class="summary-name">SEARCH_TARGET_VIEWPORT</span> = <code title="'viewport'">'viewport'</code>
+        <a href="Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS" class="summary-name">BROWSER_VISUAL_EVENT_POINTS</a> = <code title="{'backward_search': [{'event': 'first_paint', 'search_target': CropReg\
+ion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION}, {'even\
+t': 'start', 'search_target': CropRegion.TAB_VIEW, 'fraction': CropReg\
+ion.FULL_REGION_FRACTION}], 'forward_search': [{'event': 'viewport_vis\
+ual_complete', 'search_target': CropRegion.VIEWPORT, 'fraction': CropR\
+egion.FULL_REGION_FRACTION}, {'event': 'end', 'search_target': CropReg\
+ion.BROWSER, 'fraction': CropRegion.FULL_REGION_FRACTION}]}">{'backward_search': [{'event': '<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SEARCH_TARGET_TAB_VIEW"></a><span class="summary-name">SEARCH_TARGET_TAB_VIEW</span> = <code title="'tab_view'">'tab_view'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SEARCH_TARGET_BROWSER"></a><span class="summary-name">SEARCH_TARGET_BROWSER</span> = <code title="'browser'">'browser'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SKIP_STATUS_BAR_FRACTION"></a><span class="summary-name">SKIP_STATUS_BAR_FRACTION</span> = <code title="0.95">0.95</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#DEFAULT_CROP_TARGET_LIST" class="summary-name">DEFAULT_CROP_TARGET_LIST</a> = <code title="[SEARCH_TARGET_VIEWPORT, SEARCH_TARGET_TAB_VIEW, SEARCH_TARGET_BROWSER\
-]">[SEARCH_TARGET_VIEWPORT, SEARCH_TAR<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="DEFAULT_SPEEDINDEX_GENERATOR_NAME"></a><span class="summary-name">DEFAULT_SPEEDINDEX_GENERATOR_NAME</span> = <code title="'SpeedIndexGenerator'">'SpeedIndexGenerator'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.generator.runTimeDctGenerator.RunTimeDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS" class="summary-name">BROWSER_VISUAL_EVENT_POINTS</a> = <code title="{'backward_search': [{'event': 'first_paint', 'search_target': SEARCH_\
-TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION}, {'event': 'sta\
-rt', 'search_target': SEARCH_TARGET_TAB_VIEW, 'fraction': 1.0}], 'forw\
-ard_search': [{'event': 'viewport_visual_complete', 'search_target': S\
-EARCH_TARGET_VIEWPORT, 'fraction': 1.0}, {'event': 'end', 'search_targ\
-et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}">{'backward_search': [{'event': '<code class="variable-ellipsis">...</code></code>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#EVENT_END">EVENT_END</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#EVENT_START">EVENT_START</a></code>
+      </p>
     </td>
   </tr>
 </table>
@@ -301,8 +329,7 @@ et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}">{'backward_search': [{'event': '
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_result</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">input_data</span>,
-        <span class="sig-arg">input_global_result</span>)</span>
+        <span class="sig-arg">input_data</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="Hasal.lib.generator.runTimeDctGenerator-pysrc.html#RunTimeDctGenerator.generate_result">source&nbsp;code</a></span>&nbsp;
@@ -337,25 +364,6 @@ et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}">{'backward_search': [{'event': '
   </td>
 </tr>
 </table>
-<a name="DEFAULT_CROP_TARGET_LIST"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">DEFAULT_CROP_TARGET_LIST</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-[SEARCH_TARGET_VIEWPORT, SEARCH_TARGET_TAB_VIEW, SEARCH_TARGET_BROWSER<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-]
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
 <a name="BROWSER_VISUAL_EVENT_POINTS"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -368,12 +376,13 @@ et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}">{'backward_search': [{'event': '
   <dl class="fields">
     <dt>Value:</dt>
       <dd><table><tr><td><pre class="variable">
-{'backward_search': [{'event': 'first_paint', 'search_target': SEARCH_<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-TARGET_VIEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION}, {'event': 'sta<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-rt', 'search_target': SEARCH_TARGET_TAB_VIEW, 'fraction': 1.0}], 'forw<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ard_search': [{'event': 'viewport_visual_complete', 'search_target': S<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-EARCH_TARGET_VIEWPORT, 'fraction': 1.0}, {'event': 'end', 'search_targ<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}
+{'backward_search': [{'event': 'first_paint', 'search_target': CropReg<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ion.VIEWPORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION}, {'even<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+t': 'start', 'search_target': CropRegion.TAB_VIEW, 'fraction': CropReg<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ion.FULL_REGION_FRACTION}], 'forward_search': [{'event': 'viewport_vis<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ual_complete', 'search_target': CropRegion.VIEWPORT, 'fraction': CropR<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+egion.FULL_REGION_FRACTION}, {'event': 'end', 'search_target': CropReg<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ion.BROWSER, 'fraction': CropRegion.FULL_REGION_FRACTION}]}
 </pre></td></tr></table>
 </dd>
   </dl>
@@ -408,7 +417,7 @@ et': SEARCH_TARGET_BROWSER, 'fraction': 1.0}]}
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:42 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

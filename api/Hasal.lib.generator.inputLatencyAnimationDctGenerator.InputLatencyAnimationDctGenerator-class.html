@@ -62,9 +62,11 @@
 <!-- ==================== CLASS DESCRIPTION ==================== -->
 <h1 class="epydoc">Class InputLatencyAnimationDctGenerator</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator">source&nbsp;code</a></span></p>
 <pre class="base-tree">
-object --+
-         |
-        <strong class="uidshort">InputLatencyAnimationDctGenerator</strong>
+                 object --+    
+                          |    
+<a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a> --+
+                              |
+                             <strong class="uidshort">InputLatencyAnimationDctGenerator</strong>
 </pre>
 
 <hr />
@@ -91,6 +93,25 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="generate_sample_result"></a><span class="summary-sig-name">generate_sample_result</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">input_generator_name</span>,
+        <span class="summary-sig-arg">input_sample_dict</span>,
+        <span class="summary-sig-arg">input_sample_index</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.generate_sample_result">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="crop_images_based_on_samplefiles"></a><span class="summary-sig-name">crop_images_based_on_samplefiles</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">input_data</span>)</span></td>
           <td align="right" valign="top">
@@ -109,8 +130,7 @@ object --+
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#generate_result" class="summary-sig-name">generate_result</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">input_data</span>,
-        <span class="summary-sig-arg">input_global_result</span>)</span><br />
+        <span class="summary-sig-arg">input_data</span>)</span><br />
       Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.generate_result">source&nbsp;code</a></span>
@@ -121,14 +141,40 @@ object --+
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="output_case_result"></a><span class="summary-sig-name">output_case_result</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">suite_upload_dp</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.output_case_result">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#__init__">__init__</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#clean_output_images">clean_output_images</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_sample_result_template">generate_sample_result_template</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_update_result_for_ft">generate_update_result_for_ft</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#generate_update_result_for_runtime">generate_update_result_for_runtime</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#init_result_dict_variable">init_result_dict_variable</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_runtime_result_video">output_runtime_result_video</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#record_runtime_current_status">record_runtime_current_status</a></code>
+      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__delattr__</code>,
       <code>__format__</code>,
       <code>__getattribute__</code>,
       <code>__hash__</code>,
-      <code>__init__</code>,
       <code>__new__</code>,
       <code>__reduce__</code>,
       <code>__reduce_ex__</code>,
@@ -138,6 +184,43 @@ object --+
       <code>__str__</code>,
       <code>__subclasshook__</code>
       </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS METHODS ==================== -->
+<a name="section-ClassMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#calculate_runtime_base_on_event" class="summary-sig-name">calculate_runtime_base_on_event</a>(<span class="summary-sig-arg">cls</span>,
+        <span class="summary-sig-arg">input_running_time_result</span>,
+        <span class="summary-sig-arg">fps</span>=<span class="summary-sig-default">90</span>)</span><br />
+      This customized method base on `baseGenerator.runtime_calculation_event_point_base`.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.calculate_runtime_base_on_event">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
     </td>
   </tr>
 </table>
@@ -158,22 +241,13 @@ object --+
     </table>
   </td>
 </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="generate_sample_result"></a><span class="summary-sig-name">generate_sample_result</span>(<span class="summary-sig-arg">input_generator_name</span>,
-        <span class="summary-sig-arg">input_sample_dict</span>,
-        <span class="summary-sig-arg">input_sample_index</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.generate_sample_result">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#get_event_data_in_result_list">get_event_data_in_result_list</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_ipynb_file">output_ipynb_file</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#output_suite_result">output_suite_result</a></code>
+      </p>
     </td>
   </tr>
 </table>
@@ -198,31 +272,18 @@ object --+
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="SEARCH_TARGET_VIEWPORT"></a><span class="summary-name">SEARCH_TARGET_VIEWPORT</span> = <code title="'viewport'">'viewport'</code>
+        <a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS" class="summary-name">BROWSER_VISUAL_EVENT_POINTS</a> = <code title="{'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEW\
+PORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result':\
+ True}, {'event': 'start', 'search_target': CropRegion.TERMINAL, 'frac\
+tion': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]}">{'backward_search': [{'event': '<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SEARCH_TARGET_ORIGINAL"></a><span class="summary-name">SEARCH_TARGET_ORIGINAL</span> = <code title="'original'">'original'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SKIP_STATUS_BAR_FRACTION"></a><span class="summary-name">SKIP_STATUS_BAR_FRACTION</span> = <code title="1.0">1.0</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator.InputLatencyAnimationDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS" class="summary-name">BROWSER_VISUAL_EVENT_POINTS</a> = <code title="{'backward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_V\
-IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, \
-{'event': 'start', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction'\
-: SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]}">{'backward_search': [{'event': '<code class="variable-ellipsis">...</code></code>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html">baseGenerator.BaseGenerator</a></code></b>:
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#EVENT_END">EVENT_END</a></code>,
+      <code><a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#EVENT_START">EVENT_START</a></code>
+      </p>
     </td>
   </tr>
 </table>
@@ -277,8 +338,7 @@ IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, \
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_result</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">input_data</span>,
-        <span class="sig-arg">input_global_result</span>)</span>
+        <span class="sig-arg">input_data</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.generate_result">source&nbsp;code</a></span>&nbsp;
@@ -291,6 +351,47 @@ IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, \
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>input_data</code></strong></li>
     </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="calculate_runtime_base_on_event"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">calculate_runtime_base_on_event</span>(<span class="sig-arg">cls</span>,
+        <span class="sig-arg">input_running_time_result</span>,
+        <span class="sig-arg">fps</span>=<span class="sig-default">90</span>)</span>
+    <br /><em class="fname">Class Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.generator.inputLatencyAnimationDctGenerator-pysrc.html#InputLatencyAnimationDctGenerator.calculate_runtime_base_on_event">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+
+This customized method base on `baseGenerator.runtime_calculation_event_point_base`.
+However, when start and end at the same time, it will return the mid time between 0~1 frame, not 0 ms.
+
+For example, if FPS is 90, the running time of 1 frame is 11.11111 ms.
+When start and end at the same time, it will return 5.55555 ms ((1000 ms / 90 FPS) / 2).
+@param input_running_time_result: the running_time_result after do comparison.
+    ex:
+    [
+        {'event': 'start', 'file': 'foo/bar/9487.bmp', 'time_seq': 5487.9487},
+        {'event': 'end', 'file': 'foo/bar/9527.bmp', 'time_seq': 5566.5566}, ...
+    ]
+@param fps: the current FPS. Default=90.
+@return: (running time, the dict of all events' time sequence).
+
+</pre>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="Hasal.lib.generator.baseGenerator.BaseGenerator-class.html#calculate_runtime_base_on_event">baseGenerator.BaseGenerator.calculate_runtime_base_on_event</a>
+    </dt>
   </dl>
 </td></tr></table>
 </div>
@@ -325,10 +426,10 @@ IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, \
   <dl class="fields">
     <dt>Value:</dt>
       <dd><table><tr><td><pre class="variable">
-{'backward_search': [{'event': 'end', 'search_target': SEARCH_TARGET_V<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-{'event': 'start', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction'<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-: SKIP_STATUS_BAR_FRACTION, 'shift_result': True}]}
+{'backward_search': [{'event': 'end', 'search_target': CropRegion.VIEW<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+PORT, 'fraction': CropRegion.SKIP_STATUS_BAR_FRACTION, 'shift_result':<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ True}, {'event': 'start', 'search_target': CropRegion.TERMINAL, 'frac<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+tion': CropRegion.FULL_REGION_FRACTION, 'shift_result': True}]}
 </pre></td></tr></table>
 </dd>
   </dl>
@@ -363,7 +464,7 @@ IEWPORT, 'fraction': SKIP_STATUS_BAR_FRACTION, 'shift_result': True}, <span clas
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:42 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

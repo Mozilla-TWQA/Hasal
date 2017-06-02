@@ -68,6 +68,43 @@ object --+
 </pre>
 
 <hr />
+<pre class="literalblock">
+
+output sample 2017/05/22
+{
+  &quot;case_info&quot;: {
+    &quot;case_time_stamp&quot;: &quot;20170522144114&quot;,                       &lt;= test case time stamp will renew when call loop_test func of runtest.py
+    &quot;case_name&quot;: &quot;test_firefox_gdoc_ail_pagedown_10_text&quot;      &lt;= current test case name
+  },
+  &quot;current_status&quot;: {
+    &quot;sikuli_running_stat&quot;: &quot;0&quot;,                                &lt;= return code of self.sikuli.run_test
+    &quot;status_img_compare_result&quot;: &quot;PASS_IMG_COMPARE_RESULT&quot;,    &lt;= image compare result define in record_runtime_current_status of baseGenerator.py, will record the corresponse status according to the running time
+    &quot;time_list_counter&quot;: &quot;6&quot;,                                  &lt;= current executed times
+    &quot;fps_stat&quot;: 0,                                             &lt;= current fps valdiation result (0: pass)
+    &quot;validator_result&quot;: {
+      &quot;validate_result&quot;: true,
+      &quot;FileExistValidator&quot;: {
+        &quot;output_result&quot;: null,
+        &quot;validate_result&quot;: true
+      },
+      &quot;FPSValidator&quot;: {
+        &quot;output_result&quot;: 60,
+        &quot;validate_result&quot;: true
+      }
+    }
+  },
+  &quot;case_status_history&quot;: {
+    &quot;test_firefox_gdoc_ail_pagedown_10_text&quot;: {
+      &quot;20170522144114&quot;: {
+        &quot;RUNNING_STATUS&quot;: &quot;PASS_IMG_COMPARE_RESULT&quot;,
+        &quot;TOTAL_EXEC_TIME&quot;: 106.55035996437073
+      }
+    }
+  }
+}
+
+</pre>
+
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -109,12 +146,111 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="record_status"></a><span class="summary-sig-name">record_status</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">case_name</span>,
-        <span class="summary-sig-arg">status</span>,
-        <span class="summary-sig-arg">value</span>)</span></td>
+          <td><span class="summary-sig"><a name="get_current_status"></a><span class="summary-sig-name">get_current_status</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.record_status">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.get_current_status">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="set_case_basic_info"></a><span class="summary-sig-name">set_case_basic_info</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">case_name</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.set_case_basic_info">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#get_current_sikuli_status" class="summary-sig-name">get_current_sikuli_status</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Get the &quot;sikuli&quot; status from current status.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.get_current_sikuli_status">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="record_current_status"></a><span class="summary-sig-name">record_current_status</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">input_status_dict</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.record_current_status">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="create_current_case_status_history"></a><span class="summary-sig-name">create_current_case_status_history</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.create_current_case_status_history">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="record_case_status_history"></a><span class="summary-sig-name">record_case_status_history</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">status_desc</span>,
+        <span class="summary-sig-arg">value</span>=<span class="summary-sig-default">None</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.record_case_status_history">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="record_case_exec_time_history"></a><span class="summary-sig-name">record_case_exec_time_history</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">status_desc</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.record_case_exec_time_history">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -162,6 +298,41 @@ object --+
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
+        <a name="PASS_IMG_COMPARE_RESULT"></a><span class="summary-name">PASS_IMG_COMPARE_RESULT</span> = <code title="&quot;PASS_IMG_COMPARE_RESULT&quot;">&quot;PASS_IMG_COMPARE_RESULT&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ERROR_EVENT_IMAGE_LESS_THAN_2"></a><span class="summary-name">ERROR_EVENT_IMAGE_LESS_THAN_2</span> = <code title="&quot;ERROR_EVENT_IMAGE_LESS_THAN_2&quot;">&quot;ERROR_EVENT_IMAGE_LESS_THAN_2&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ERROR_EVENT_IMAGE_BOTH_SAME"></a><span class="summary-name">ERROR_EVENT_IMAGE_BOTH_SAME</span> = <code title="&quot;ERROR_EVENT_IMAGE_BOTH_SAME&quot;">&quot;ERROR_EVENT_IMAGE_BOTH_SAME&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_EVENT_IMAGE_START_AFTER_END" class="summary-name">ERROR_EVENT_IMAGE_START_AFTER_END</a> = <code title="&quot;ERROR_EVENT_IMAGE_START_AFTER_END&quot;">&quot;ERROR_EVENT_IMAGE_START_A<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_MISSING_FIELD_IMG_COMPARE_RESULT" class="summary-name">ERROR_MISSING_FIELD_IMG_COMPARE_RESULT</a> = <code title="&quot;ERROR_MISSING_FIELD_IMG_COMPARE_RESULT&quot;">&quot;ERROR_MISSING_FIELD_<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
         <a name="ERROR_CANT_FIND_STATUS_FILE"></a><span class="summary-name">ERROR_CANT_FIND_STATUS_FILE</span> = <code title="&quot;ERROR_CANT_FIND_STATUS_FILE&quot;">&quot;ERROR_CANT_FIND_STATUS_FILE&quot;</code>
     </td>
   </tr>
@@ -191,6 +362,125 @@ object --+
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
         <a href="Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_LOOP_TEST_RAISE_EXCEPTION" class="summary-name">ERROR_LOOP_TEST_RAISE_EXCEPTION</a> = <code title="&quot;ERROR_LOOP_TEST_RAISE_EXCEPTION&quot;">&quot;ERROR_LOOP_TEST_RAISE_EXCEP<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ERROR_COMPARE_RESULT_IS_NONE"></a><span class="summary-name">ERROR_COMPARE_RESULT_IS_NONE</span> = <code title="&quot;ERROR_COMPARE_RESULT_IS_NONE&quot;">&quot;ERROR_COMPARE_RESULT_IS_NONE&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_IMG_COMPARE_RESULT"></a><span class="summary-name">STATUS_IMG_COMPARE_RESULT</span> = <code title="&quot;status_img_compare_result&quot;">&quot;status_img_compare_result&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_SIKULI_RUNNING_VALIDATION"></a><span class="summary-name">STATUS_SIKULI_RUNNING_VALIDATION</span> = <code title="&quot;sikuli_running_stat&quot;">&quot;sikuli_running_stat&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_FPS_VALIDATION"></a><span class="summary-name">STATUS_FPS_VALIDATION</span> = <code title="&quot;fps_stat&quot;">&quot;fps_stat&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_TIME_LIST_COUNTER"></a><span class="summary-name">STATUS_TIME_LIST_COUNTER</span> = <code title="&quot;time_list_counter&quot;">&quot;time_list_counter&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_VALIDATOR_RESULT"></a><span class="summary-name">STATUS_VALIDATOR_RESULT</span> = <code title="&quot;validator_result&quot;">&quot;validator_result&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_FIELD_CASE_NAME"></a><span class="summary-name">DEFAULT_FIELD_CASE_NAME</span> = <code title="&quot;case_name&quot;">&quot;case_name&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_FIELD_CASE_TIME_STAMP"></a><span class="summary-name">DEFAULT_FIELD_CASE_TIME_STAMP</span> = <code title="&quot;case_time_stamp&quot;">&quot;case_time_stamp&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_FPS_VALIDATION_NORMAL"></a><span class="summary-name">STATUS_FPS_VALIDATION_NORMAL</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_FPS_VALIDATION_ABNORMAL"></a><span class="summary-name">STATUS_FPS_VALIDATION_ABNORMAL</span> = <code title="1">1</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_FIELD_CURRENT_STATUS"></a><span class="summary-name">DEFAULT_FIELD_CURRENT_STATUS</span> = <code title="&quot;current_status&quot;">&quot;current_status&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_FIELD_CASE_STATUS_HISTORY"></a><span class="summary-name">DEFAULT_FIELD_CASE_STATUS_HISTORY</span> = <code title="&quot;case_status_history&quot;">&quot;case_status_history&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_FIELD_CASE_INFO"></a><span class="summary-name">DEFAULT_FIELD_CASE_INFO</span> = <code title="&quot;case_info&quot;">&quot;case_info&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_DESC_CASE_TOTAL_EXEC_TIME"></a><span class="summary-name">STATUS_DESC_CASE_TOTAL_EXEC_TIME</span> = <code title="&quot;TOTAL_EXEC_TIME&quot;">&quot;TOTAL_EXEC_TIME&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STATUS_DESC_CASE_RUNNING_STATUS"></a><span class="summary-name">STATUS_DESC_CASE_RUNNING_STATUS</span> = <code title="&quot;RUNNING_STATUS&quot;">&quot;RUNNING_STATUS&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SIKULI_KEY_REGION"></a><span class="summary-name">SIKULI_KEY_REGION</span> = <code title="'region'">'region'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SIKULI_KEY_REGION_OVERRIDE"></a><span class="summary-name">SIKULI_KEY_REGION_OVERRIDE</span> = <code title="'region_override'">'region_override'</code>
     </td>
   </tr>
 </table>
@@ -262,6 +552,27 @@ object --+
   </dl>
 </td></tr></table>
 </div>
+<a name="get_current_sikuli_status"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_current_sikuli_status</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.common.commonUtil-pysrc.html#StatusRecorder.get_current_sikuli_status">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the &quot;sikuli&quot; status from current status.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>the status object of &quot;current_status/sikuli&quot;.</dd>
+  </dl>
+</td></tr></table>
+</div>
 <br />
 <!-- ==================== CLASS VARIABLE DETAILS ==================== -->
 <a name="section-ClassVariableDetails"></a>
@@ -281,6 +592,42 @@ object --+
   </td>
 </tr>
 </table>
+<a name="ERROR_EVENT_IMAGE_START_AFTER_END"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ERROR_EVENT_IMAGE_START_AFTER_END</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+&quot;ERROR_EVENT_IMAGE_START_AFTER_END&quot;
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ERROR_MISSING_FIELD_IMG_COMPARE_RESULT"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ERROR_MISSING_FIELD_IMG_COMPARE_RESULT</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+&quot;ERROR_MISSING_FIELD_IMG_COMPARE_RESULT&quot;
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="ERROR_LOOP_TEST_RAISE_EXCEPTION"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -328,7 +675,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:42 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

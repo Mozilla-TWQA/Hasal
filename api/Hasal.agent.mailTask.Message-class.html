@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator</title>
+  <title>Hasal.agent.mailTask.Message</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -40,10 +40,9 @@
     <td width="100%">
       <span class="breadcrumbs">
         Package&nbsp;Hasal ::
-        <a href="Hasal.lib-module.html">Package&nbsp;lib</a> ::
-        <a href="Hasal.lib.generator-module.html">Package&nbsp;generator</a> ::
-        <a href="Hasal.lib.generator.inputLatencyDctGenerator-module.html">Module&nbsp;inputLatencyDctGenerator</a> ::
-        Class&nbsp;InputLatencyDctGenerator
+        <a href="Hasal.agent-module.html">Package&nbsp;agent</a> ::
+        <a href="Hasal.agent.mailTask-module.html">Module&nbsp;mailTask</a> ::
+        Class&nbsp;Message
       </span>
     </td>
     <td>
@@ -53,18 +52,18 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html"
+            >]&nbsp;|&nbsp;<a href="Hasal.agent.mailTask.Message-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class InputLatencyDctGenerator</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.lib.generator.inputLatencyDctGenerator-pysrc.html#InputLatencyDctGenerator">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class Message</h1><p class="nomargin-top"><span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message">source&nbsp;code</a></span></p>
 <pre class="base-tree">
 object --+
          |
-        <strong class="uidshort">InputLatencyDctGenerator</strong>
+        <strong class="uidshort">Message</strong>
 </pre>
 
 <hr />
@@ -91,12 +90,80 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html#generate_result" class="summary-sig-name">generate_result</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">input_data</span>,
-        <span class="summary-sig-arg">input_global_result</span>)</span><br />
-      Returns:</td>
+          <td><span class="summary-sig"><a href="Hasal.agent.mailTask.Message-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">message_id</span>,
+        <span class="summary-sig-arg">thread_id</span>,
+        <span class="summary-sig-arg">contents</span>)</span><br />
+      Basic Message Type message_id: unique message ID thread_id: thread ID
+      for easier find a message</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyDctGenerator-pysrc.html#InputLatencyDctGenerator.generate_result">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getInfo"></a><span class="summary-sig-name">getInfo</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.getInfo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__resolve_headers"></a><span class="summary-sig-name">__resolve_headers</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">contents</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.__resolve_headers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__resolve_body"></a><span class="summary-sig-name">__resolve_body</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">contents</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.__resolve_body">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__isValid"></a><span class="summary-sig-name">__isValid</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.__isValid">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -111,7 +178,6 @@ object --+
       <code>__format__</code>,
       <code>__getattribute__</code>,
       <code>__hash__</code>,
-      <code>__init__</code>,
       <code>__new__</code>,
       <code>__reduce__</code>,
       <code>__reduce_ex__</code>,
@@ -121,84 +187,6 @@ object --+
       <code>__str__</code>,
       <code>__subclasshook__</code>
       </p>
-    </td>
-  </tr>
-</table>
-<!-- ==================== STATIC METHODS ==================== -->
-<a name="section-StaticMethods"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Static Methods</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-StaticMethods"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="generate_sample_result"></a><span class="summary-sig-name">generate_sample_result</span>(<span class="summary-sig-arg">input_generator_name</span>,
-        <span class="summary-sig-arg">input_sample_dict</span>,
-        <span class="summary-sig-arg">input_sample_index</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Hasal.lib.generator.inputLatencyDctGenerator-pysrc.html#InputLatencyDctGenerator.generate_sample_result">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-</table>
-<!-- ==================== CLASS VARIABLES ==================== -->
-<a name="section-ClassVariables"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Class Variables</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-ClassVariables"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SEARCH_TARGET_ORIGINAL"></a><span class="summary-name">SEARCH_TARGET_ORIGINAL</span> = <code title="'original'">'original'</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="SKIP_STATUS_BAR_FRACTION"></a><span class="summary-name">SKIP_STATUS_BAR_FRACTION</span> = <code title="1.0">1.0</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Hasal.lib.generator.inputLatencyDctGenerator.InputLatencyDctGenerator-class.html#BROWSER_VISUAL_EVENT_POINTS" class="summary-name">BROWSER_VISUAL_EVENT_POINTS</a> = <code title="{'backward_search': [{'event': 'start', 'search_target': SEARCH_TARGET\
-_ORIGINAL, 'fraction': 1.0, 'shift_result': True}], 'forward_search': \
-[{'event': 'end', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction':\
- 1.0, 'shift_result': False}]}">{'backward_search': [{'event': '<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 </table>
@@ -245,68 +233,32 @@ _ORIGINAL, 'fraction': 1.0, 'shift_result': True}], 'forward_search': \
   </td>
 </tr>
 </table>
-<a name="generate_result"></a>
+<a name="__init__"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_result</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">input_data</span>,
-        <span class="sig-arg">input_global_result</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">message_id</span>,
+        <span class="sig-arg">thread_id</span>,
+        <span class="sig-arg">contents</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Hasal.lib.generator.inputLatencyDctGenerator-pysrc.html#InputLatencyDctGenerator.generate_result">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="Hasal.agent.mailTask-pysrc.html#Message.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  
+  <p>Basic Message Type message_id: unique message ID thread_id: thread ID 
+  for easier find a message</p>
+  <p>status: status handled by Iskakalunan parameters: parameters requested
+  in a message</p>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>input_data</code></strong></li>
-    </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<br />
-<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
-<a name="section-ClassVariableDetails"></a>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Class Variable Details</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-ClassVariableDetails"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-</table>
-<a name="BROWSER_VISUAL_EVENT_POINTS"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">BROWSER_VISUAL_EVENT_POINTS</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-{'backward_search': [{'event': 'start', 'search_target': SEARCH_TARGET<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-_ORIGINAL, 'fraction': 1.0, 'shift_result': True}], 'forward_search': <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-[{'event': 'end', 'search_target': SEARCH_TARGET_ORIGINAL, 'fraction':<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
- 1.0, 'shift_result': False}]}
-</pre></td></tr></table>
-</dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
   </dl>
 </td></tr></table>
 </div>
@@ -339,7 +291,7 @@ _ORIGINAL, 'fraction': 1.0, 'shift_result': True}], 'forward_search': <span clas
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:41 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

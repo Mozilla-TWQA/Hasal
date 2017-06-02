@@ -85,7 +85,8 @@
         <tr>
           <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">run_sikulix_cmd_path</span>,
-        <span class="summary-sig-arg">hasal_dir</span>)</span></td>
+        <span class="summary-sig-arg">hasal_dir</span>,
+        <span class="summary-sig-arg">running_statistics_file_path</span>=<span class="summary-sig-default">''</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.__init__">source&nbsp;code</a></span>
             
@@ -101,10 +102,59 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="set_syspath"></a><span class="summary-sig-name">set_syspath</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">hasal_dir</span>)</span></td>
+          <td><span class="summary-sig"><a href="Hasal.lib.sikuli.Sikuli-class.html#set_syspath" class="summary-sig-name">set_syspath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">hasal_dir</span>)</span><br />
+      Get the Sikuli Library folder path.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.set_syspath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_check_status_recorder"></a><span class="summary-sig-name">_check_status_recorder</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli._check_status_recorder">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_load_current_status"></a><span class="summary-sig-name">_load_current_status</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli._load_current_status">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_load_sikuli_status"></a><span class="summary-sig-name">_load_sikuli_status</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli._load_sikuli_status">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -118,12 +168,32 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="run_test"></a><span class="summary-sig-name">run_test</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="Hasal.lib.sikuli.Sikuli-class.html#set_sikuli_status" class="summary-sig-name">set_sikuli_status</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Set up the key, value pair into status file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.set_sikuli_status">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Hasal.lib.sikuli.Sikuli-class.html#run_test" class="summary-sig-name">run_test</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">script_name</span>,
-        <span class="summary-sig-arg">timestamp</span>=<span class="summary-sig-default">&quot;0000000000&quot;</span>,
+        <span class="summary-sig-arg">case_output_name</span>,
         <span class="summary-sig-arg">test_target</span>=<span class="summary-sig-default">&quot;&quot;</span>,
         <span class="summary-sig-arg">script_dp</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">args_list</span>=<span class="summary-sig-default">[]</span>)</span></td>
+        <span class="summary-sig-arg">args_list</span>=<span class="summary-sig-default">[]</span>)</span><br />
+      Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.run_test">source&nbsp;code</a></span>
             
@@ -152,6 +222,155 @@
     </td>
   </tr>
 </table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KEY_NAME_CURRENT_STATUS"></a><span class="summary-name">KEY_NAME_CURRENT_STATUS</span> = <code title="'current_status'">'current_status'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KEY_NAME_SIKULI"></a><span class="summary-name">KEY_NAME_SIKULI</span> = <code title="'sikuli'">'sikuli'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KEY_NAME_SIKULI_ARGS"></a><span class="summary-name">KEY_NAME_SIKULI_ARGS</span> = <code title="'args'">'args'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST"></a><span class="summary-name">KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST</span> = <code title="'additional_args'">'additional_args'</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="set_syspath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">set_syspath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">hasal_dir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.set_syspath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the Sikuli Library folder path.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>hasal_dir</code></strong> - the Hasal root folder.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the `lib/sikuli` folder path under Hasal root folder.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="set_sikuli_status"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">set_sikuli_status</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.set_sikuli_status">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up the key, value pair into status file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>key</code></strong></li>
+        <li><strong class="pname"><code>value</code></strong></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="run_test"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">run_test</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">script_name</span>,
+        <span class="sig-arg">case_output_name</span>,
+        <span class="sig-arg">test_target</span>=<span class="sig-default">&quot;&quot;</span>,
+        <span class="sig-arg">script_dp</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">args_list</span>=<span class="sig-default">[]</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Hasal.lib.sikuli-pysrc.html#Sikuli.run_test">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>script_name</code></strong> - &lt;SIKULI_CASE_NAME&gt;</li>
+        <li><strong class="pname"><code>case_output_name</code></strong> - &lt;CASE_NAME&gt;_&lt;TIMESTAMP&gt;</li>
+        <li><strong class="pname"><code>test_target</code></strong> - the target URL address.</li>
+        <li><strong class="pname"><code>script_dp</code></strong> - specify the Sikuli cases' folder path.</li>
+        <li><strong class="pname"><code>args_list</code></strong></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -180,7 +399,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  8 06:28:35 2017
+    Generated by Epydoc 3.0.1 on Fri Jun  2 07:38:42 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
