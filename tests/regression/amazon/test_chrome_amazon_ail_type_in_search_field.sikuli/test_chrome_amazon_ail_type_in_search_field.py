@@ -36,7 +36,7 @@ class Case(basecase.SikuliInputLatencyCase):
         # Access link and wait
         my_browser.clickBar()
         my_browser.enterLink(self.INPUT_TEST_TARGET)
-        pattern = app.wait_for_loaded()
+        app.wait_for_search_button_loaded()
 
         # Wait for stable
         sleep(2)
@@ -44,6 +44,12 @@ class Case(basecase.SikuliInputLatencyCase):
         # PRE ACTIONS
         app.click_search_field()
         sleep(1)
+
+        # Customized Region
+        customized_region_name = 'end'
+        type_area = wait(Pattern('search_bar.png').similar(0.90), 10)
+        self.set_override_region_settings(customized_region_name, type_area)
+        sleep(2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
@@ -58,7 +64,6 @@ class Case(basecase.SikuliInputLatencyCase):
         t2 = time.time()
 
         # POST ACTIONS
-        app.wait_pattern_for_vanished(pattern)
 
         # Write timestamp
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
