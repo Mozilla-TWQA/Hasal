@@ -155,6 +155,7 @@ class WebApp(object):
         @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
         @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        @return: object pattern and object info
         """
         is_exists = False
         p = None
@@ -169,9 +170,8 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     is_exists = True
                     break
-                p = pic
-        wait(p, wait_sec)
-        return p
+        obj = wait(p, wait_sec)
+        return p, obj
 
     def wait_pattern_for_vanished(self, pattern, timeout=10):
         """
