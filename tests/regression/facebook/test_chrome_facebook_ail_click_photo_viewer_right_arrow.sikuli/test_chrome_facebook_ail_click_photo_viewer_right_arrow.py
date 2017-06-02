@@ -28,7 +28,7 @@ class Case(basecase.SikuliInputLatencyCase):
         chrome.enterLink(self.INPUT_TEST_TARGET)
         fb._wait(component=fb.FACEBOOK_COMMENT_ICONS, timeout=15)
 
-        sample2_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
         sleep(2)
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
@@ -40,7 +40,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         t2 = time.time()
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
-        shutil.move(screenshot, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
+        shutil.move(screenshot, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
 
 
 case = Case(sys.argv)

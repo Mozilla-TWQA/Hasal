@@ -40,18 +40,16 @@ class Gsearch(WebApp):
     # this calculation is based on english version of google image search only
     def click_result_image(self, x, y):
         a = -120 + 280 * (x - 1)
-        b = 275 + 200 * (y - 1)
+        b = 190 + 200 * (y - 1)
         GSEARCH_CLICK_RESULT_IMAGE = [
             [os.path.join('pics', 'gsearch_image_header.png'), a, b]
         ]
-        return self._click(action_name='Click result image',
-                           component=GSEARCH_CLICK_RESULT_IMAGE)
+        return self._click(action_name='Click result image', component=GSEARCH_CLICK_RESULT_IMAGE)
 
     def hover_result_image(self, x, y):
         a = -120 + 280 * (x - 1)
-        b = 275 + 200 * (y - 1)
+        b = 190 + 200 * (y - 1)
         GSEARCH_HOVER_RESULT_IMAGE = [
             [os.path.join('pics', 'gsearch_image_header.png'), a, b]
         ]
-        return self._mouseMove(action_name='Hover result image',
-                               component=GSEARCH_HOVER_RESULT_IMAGE)
+        return self._mouseMove(action_name='', component=GSEARCH_HOVER_RESULT_IMAGE)

@@ -24,9 +24,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Prepare
         app = amazon.Amazon()
-        sample2_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH,
-                                         self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-        sample2_file_path = sample2_file_path.replace(os.path.splitext(sample2_file_path)[1], '.png')
+        sample1_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_file_path = sample1_file_path.replace(os.path.splitext(sample1_file_path)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
@@ -73,7 +72,7 @@ class Case(basecase.SikuliInputLatencyCase):
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
         # Write the snapshot image
-        shutil.move(screenshot, sample2_file_path)
+        shutil.move(screenshot, sample1_file_path)
 
 
 case = Case(sys.argv)
