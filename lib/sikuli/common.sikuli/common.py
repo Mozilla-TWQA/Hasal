@@ -155,7 +155,7 @@ class WebApp(object):
         @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
         @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
-        @return: object pattern and object info
+        @return: The object pattern and the match region object. (pattern, match_obj).
         """
         is_exists = False
         p = None

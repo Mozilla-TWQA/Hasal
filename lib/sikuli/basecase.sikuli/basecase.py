@@ -1,5 +1,6 @@
 from sikuli import *  # NOQA
 import json
+import common
 
 
 class SikuliCase(object):
@@ -8,13 +9,16 @@ class SikuliCase(object):
     It will parse sys.argv, which is [library path for running cases, running statistics file path.
 
     After loading the stat file, it will prepare some default variables:
-    - INPUT_LIB_PATH: the library path for running cases.
-    - INPUT_STAT_FILE: the running statistics file, which is JSON format.
-    - default_args: default input arguments, which is dict object.
-    - INPUT_CASE_OUTPUT_NAME: the case output name, for example: test_firefox_foo_bar_<TIMESTAMP>
-    - INPUT_ROOT_FOLDER: the Hasal root folder.
-    - INPUT_TEST_TARGET: the test target URL address.
-    - additional_args: additional input arguments, which is array list.
+    - operating_system: The operating system type. It will be one of following string: MAC, LINUX, WINDOWS, NOT_SUPPORTED.
+    - operating_system_version: The operating system version.
+    - common: The common General object, which contains some useful methods.
+    - INPUT_LIB_PATH: The library path for running cases.
+    - INPUT_STAT_FILE: The running statistics file, which is JSON format.
+    - default_args: The default input arguments, which is dict object.
+    - INPUT_CASE_OUTPUT_NAME: The case output name, for example: test_firefox_foo_bar_<TIMESTAMP>
+    - INPUT_ROOT_FOLDER: The Hasal root folder.
+    - INPUT_TEST_TARGET: The test target URL address.
+    - additional_args: The additional input arguments, which is array list.
 
     Usage:
     ```python
@@ -43,9 +47,20 @@ class SikuliCase(object):
     KEY_REGION_OVERRIDE = 'region_override'
 
     def __init__(self, argv):
+        # loading default argv
         self.argv = argv
         self.INPUT_LIB_PATH = argv[1]
         self.INPUT_STAT_FILE = argv[2]
+
+        # Env.getOS() will return one of following object, OS.MAC, OS.LINUX, OS.WINDOWS, and OS.NOT_SUPPORTED.
+        self.operating_system = Env.getOS()
+        self.operating_system_version = Env.getOSVersion()
+
+        # loading general common object
+        self.common = common.General()
+        self._web_page = common.WebApp()
+
+        # loading other settings
         self._load_stat_json()
         self._load_addtional_args()
 
@@ -64,6 +79,17 @@ class SikuliCase(object):
         self.additional_args = self.sikuli_status.get(self.KEY_NAME_SIKULI_ADDITIONAL_ARGS_LIST, [])
         # reset the data of Override Region
         self.append_to_stat_json(self.KEY_REGION_OVERRIDE, {})
+
+    def find_match_region(self, component, similarity=0.70, timeout=10):
+        """
+        Find the matched region object base on component. Default timeout is 10 sec.
+        @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
+        @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        @return:The matched region object.
+        """
+        _, match_obj = self._web_page._wait_for_loaded(component=component, similarity=similarity, timeout=timeout)
+        return match_obj
 
     def append_to_stat_json(self, key, value):
         """
