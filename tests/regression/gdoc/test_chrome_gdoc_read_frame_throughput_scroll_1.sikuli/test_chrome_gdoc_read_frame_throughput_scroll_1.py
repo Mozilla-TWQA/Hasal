@@ -1,36 +1,48 @@
 # if you are putting your test script folders under {git project folder}/tests/, it will work fine.
 # otherwise, you either add it to system path before you run or hard coded it in here.
-sys.path.append(sys.argv[2])
-import browser
-import common
-import gdoc
-import shutil
-import time
+
+INPUT_LIB_PATH = sys.argv[1]
+sys.path.append(INPUT_LIB_PATH)
+
 import os
+import common
+import basecase
+import gdoc
 
-com = common.General()
-chrome = browser.Chrome()
-gd = gdoc.gDoc()
+import shutil
+import browser
+import time
 
-chrome.clickBar()
-chrome.enterLink(sys.argv[3])
-sleep(5)
-gd.wait_for_loaded()
 
-setAutoWaitTimeout(10)
-sample1_fp = os.path.join(sys.argv[4], sys.argv[5])
-sample2_fp = os.path.join(sys.argv[4], sys.argv[5].replace('sample_1', 'sample_2'))
+class Case(basecase.SikuliInputLatencyCase):
 
-sleep(2)
-capture_width = int(sys.argv[6])
-capture_height = int(sys.argv[7])
+    def run(self):
+        com = common.General()
+        chrome = browser.Chrome()
+        gd = gdoc.gDoc()
 
-t1 = time.time()
-capimg1 = capture(0, 0, capture_width, capture_height)
-gd.move_to_highlight_scroll(WHEEL_DOWN, 1)
-sleep(1)
-t2 = time.time()
-capimg2 = capture(0, 0, capture_width, capture_height)
-com.updateJson({'t1': t1, 't2': t2}, sys.argv[8])
-shutil.move(capimg1, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
-shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
+        chrome.clickBar()
+        chrome.enterLink(self.INPUT_TEST_TARGET)
+        sleep(5)
+        gd.wait_for_loaded()
+
+        setAutoWaitTimeout(10)
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample2_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
+
+        sleep(2)
+        capture_width = int(self.INPUT_RECORD_WIDTH)
+        capture_height = int(self.INPUT_RECORD_HEIGHT)
+
+        t1 = time.time()
+        capimg1 = capture(0, 0, capture_width, capture_height)
+        gd.move_to_highlight_scroll(gd.input_wheel_down_direction, 1)
+        sleep(1)
+        t2 = time.time()
+        capimg2 = capture(0, 0, capture_width, capture_height)
+        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+        shutil.move(capimg1, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
+        shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
+
+case = Case(sys.argv)
+case.run()

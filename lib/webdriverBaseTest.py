@@ -21,7 +21,8 @@ class WebdriverBaseTest(baseTest.BaseTest):
         # launch browser
         self.browser_obj, self.profile_dir_path = \
             desktopHelper.launch_browser(self.browser_type, env=self.env, type='webdriver',
-                                         profiler_list=self.env.firefox_settings_extensions)
+                                         profiler_list=self.env.firefox_settings_extensions,
+                                         exec_config=self.exec_config)
         self.driver = self.browser_obj.return_driver()
         self.wd = wd.Webdriver(self.driver)
 
@@ -41,7 +42,7 @@ class WebdriverBaseTest(baseTest.BaseTest):
         # capture 1st snapshot
         time.sleep(5)
         if self.index_config['snapshot-base-sample1']:
-            videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
+            videoHelper.capture_screen(self.env, self.index_config, self.exec_config, self.env.video_output_sample_1_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_1_fn)
         time.sleep(2)
 
@@ -65,7 +66,7 @@ class WebdriverBaseTest(baseTest.BaseTest):
         # capture 2nd snapshot
         time.sleep(5)
         if self.index_config['snapshot-base-sample2']:
-            videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
+            videoHelper.capture_screen(self.env, self.index_config, self.exec_config, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
                                        self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data

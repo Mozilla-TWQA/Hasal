@@ -1,7 +1,7 @@
 """runtest.
 
 Usage:
-  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>]
+  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>] [--chrome-config=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -11,6 +11,7 @@ Options:
   --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
   --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
   --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
+  --chrome-config=<str>           Specify the test Chrome config file; [default: configs/chrome/default.json]
 
 """
 import os
@@ -19,25 +20,28 @@ import copy
 import shutil
 import platform
 import subprocess
+import importlib
+from lib.helper.desktopHelper import close_browser
+import traceback
 from docopt import docopt
 from datetime import datetime
-from lib.common.commonUtil import load_json_file
 from lib.common.commonUtil import StatusRecorder
 from lib.common.commonUtil import CommonUtil
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
+from lib.helper.chromeProfileCreator import ChromeProfileCreator
 
 if platform.system().lower() == "linux":
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg"]
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "cat "
 elif platform.system().lower() == "windows":
     DEFAULT_TASK_KILL_CMD = "taskkill /f /t /im "
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox.exe", "chrome.exe"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "obs32.exe", "obs64.exe"]
     DEFAULT_EDITOR_CMD = "type "
 else:
-    DEFAULT_TASK_KILL_LIST = ["ffmpeg", "firefox", "chrome"]
+    DEFAULT_TASK_KILL_LIST = ["ffmpeg"]
     DEFAULT_TASK_KILL_CMD = "pkill "
     DEFAULT_EDITOR_CMD = "open -e "
 
@@ -55,8 +59,9 @@ class RunTest(object):
         self.index_config_fp = os.path.abspath(kwargs['index_config'])
         self.online_config_fp = os.path.abspath(kwargs['online_config'])
         self.global_config_fp = os.path.abspath(kwargs['global_config'])
+        self.chrome_config_fp = os.path.abspath(kwargs['chrome_config'])
         for variable_name in kwargs.keys():
-            setattr(self, variable_name, load_json_file(kwargs[variable_name]))
+            setattr(self, variable_name, CommonUtil.load_json_file(kwargs[variable_name]))
 
         # init logger
         self.logger = get_logger(__file__, self.exec_config['advance'])
@@ -67,16 +72,29 @@ class RunTest(object):
                 'Loading Settings from {}:\n{}\n'.format(v_name, json.dumps(getattr(self, v_name), indent=4)))
 
         # init values
-        self.firefox_profile_creator = FirefoxProfileCreator()
-        self.settings_prefs = self.firefox_config.get('prefs', {})
-        self.cookies_settings = self.firefox_config.get('cookies', {})
-        self.extensions_settings = self.firefox_config.get('extensions', {})
         self.suite_result_dp = ''
-        self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
-            prefs=self.settings_prefs,
-            cookies_settings=self.cookies_settings,
-            extensions_settings=self.extensions_settings)
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
+        if self.firefox_config.get('enable_create_new_profile', False):
+            self.firefox_profile_creator = FirefoxProfileCreator()
+            settings_prefs = self.firefox_config.get('prefs', {})
+            cookies_settings = self.firefox_config.get('cookies', {})
+            profile_files_settings = self.firefox_config.get('profile_files', {})
+            extensions_settings = self.firefox_config.get('extensions', {})
+            self._firefox_profile_path = self.firefox_profile_creator.get_firefox_profile(
+                prefs=settings_prefs,
+                cookies_settings=cookies_settings,
+                profile_files_settings=profile_files_settings,
+                extensions_settings=extensions_settings)
+        else:
+            self._firefox_profile_path = ""
+
+        # chrome config
+        if self.chrome_config.get('enable_create_new_profile', False):
+            self.chrome_profile_creator = ChromeProfileCreator()
+            chrome_cookies_settings = self.chrome_config.get('cookies', {})
+            self._chrome_profile_path = self.chrome_profile_creator.get_chrome_profile(cookies_settings=chrome_cookies_settings)
+        else:
+            self._chrome_profile_path = ""
 
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
@@ -96,14 +114,21 @@ class RunTest(object):
             self.upload_agent_obj = UploadAgent(svr_config=self.online_config['svr-config'], test_comment=self.exec_config['comment'])
 
     def suite_teardown(self):
+        # run generator's output suite result
+        generator_class = getattr(importlib.import_module(self.index_config['module-path']), self.index_config['module-name'])
+        generator_class.output_suite_result(self.global_config, self.index_config, self.exec_config, self.suite_result_dp)
+
+        # do action when online mode is enabled
         if self.online_config['enable']:
             self.clean_up_output_data()
         if self.exec_config['advance']:
             self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
-        elif os.path.isdir(self._firefox_profile_path):
-            self.firefox_profile_creator.remove_firefox_profile()
-        if os.path.exists(self.default_result_fp):
-            shutil.copy(self.default_result_fp, self.suite_result_dp)
+            self.logger.debug('Skip removing profile: {}'.format(self._chrome_profile_path))
+        else:
+            if os.path.isdir(self._firefox_profile_path):
+                self.firefox_profile_creator.remove_firefox_profile()
+            if os.path.isdir(self._chrome_profile_path):
+                self.chrome_profile_creator.remove_chrome_profile()
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
@@ -122,6 +147,8 @@ class RunTest(object):
         for process_name in DEFAULT_TASK_KILL_LIST:
             cmd_str = DEFAULT_TASK_KILL_CMD + process_name
             os.system(cmd_str)
+        for broswer_type in ['firefox', 'chrome']:
+            close_browser(broswer_type)
 
     def clean_up_output_data(self):
         # clean output folder
@@ -138,13 +165,14 @@ class RunTest(object):
         result['ONLINE_CONFIG_FP'] = self.online_config_fp
         result['SUITE_RESULT_DP'] = str(self.suite_result_dp)
         result['FIREFOX_PROFILE_PATH'] = self._firefox_profile_path
+        result['CHROME_PROFILE_PATH'] = self._chrome_profile_path
 
         if self.online_config['perfherder-revision']:
-            result['PERFHERDER_REVISION'] = self.online_config['perfherder-revision']
+            result['PERFHERDER_REVISION'] = str(self.online_config['perfherder-revision'])
         else:
             result['PERFHERDER_REVISION'] = ""
         if self.online_config['perfherder-pkg-platform']:
-            result['PERFHERDER_PKG_PLATFORM'] = self.online_config['perfherder-pkg-platform']
+            result['PERFHERDER_PKG_PLATFORM'] = str(self.online_config['perfherder-pkg-platform'])
         else:
             result['PERFHERDER_PKG_PLATFORM'] = ""
         for variable_name in kwargs.keys():
@@ -152,72 +180,81 @@ class RunTest(object):
         return result
 
     def run_test_result_analyzer(self, test_case_module_name, test_name, current_run, current_retry, video_result):
-        run_result = None
+        status_result = None
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
-        if os.path.exists(self.global_config['default-current-running-status-fn']):
-            with open(self.global_config['default-current-running-status-fn']) as stat_fh:
-                run_result = json.load(stat_fh)
-                round_status = int(run_result.get("round_status", -1))
-                fps_stat = int(run_result.get("fps_stat", -1))
-                if round_status == 0 and fps_stat == 0:
-                    if self.online_config['enable']:
-                        # Online mode handling
-                        upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
-                        if upload_result:
-                            self.logger.info("===== upload success =====")
-                            self.logger.info(upload_result)
-                            video_result['ip'] = upload_result['ip']
-                            video_result['video_path'] = upload_result['video']
-                            video_result['test_name'] = test_name
-                            self.logger.info("===== upload success =====")
-                            if "current_test_times" in upload_result:
-                                current_run = upload_result["current_test_times"]
-                                self.exec_config['max-run'] = upload_result['config_test_times']
-                            else:
-                                current_run += 1
-                        else:
+        if os.path.exists(self.global_config['default-running-statistics-fn']):
+            status_result = objStatusRecorder.get_current_status()
+            round_status = int(status_result.get(objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION, -1))
+            fps_stat = int(status_result.get(objStatusRecorder.STATUS_FPS_VALIDATION, -1))
+            compare_img_result = status_result.get(objStatusRecorder.STATUS_IMG_COMPARE_RESULT, objStatusRecorder.ERROR_MISSING_FIELD_IMG_COMPARE_RESULT)
 
+            if round_status == 0 and fps_stat == 0 and compare_img_result == objStatusRecorder.PASS_IMG_COMPARE_RESULT:
+                # check the field status_img_compare_result of current status in running_statistics.json
+                # only continue when status equal to PASS otherwise retry count plus one
+                if self.online_config['enable']:
+                    # Online mode handling
+                    upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
+                    if upload_result:
+                        self.logger.info("===== upload success =====")
+                        self.logger.info(upload_result)
+                        video_result['ip'] = upload_result['ip']
+                        video_result['video_path'] = upload_result['video']
+                        video_result['test_name'] = test_name
+                        self.logger.info("===== upload success =====")
+                        if "current_test_times" in upload_result:
+                            current_run = upload_result["current_test_times"]
+                            self.exec_config['max-run'] = upload_result['config_test_times']
+                        else:
                             current_run += 1
                     else:
-                        if run_result.get("comparing_image_missing", False):
-                            if "time_list_counter" in run_result:
-                                current_run = int(run_result['time_list_counter'])
-                            else:
-                                current_run += 1
-                        else:
-                            objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_COMPARING_IMAGE_FAILED, None)
-                            current_retry += 1
+
+                        current_run += 1
                 else:
-                    if round_status != 0:
-                        objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_ROUND_STAT_ABNORMAL,
-                                                        round_status)
-                    if fps_stat != 0:
-                        objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_FPS_STAT_ABNORMAL,
-                                                        round_status)
-                    current_retry += 1
+                    if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
+                        current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
+                    else:
+                        current_run += 1
+            else:
+                if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
+                    objStatusRecorder.record_case_status_history(compare_img_result, None)
+                if round_status != 0:
+                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
+                if fps_stat != 0:
+                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_FPS_STAT_ABNORMAL, round_status)
+                current_retry += 1
         else:
             self.logger.error("test could raise exception during execution!!")
-            objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_CANT_FIND_STATUS_FILE, None)
+            objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
+                                                         StatusRecorder.ERROR_CANT_FIND_STATUS_FILE)
             current_retry += 1
         return current_run, current_retry, video_result
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
+        objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
+        objStatusRecorder.set_case_basic_info(test_name)
         return_result = {"ip": None, "video_path": None, "test_name": None}
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
+                objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
+                # when online mode is enabled, the result file will be removed before trigger the runtest.py everytime.
+                if self.online_config['enable'] and os.path.exists(self.default_result_fp):
+                    os.remove(self.default_result_fp)
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
                 current_run, current_retry, return_result = self.run_test_result_analyzer(test_case_module_name,
                                                                                           test_name, current_run,
                                                                                           current_retry, return_result)
-            except Exception as e:
-                self.logger.warn('Exception happend during running test!')
-                objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
-                objStatusRecorder.record_status(test_case_module_name, StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION, e)
+                objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
+            except:
+                self.logger.warn('Exception happened during running test!')
+                traceback.print_exc()
+                objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
+                                                             StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION)
                 current_retry += 1
 
             if current_retry >= self.exec_config['max-retry']:
+                self.logger.warn("current retry [%s] exceed the max retry count [%s]" % (current_retry, self.exec_config['max-retry']))
                 break
         return return_result
 
@@ -298,7 +335,7 @@ def main():
     arguments = docopt(__doc__)
     run_test_obj = RunTest(exec_config=arguments['--exec-config'], firefox_config=arguments['--firefox-config'],
                            index_config=arguments['--index-config'], online_config=arguments['--online-config'],
-                           global_config=arguments['--global-config'])
+                           global_config=arguments['--global-config'], chrome_config=arguments['--chrome-config'])
     run_test_obj.run()
 
 if __name__ == '__main__':

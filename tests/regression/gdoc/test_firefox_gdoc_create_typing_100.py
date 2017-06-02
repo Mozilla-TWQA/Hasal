@@ -5,7 +5,7 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         self.pre_run_script = "test_firefox_gdoc_read_blank_page"
-        self.pre_run_script_test_url_id = "TEST_TARGET_ID_BLANK_PAGE"  # copy from environment
+        self.pre_run_script_test_url_id = self.global_config['gsuite']['gdoc-blank-page']  # copy from environment
         super(TestSikuli, self).setUp()
 
     def test_firefox_gdoc_create_typing_100(self):

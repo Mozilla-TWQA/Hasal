@@ -1,50 +1,47 @@
 {
-    "id": "53aa88a7-38af-4b37-b22f-10c369103ac8@jetpack",
-    "syncGUID": "{99d542e8-cd88-c745-a097-13d9a993e652}",
+    "id": "geckoprofiler@mozilla.com",
+    "syncGUID": "{e3c600b3-3ea6-4ce8-bfc8-ef2e59655b41}",
     "location": "app-profile",
-    "version": "2.0.31-hasal20170308",
-    "type": "extension",
+    "version": "0.14",
+    "type": "webextension",
     "internalName": null,
-    "updateURL": "https://raw.githubusercontent.com/devtools-html/Gecko-Profiler-Addon/master/gecko_profiler.update.rdf",
+    "updateURL": "https://raw.githubusercontent.com/devtools-html/Gecko-Profiler-Addon/master/updates.json",
     "updateKey": null,
-    "optionsURL": "data:text/xml,<placeholder/>",
-    "optionsType": "2",
+    "optionsURL": "options.html",
+    "optionsType": 5,
+    "optionsBrowserStyle": true,
     "aboutURL": null,
-    "icons": {
-        "32": "icon.png",
-        "48": "icon.png"
-    },
-    "iconURL": null,
-    "icon64URL": null,
     "defaultLocale": {
-        "name": "Gecko Profiler (Hasal)",
-        "description": "Collect platform profiles from Firefox Desktop.",
-        "creator": "Askeing Yen <askeing@gmail.com>",
-        "homepageURL": null
+        "name": "Gecko Profiler",
+        "description": "Gecko Profiler WebExtension.",
+        "creator": null,
+        "developers": null,
+        "translators": null,
+        "contributors": null
     },
     "visible": true,
     "active": true,
     "userDisabled": false,
     "appDisabled": false,
-    "descriptor": "/Users/Askeing/software/Gecko-Profiler-Addon/tempfolder/extensions/53aa88a7-38af-4b37-b22f-10c369103ac8@jetpack.xpi",
-    "installDate": 1488949331000,
-    "updateDate": 1488949331000,
+    "installDate": 1494902350211,
+    "updateDate": 1494902350211,
     "applyBackgroundUpdates": 1,
     "bootstrap": true,
+    "path": "C:\\Users\\user\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\fpxr6bep.default\\extensions\\geckoprofiler@mozilla.com.xpi",
     "skinnable": false,
-    "size": 35974797,
-    "sourceURI": "file:///Users/Askeing/software/Gecko-Profiler-Addon/gecko_profiler_hasal-2.0.31-hasal20170308-fx.xpi",
+    "size": 66994,
+    "sourceURI": "file:///C:/Users/user/Hasal/thirdParty/extensions/gecko_profiler/gecko_profiler.xpi",
     "releaseNotesURI": null,
     "softDisabled": false,
     "foreignInstall": false,
     "hasBinaryComponents": false,
-    "strictCompatibility": false,
+    "strictCompatibility": true,
     "locales": [],
     "targetApplications": [
         {
-            "id": "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}",
-            "minVersion": "38.0a1",
-            "maxVersion": "*"
+            "id": "toolkit@mozilla.org",
+            "minVersion": "55.0a1",
+            "maxVersion": null
         }
     ],
     "targetPlatforms": [],
@@ -53,6 +50,21 @@
     "seen": true,
     "dependencies": [],
     "hasEmbeddedWebExtension": false,
-    "mpcOptedOut": false,
-    "userPermissions": null
+    "userPermissions": {
+        "origins": [
+            "https://perf-html.io/*",
+            "https://perf-html.io/"
+        ],
+        "apis": [],
+        "permissions": [
+            "geckoProfiler",
+            "storage"
+        ]
+    },
+    "icons": {
+        "32": "icons/icon.png",
+        "64": "icons/icon@2x.png"
+    },
+    "iconURL": null,
+    "icon64URL": null
 }

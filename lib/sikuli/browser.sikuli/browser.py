@@ -20,7 +20,7 @@ class GeneralBrowser():
     def enterLink(self, link):
         if not self.urlbar_loc:
             self.urlbar_loc = self.clickBar()
-        type("a", self.control)
+        type('l', self.control)
         paste(link)
         type(Key.ENTER)
         x_offset = 0
@@ -134,7 +134,9 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = [('pics/ff_urlbar_gray_win.png', -80, 0),
+        urlbar_pics = [('pics/ff_urlbar_gray_win7.png', 250, 0),
+                       ('pics/ff_urlbar_gray_win10.png', 250, 0),
+                       ('pics/ff_urlbar_gray_win.png', -80, 0),
                        ('pics/ff_urlbar_gray_ubuntu.png', -80, 0),
                        ('pics/ff_urlbar_black.png', -80, 0),
                        ('pics/ff_urlbar_gray_focus_win.png', -80, 0),

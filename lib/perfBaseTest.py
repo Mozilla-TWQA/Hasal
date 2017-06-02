@@ -7,6 +7,7 @@ import lib.helper.videoHelper as videoHelper
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
 from common.commonUtil import CommonUtil
+from common.commonUtil import StatusRecorder
 
 logger = get_logger(__name__)
 
@@ -20,10 +21,15 @@ class PerfBaseTest(baseTest.BaseTest):
         super(PerfBaseTest, self).setUp()
 
         # init sikuli
-        self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir)
+        self.sikuli = sikuli.Sikuli(self.env.run_sikulix_cmd_path, self.env.hasal_dir,
+                                    running_statistics_file_path=self.global_config['default-running-statistics-fn'])
+        # set up the Customized Region settings
+        if StatusRecorder.SIKULI_KEY_REGION in self.index_config:
+            logger.info('Set Sikuli Status for Customized Region')
+            self.sikuli.set_sikuli_status(StatusRecorder.SIKULI_KEY_REGION, self.index_config[StatusRecorder.SIKULI_KEY_REGION])
 
         # Start video recordings
-        self.profilers = Profilers(self.env, self.index_config, self.browser_type, self.sikuli)
+        self.profilers = Profilers(self.env, self.index_config, self.exec_config, self.browser_type, self.sikuli)
         self.profilers.start_profiling(self.env.firefox_settings_extensions)
 
         # Record initial timestamp
@@ -33,7 +39,8 @@ class PerfBaseTest(baseTest.BaseTest):
 
         # launch browser
         _, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
-                                                                profiler_list=self.env.firefox_settings_extensions)
+                                                                profiler_list=self.env.firefox_settings_extensions,
+                                                                exec_config=self.exec_config)
 
         # wait browser ready
         self.get_browser_done()
@@ -44,7 +51,8 @@ class PerfBaseTest(baseTest.BaseTest):
         # check the video recording
         recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
         if recording_enabled and self.index_config.get('snapshot-base-sample1', False) is True:
-            videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_1_fp,
+            videoHelper.capture_screen(self.env, self.index_config, self.exec_config,
+                                       self.env.video_output_sample_1_fp,
                                        self.env.img_sample_dp,
                                        self.env.img_output_sample_1_fn)
         time.sleep(2)
@@ -69,10 +77,12 @@ class PerfBaseTest(baseTest.BaseTest):
         # capture 2nd snapshot
         time.sleep(5)
 
-        if self.env.PROFILER_FLAG_AVCONV in self.env.firefox_settings_extensions:
-            if self.env.firefox_settings_extensions[self.env.PROFILER_FLAG_AVCONV]['enable'] is True and self.index_config['snapshot-base-sample2'] is True:
-                videoHelper.capture_screen(self.env, self.index_config, self.env.video_output_sample_2_fp, self.env.img_sample_dp,
-                                           self.env.img_output_sample_2_fn)
+        recording_enabled = CommonUtil.is_video_recording(self.firefox_config)
+        if recording_enabled and self.index_config.get('snapshot-base-sample2', False) is True:
+            videoHelper.capture_screen(self.env, self.index_config, self.exec_config,
+                                       self.env.video_output_sample_2_fp,
+                                       self.env.img_sample_dp,
+                                       self.env.img_output_sample_2_fn)
 
         # Stop profiler and save profile data
         self.profilers.stop_profiling(self.profile_dir_path)

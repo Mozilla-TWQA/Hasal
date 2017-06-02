@@ -23,6 +23,10 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
+! thirdParty/userChrome.css
+! thirdParty/extensions
+! thirdParty/obsConfigs
+! thirdParty/ipynbTemplates
 
 # File types to ignore
 *.zip
@@ -37,6 +41,7 @@ docs/*
 thirdParty/*
 # creds files
 client_secrets.json
+github.json
 mycreds.txt
 client_secret_mozhasalvideo.json
 mozhasalvideo.yaml

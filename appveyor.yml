@@ -11,9 +11,10 @@ skip_commits:
   message: /SkipCI.*/
 
 cache:
-  - sikulixsetup-1.1.0.jar
-  - ffmpeg-20160527-git-d970f7b-win32-static.7z
-  - VCForPython27.msi
+  - thirdParty\sikulixsetup.jar
+  - thirdParty\VCForPython27.msi
+  - thirdParty\7z1604.exe
+  - thirdParty\geckodriver\geckodriver.exe
 build: false
 
 environment:
@@ -38,4 +39,4 @@ test_script:
 on_success:
   - cmd: echo AppVeyor run was successful!
 on_failure:
-  - cmd: echo AppVeyor run FAILED!
+  - ps: echo AppVeyor run FAILED!

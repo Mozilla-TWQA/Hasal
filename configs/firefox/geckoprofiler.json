@@ -1,4 +1,5 @@
 {
+  "enable_create_new_profile": true,
   "env": {
     "JSGC_DISABLE_POISONING": 1
   },
@@ -24,11 +25,19 @@
     "datareporting.healthreport.service.firstRun": false,
     "general.useragent.locale": "en-US",
     "intl.accept_languages": "en-US, en",
-    "gfx.downloadable_fonts.otl_validation": false
+    "gfx.downloadable_fonts.otl_validation": false,
+    "browser.urlbar.daysBeforeHidingSuggestionsPrompt": 0,
+    "browser.urlbar.timesBeforeHidingSuggestionsHint": 0
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
     "filename": "cookies_gsuite_fb.sqlite"
+  },
+  "profile_files": {
+    "DisableStatusBar": {
+      "filename": "userChrome.css",
+      "destination": "chrome"
+    }
   },
   "extensions": {
     "AvconvProfiler": {
@@ -37,12 +46,10 @@
       "XPI": []
     },
     "GeckoProfiler": {
-      "version": "Gecko Profiler (Hasal) 2.0.31",
+      "version": "Gecko Profiler Webextension 0.14",
       "enable": true,
       "XPI": [
-        "gecko_profiler",
-        "hotkeys",
-        "marker"
+        "gecko_profiler"
       ]
     },
     "HarProfiler": {
