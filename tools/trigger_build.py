@@ -16,6 +16,7 @@ import json
 import copy
 import urllib2
 import requests
+import platform
 
 from thclient import TreeherderClient
 from docopt import docopt
@@ -147,23 +148,30 @@ class TriggerBuild(object):
             print "ERROR: something wrong with your build download process, please check the setting and job status."
             sys.exit(1)
         else:
+            current_platform_release = platform.release().strip()
             # generate hasal.json data
             with open(download_json_fp) as dl_json_fh:
                 dl_json_data = json.load(dl_json_fh)
                 perfherder_revision = dl_json_data['moz_source_stamp']
                 build_pkg_platform = dl_json_data['moz_pkg_platform']
                 # mapping the perfherder pkg platform to nomenclature of builddot
-                builddot_mapping_platform = {"linux-i686": "linux32",
-                                             "linux-x86_64": "linux64",
-                                             "mac": "osx-10-10",
-                                             "win32": "windows7-32",
-                                             "win64": "windows8-64"}
+                builddot_mapping_platform = {"linux-i686": {"_": "linux32"},
+                                             "linux-x86_64": {"_": "linux64"},
+                                             "mac": {"_": "osx-10-10"},
+                                             "win32": {"_": "windows7-32"},
+                                             "win64": {"_": "windows8-64",
+                                                       "7": "windows8-64",
+                                                       "10": "windows10-64"}
+                                             }
                 with open(self.HASAL_JSON_FN, "w") as write_fh:
                     write_data = copy.deepcopy(self.env_data)
                     write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
                     write_data['FX-DL-JSON-PATH'] = download_json_fp
                     write_data['PERFHERDER_REVISION'] = perfherder_revision
-                    write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]
+                    if current_platform_release in builddot_mapping_platform[build_pkg_platform].keys():
+                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform][current_platform_release]
+                    else:
+                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
                     json.dump(write_data, write_fh)
 
             if os.path.exists(os.path.join(os.getcwd(), self.HASAL_JSON_FN)):
