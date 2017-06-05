@@ -36,13 +36,22 @@ class Case(basecase.SikuliInputLatencyCase):
         # Access link and wait
         my_browser.clickBar()
         my_browser.enterLink(self.INPUT_TEST_TARGET)
-        app.wait_for_loaded()
+        app.wait_for_logo_loaded()
 
         # Wait for stable
         sleep(2)
 
         # PRE ACTIONS
         type(Key.PAGE_DOWN)
+        sleep(2)
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        _, obj = app.wait_for_customer_text_loaded()
+        # product thumbnail list region
+        compare_area = Region(obj.x, obj.y, obj.w + 850, obj.h + 250)
+        self.set_override_region_settings(customized_region_name, compare_area)
         sleep(2)
 
         # Record T1, and capture the snapshot image

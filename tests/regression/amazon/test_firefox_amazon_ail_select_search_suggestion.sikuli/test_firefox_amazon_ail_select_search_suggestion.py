@@ -36,17 +36,29 @@ class Case(basecase.SikuliInputLatencyCase):
         # Access link and wait
         my_browser.clickBar()
         my_browser.enterLink(self.INPUT_TEST_TARGET)
-        pattern = app.wait_for_loaded()
+        _, obj = app.wait_for_logo_loaded()
 
         # Wait for stable
         sleep(2)
 
         # PRE ACTIONS
         app.click_search_field()
+
+        # user function's related position from logo
+        pattern = capture(obj.x + 160, obj.y + 50, obj.w + 100, obj.h)
         sleep(1)
         type('m')
+        com.system_print('Wait temp pattern {} vanished.'.format(pattern))
         app.wait_pattern_for_vanished(pattern=pattern)
         com.loop_type_key(Key.DOWN, 2, 0.5)
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        # part region of search suggestion list
+        compare_area = Region(obj.x + 160, obj.y, obj.w + 200, obj.h + 50)
+        self.set_override_region_settings(customized_region_name, compare_area)
+        sleep(2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action

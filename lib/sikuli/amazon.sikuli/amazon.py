@@ -14,6 +14,10 @@ class Amazon(WebApp):
         ]
     """
 
+    AMAZON_LOGO = [
+        [os.path.join('pics', 'amazon_logo.png'), 0, 0],
+    ]
+
     AMAZON_SEARCH_BTN = [
         [os.path.join('pics', 'search_button.png'), 0, 0],
     ]
@@ -37,11 +41,29 @@ class Amazon(WebApp):
         [os.path.join('pics', 'function_under_search_field_moztpeqa_win10.png'), 0, 0],
     ]
 
-    def wait_for_loaded(self, similarity=0.70):
+    def wait_for_logo_loaded(self, similarity=0.70):
+        """
+        @param similarity: The similarity of AMAZON_LOGO component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=Amazon.AMAZON_LOGO, similarity=similarity)
+
+    def wait_for_search_button_loaded(self, similarity=0.70):
+        """
+        @param similarity: The similarity of AMAZON_SEARCH_BTN component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=Amazon.AMAZON_SEARCH_BTN, similarity=similarity)
+
+    def wait_for_func_field_loaded(self, similarity=0.70):
         """
         @param similarity: The similarity of AMAZON_FUNCTION_UNDER_SEARCH_FIELD component. Default: 0.70.
         """
         return self._wait_for_loaded(component=Amazon.AMAZON_FUNCTION_UNDER_SEARCH_FIELD, similarity=similarity)
+
+    def wait_for_customer_text_loaded(self, similarity=0.70):
+        """
+        @param similarity: The similarity of AMAZON_CUSTOMER_TEXT component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=Amazon.AMAZON_CUSTOMER_TEXT, similarity=similarity)
 
     def click_search_field(self):
         """
