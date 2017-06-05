@@ -16,7 +16,7 @@ sleep(2)
 fb.wait_for_loaded()
 wheel(fb.blue_bar, WHEEL_DOWN, 20)
 for i in range(10):
-    if exists(fb.feed_end_reminder):
+    if fb._exists(fb.FACEBOOK_FEED_END_REMINDER):
         break
     else:
         if i == 9:

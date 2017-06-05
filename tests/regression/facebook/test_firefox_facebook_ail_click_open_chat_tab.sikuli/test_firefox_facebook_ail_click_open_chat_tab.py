@@ -35,20 +35,21 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Set mouse move delay time to 0 for immediately action requirement
         Settings.MoveMouseDelay = 0
-        hover(fb.right_panel_contact.targetOffset(0, 15))
+        fb._mouseMove("", fb.FACEBOOK_MOUSEMOVE_RIGHT_PANEL_CONTACT)
         mouseDown(Button.LEFT)
         capimg2 = capture(0, 0, capture_width, capture_height)
         t1 = time.time()
 
         com.system_print('[log] Mouse Click - Button Up')
         mouseUp(Button.LEFT)
-        mouseMove(fb.right_panel_contact.targetOffset(0, 50))
+        fb._mouseMove("", fb.FACEBOOK_MOUSEMOVE_RIGHT_PANEL_CONTACT)
         sleep(0.1)
         t2 = time.time()
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
         shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
-        click(fb.chat_tab_close_button)
-        if not waitVanish(fb.chat_tab_close_button):
+        fb._click(component=fb.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+        pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+        if not fb.wait_pattern_for_vanished(pattern=pattern):
             exit(1)
 
 
