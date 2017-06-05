@@ -7,8 +7,8 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
         self.set_configs(self.config_name.INDEX,
                          self.extract_platform_dep_settings(
-                             {'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.007},
-                                        '10': {'search-margin': 2, 'compare-threshold': 0.0065}}}))
+                             {'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.02},
+                                        '10': {'search-margin': 2, 'compare-threshold': 0.02}}}))
 
     def test_chrome_youtube_ail_select_search_suggestion(self):
         self.test_url = self.global_config['youtube']['test-url']

@@ -47,9 +47,11 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Customized Region
         customized_region_name = 'end'
-        type_area = wait('search_bar.png', 10)
+        type_area_component = [
+            ['search_bar_win.png', 0, 0],
+        ]
+        type_area = self.find_match_region(type_area_component)
         self.set_override_region_settings(customized_region_name, type_area)
-        sleep(2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
