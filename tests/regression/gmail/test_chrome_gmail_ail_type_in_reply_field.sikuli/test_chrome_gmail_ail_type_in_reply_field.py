@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import gmail
 
@@ -18,8 +17,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(False)
+        self.common.infolog_enable(False)
         Settings.MoveMouseDelay = 0
 
         # Prepare
@@ -49,7 +47,10 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Customized Region
         customized_region_name = 'end'
-        type_area = wait('type_area.png', 10)
+        type_area_component = [
+            ['type_area_win.png', 0, 0],
+        ]
+        type_area = self.find_match_region(type_area_component)
         self.set_override_region_settings(customized_region_name, type_area)
         sleep(2)
 
@@ -70,7 +71,7 @@ class Case(basecase.SikuliInputLatencyCase):
         app.click_reply_del_btn()
 
         # Write timestamp
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
         # Write the snapshot image
         shutil.move(screenshot, sample2_file_path)
