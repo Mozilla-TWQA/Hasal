@@ -53,5 +53,5 @@ class Gsearch(WebApp):
         GSEARCH_HOVER_RESULT_IMAGE = [
             [os.path.join('pics', 'gsearch_image_header.png'), a, b]
         ]
-        return self._click(action_name='Hover result image',
-                           component=GSEARCH_HOVER_RESULT_IMAGE)
+        return self._mouseMove(action_name='Hover result image',
+                               component=GSEARCH_HOVER_RESULT_IMAGE)
