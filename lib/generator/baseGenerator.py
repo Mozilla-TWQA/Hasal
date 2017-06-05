@@ -86,6 +86,33 @@ class BaseGenerator(object):
             init_result_dict[init_list_key] = []
         return init_result_dict
 
+    def generate_update_result_for_combination(self, input_update_result, input_compare_result, input_run_time_dict):
+        update_result = copy.deepcopy(input_update_result)
+        update_result['total_run_no'] += 1
+        update_result['detail'].extend(input_compare_result['running_time_result'])
+
+        if input_compare_result['ft_run_time'] <= 0 or input_compare_result['il_run_time'] <= 0:
+            update_result['error_no'] += 1
+        else:
+            update_result['time_list'].append(input_run_time_dict)
+
+        update_result['video_fp'] = self.env.video_output_fp
+        update_result['web_app_name'] = self.env.web_app_name
+        update_result['revision'] = self.online_config['perfherder-revision']
+        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+
+        for time_type in ['il_', 'ft_']:
+            _, _, update_result[time_type + 'med_time'], update_result[time_type + 'avg_time'], \
+                update_result[time_type + 'std_dev'], update_result[time_type + 'min_time'], \
+                update_result[time_type + 'max_time'] = CalculationUtil.get_median_avg_sigma_value(
+                    update_result['time_list'], time_type + 'run_time')
+
+        update_result['video_fp'] = self.env.video_output_fp
+        update_result['web_app_name'] = self.env.web_app_name
+        update_result['revision'] = self.online_config['perfherder-revision']
+        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+        return update_result
+
     def generate_update_result_for_ft(self, input_update_result, input_compare_result, input_run_time_dict):
         update_result = copy.deepcopy(input_update_result)
         update_result['total_run_no'] += 1
