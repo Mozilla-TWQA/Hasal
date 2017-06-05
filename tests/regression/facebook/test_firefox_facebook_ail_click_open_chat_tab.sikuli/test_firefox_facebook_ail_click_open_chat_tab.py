@@ -47,8 +47,8 @@ class Case(basecase.SikuliInputLatencyCase):
         t2 = time.time()
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
         shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
-        fb._click(component=fb.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
         pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+        fb._click(component=fb.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
         if not fb.wait_pattern_for_vanished(pattern=pattern):
             exit(1)
 
