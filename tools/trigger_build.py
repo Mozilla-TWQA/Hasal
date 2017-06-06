@@ -36,7 +36,6 @@ class TriggerBuild(object):
     ENV_KEY_SKIP_STATUS_CHECK = "SKIP_STATUS_CHECK"
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
-    ENV_KEY_BUILD_NO = "BUILD_NUMBER"
     ENV_KEY_BUILD_TAG = "BUILD_TAG"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
     DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
