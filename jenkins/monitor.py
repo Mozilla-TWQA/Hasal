@@ -60,7 +60,7 @@ while True:
     agent_status_file_list = os.listdir(agent_status_dir_path)
     print "DEBUG: current agent status file list [%s]" % agent_status_file_list
     job_id_list = []
-    for job_id in [id.split(".")[0] for id in agent_status_file_list]:
+    for job_id in [os.path.splitext(id)[0] for id in agent_status_file_list]:
         if job_id not in job_id_list:
             job_id_list.append(job_id)
     if current_build_tag not in job_id_list:
@@ -71,7 +71,7 @@ while True:
             sys.exit(1)
         time.sleep(DEFAULT_SLEEP_TIME)
     else:
-        job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_build_tag]
+        job_status_list = [os.path.splitext(status)[1].split(os.path.extsep)[1] for status in agent_status_file_list if os.path.splitext(status)[0] == current_build_tag]
         job_status_list.sort()
         if len(job_status_list) > 0:
             current_job_status = job_status_list[-1]
@@ -113,7 +113,7 @@ while True:
                 shutil.move(job_log_full_path, jenkins_job_log_path)
             break
         else:
-            print "WARNING: job raise exception, the exception log is [%s]" % (current_build_tag + "." + current_job_status)
+            print "WARNING: job raise exception, the exception log is [%s]" % (current_build_tag + os.path.extsep + current_job_status)
 
             # print out job.log
             job_log_current_lineno = printlog(job_log_full_path, job_log_current_lineno)

@@ -107,8 +107,8 @@ class TriggerBuild(object):
             print "DEBUG: current agent status file list [%s]" % agent_status_file_list
 
             # get latest agent id
-            job_id_list = [int(id.split(".")[0]) for id in agent_status_file_list]
-            job_id_list.sort()
+            job_id_list = [os.path.splitext(id)[0] for id in agent_status_file_list]
+            job_id_list.sort(key=lambda x: int(x.rsplit('-', 1)[1]))
             if len(job_id_list) > 0:
                 current_id = job_id_list[-1]
             else:
@@ -116,7 +116,7 @@ class TriggerBuild(object):
 
             # get latest agent status
             # agent status will sort by alphabetical, so the last one will be the latest status
-            job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == str(current_id)]
+            job_status_list = [os.path.splitext(status)[1].split(os.path.extsep)[1] for status in agent_status_file_list if os.path.splitext(status)[0] == str(current_id)]
             job_status_list.sort()
             if len(job_status_list) > 0:
                 current_job_status = job_status_list[-1]
