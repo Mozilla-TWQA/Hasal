@@ -37,6 +37,7 @@ class TriggerBuild(object):
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
     ENV_KEY_BUILD_NO = "BUILD_NUMBER"
+    ENV_KEY_BUILD_TAG = "BUILD_TAG"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
     DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
@@ -90,11 +91,11 @@ class TriggerBuild(object):
             self.output_dp = os.getcwd()
 
         # assign build number to variable
-        if self.ENV_KEY_BUILD_NO in input_env_data.keys():
-            self.jenkins_build_no = input_env_data[self.ENV_KEY_BUILD_NO]
+        if self.ENV_KEY_BUILD_TAG in input_env_data.keys():
+            self.jenkins_build_tag = input_env_data[self.ENV_KEY_BUILD_TAG]
         else:
-            self.jenkins_build_no = 0
-        self.HASAL_JSON_FN = str(self.jenkins_build_no) + ".json"
+            self.jenkins_build_tag = "jenkins-unknown-0"
+        self.HASAL_JSON_FN = str(self.jenkins_build_tag) + ".json"
 
     def check_agent_status(self):
         for i in range(0, self.DEFAULT_AGENT_JOB_WACTH_TIMEOUT):
