@@ -45,8 +45,8 @@ class HasalTask(object):
         self.read_configuration(**kwargs)
 
         # init variables
-        self.DEFAULT_JOB_LOG_FN = self.configurations.get('BUILD_NUMBER', "job") + ".log"
-        self.BUILD_NO = self.configurations.get('BUILD_NUMBER', "0")
+        self.DEFAULT_JOB_LOG_FN = self.configurations.get('BUILD_TAG', "jenkins-unknown-0") + ".log"
+        self.BUILD_TAG = self.configurations.get('BUILD_TAG', 'jenkins-unknown-0')
         self.CURRENT_WORKING_DIR = os.path.abspath(self.configurations.get('HASAL_WORKSPACE', os.getcwd()))
         self.DEFAULT_CONFIG_DP = os.path.join(self.CURRENT_WORKING_DIR, self.DEFAULT_CONFIG_DN)
 
@@ -79,10 +79,9 @@ class HasalTask(object):
         output_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.JENKINS_CONFIG_NAME)
         with open(default_config_fp) as fh:
             config_data = json.load(fh)
-        config_data['enable'] = self.configurations.get('ENABLE_ONLINE', False).lower() == 'true'
+        config_data['enable'] = self.configurations.get('ENABLE_ONLINE', "false").lower() == 'true'
         config_data['perfherder-revision'] = self.configurations.get('PERFHERDER_REVISION', "")
         config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER_PKG_PLATFORM', "")
-        config_data['jenkins-build-no'] = int(self.BUILD_NO)
         config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER_SUITE_NAME', "")
         config_data['svr-config']['svr_addr'] = self.configurations.get('SVR_ADDR', "127.0.0.1")
         config_data['svr-config']['svr_port'] = self.configurations.get('SVR_PORT', "1234")
@@ -99,11 +98,11 @@ class HasalTask(object):
             config_data = json.load(fh)
         config_data['max-run'] = int(self.configurations.get('MAX_RUN', 30))
         config_data['max-retry'] = int(self.configurations.get('MAX_RETRY', 15))
-        config_data['advance'] = self.configurations.get('ENABLE_ADVANCE', False).lower() == 'true'
+        config_data['advance'] = self.configurations.get('ENABLE_ADVANCE', "false").lower() == 'true'
         config_data['comment'] = self.configurations.get('EXEC_COMMENT', "<today>")
         config_data['exec-suite-fp'] = self.create_suite_file()
-        config_data['output-result-ipynb-file'] = self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', False).lower() == 'true'
-        config_data['output-result-video-file'] = self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', True).lower() == 'true'
+        config_data['output-result-ipynb-file'] = self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', "false").lower() == 'true'
+        config_data['output-result-video-file'] = self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', "true").lower() == 'true'
         with open(output_config_fp, 'w') as write_fh:
             json.dump(config_data, write_fh)
         return output_config_fp
@@ -233,7 +232,7 @@ class HasalTask(object):
             os.mkdir(self.DEFAULT_AGENT_STATUS_DIR)
 
     def touch_status_file(self, status):
-        current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
+        current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_TAG + "." + status)
         with open(current_status_fp, 'w') as write_fh:
             write_fh.write(" ")
 
