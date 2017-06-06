@@ -91,6 +91,25 @@ class SikuliCase(object):
         _, match_obj = self._web_page._wait_for_loaded(component=component, similarity=similarity, timeout=timeout)
         return match_obj
 
+    def tuning_region(self, region_obj, x_offset=0, y_offset=0, w_offset=0, h_offset=0):
+        """
+        Return the new Region object base on input Region object and x, y, w, h offset.
+        @param region_obj: The original base Region object.
+        @param x_offset: The x offset. The x position of new Region will be max(region_obj.x + x_offset, 0).
+        @param y_offset: The y offset. The y position of new Region will be max(region_obj.y + y_offset, 0).
+        @param w_offset: The w offset. The width of new Region will be max(region_obj.w + w_offset, 1).
+        @param h_offset: The h offset. The height of new Region will be max(region_obj.h + h_offset, 1).
+        @return: The new Region object.
+        """
+        if hasattr(region_obj, 'x') and hasattr(region_obj, 'y') \
+                and hasattr(region_obj, 'w') and hasattr(region_obj, 'h'):
+            return Region(max(region_obj.x + x_offset, 0),
+                          max(region_obj.y + y_offset, 0),
+                          max(region_obj.w + w_offset, 1),
+                          max(region_obj.h + h_offset, 1))
+        else:
+            raise Exception('Invalid input Region object.')
+
     def append_to_stat_json(self, key, value):
         """
         Append key-value pair into stat JSON file under "current_status/sikuli" path.
