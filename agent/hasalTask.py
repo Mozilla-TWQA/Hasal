@@ -50,6 +50,9 @@ class HasalTask(object):
         self.CURRENT_WORKING_DIR = os.path.abspath(self.configurations.get('HASAL_WORKSPACE', os.getcwd()))
         self.DEFAULT_CONFIG_DP = os.path.join(self.CURRENT_WORKING_DIR, self.DEFAULT_CONFIG_DN)
 
+        # lambda function
+        self.str2bool = lambda x: x.lower() in ['true', 'yes', 'y', '1', 'ok']
+
     def update(self, **kwargs):
         if 'name' in kwargs:
             self.name = kwargs['name']
@@ -79,7 +82,7 @@ class HasalTask(object):
         output_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.JENKINS_CONFIG_NAME)
         with open(default_config_fp) as fh:
             config_data = json.load(fh)
-        config_data['enable'] = self.configurations.get('ENABLE_ONLINE', "false").lower() == 'true'
+        config_data['enable'] = self.str2bool(self.configurations.get('ENABLE_ONLINE', "false"))
         config_data['perfherder-revision'] = self.configurations.get('PERFHERDER_REVISION', "")
         config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER_PKG_PLATFORM', "")
         config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER_SUITE_NAME', "")
@@ -98,11 +101,11 @@ class HasalTask(object):
             config_data = json.load(fh)
         config_data['max-run'] = int(self.configurations.get('MAX_RUN', 30))
         config_data['max-retry'] = int(self.configurations.get('MAX_RETRY', 15))
-        config_data['advance'] = self.configurations.get('ENABLE_ADVANCE', "false").lower() == 'true'
+        config_data['advance'] = self.str2bool(self.configurations.get('ENABLE_ADVANCE', "false"))
         config_data['comment'] = self.configurations.get('EXEC_COMMENT', "<today>")
         config_data['exec-suite-fp'] = self.create_suite_file()
-        config_data['output-result-ipynb-file'] = self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', "false").lower() == 'true'
-        config_data['output-result-video-file'] = self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', "true").lower() == 'true'
+        config_data['output-result-ipynb-file'] = self.str2bool(self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', "false"))
+        config_data['output-result-video-file'] = self.str2bool(self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', "true"))
         with open(output_config_fp, 'w') as write_fh:
             json.dump(config_data, write_fh)
         return output_config_fp
