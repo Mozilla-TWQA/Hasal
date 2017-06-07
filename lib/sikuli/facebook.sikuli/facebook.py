@@ -167,10 +167,10 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_CHAT_TAB_CLOSE_BUTTON = [
-        [os.path.join('pics', 'facebook_chat_tab_close_button.png'), 0, 0]
+        [os.path.join('pics', 'facebook_chat_tab_title_bar.png'), 43, 0]
     ]
 
-    FACEBOOK_CHAT_TAB_EMOGI_BUTTON = [
+    FACEBOOK_CHAT_TAB_EMOJI_BUTTON = [
         [os.path.join('pics', 'facebook_chat_tab_emoji_button.png'), 0, 0]
     ]
 
@@ -178,20 +178,24 @@ class facebook(WebApp):
         [os.path.join('pics', 'facebook_comment_icons.png'), 0, 0]
     ]
 
-    FACEBOOK_HOVER_COMMENT_ICONS = [
-        [os.path.join('pics', 'facebook_comment_icons.png'), -340, -40]
+    FACEBOOK_PHOTO_VIEWER_RIGHT_ARROW = [
+        [os.path.join('pics', 'facebook_comment_icons.png'), -340, -55]
     ]
 
-    FACEBOOK_CLICK_RIGHT_PANEL_CONTACT = [
+    FACEBOOK_RIGHT_PANEL_CONTACT = [
         [os.path.join('pics', 'facebook_contact.png'), 0, 15]
     ]
 
-    FACEBOOK_HOVER_RIGHT_PANEL_CONTACT = [
-        [os.path.join('pics', 'facebook_contact.png'), 0, 15]
-    ]
-
-    FACEBOOK_MOUSEMOVE_RIGHT_PANEL_CONTACT = [
+    FACEBOOK_UNDER_RIGHT_PANEL_CONTACT = [
         [os.path.join('pics', 'facebook_contact.png'), 0, 50]
+    ]
+
+    FACEBOOK_MESSAGE_SEARCH_BAR = [
+        [os.path.join('pics', 'facebook_message_search_bar.png'), 0, 0]
+    ]
+
+    FACEBOOK_CHAT_TAB_TITLE_BAR = [
+        [os.path.join('pics', 'facebook_chat_tab_title_bar.png'), 0, 0]
     ]
 
     def wait_for_loaded(self, similarity=0.70):
@@ -199,14 +203,35 @@ class facebook(WebApp):
         Wait for facebook loaded, max 15 sec
         @param similarity: The similarity of FACEBOOK_LOGO component. Default: 0.70.
         """
-        self._wait_for_loaded(component=facebook.FACEBOOK_LOGO, similarity=similarity, timeout=15)
+        return self._wait_for_loaded(component=facebook.FACEBOOK_LOGO, similarity=similarity, timeout=15)
+
+    def wait_for_close_button_loaded(self, similarity=0.70):
+        """
+        Wait for chat tab close button loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_CHAT_TAB_CLOSE_BUTTON component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON, similarity=similarity, timeout=10)
+
+    def wait_for_comment_icons_loaded(self, similarity=0.70):
+        """
+        Wait for comment icons loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_COMMENT_ICONS component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_COMMENT_ICONS, similarity=similarity, timeout=10)
+
+    def wait_for_message_search_bar(self, similarity=0.70):
+        """
+        Wait for message search bar loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_MESSAGE_SEARCH_BAR component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_MESSAGE_SEARCH_BAR, similarity=similarity, timeout=10)
 
     def wait_for_messenger_loaded(self, similarity=0.7):
         """
         Wait for facebook messenger loaded, max 15 sec
         @param similarity: The similarity of FACEBOOK_MESSENGER_HEADER component. Default: 0.70.
         """
-        self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
+        return self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
 
     def focus_window(self):
         """
@@ -519,3 +544,58 @@ class facebook(WebApp):
         return self._click(action_name='Focus comment box',
                            component=facebook.FACEBOOK_POST_ACTION,
                            wait_component=facebook.FACEBOOK_POST_ACTION)
+
+    def il_click_close_chat_tab(self, width, height):
+        """
+        Click close button on chat tab.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Close Chat Tab Button',
+                              component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON,
+                              width=width,
+                              height=height,
+                              wait_component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+
+    def click_close_chat_tab(self):
+        """
+        Click close button on chat tab.
+        """
+        return self._click(action_name='Click Close Chat Tab Button',
+                           component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+
+    def click_right_panel_contact(self):
+        """
+            Click right panel contact to open chat tab.
+            """
+        return self._click(action_name='Click Right Panel Contact',
+                           component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT)
+
+    def il_click_open_chat_tab(self, width, height):
+        """
+        Click right panel contact to open chat tab.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Open Chat Tab',
+                              component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT,
+                              width=width,
+                              height=height)
+
+    def il_click_open_chat_tab_emoji_dialog(self, width, height):
+        """
+        Click emoji button on chat tab to open dialog.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Open Chat Tab Emoji',
+                              component=facebook.FACEBOOK_CHAT_TAB_EMOJI_BUTTON,
+                              width=width,
+                              height=height)
+
+    def il_click_photo_viewer_right_arrow(self, width, height):
+        """
+        Click photo viewer right arrow button to load next pic.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Photo Viewer Right Arrow',
+                              component=facebook.FACEBOOK_PHOTO_VIEWER_RIGHT_ARROW,
+                              width=width,
+                              height=height)

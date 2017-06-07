@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import facebook
 
@@ -18,40 +17,62 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(0)
+        self.common.infolog_enable(False)
+        self.common.set_mouse_delay(0)
 
-        chrome = browser.Chrome()
-        fb = facebook.facebook()
-
-        chrome.clickBar()
-        chrome.enterLink(self.INPUT_TEST_TARGET)
-        fb.wait_for_loaded()
-
+        # Prepare
+        app = facebook.facebook()
         sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
-        sleep(2)
+        sample1_fp = sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        # Set mouse move delay time to 0 for immediately action requirement
-        Settings.MoveMouseDelay = 0
-        fb._mouseMove("", fb.FACEBOOK_HOVER_RIGHT_PANEL_CONTACT)
-        mouseDown(Button.LEFT)
-        capimg2 = capture(0, 0, capture_width, capture_height)
-        t1 = time.time()
+        # Launch browser
+        chrome = browser.Chrome()
 
-        com.system_print('[log] Mouse Click - Button Up')
-        mouseUp(Button.LEFT)
-        fb._mouseMove("", fb.FACEBOOK_MOUSEMOVE_RIGHT_PANEL_CONTACT)
+        # Access link and wait
+        chrome.clickBar()
+        chrome.enterLink(self.INPUT_TEST_TARGET)
+        app.wait_for_loaded()
+
+        # Wait for stable
+        sleep(2)
+
+        # PRE ACTIONS
+        _, obj = app.wait_for_message_search_bar()
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        # part region of search suggestion list
+        compare_area = self.tuning_region(obj, x_offset=-275, y_offset=-300, w_offset=55, h_offset=300)
+        self.set_override_region_settings(customized_region_name, compare_area)
+
+        # Record T1, and capture the snapshot image
+        # Input Latency Action
+        loc, screenshot, t1 = app.il_click_open_chat_tab(capture_width, capture_height)
+
+        # In normal condition, a should appear within 100ms,
+        # but if lag happened, that could lead the show up after 100 ms,
+        # and that will cause the calculation of AIL much smaller than expected.
         sleep(0.1)
-        t2 = time.time()
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
-        shutil.move(capimg2, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
-        pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
-        fb._click(component=fb.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
-        if not fb.wait_pattern_for_vanished(pattern=pattern):
-            exit(1)
+        # Record T2
+        t2 = time.time()
+
+        # POST ACTIONS
+        sleep(2)
+        pattern, _ = app.wait_for_close_button_loaded()
+        app.click_close_chat_tab()
+        sleep(1)
+        app.wait_pattern_for_vanished(pattern=pattern)
+
+        # Write timestamp
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+
+        # Write the snapshot image
+        shutil.move(screenshot, sample1_fp)
+
 
 case = Case(sys.argv)
 case.run()

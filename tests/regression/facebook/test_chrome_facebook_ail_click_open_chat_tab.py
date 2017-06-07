@@ -7,7 +7,10 @@ class TestSikuli(PerfBaseTest):
         self.set_configs(self.config_name.EXEC, {"browser-width": 1380, 'viewport-width': 1366})
         self.set_configs(self.config_name.EXEC, self.get_new_recording_size())
         super(TestSikuli, self).setUp()
-        self.set_configs(self.config_name.INDEX, self.extract_platform_dep_settings({"win32": {"7": {"compare-threshold": 0.012}}}))
+        self.set_configs(self.config_name.INDEX,
+                         self.extract_platform_dep_settings(
+                             {'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.02},
+                                        '10': {'search-margin': 2, 'compare-threshold': 0.02}}}))
 
     def test_chrome_facebook_ail_click_open_chat_tab(self):
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.env.TEST_FB_FIRST_WALL,
