@@ -28,7 +28,7 @@ class Case(basecase.SikuliInputLatencyCase):
         gd.wait_for_loaded()
 
         setAutoWaitTimeout(10)
-        sample2_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
 
         sleep(2)
         capture_width = int(self.INPUT_RECORD_WIDTH)
@@ -43,7 +43,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         t2 = time.time()
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
-        shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
+        shutil.move(capimg2, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
 
 
 case = Case(sys.argv)

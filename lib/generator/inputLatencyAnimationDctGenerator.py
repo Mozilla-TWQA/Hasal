@@ -63,7 +63,7 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
         crop_images(crop_data_dict)
 
         return_result[input_generator_name]['event_tags'] = {}
-        if input_sample_index == 2:
+        if input_sample_index == 1:
             # tag event to sample
             for event_obj in self.visual_event_points['backward_search']:
                 if event_obj['search_target'] == CropRegion.ORIGINAL:
