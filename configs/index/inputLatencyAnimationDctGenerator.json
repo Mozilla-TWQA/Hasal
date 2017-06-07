@@ -1,8 +1,8 @@
 {
   "module-name"             : "InputLatencyAnimationDctGenerator",
   "module-path"             : "lib.generator.inputLatencyAnimationDctGenerator",
-  "sample-converter-name"   : "SampleConverter",
-  "sample-converter-path"   : "lib.converter.sampleConverter",
+  "sample-converter-name"   : "FTSampleConverter",
+  "sample-converter-path"   : "lib.converter.ftSampleConverter",
   "image-converter-name"    : "Cv2Converter",
   "image-converter-path"    : "lib.converter.cv2Converter",
   "image-converter-format"  : "bmp",
