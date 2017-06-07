@@ -157,6 +157,8 @@ class HasalTask(object):
         else:
             firefox_fp = self.FIREFOX_BIN_MAC_FP
         # Create and check backup
+        # Move default firefox to backup folder, and we want to always keep one copy of default firefox package,
+        # so we won't always replace the backup one.
         backup_path = firefox_fp + ".bak"
         if os.path.exists(backup_path):
             if os.path.exists(firefox_fp):
