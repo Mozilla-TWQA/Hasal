@@ -165,7 +165,8 @@ class HasalTask(object):
                 else:
                     shutil.rmtree(firefox_fp)
         else:
-            os.rename(firefox_fp, backup_path)
+            if os.path.exists(firefox_fp):
+                os.rename(firefox_fp, backup_path)
 
         if sys.platform == "linux2":
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
