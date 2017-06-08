@@ -489,3 +489,11 @@ class CommonUtil(object):
                 return False
         except:
             return False
+
+    @staticmethod
+    def get_value_from_config(config, key):
+        value = config.get(key)
+        if not value:
+            logger.warn('There is no {key} in {config} config file.'.format(key=key,
+                                                                            config=config))
+        return value
