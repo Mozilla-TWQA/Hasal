@@ -147,6 +147,10 @@ class BaseGenerator(object):
         start_fp = start_event.get('file', None)
         end_fp = end_event.get('file', None)
         if not start_fp or not end_fp:
+            logger.warning("Cannot get file path of either start event or end event, stop output video.")
+            return None
+        elif start_fp > end_fp:
+            logger.warning("Start point is behind End point, stop output video.")
             return None
         else:
             if os.path.exists(os.path.join(os.path.dirname(start_fp), self.global_config['default-search-target-browser'])):
