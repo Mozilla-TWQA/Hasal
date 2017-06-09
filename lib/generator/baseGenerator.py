@@ -275,7 +275,7 @@ class BaseGenerator(object):
     def output_suite_result(global_config, index_config, exec_config, output_result_dir):
         # generate ipynb file
         try:
-            if CommonUtil.get_value_from_config(config=global_config, key='output-result-ipynb-file'):
+            if CommonUtil.get_value_from_config(config=exec_config, key='output-result-ipynb-file'):
                 BaseGenerator.output_ipynb_file(global_config, index_config, output_result_dir)
         except Exception as e:
             logger.error('Cannot output ipynb file. Error: {exp}'.format(exp=e))
