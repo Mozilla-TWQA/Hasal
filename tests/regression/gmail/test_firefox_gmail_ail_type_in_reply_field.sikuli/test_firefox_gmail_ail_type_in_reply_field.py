@@ -55,7 +55,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
-        screenshot, t1 = app.il_type('a', capture_width, capture_height, wait_component=app.GMAIL_SEND)
+        screenshot, t1 = app.il_type('a', capture_width, capture_height,
+                                     wait_component=(app.GMAIL_TYPE_FOR_REPLY + app.GMAIL_SEND))
 
         # In normal condition, a should appear within 100ms,
         # but if lag happened, that could lead the show up after 100 ms,

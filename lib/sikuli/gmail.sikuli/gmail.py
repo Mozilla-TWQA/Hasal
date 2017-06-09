@@ -19,6 +19,10 @@ class gMail(WebApp):
         [os.path.join('pics', 'compose_btn_mac.png'), 0, 0],
     ]
 
+    GMAIL_SETTINGS = [
+        [os.path.join('pics', 'settings_btn_win.png'), 0, 0],
+    ]
+
     GMAIL_REPLY = [
         [os.path.join('pics', 'reply_btn_win.png'), 0, 0],
         [os.path.join('pics', 'reply_btn_mac.png'), 0, 0],
@@ -29,12 +33,17 @@ class gMail(WebApp):
         [os.path.join('pics', 'send_btn_mac.png'), 0, 0],
     ]
 
+    GMAIL_TYPE_FOR_REPLY = [
+        [os.path.join('pics', 'type_for_reply_btn_win.png'), 0, 0],
+    ]
+
     GMAIL_FIRST_MAIL_WITH_CATEGORY_BAR = [
         [os.path.join('pics', 'primary_tab_win.png'), 60, 35],
         [os.path.join('pics', 'primary_tab_mac.png'), 60, 45],
     ]
 
     GMAIL_FIRST_MAIL = [
+        [os.path.join('pics', 'settings_btn_win.png'), 0, 40],
         [os.path.join('pics', 'more_btn_win.png'), 0, 40],
         [os.path.join('pics', 'more_btn_mac.png'), 0, 40],
     ]
@@ -47,9 +56,10 @@ class gMail(WebApp):
     def wait_for_loaded(self, similarity=0.70):
         """
         Wait for Gmail loaded, max 5 sec
-        @param similarity: The similarity of GMAIL_COMPOSE component. Default: 0.70.
+        @param similarity: The similarity of GMAIL_COMPOSE and GMAIL_SETTINGS components. Default: 0.70.
         """
-        self._wait_for_loaded(component=gMail.GMAIL_COMPOSE, similarity=similarity)
+        self._wait_for_loaded(component=(gMail.GMAIL_COMPOSE + gMail.GMAIL_SETTINGS),
+                              similarity=similarity)
 
     def click_first_mail(self):
         """

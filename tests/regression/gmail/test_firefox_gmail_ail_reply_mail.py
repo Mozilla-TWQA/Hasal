@@ -5,6 +5,9 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         super(TestSikuli, self).setUp()
+        self.set_configs(self.config_name.INDEX,
+                         self.extract_platform_dep_settings({'win32': {'7': {'compare-threshold': 0.01},
+                                                                       '10': {'compare-threshold': 0.01}}}))
 
     def test_firefox_gmail_ail_reply_mail(self):
         self.test_url = self.global_config['gsuite']['gmail']['test-url']
