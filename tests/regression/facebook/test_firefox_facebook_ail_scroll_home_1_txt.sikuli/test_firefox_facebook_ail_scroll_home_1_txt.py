@@ -27,7 +27,6 @@ class Case(basecase.SikuliInputLatencyCase):
         ff.clickBar()
         ff.enterLink(self.INPUT_TEST_TARGET)
         fb.wait_for_loaded()
-        fb.wait_for_messenger_loaded()
 
         sleep(2)
         setAutoWaitTimeout(10)
