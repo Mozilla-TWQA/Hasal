@@ -23,10 +23,8 @@ class GeneralBrowser():
         type('l', self.control)
         paste(link)
         type(Key.ENTER)
-        x_offset = 0
-        y_offset = -35
-        inside_window = Location(self.urlbar_loc.getX() + x_offset, self.urlbar_loc.getY() + y_offset)
-        mouseMove(inside_window)
+        screen_top_left = Location(0, 0)
+        mouseMove(screen_top_left)
 
     def scroll_down(self, step):
         if self.os.lower() == 'mac':
