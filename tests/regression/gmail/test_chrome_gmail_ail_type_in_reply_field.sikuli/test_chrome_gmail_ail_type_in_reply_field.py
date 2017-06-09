@@ -48,6 +48,7 @@ class Case(basecase.SikuliInputLatencyCase):
         customized_region_name = 'end'
         type_area_component = [
             ['type_area_win.png', 0, 0],
+            ['type_area_chrome_win10.png', 0, 0],
         ]
         type_area = self.find_match_region(type_area_component)
         self.set_override_region_settings(customized_region_name, type_area)

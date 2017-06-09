@@ -35,6 +35,7 @@ class gMail(WebApp):
 
     GMAIL_TYPE_FOR_REPLY = [
         [os.path.join('pics', 'type_for_reply_btn_win.png'), 0, 0],
+        [os.path.join('pics', 'type_for_reply_btn_chrome_win10.png'), 0, 0],
     ]
 
     GMAIL_FIRST_MAIL_WITH_CATEGORY_BAR = [
@@ -50,6 +51,7 @@ class gMail(WebApp):
 
     GMAIL_REPLY_DEL = [
         [os.path.join('pics', 'reply_del_btn_win.png'), -30, -5],
+        [os.path.join('pics', 'reply_del_btn_chrome_win10.png'), -20, 0],
         [os.path.join('pics', 'reply_del_btn_mac.png'), -28, 0],
     ]
 
