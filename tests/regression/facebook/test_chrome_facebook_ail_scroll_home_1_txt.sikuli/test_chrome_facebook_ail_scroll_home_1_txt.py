@@ -18,6 +18,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
+        setAutoWaitTimeout(10)
         com = common.General()
         com.infolog_enable(0)
 
@@ -26,15 +27,18 @@ class Case(basecase.SikuliInputLatencyCase):
 
         chrome.clickBar()
         chrome.enterLink(self.INPUT_TEST_TARGET)
-        fb.wait_for_loaded()
-
+        _, obj = fb.wait_for_loaded()
         sleep(2)
-        setAutoWaitTimeout(10)
-        fb.focus_comment_box()
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        # part region of search suggestion list
+        compare_area = self.tuning_region(obj, x_offset=175, y_offset=35, w_offset=500, h_offset=150)
+        self.set_override_region_settings(customized_region_name, compare_area)
+        hover(compare_area)
 
         sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
-
-        sleep(2)
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 

@@ -99,7 +99,8 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_HOME_POST_AREA_FOCUSED = [
-        [os.path.join('pics', 'facebook_home_post_area_focused.png'), 0, 0]
+        [os.path.join('pics', 'facebook_home_post_area_focused.png'), 0, 0],
+        [os.path.join('pics', 'facebook_home_post_area_focused_dual.png'), 0, 0]
     ]
 
     FACEBOOK_CLUB_DELETE_POST_BUTTON = [
@@ -426,15 +427,17 @@ class facebook(WebApp):
         @param type:
         @return:
         """
+        location = None
         if type == 'center':
-            self._click(action_name='Click center home post area',
-                        component=facebook.FACEBOOK_CLICK_CENTER_HOME_POST_AREA)
+            location = self._click(action_name='Click center home post area',
+                                   component=facebook.FACEBOOK_CLICK_CENTER_HOME_POST_AREA)
             self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA_FOCUSED)
         elif type == 'photo_video':
-            self._click(action_name='Click photo video home post area',
-                        component=facebook.FACEBOOK_CLICK_PHOTO_VIDEO_HOME_POST_AREA)
+            location = self._click(action_name='Click photo video home post area',
+                                   component=facebook.FACEBOOK_CLICK_PHOTO_VIDEO_HOME_POST_AREA)
             home_post_area_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA)
             self.wait_pattern_for_vanished(pattern=home_post_area_pattern)
+        return location
 
     def click_post_area_club(self, type='center'):
         """
