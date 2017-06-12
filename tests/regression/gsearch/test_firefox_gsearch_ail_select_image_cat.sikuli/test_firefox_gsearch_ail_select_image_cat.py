@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import gsearch
 
@@ -18,37 +17,49 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(0)
-        com.set_mouse_delay(0)
+        self.common.infolog_enable(False)
+        self.common.set_mouse_delay(0)
 
-        ff = browser.Firefox()
+        # Prepare
         gs = gsearch.Gsearch()
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_fp = sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png')
+        capture_width = int(self.INPUT_RECORD_WIDTH)
+        capture_height = int(self.INPUT_RECORD_HEIGHT)
 
+        # Launch browser
+        ff = browser.Firefox()
+
+        # Access link and wait
         ff.clickBar()
         ff.enterLink(self.INPUT_TEST_TARGET)
         gs.wait_gimage_loaded()
 
+        # Wait for stable
         sleep(2)
-        gs.hover_result_image(1, 1)
-        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
 
-        sleep(2)
-        capture_width = int(self.INPUT_RECORD_WIDTH)
-        capture_height = int(self.INPUT_RECORD_HEIGHT)
+        # PRE ACTIONS
 
-        t1 = time.time()
-        capimg2 = capture(0, 0, capture_width, capture_height)
+        # Record T1, and capture the snapshot image
+        # Input Latency Action
+        loc, screenshot, t1 = gs.il_click_image(capture_width, capture_height, 1, 1)
 
-        mouseDown(Button.LEFT)
-        com.system_print('[log]  Mouse up on first image')
-        mouseUp(Button.LEFT)
-        # gs.click_result_image(1, 1)
-        sleep(1)
+        # In normal condition, a should appear within 100ms,
+        # but if lag happened, that could lead the show up after 100 ms,
+        # and that will cause the calculation of AIL much smaller than expected.
+        sleep(0.1)
+
+        # Record T2
         t2 = time.time()
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
-        shutil.move(capimg2, sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png'))
-        com.set_mouse_delay()
+
+        # POST ACTIONS
+        sleep(2)
+
+        # Write timestamp
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+
+        # Write the snapshot image
+        shutil.move(screenshot, sample1_fp)
 
 
 case = Case(sys.argv)

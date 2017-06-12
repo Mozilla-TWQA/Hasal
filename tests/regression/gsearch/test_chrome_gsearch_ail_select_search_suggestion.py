@@ -5,6 +5,10 @@ class TestSikuli(PerfBaseTest):
 
     def setUp(self):
         super(TestSikuli, self).setUp()
+        self.set_configs(self.config_name.INDEX,
+                         self.extract_platform_dep_settings(
+                             {'win32': {'7': {'search-margin': 2, 'compare-threshold': 0.02},
+                                        '10': {'search-margin': 2, 'compare-threshold': 0.02}}}))
 
     def test_chrome_gsearch_ail_select_search_suggestion(self):
         self.test_url = self.global_config['gsearch']['gsearch-home-english']
