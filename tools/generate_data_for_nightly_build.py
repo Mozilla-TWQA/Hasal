@@ -369,6 +369,7 @@ def main():
     if arguments['-i']:
         if not os.path.exists(arguments['-i']):
             print "ERROR: Cannot find the specify config path"
+            sys.exit(1)
     else:
         print "ERROR: Please specify the json config"
         sys.exit(1)
