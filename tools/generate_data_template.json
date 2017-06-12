@@ -95,7 +95,7 @@
     "gmail_ail_compose_new_mail_via_keyboard":{
       "case_list": [
               "tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
-              "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard",
+              "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard"
             ],
     "perfherder_suite_name": "gmail_ail_compose_new_mail_via_keyboard"
     },
@@ -156,5 +156,4 @@
     "perfherder_suite_name": "youtube_ail_type_in_search_field"
     }
   }
-
 }
