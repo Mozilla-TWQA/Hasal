@@ -497,3 +497,11 @@ class CommonUtil(object):
             logger.warn('There is no {key} in {config} config file (or the value is None).'.format(key=key,
                                                                                                    config=config))
         return value
+
+    @staticmethod
+    def update_json(input_data, filename, mode="r+"):
+        with open(filename, mode) as fh:
+            origin_data = json.load(fh)
+            origin_data.update(input_data)
+            fh.seek(0)
+            fh.write(json.dumps(origin_data))

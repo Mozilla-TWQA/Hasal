@@ -214,6 +214,9 @@ class ObsProfiler(BaseProfiler):
             # stop recording
             self.pywin32_ctrl_q()
             self.pywin32_return()
+            timestamp = time.time()
+            timestamp_info = {'end': timestamp}
+            CommonUtil.update_json(timestamp_info, self.env.DEFAULT_TIMESTAMP)
             time.sleep(2)
 
             # get latest video file for obs video output dir
