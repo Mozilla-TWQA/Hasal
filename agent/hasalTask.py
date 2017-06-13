@@ -5,7 +5,7 @@ import json
 import tarfile
 import zipfile
 import shutil
-import subprocess
+from lib.thirdparty.tee import system2
 
 
 class HasalTask(object):
@@ -25,18 +25,6 @@ class HasalTask(object):
     DEFAULT_SUITE_NAME = "suite.txt"
     JENKINS_SUITE_NAME = "jenkins_suite.txt"
     DEFAULT_INDEX_CONFIG_NAME = "inputLatencyAnimationDctGenerator.json"
-
-    # this class is designed for output to the terminal and log at same time
-    class Unbuffered:
-        def __init__(self, stream, log_fh):
-            self.stream = stream
-            self.log_fh = log_fh
-
-        def write(self, data):
-            self.stream.write(data)
-            if not self.log_fh:
-                self.log_fh.write(data)
-                self.log_fh.flush()
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -215,9 +203,6 @@ class HasalTask(object):
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
             print "WARNING: job.log [%s] exist, removed right now!" % self.DEFAULT_JOB_LOG_FN
-        self.log_fh = open(self.DEFAULT_JOB_LOG_FN, "w+")
-        sys.stdout = self.Unbuffered(sys.stdout, self.log_fh)
-        sys.stderr = self.Unbuffered(sys.stderr, self.log_fh)
 
         # kill legacy process
         if sys.platform == "linux2":
@@ -245,10 +230,6 @@ class HasalTask(object):
     def teardown_job(self):
         # touch finish status
         self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['FINISH'])
-        if not self.log_fh.closed:
-            sys.stdout = sys.stdout
-            sys.stderr = sys.stderr
-            self.log_fh.close()
 
     def run(self):
         # clean up the environment
@@ -266,9 +247,10 @@ class HasalTask(object):
         print "INFO: generate new config for Jenkins running Hasal"
         cmd_list = self.generate_command_list()
         print "INFO: start to trigger runtest.py"
-        print " ".join(cmd_list)
+        str_exec_cmd = " ".join(cmd_list)
+        print str_exec_cmd
         try:
-            subprocess.call(cmd_list, env=os.environ.copy())
+            system2(str_exec_cmd, logger=self.DEFAULT_JOB_LOG_FN, stdout=True, exec_env=os.environ.copy())
         except Exception as e:
             print e.message
 
