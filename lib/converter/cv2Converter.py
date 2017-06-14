@@ -15,6 +15,19 @@ class Cv2Converter(object):
         search_range = []
         return_result = {}
         vidcap = cv2.VideoCapture(input_data['video_fp'])
+
+        # make sure the video file is opened, ready for convert to images
+        for _ in range(60):
+            if vidcap.isOpened():
+                break
+            else:
+                time.sleep(1)
+                vidcap = cv2.VideoCapture(input_data['video_fp'])
+        if not vidcap.isOpened():
+            logger.debug('Video file cannot open: {}'.format(input_data['video_fp']))
+            return None
+        logger.debug('Video file is opened: {}'.format(input_data['video_fp']))
+
         if hasattr(cv2, 'CAP_PROP_FPS'):
             header_fps = vidcap.get(cv2.CAP_PROP_FPS)
         else:
