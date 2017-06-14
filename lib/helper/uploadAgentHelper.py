@@ -6,7 +6,7 @@ import urllib2
 import platform
 import desktopHelper
 import videoHelper
-from datetime import date
+from datetime import datetime
 from ..common.pyDriveUtil import PyDriveUtil
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
@@ -40,7 +40,7 @@ class UploadAgent(object):
 
         # convert test comment
         if self.test_comment == "<today>":
-            self.test_comment_str = date.today().strftime("%Y-%m-%d-%H-%M-%S")
+            self.test_comment_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
         else:
             self.test_comment_str = self.test_comment.strip()
 
