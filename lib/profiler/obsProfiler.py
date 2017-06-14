@@ -220,8 +220,29 @@ class ObsProfiler(BaseProfiler):
             src_video_fp = max(glob.iglob(
                 ObsProfiler.OBS_VIDEO_OUTPUT_DIR_PATH + os.sep + '*.' + ObsProfiler.OBS_RECORDING_FMT),
                 key=os.path.getctime)
-            print('Found Video file: {}'.format(src_video_fp))
-            shutil.move(src_video_fp, self.env.video_output_fp)
+            logger.info('Found Video file: {}'.format(src_video_fp))
+            for _ in range(10):
+                try:
+                    # To complete move file from src to dst, origin file should be unlinked
+                    if os.path.exists(src_video_fp):
+                        logger.info('Move Video file from {src} to {dst}.'.format(src=src_video_fp,
+                                                                                  dst=self.env.video_output_fp))
+                        shutil.move(src_video_fp, self.env.video_output_fp)
+                    else:
+                        break
+                except OSError as e:
+                    # Move file failed will raise OSError, we'll catch it and retry
+                    logger.warning(e)
+                    logger.warning('File may not ready to move, retry again after 1 sec.')
+                    time.sleep(1)
+                except Exception as e:
+                    logger.error(e)
+                    raise Exception
+
+            # Original video file still exist after many seconds trying to move, raise exception
+            if os.path.exists(src_video_fp):
+                raise Exception('[ERROR] Move Video file from {src} to {dst} failed.'.format(src=src_video_fp,
+                                                                                             dst=self.env.video_output_fp))
         else:
             self.process.send_signal(3)
 
