@@ -41,13 +41,14 @@ class Case(basecase.SikuliInputLatencyCase):
         # PRE ACTIONS
         app.click_right_panel_contact()
         sleep(2)
-        pattern, obj = app.wait_for_close_button_loaded()
+        _, obj = app.wait_for_close_button_loaded()
 
         # Customized Region
         customized_region_name = 'end'
 
         # part region of search suggestion list
         compare_area = self.tuning_region(obj, x_offset=-245, y_offset=-100, w_offset=245, h_offset=405)
+        pattern = capture(compare_area)
         self.set_override_region_settings(customized_region_name, compare_area)
 
         # Record T1, and capture the snapshot image
@@ -63,9 +64,6 @@ class Case(basecase.SikuliInputLatencyCase):
         t2 = time.time()
 
         # POST ACTIONS
-        sleep(2)
-        app.click_close_chat_tab()
-        sleep(1)
         app.wait_pattern_for_vanished(pattern=pattern)
 
         # Write timestamp
