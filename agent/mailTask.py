@@ -5,7 +5,6 @@ import httplib2
 import urllib2
 import requests
 import os
-import sys
 import re
 import base64
 import subprocess
@@ -22,6 +21,8 @@ from apiclient import discovery, errors
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
+
+from hasalTask import HasalTask
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -55,6 +56,7 @@ class MailTask(object):
         self.credentials = self.get_credentials()
         http = self.credentials.authorize(httplib2.Http())
         self.service = discovery.build('gmail', 'v1', http=http)
+        self.kwargs = kwargs
 
     def run(self):
         """Runner for Hasal agent
@@ -197,19 +199,15 @@ class MailTask(object):
         """
         self.prepare_try_build(msg.revision)
 
-        cmd = [sys.executable,
-               "runtest.py",
-               "re",
-               "test.suite",
-               "--max-run=" + str(msg.max_run),
-               "--max-retry=" + str(msg.max_retry)]
-        if msg.calc_si != "":
-            cmd.append(msg.calc_si)
-        if msg.advance != "":
-            cmd.append(msg.advance)
+        self.kwargs['INDEX_CONFIG_NAME'] = 'runtimeDctGenerator.json'
+        hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
+        cmd_list = hasal.generate_command_list()
+        logger.debug("cmd: %s" % ' '.join(cmd_list))
 
-        logger.debug("cmd: %s" % ' '.join(cmd))
-        subprocess.call(cmd, env=os.environ.copy())
+        try:
+            subprocess.call(cmd_list, env=os.environ.copy)
+        except Exception as e:
+            print(e.message)
 
     def check_job_status(self):
         """Check if a job is finished
