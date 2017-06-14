@@ -34,9 +34,6 @@ class Case(basecase.SikuliInputLatencyCase):
         fb.wait_for_loaded()
         sleep(2)
 
-        fb.focus_comment_box()
-        sleep(2)
-
         # Customized Region
         customized_region_name = 'end'
         type_area_component = [
@@ -44,6 +41,7 @@ class Case(basecase.SikuliInputLatencyCase):
         ]
         type_area = self.find_match_region(type_area_component, similarity=0.80)
         self.set_override_region_settings(customized_region_name, type_area)
+        click(type_area)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
