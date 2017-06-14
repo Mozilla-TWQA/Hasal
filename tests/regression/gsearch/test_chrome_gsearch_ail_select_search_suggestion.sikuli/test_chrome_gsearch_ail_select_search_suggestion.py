@@ -42,6 +42,7 @@ class Case(basecase.SikuliInputLatencyCase):
         gs.focus_search_inputbox()
         type("mozilla")
         sleep(1)
+        gs.wait_search_suggestion()
 
         # Customized Region
         customized_region_name = 'end'
