@@ -88,7 +88,7 @@ class SikuliCase(object):
         @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
         @return:The matched region object.
         """
-        _, match_obj = self._web_page._wait_for_loaded(component=component, similarity=similarity, timeout=timeout)
+        _, match_obj = self._web_page.wait_for_component_display(component=component, similarity=similarity, timeout=timeout)
         return match_obj
 
     def tuning_region(self, region_obj, x_offset=0, y_offset=0, w_offset=0, h_offset=0):
