@@ -27,11 +27,20 @@ class Gsearch(WebApp):
         [os.path.join('pics', 'gsearch_homepage_buttons_chrome_win10.png'), -7, -71]
     ]
 
+    GSEARCH_MOZILLA_SUGGESTION = [
+        [os.path.join('pics', 'gsearch_search_result.png'), 0, 0],
+        [os.path.join('pics', 'gsearch_search_result_2.png'), 0, 0],
+        [os.path.join('pics', 'gsearch_search_result_3.png'), 0, 0]
+    ]
+
     def wait_gsearch_loaded(self, similarity=0.70):
         return self._wait_for_loaded(component=Gsearch.GSEARCH_HOMEPAGE_BUTTONS, similarity=similarity)
 
     def wait_gimage_loaded(self, similarity=0.70):
         return self._wait_for_loaded(component=Gsearch.GSEARCH_IMAGE_HEADER, similarity=similarity)
+
+    def wait_search_suggestion(self, similarity=0.70):
+        return self._wait_for_loaded(component=Gsearch.GSEARCH_MOZILLA_SUGGESTION, similarity=similarity)
 
     def focus_search_inputbox(self):
         return self._click(action_name='Focus search inputbox',
