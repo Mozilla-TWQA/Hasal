@@ -6,7 +6,7 @@ import subprocess
 import logging
 import json
 import os
-
+from hasalTask import HasalTask
 
 logger = logging.getLogger('iskakalunan')
 logging.basicConfig(format='%(module)s %(levelname)s %(message)s', level=logging.DEBUG)
@@ -17,6 +17,7 @@ ISKAKALUNAN_NOTE = 'iskakalunan.note'
 class Iskakalunan(object):
     def __init__(self, name="iskakalunan", **kwargs):
         self.name = name
+        self.kwargs = kwargs
         logging.info("Check mail credential")
         self.mail_handler = mailTask.MailTask()
         logging.info("Check github hooker credential")
@@ -37,17 +38,30 @@ class Iskakalunan(object):
                     self.mail_handler.update_job_results()
             elif note['type'] == 'githubHook':
                 # TODO: add result checker
-                if not os.path.isfile('result'):
-                    return
-                if not subprocess.call(['diff', 'result', 'sample']):
-                    self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'success')
+                if not os.path.isfile('result.json'):
+                    self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'failure', 'no-result')
                 else:
-                    self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'failure')
-                self.github_handler.update_job_result_by_pr_number(note['pr_number'], result)
-            os.remove(ISKAKALUNAN_NOTE)
+                    with open('result.json', 'r') as f:
+                        result = json.load(f)
+                    if 'test_firefox_gdoc_read_basic_txt_1' in result \
+                            and 'total_time' in result['test_firefox_gdoc_read_basic_txt_1'] \
+                            and result['test_firefox_gdoc_read_basic_txt_1']['total_time'] > 0:
+                        self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'success', 'success')
+                    else:
+                        self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'failure', 'no-result')
+            if 'pr_number' in note:
+                subprocess.call(['git', 'checkout', 'dev'])
+                subprocess.call(['git', 'branch', '-D', 'pr/' + str(note['pr_number'])])
+            try:
+                os.remove(ISKAKALUNAN_NOTE)
+                os.remove('result.json')
+            except Exception as e:
+                print(e)
+            return
 
         # reset environment
         note = {}
+        subprocess.call(['git', 'checkout', 'dev'])
 
         # is there any new CI request
         pull_requests = self.github_handler.get_requests()
@@ -62,11 +76,18 @@ class Iskakalunan(object):
                 json.dump(note, f)
             self.github_handler.checkout_pr(pull_requests[0])
             # execute
-            # TODO: add the execute script
-            subprocess.call(['python', 'runtest.py', '-h', '>', 'result'])
+            self.kwargs['MAX_RUN'] = 1
+            self.kwargs['MAX_RETRY'] = 1
+            self.kwargs['INDEX_CONFIG_NAME'] = 'runtimeDctGenerator.json'
+            hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
+            cmd_list = hasal.generate_command_list()
+            print(' '.join(cmd_list))
+            try:
+                subprocess.call(cmd_list, env=os.environ.copy())
+            except Exception as e:
+                print e.message
             return
 
-        subprocess.call(['git', 'checkout', 'dev'])
         # is there any new Mail request
         messages = self.mail_handler.get_requests()
         if messages:
