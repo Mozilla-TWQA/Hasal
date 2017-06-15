@@ -81,15 +81,25 @@ class MainRunner(object):
         with open("agent.log", 'w+') as f:
             f.write(fp + " was loaded!")
         data = {}
-        with open(fp) as in_data:
+        loaded = False
+        for _ in range(10):
             try:
-                data = json.load(in_data)
-                # default will load JOB_NAME parameter in Jenkins created json file
-                data['name'] = data.get('JOB_NAME', "Jenkins Job")
-                data['path'] = fp
+                with open(fp) as in_data:
+                    data = json.load(in_data)
+                    # default will load JOB_NAME parameter in Jenkins created json file
+                    data['name'] = data.get('JOB_NAME', "Jenkins Job")
+                    data['path'] = fp
+                    loaded = True
             except ValueError as e:
                 logger.warning(fp + " loaded failed: " + e.message)
                 return None
+            except Exception as e:
+                logger.warning("File is not ready. Wait 1 second for another try.")
+                time.sleep(1)
+
+        if not loaded:
+            logger.warning(fp + " is not ready for 10 seconds.")
+            return None
 
         # load interval value from Jenkins created json file (default : 30 )
         interval = int(data.get('interval', 30))
