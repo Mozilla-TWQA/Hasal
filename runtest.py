@@ -285,7 +285,7 @@ class RunTest(object):
         self.logger.debug(test_env)
         self.logger.debug("========== Environment data ======")
         self.logger.info(" ".join(["python", "-m", "unittest", test_case_module_name]))
-        subprocess.call(["python", "-m", "unittest", test_case_module_name], env=test_env)
+        subprocess.check_call(["python", "-m", "unittest", test_case_module_name], env=test_env)
 
     def suite_validator(self):
         exec_case_list = []
