@@ -173,6 +173,16 @@ class WebApp(object):
         obj = wait(p, wait_sec)
         return p, obj
 
+    def wait_for_component_display(self, component, similarity=0.7, timeout=10):
+        """
+        Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
+        @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
+        @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        @return: The object pattern and the match region object. (pattern, match_obj).
+        """
+        return self._wait_for_loaded(component, similarity=similarity, timeout=timeout)
+
     def wait_pattern_for_vanished(self, pattern, timeout=10):
         """
         Wait for component loaded. Default timeout is 10 sec, min is 1 sec.

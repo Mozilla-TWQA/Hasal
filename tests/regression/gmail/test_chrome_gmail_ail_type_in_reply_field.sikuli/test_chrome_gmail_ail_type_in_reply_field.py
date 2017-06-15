@@ -46,11 +46,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Customized Region
         customized_region_name = 'end'
-        type_area_component = [
-            ['type_area_win.png', 0, 0],
-            ['type_area_chrome_win10.png', 0, 0],
-        ]
-        type_area = self.find_match_region(type_area_component)
+        _, reply_btn_region = app.wait_for_component_display(app.GMAIL_TYPE_FOR_REPLY, similarity=0.8)
+        type_area = self.tuning_region(reply_btn_region, x_offset=12, h_offset=50)
         self.set_override_region_settings(customized_region_name, type_area)
         sleep(2)
 
