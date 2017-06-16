@@ -45,8 +45,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
-        screenshot, t1 = fb.il_type('a', capture_width, capture_height,
-                                    wait_component=fb.FACEBOOK_POST_ACTION)
+        screenshot, t1 = fb.il_type('a', capture_width, capture_height)
 
         # In normal condition, a should appear within 200ms,
         # but if lag happened, that could lead the show up after 200 ms,
