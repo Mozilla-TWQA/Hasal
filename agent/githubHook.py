@@ -34,7 +34,7 @@ class githubHook(object):
             issue = pr.issue()
             if KEY_LABEL in [x.name for x in issue.original_labels]:
                 status_list = [x.state for x in self.hasal.statuses(pr.head.sha) if x.context == 'iskakaklunan']
-                state = '' if len(status_list) == 0 else status_list[0]
+                state = '' if len(status_list) == 0 else status_list[-1]
                 if state == '':
                     self.hasal.create_status(pr.head.sha, STATE_PENDING, context='iskakalunan', description='waiting for result')
                     local_queue.append(pr)
