@@ -158,6 +158,7 @@ class BaseGenerator(object):
             else:
                 source_dp = os.path.dirname(start_fp)
             img_list = os.listdir(source_dp)
+            img_list = [item for item in img_list if os.path.isfile(os.path.join(source_dp, item))]
             img_list.sort(key=CommonUtil.natural_keys)
             start_fn = os.path.basename(start_fp)
             end_fn = os.path.basename(end_fp)
