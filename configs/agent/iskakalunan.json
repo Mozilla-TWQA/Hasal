@@ -1,5 +1,8 @@
 {
     "AGENT_MODULE_PATH": "iskakalunan",
     "AGENT_OBJECT_NAME": "Iskakalunan",
-    "JOB_NAME": "iskakalunan"
+    "JOB_NAME": "iskakalunan",
+    "MAX_RUN": 1,
+    "MAX_RETRY": 1,
+    "INDEX_CONFIG_NAME": "runtimeDctGenerator.json"
 }
