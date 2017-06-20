@@ -30,17 +30,19 @@ APPLICATION_NAME = 'Iskakalunan'
 
 LABEL_NEW_REQUEST = 'Label_8'
 LABEL_IN_QUEUE = 'Label_4'
-LABEL_IN_PROCESS = 'Label_5'
+LABEL_IN_PROGRESS = 'Label_5'
 LABEL_REPLIED = 'Label_6'
 
 RESULT_ZIP = 'result.zip'
 RESULT_JSON = 'result.json'
-UPLOAD_FOLDER = 'upload'
-FIREFOX_PATH = r'C:/Program Files/Mozilla Firefox'
+UPLOAD_FOLDER = 'result'
+FIREFOX_PATH = r'C:/Program Files (x86)/Mozilla Firefox'
+FIREFOX_PATH_BACKUP = r'C:/Program Files (x86)/Firefox_backup'
 
 MSG_TYPE_INVALID_REQUEST = 'This is a notifier that your request is invalid.'
 MSG_TYPE_UNDER_EXECUTION = 'This is a notifier that your request is under execution.'
 MSG_TYPE_JOB_FINISHED = 'This is a notifier that your request is finished.'
+MSG_TYPE_JOB_FAILED = 'This is a notifier that your request is failed in execution'
 
 logger = logging.getLogger('mailTask')
 logging.basicConfig(format='%(module)s %(levelname)s %(message)s', level=logging.DEBUG)
@@ -58,54 +60,35 @@ class MailTask(object):
         self.service = discovery.build('gmail', 'v1', http=http)
         self.kwargs = kwargs
 
-    def run(self):
-        """Runner for Hasal agent
-        """
-        # NewRequest to InQueue
-        messages = self.fetch_messages(LABEL_NEW_REQUEST)
-        logger.info("Check New Requests: %d request(s) get" % len(messages))
+    def update_labels(self, msg, labels):
+        try:
+            logger.debug('Update labels for msgId: %s with %s' % (msg.message_id, labels))
+            self.service.users().messages().modify(userId='me', id=msg.message_id, body=labels).execute()
+        except errors.HttpError, error:
+            logger.error('An error occurred: %s' % error)
 
-        for message in messages:
-            if message.validation:
-                update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
-                               "addLabelIds": [LABEL_IN_QUEUE]}
-                self.update_labels(message, update_body)
-            else:
-                update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
-                               "addLabelIds": [LABEL_REPLIED]}
-                self.update_labels(message, update_body)
-                self.reply_status(message, MSG_TYPE_INVALID_REQUEST)
+    def prepare_try_build(self, revision):
+        try:
+            url_try_builds = "https://archive.mozilla.org/pub/firefox/try-builds/"
+            req = urllib2.Request(url_try_builds)
+            response = urllib2.urlopen(req)
+            html_try_builds = response.read()
 
-        # Check if InProcess exists
-        msg_in_process = self.fetch_messages(LABEL_IN_PROCESS)
-        logger.info("Check In Process job exists: %d Job(s) on machine" % len(msg_in_process))
+            pattern = 'href="(.+' + revision + '\/)"'
+            m = re.search(pattern, html_try_builds)
+            url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-56.0a1.en-US.win64.zip"
+            logger.debug("Download build from %s" % url_revision_build)
+            r = requests.get(url_revision_build, stream=True)
+            with open('firefox.zip', 'wb') as f:
+                for chunk in r.iter_content(chunk_size=4096):
+                    f.write(chunk)
 
-        # Check if in process job is finished
-        job_empty = False
-        if msg_in_process and self.check_job_status():
-            update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
-                           "addLabelIds": [LABEL_REPLIED]}
-            self.update_labels(msg_in_process[0], update_body)
-            self.reply_status(msg_in_process[0], MSG_TYPE_JOB_FINISHED)
-            job_empty = True
-        elif not msg_in_process:
-            job_empty = True
-        if job_empty:
-            messages = self.fetch_messages(LABEL_IN_QUEUE)
-            logger.info("Check In Queue tasks: %d tasks in queue" % len(messages))
-            if messages:
-                update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
-                               "addLabelIds": [LABEL_IN_PROCESS]}
-                self.update_labels(messages[0], update_body)
-                self.reply_status(messages[0], MSG_TYPE_UNDER_EXECUTION)
-                self.prepare_job(messages[0])
-
-    def execute_job(self, message):
-        update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
-                       "addLabelIds": [LABEL_IN_PROCESS]}
-        self.update_labels(message, update_body)
-        self.reply_status(message, MSG_TYPE_UNDER_EXECUTION)
-        self.prepare_job(message)
+            with zipfile.ZipFile('firefox.zip', 'r') as zf:
+                zf.extractall()
+            shutil.rmtree(FIREFOX_PATH)
+            shutil.move('firefox', FIREFOX_PATH)
+        except Exception as e:
+            logger.error("Failed to grab builds for testing: %s" % e)
 
     def get_requests(self):
         messages = self.fetch_messages(LABEL_NEW_REQUEST)
@@ -124,13 +107,6 @@ class MailTask(object):
         messages = self.fetch_messages(LABEL_IN_QUEUE)
         logger.info("Check In Queue tasks: %d tasks in queue" % len(messages))
         return messages
-
-    def update_job_results(self):
-        msg = self.fetch_messages(LABEL_IN_PROCESS)
-        update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
-                       "addLabelIds": [LABEL_REPLIED]}
-        self.update_labels(msg, update_body)
-        self.reply_status(msg, MSG_TYPE_JOB_FINISHED)
 
     def fetch_messages(self, label_id):
         """Fetch messages from pre-set mail account
@@ -164,67 +140,22 @@ class MailTask(object):
         except errors.HttpError, error:
             logger.error("An error occurred: %s" % error)
 
-    def update_labels(self, msg, labels):
-        try:
-            logger.debug('Update labels for msgId: %s with %s' % (msg.message_id, labels))
-            self.service.users().messages().modify(userId='me', id=msg.message_id, body=labels).execute()
-        except errors.HttpError, error:
-            logger.error('An error occurred: %s' % error)
+    def execute_job(self, message):
+        update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
+                       "addLabelIds": [LABEL_IN_PROGRESS]}
+        self.update_labels(message, update_body)
+        self.reply_status(message, MSG_TYPE_UNDER_EXECUTION)
+        self.prepare_job(message)
 
-    def prepare_try_build(self, revision):
-        try:
-            url_try_builds = "https://archive.mozilla.org/pub/firefox/try-builds/"
-            req = urllib2.Request(url_try_builds)
-            response = urllib2.urlopen(req)
-            html_try_builds = response.read()
+    def reply_status(self, msg=None, status=MSG_TYPE_JOB_FINISHED):
+        if msg is None:
+            msgs = self.fetch_messages(LABEL_IN_PROGRESS)
+            logger.info("Message length: {}".format(len(msgs)))
+            msg = msgs[0]
+            update_body = {"removeLabelIds": [LABEL_IN_PROGRESS],
+                           "addLabelIds": [LABEL_REPLIED]}
+            self.update_labels(msg, update_body)
 
-            pattern = 'href="(.+' + revision + '\/)"'
-            m = re.search(pattern, html_try_builds)
-            url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-55.0a1.en-US.win64.zip"
-            logger.debug("Download build from %s" % url_revision_build)
-            r = requests.get(url_revision_build, stream=True)
-            with open('firefox.zip', 'wb') as f:
-                for chunk in r.iter_content(chunk_size=4096):
-                    f.write(chunk)
-
-            with zipfile.ZipFile('firefox.zip', 'r') as zf:
-                zf.extractall()
-            shutil.rmtree(FIREFOX_PATH)
-            shutil.move('firefox', FIREFOX_PATH)
-        except Exception as e:
-            logger.error("Failed to grab builds for testing: %s" % e)
-
-    def prepare_job(self, msg):
-        """Prepare a json represent a job and update message status
-        """
-        self.prepare_try_build(msg.revision)
-
-        self.kwargs['INDEX_CONFIG_NAME'] = 'runtimeDctGenerator.json'
-        hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
-        cmd_list = hasal.generate_command_list()
-        logger.debug("cmd: %s" % ' '.join(cmd_list))
-
-        try:
-            subprocess.call(cmd_list, env=os.environ.copy)
-        except Exception as e:
-            print(e.message)
-
-    def check_job_status(self):
-        """Check if a job is finished
-
-        return - True if a job is finished
-        """
-        if os.path.isdir(UPLOAD_FOLDER) and os.path.isfile(os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER)), RESULT_JSON)):
-            if os.path.isfile(RESULT_ZIP):
-                os.remove(RESULT_ZIP)
-            shutil.make_archive("result", 'zip', os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER))))
-            logger.info("Job finished by checking")
-            return True
-        else:
-            logger.info("Job did not finish by checking")
-            return False
-
-    def reply_status(self, msg, status):
         """Update status to sender"""
         logger.debug("reply status to %s with %s" % (msg.message_id, status))
         message = MIMEMultipart()
@@ -235,6 +166,11 @@ class MailTask(object):
         message.attach(text)
 
         if status == MSG_TYPE_JOB_FINISHED:
+            if os.path.isdir(UPLOAD_FOLDER) and os.path.isfile(os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER)), RESULT_JSON)):
+                if os.path.isfile(RESULT_ZIP):
+                    os.remove(RESULT_ZIP)
+                shutil.make_archive("result", 'zip', os.path.join(UPLOAD_FOLDER, max(os.listdir(UPLOAD_FOLDER))))
+
             path = os.path.join(os.getcwd(), RESULT_ZIP)
             content_type, encoding = mimetypes.guess_type(path)
 
@@ -251,6 +187,23 @@ class MailTask(object):
         raw_message = {'raw': base64.urlsafe_b64encode(message.as_string())}
         raw_message['threadId'] = msg.thread_id
         self.service.users().messages().send(userId='me', body=raw_message).execute()
+
+    def prepare_job(self, msg):
+        """Prepare a json represent a job and update message status
+        """
+        try:
+            shutil.rmtree(UPLOAD_FOLDER)
+        except Exception as e:
+            logger.info("No upload folder in repo")
+        self.prepare_try_build(msg.revision)
+        hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
+        cmd_list = hasal.generate_command_list()
+        logger.debug("cmd: %s" % ' '.join(cmd_list))
+
+        try:
+            subprocess.call(cmd_list, env=os.environ.copy())
+        except Exception as e:
+            logger.error(e)
 
     def get_credentials(self):
         """Gets valid user credentials from storage.
@@ -332,18 +285,11 @@ class Message(object):
     def __isValid(self):
         msg_body = base64.urlsafe_b64decode(self.body.encode('utf-8')).split('\r\n')
 
-        isLink = False
         for line in msg_body:
             line = line.replace('\xe2\x80\x8b', '')
-            if isLink:
+            if line.startswith("Build"):
+                # TODO: if input is a link, it will be processed as a new line
                 self.revision = line[-40:]
-                isLink = False
-            elif line.startswith("Build"):
-                if len(line) < 60:
-                    isLink = True
-                    logger.debug("commit is a link")
-                else:
-                    self.revision = line[-40:]
             elif line.startswith("Suite:"):
                 self.test_suite = ''.join(line[6:].split())
                 with open('test.suite', 'w') as f:
@@ -367,43 +313,4 @@ class Message(object):
 
 
 if __name__ == '__main__':
-    iskakalunan = MailTask()
-
-    # NewRequest to InQueue
-    messages = iskakalunan.fetch_messages(LABEL_NEW_REQUEST)
-    logger.info("Check New Requests: %d request(s) get" % len(messages))
-
-    for message in messages:
-        if message.validation:
-            update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
-                           "addLabelIds": [LABEL_IN_QUEUE]}
-            iskakalunan.update_labels(message, update_body)
-        else:
-            update_body = {"removeLabelIds": [LABEL_NEW_REQUEST],
-                           "addLabelIds": [LABEL_REPLIED]}
-            iskakalunan.update_labels(message, update_body)
-            iskakalunan.reply_status(message, MSG_TYPE_INVALID_REQUEST)
-
-    # Check if InProcess exists
-    msg_in_process = iskakalunan.fetch_messages(LABEL_IN_PROCESS)
-    logger.info("Check In Process job exists: %d Job(s) on machine" % len(msg_in_process))
-
-    # Check if in process job is finished
-    job_empty = False
-    if msg_in_process and iskakalunan.check_job_status():
-        update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
-                       "addLabelIds": [LABEL_REPLIED]}
-        iskakalunan.update_labels(msg_in_process[0], update_body)
-        iskakalunan.reply_status(msg_in_process[0], MSG_TYPE_JOB_FINISHED)
-        job_empty = True
-    elif not msg_in_process:
-        job_empty = True
-    if job_empty:
-        messages = iskakalunan.fetch_messages(LABEL_IN_QUEUE)
-        logger.info("Check In Queue tasks: %d tasks in queue" % len(messages))
-        if messages:
-            update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
-                           "addLabelIds": [LABEL_IN_PROCESS]}
-            iskakalunan.update_labels(messages[0], update_body)
-            iskakalunan.reply_status(messages[0], MSG_TYPE_UNDER_EXECUTION)
-            iskakalunan.prepare_job(messages[0])
+    mail_task = MailTask()
