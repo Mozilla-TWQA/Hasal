@@ -42,6 +42,7 @@ class Case(basecase.SikuliInputLatencyCase):
         type_area = self.find_match_region(type_area_component, similarity=0.80)
         self.set_override_region_settings(customized_region_name, type_area)
         click(type_area)
+        sleep(0.2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
