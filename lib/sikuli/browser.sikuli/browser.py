@@ -132,19 +132,21 @@ class Firefox(GeneralBrowser):
 
     # Wait for URL bar to appear
     def clickBar(self):
-        urlbar_pics = [('pics/ff_urlbar_gray_win7.png', 250, 0),
-                       ('pics/ff_urlbar_gray_win10.png', 250, 0),
-                       ('pics/ff_urlbar_gray_win.png', -80, 0),
-                       ('pics/ff_urlbar_gray_ubuntu.png', -80, 0),
-                       ('pics/ff_urlbar_black.png', -80, 0),
-                       ('pics/ff_urlbar_gray_focus_win.png', -80, 0),
-                       ('pics/ff_urlbar_gray_focus_ubuntu.png', -80, 0),
-                       ('pics/ff_urlbar_black_focus_mac.png', -80, 0)]
-        for counter in range(30):
-            for urlbar_pic, offset_x, offset_y in urlbar_pics:
-                if exists(Pattern(urlbar_pic).similar(0.70), 0.1):
-                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y)).getTarget()
-                    click(Pattern(urlbar_pic).similar(0.70).targetOffset(offset_x, offset_y))
+        urlbar_pics = [('pics/ff_urlbar_blue_win7.png', 250, 0, 0.8),
+                       ('pics/ff_urlbar_deepblue_win10.png', 250, 0, 0.7),
+                       ('pics/ff_urlbar_gray_win7.png', 250, 0, 0.7),
+                       ('pics/ff_urlbar_gray_win10.png', 250, 0, 0.7),
+                       ('pics/ff_urlbar_gray_win.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_gray_ubuntu.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_black.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_gray_focus_win.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_gray_focus_ubuntu.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_black_focus_mac.png', -80, 0, 0.7)]
+        for counter in range(20):
+            for urlbar_pic, offset_x, offset_y, similarity in urlbar_pics:
+                if exists(Pattern(urlbar_pic).similar(similarity), 0.1):
+                    self.urlbar_loc = find(Pattern(urlbar_pic).similar(similarity).targetOffset(offset_x, offset_y)).getTarget()
+                    click(Pattern(urlbar_pic).similar(similarity).targetOffset(offset_x, offset_y))
                     return self.urlbar_loc
         raise Exception('Cannot find URL bar.')
 
