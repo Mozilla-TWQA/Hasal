@@ -183,19 +183,21 @@ class WebApp(object):
         """
         return self._wait_for_loaded(component, similarity=similarity, timeout=timeout)
 
-    def wait_pattern_for_vanished(self, pattern, timeout=10):
+    def wait_pattern_for_vanished(self, pattern, similarity=0.7, timeout=10):
         """
         Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
         @param pattern: Specify the wait vanished pattern, which is an sikuli object pattern.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
         """
         is_exists = True
         # get the loop time base on the pattern amount of component, min loop time is 10 times
         wait_sec = 0.5
         loop_time = self._get_loop_times(object_amount=1, total_second=timeout, each_check_second=wait_sec)
+        p = Pattern(pattern).similar(similarity)
         for counter in range(loop_time):
             sleep(wait_sec)
-            if not exists(pattern, wait_sec):
+            if not exists(p, wait_sec):
                 is_exists = False
                 break
         if is_exists:
