@@ -206,6 +206,8 @@ class WebApp(object):
         if wait_component:
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
+        # Flush pending console log before sending target message
+        self.common.system_print('')
         # Screenshot and get time for Input Latency
         action_name = '[log]  TYPE "{}"'.format(message)
         screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
@@ -217,6 +219,8 @@ class WebApp(object):
         if wait_component:
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
+        # Flush pending console log before sending target message
+        self.common.system_print('')
         # Screenshot and get time for Input Latency
         screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
         type(key)
@@ -335,6 +339,8 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     # Hover
                     hover(p)
+                    # Flush pending console log before sending target message
+                    self.common.system_print('')
 
                     if self.CapturePoints.BEFORE_MOUSEDOWN == action_point:
                         # Screenshot and get time for Input Latency
@@ -391,6 +397,9 @@ class WebApp(object):
                 if exists(p, 0.1):
                     # Get location
                     loc = find(p).getTarget()
+
+                    # Flush pending console log before sending target message
+                    self.common.system_print('')
 
                     # Screenshot and get time for Input Latency
                     screenshot, current_time = self._screenshot_and_time(width=width, height=height,
