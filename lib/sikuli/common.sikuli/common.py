@@ -2,6 +2,14 @@ from sikuli import *  # NOQA
 import json
 
 
+class FlushBeforePrint(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        sys.stdout.flush()
+        return self.func(object, *args)
+
 class General():
     def __init__(self):
         self.os = str(Env.getOS())
@@ -100,6 +108,7 @@ class General():
     def set_type_delay(self, sec=0):
         Settings.TypeDelay = sec
 
+    @FlushBeforePrint
     def system_print(self, content):
         sys.stdout.write(content + '\n')
         sys.stdout.flush()

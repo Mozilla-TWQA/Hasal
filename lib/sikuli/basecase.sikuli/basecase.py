@@ -148,10 +148,10 @@ class SikuliCase(object):
             }
             self.append_to_stat_json(self.KEY_REGION_OVERRIDE, customized_region)
             self.common.system_print('[INFO] Found [{r_name}] with [x,y,w,h]: [{x},{y},{w},{h}]'.format(r_name=customized_region_name,
-                                                                                     x=sikuli_region_obj.x,
-                                                                                     y=sikuli_region_obj.y,
-                                                                                     w=sikuli_region_obj.w,
-                                                                                     h=sikuli_region_obj.h))
+                                                                                                        x=sikuli_region_obj.x,
+                                                                                                        y=sikuli_region_obj.y,
+                                                                                                        w=sikuli_region_obj.w,
+                                                                                                        h=sikuli_region_obj.h))
             return True
         else:
             self.common.system_print('[ERROR] Cannot find the settings [{r_name}] of Customized Region from index-config.'.format(r_name=customized_region_name))
