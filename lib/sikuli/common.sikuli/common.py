@@ -10,6 +10,7 @@ class FlushBeforePrint(object):
         sys.stdout.flush()
         return self.func(object, *args)
 
+
 class General():
     def __init__(self):
         self.os = str(Env.getOS())
