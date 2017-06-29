@@ -35,7 +35,7 @@ class ConcatenateVideo(object):
             sample = cv2.imread(left_img_list[0])
             height, width, channel = sample.shape
             video = cv2.VideoWriter()
-            fourcc = cv2.cv.FOURCC('m','p','4','v')
+            fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
             video_fp = os.path.join(output_video_dp, 'output.mp4')
 
             # mode 0 means concatenate top and bottom
