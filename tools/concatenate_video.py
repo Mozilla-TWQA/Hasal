@@ -1,6 +1,6 @@
 """
 Usage:
-  concatenate_video.py [--top=<str>] [--bottom=<str>] [--left=<str>] [--right=<str>] [--mode=<int>] [--slower-times=<int>]
+  concatenate_video.py [--top=<str>] [--bottom=<str>] [--left=<str>] [--right=<str>] [--slower-times=<int>]
   concatenate_video.py (-h | --help)
 
 Options:
@@ -9,7 +9,6 @@ Options:
   -b --bottom=<str>             Specify the folder path of images on video bottom-half ;[default: ]
   -l --left=<str>               Specify the folder path of images on video left-half ;[default: ]
   -r --right=<str>              Specify the folder path of images on video left-half; [default: ]
-  -m --mode=<int>               Specify the concatenate mode, 0 for vertical and 1 for horizontal; [default: 1]
   -s --slower-times=<int>       Specify the slower times for customized video; [default: 1]
 
 """
@@ -73,15 +72,16 @@ def main():
     bottom_img_dp = arguments['--bottom']
     left_img_dp = arguments['--left']
     right_img_dp = arguments['--right']
-    concatenate_mode = int(arguments['--mode'])
     slower_times = int(arguments['--slower-times'])
 
     concatenate_video_obj = ConcatenateVideo()
-    if os.path.isdir(top_img_dp) and os.path.isdir(bottom_img_dp) and concatenate_mode == 0:
+    if os.path.isdir(top_img_dp) and os.path.isdir(bottom_img_dp):
+        concatenate_mode = 0
         top_img_list = concatenate_video_obj.get_img_list(top_img_dp)
         bottom_img_list = concatenate_video_obj.get_img_list(bottom_img_dp)
         concatenate_video_obj.concatenate_video(top_img_list, bottom_img_list, os.getcwd(), concatenate_mode, slower_times)
-    elif os.path.isdir(left_img_dp) and os.path.isdir(right_img_dp) and concatenate_mode == 1:
+    elif os.path.isdir(left_img_dp) and os.path.isdir(right_img_dp):
+        concatenate_mode = 1
         left_img_list = concatenate_video_obj.get_img_list(left_img_dp)
         right_img_list = concatenate_video_obj.get_img_list(right_img_dp)
         concatenate_video_obj.concatenate_video(left_img_list, right_img_list, os.getcwd(), concatenate_mode, slower_times)
