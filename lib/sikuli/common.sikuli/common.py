@@ -109,7 +109,6 @@ class General():
     def set_type_delay(self, sec=0):
         Settings.TypeDelay = sec
 
-    @FlushBeforePrint
     def system_print(self, content):
         sys.stdout.write(content + '\n')
         sys.stdout.flush()
@@ -216,8 +215,6 @@ class WebApp(object):
         if wait_component:
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
-        # Flush pending console log before sending target message
-        self.common.system_print('')
         # Screenshot and get time for Input Latency
         action_name = '[log]  TYPE "{}"'.format(message)
         screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
@@ -229,8 +226,6 @@ class WebApp(object):
         if wait_component:
             self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
 
-        # Flush pending console log before sending target message
-        self.common.system_print('')
         # Screenshot and get time for Input Latency
         screenshot, current_time = self._screenshot_and_time(width=width, height=height, action_name=action_name)
         type(key)
@@ -349,8 +344,6 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     # Hover
                     hover(p)
-                    # Flush pending console log before sending target message
-                    self.common.system_print('')
 
                     if self.CapturePoints.BEFORE_MOUSEDOWN == action_point:
                         # Screenshot and get time for Input Latency
@@ -376,6 +369,7 @@ class WebApp(object):
                     return loc, screenshot, current_time
         raise Exception('Cannot {action}'.format(action=action_name))
 
+    @FlushBeforePrint
     def _screenshot_and_time(self, width, height,
                              action_name='Task Screenshot and Get Current Timestamp'):
         """
@@ -407,9 +401,6 @@ class WebApp(object):
                 if exists(p, 0.1):
                     # Get location
                     loc = find(p).getTarget()
-
-                    # Flush pending console log before sending target message
-                    self.common.system_print('')
 
                     # Screenshot and get time for Input Latency
                     screenshot, current_time = self._screenshot_and_time(width=width, height=height,
