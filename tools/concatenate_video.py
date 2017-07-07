@@ -45,7 +45,6 @@ class ConcatenateVideo(object):
                 video.open(video_fp, fourcc, 30, (width * 2, height), True)
             else:
                 raise Exception
-
             len_firefox = len(left_img_list)
             len_chrome = len(right_img_list)
             vid_len = max(len_firefox, len_chrome)
