@@ -74,3 +74,21 @@ PATH=%SIKULIX_HOME%libs;%PATH%
 echo +++ trying to run SikuliX
 echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
 java %PARMS% -jar "%SIKULIX_HOME%%SJAR%.jar" %SIKULI_COMMAND%
+set RET_CODE=%ERRORLEVEL%
+GOTO FINALLY
+
+:JAVA_OK
+echo +++ running this Java
+set SIKULI_COMMAND=%*
+"%JAVA_HOME%\bin\java.exe" -version
+echo +++ trying to run SikuliX
+echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
+"%JAVA_HOME%\bin\java.exe" %PARMS% -jar "%SIKULIX_HOME%%SJAR%.jar" %SIKULI_COMMAND%
+set RET_CODE=%ERRORLEVEL%
+GOTO FINALLY
+
+:STOPIT
+echo.+++ ended with some errors
+set RET_CODE=1
+:FINALLY
+ENDLOCAL & EXIT /B %RET_CODE%

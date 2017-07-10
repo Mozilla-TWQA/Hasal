@@ -1,0 +1,54 @@
+{
+  "module-name"             : "InputLatencyFrameThroughputGenerator",
+  "module-path"             : "lib.generator.inputLatencyFrameThroughputGenerator",
+  "sample-converter-name"   : "FTSampleConverter",
+  "sample-converter-path"   : "lib.converter.ftSampleConverter",
+  "image-converter-name"    : "Cv2Converter",
+  "image-converter-path"    : "lib.converter.cv2Converter",
+  "image-converter-format"  : "bmp",
+  "case-type"               : "re",
+  "ipynb-template-name"     : "inputLatencyFrameThroughputTemplate.ipynb",
+  "snapshot-base-sample1"   : true,
+  "snapshot-base-sample2"   : false,
+  "supported-suite-fp"      : "",
+  "drop-outlier-flag"       : false,
+  "region"                  : {},
+  "platform-dep-settings"   : {
+    "darwin":{
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 3,
+        "mismatch-rate-threshold": 0
+      }
+    },
+    "win32": {
+      "7": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 3,
+        "mismatch-rate-threshold": 0
+      },
+      "10": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 3,
+        "mismatch-rate-threshold": 0
+      },
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.005,
+        "search-margin": 3,
+        "mismatch-rate-threshold": 0
+      }
+    },
+    "linux2":{
+      "default": {
+        "video-recording-fps": 90,
+        "compare-threshold": 0.01,
+        "search-margin": 3,
+        "mismatch-rate-threshold": 0
+      }
+    }
+  }
+}

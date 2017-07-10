@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import facebook
 
@@ -17,9 +16,15 @@ import time
 class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_file_path = sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png')
+        capture_width = int(self.INPUT_RECORD_WIDTH)
+        capture_height = int(self.INPUT_RECORD_HEIGHT)
+
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(0)
+        self.common.infolog_enable(False)
+        Settings.MoveMouseDelay = 0
+        setAutoWaitTimeout(10)
 
         ff = browser.Firefox()
         fb = facebook.facebook()
@@ -27,27 +32,34 @@ class Case(basecase.SikuliInputLatencyCase):
         ff.clickBar()
         ff.enterLink(self.INPUT_TEST_TARGET)
         fb.wait_for_loaded()
-
         sleep(2)
-        setAutoWaitTimeout(10)
+
         fb.click_post_area_home()
-
-        sample2_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-
         sleep(2)
-        capture_width = int(self.INPUT_RECORD_WIDTH)
-        capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        t1 = time.time()
-        capimg2 = capture(0, 0, capture_width, capture_height)
+        # Customized Region
+        customized_region_name = 'end'
+        type_area_component = [
+            ['facebook_type_post_win.png', 0, 0],
+        ]
+        type_area = self.find_match_region(type_area_component, similarity=0.80)
+        self.set_override_region_settings(customized_region_name, type_area)
 
-        com.system_print('[log]  TYPE "a"')
-        type("a")
-        sleep(1)
+        # Record T1, and capture the snapshot image
+        # Input Latency Action
+        screenshot, t1 = fb.il_type('a', capture_width, capture_height,
+                                    wait_component=fb.FACEBOOK_HOME_POST_AREA_FOCUSED)
+
+        # In normal condition, a should appear within 100ms,
+        # but if lag happened, that could lead the show up after 100 ms,
+        # and that will cause the calculation of AIL much smaller than expected.
+        sleep(0.1)
+
+        # Record T2
         t2 = time.time()
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
-        shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
 
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+        shutil.move(screenshot, sample1_file_path)
 
 case = Case(sys.argv)
 case.run()

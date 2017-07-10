@@ -10,60 +10,236 @@ class facebook(WebApp):
         [os.path.join('pics', 'facebook_messenger_header_win10.png'), 0, 0]
     ]
 
-    def __init__(self):
-        # Using Env because of sikuli issue from https://bugs.launchpad.net/sikuli/+bug/1514007
-        self.os = str(Env.getOS()).lower()
+    FACEBOOK_LOGO = [
+        [os.path.join('pics', 'facebook_logo.png'), 0, 0]
+    ]
 
-        if self.os == 'mac':
-            self.control = Key.CMD
-        else:
-            self.control = Key.CTRL
-            self.alt = Key.ALT
+    FACEBOOK_LOGO_FOCUS_WINDOW = [
+        [os.path.join('pics', 'facebook_logo.png'), 0, 15]
+    ]
 
-        # This is the old way for pattern matching, but pictures should work for different operating systems.
-        self.fb_logo = Pattern("pics/facebook_logo.png").similar(0.70)
-        self.blue_bar = Pattern("pics/facebook_blue_bar.png").similar(0.70)
-        self.search_bar = Pattern("pics/facebook_search_bar.png").similar(0.70)
-        self.search_icon = Pattern("pics/facebook_search_icon.png").similar(0.70)
-        self.folding_icon = Pattern("pics/facebook_folding_icon.png").similar(0.70)
-        self.notification_icon = Pattern("pics/facebook_notification_icon.png").similar(0.70)
-        self.post_button = Pattern("pics/facebook_post_button.png").similar(0.70)
-        self.post_action = Pattern("pics/facebook_post_action.png").similar(0.70)
-        self.home_post_area = Pattern("pics/facebook_home_post_area.png").similar(0.70)
-        self.club_post_area = Pattern("pics/facebook_club_post_area.png").similar(0.70)
-        self.personal_post_area = Pattern("pics/facebook_personal_post_area.png").similar(0.70)
-        self.post_area_focused = Pattern("pics/facebook_post_area_focused.png").similar(0.70)
-        self.home_post_area_focused = Pattern("pics/facebook_home_post_area_focused.png").similar(0.70)
-        self.club_delete_post_button = Pattern("pics/facebook_club_delete_post_button.png").similar(0.85)
-        self.club_post_area_upload = Pattern("pics/facebook_club_post_area_upload.png").similar(0.70)
-        self.club_post_marker = Pattern("pics/facebook_club_post_marker.png").similar(0.70)
-        self.club_delete_post_menu = Pattern("pics/facebook_club_delete_post_menu.png").similar(0.70)
-        self.non_club_delete_post_button = Pattern("pics/facebook_non_club_delete_post_button.png").similar(0.70)
-        self.non_club_post_marker = Pattern("pics/facebook_non_club_post_marker.png").similar(0.70)
-        self.non_club_post_menu_edit = Pattern("pics/facebook_non_club_post_menu_edit.png").similar(0.70)
-        self.non_club_delete_post_menu = Pattern("pics/facebook_non_club_delete_post_menu.png").similar(0.70)
-        self.club_post_header = Pattern("pics/facebook_club_post_header.png").similar(0.70)
-        self.video_stop_icon = Pattern("pics/facebook_video_stop_icon.png").similar(0.70)
-        self.feed_end_reminder = Pattern("pics/facebook_feed_end_reminder.png").similar(0.70)
-        self.activity_end_reminder = Pattern("pics/facebook_activity_end_reminder.png").similar(0.70)
-        self.share_button = Pattern("pics/facebook_share_button.png").similar(0.70)
-        self.share_menu = Pattern("pics/facebook_share_menu.png").similar(0.70)
-        self.save_button = Pattern("pics/facebook_save_button.png").similar(0.70)
-        self.club_post_menu_delete = Pattern("pics/facebook_club_post_menu_delete.png").similar(0.70)
-        self.right_panel_contact = Pattern("pics/facebook_contact.png").similar(0.70)
-        self.chat_tab_close_button = Pattern("pics/facebook_chat_tab_close_button.png").similar(0.70)
-        self.chat_tab_emoji_button = Pattern("pics/facebook_chat_tab_emoji_button.png").similar(0.70)
-        self.comment_icons = Pattern("pics/facebook_comment_icons.png").similar(0.70)
-        self.sampleImg1 = os.path.join(os.path.dirname(os.path.realpath(__file__)), "content", "sample_1.jpg")
+    FACEBOOK_BLUE_BAR = [
+        [os.path.join('pics', 'facebook_blue_bar.png'), 0, 0]
+    ]
 
-    def wait_for_loaded(self):
-        wait(self.fb_logo, 15)
+    FACEBOOK_SEARCH_BAR = [
+        [os.path.join('pics', 'facebook_search_bar.png'), 0, 0]
+    ]
+
+    FACEBOOK_SEARCH_ICON = [
+        [os.path.join('pics', 'facebook_search_icon.png'), 0, 0]
+    ]
+
+    FACEBOOK_FOLDING_ICON = [
+        [os.path.join('pics', 'facebook_folding_icon.png'), 0, 0]
+    ]
+
+    FACEBOOK_POST_ACTION = [
+        [os.path.join('pics', 'facebook_post_action.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_POST_ACTION = [
+        [os.path.join('pics', 'facebook_post_action.png'), 80, 0]
+    ]
+
+    FACEBOOK_SHARE_BUTTON = [
+        [os.path.join('pics', 'facebook_share_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_SHARE_MENU = [
+        [os.path.join('pics', 'facebook_share_menu.png'), 0, -12]
+    ]
+
+    FACEBOOK_POST_BUTTON = [
+        [os.path.join('pics', 'facebook_post_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_NOTIFICATION_ICON = [
+        [os.path.join('pics', 'facebook_notification_icon.png'), 0, 0]
+    ]
+
+    FACEBOOK_PERSONAL_POST_AREA = [
+        [os.path.join('pics', 'facebook_personal_post_area.png'), 0, 0]
+    ]
+
+    FACEBOOK_POST_AREA_FOCUSED = [
+        [os.path.join('pics', 'facebook_post_area_focused.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLUB_POST_AREA = [
+        [os.path.join('pics', 'facebook_club_post_area.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_CENTER_CLUB_POST_AREA = [
+        [os.path.join('pics', 'facebook_club_post_area.png'), 0, 15]
+    ]
+
+    FACEBOOK_CLICK_PHOTO_VIDEO_CLUB_POST_AREA = [
+        [os.path.join('pics', 'facebook_club_post_area.png'), -60, -35]
+    ]
+
+    FACEBOOK_CLUB_POST_AREA_UPLOAD = [
+        [os.path.join('pics', 'facebook_club_post_area_upload.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_CLUB_POST_AREA_UPLOAD = [
+        [os.path.join('pics', 'facebook_club_post_area_upload.png'), -125, 15]
+    ]
+
+    FACEBOOK_HOME_POST_AREA = [
+        [os.path.join('pics', 'facebook_home_post_area.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_CENTER_HOME_POST_AREA = [
+        [os.path.join('pics', 'facebook_home_post_area.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_PHOTO_VIDEO_HOME_POST_AREA = [
+        [os.path.join('pics', 'facebook_home_post_area.png'), -180, 50]
+    ]
+
+    FACEBOOK_HOME_POST_AREA_FOCUSED = [
+        [os.path.join('pics', 'facebook_home_post_area_focused.png'), 0, 0],
+        [os.path.join('pics', 'facebook_home_post_area_focused_dual.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLUB_DELETE_POST_BUTTON = [
+        [os.path.join('pics', 'facebook_club_delete_post_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_NON_CLUB_DELETE_POST_BUTTON = [
+        [os.path.join('pics', 'facebook_non_club_delete_post_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_NON_CLUB_POST_MARKER = [
+        [os.path.join('pics', 'facebook_non_club_post_marker.png'), 0, 0]
+    ]
+
+    FACEBOOK_NON_CLUB_DELETE_POST_MENU = [
+        [os.path.join('pics', 'facebook_non_club_delete_post_menu.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_NON_CLUB_DELETE_POST_MENU = [
+        [os.path.join('pics', 'facebook_non_club_delete_post_menu.png'), 0, -10]
+    ]
+
+    FACEBOOK_CLUB_POST_MARKER = [
+        [os.path.join('pics', 'facebook_club_post_marker.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLUB_DELETE_POST_MENU = [
+        [os.path.join('pics', 'facebook_club_delete_post_menu.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_CLUB_DELETE_POST_MENU = [
+        [os.path.join('pics', 'facebook_club_delete_post_menu.png'), 0, -10]
+    ]
+
+    FACEBOOK_NON_CLUB_POST_MENU_EDIT = [
+        [os.path.join('pics', 'facebook_non_club_post_menu_edit.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLUB_POST_HEADER = [
+        [os.path.join('pics', 'facebook_club_post_header.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLICK_CLUB_POST_HEADER = [
+        [os.path.join('pics', 'facebook_club_post_header.png'), 0, 200]
+    ]
+
+    FACEBOOK_VIDEO_STOP_ICON = [
+        [os.path.join('pics', 'facebook_video_stop_icon.png'), 0, 0]
+    ]
+
+    FACEBOOK_FEED_END_REMINDER = [
+        [os.path.join('pics', 'facebook_feed_end_reminder.png'), 0, 0]
+    ]
+
+    FACEBOOK_ACTIVITY_END_REMINDER = [
+        [os.path.join('pics', 'facebook_activity_end_reminder.png'), 0, 0]
+    ]
+
+    FACEBOOK_SAVE_BUTTON = [
+        [os.path.join('pics', 'facebook_save_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_CLUB_POST_MENU_DELETE = [
+        [os.path.join('pics', 'facebook_club_post_menu_delete.png'), 0, 0]
+    ]
+
+    FACEBOOK_CHAT_TAB_CLOSE_BUTTON = [
+        [os.path.join('pics', 'facebook_chat_tab_title_bar.png'), 43, 0]
+    ]
+
+    FACEBOOK_CHAT_TAB_EMOJI_BUTTON = [
+        [os.path.join('pics', 'facebook_chat_tab_emoji_button.png'), 0, 0]
+    ]
+
+    FACEBOOK_COMMENT_ICONS = [
+        [os.path.join('pics', 'facebook_comment_icons.png'), 0, 0]
+    ]
+
+    FACEBOOK_PHOTO_VIEWER_RIGHT_ARROW = [
+        [os.path.join('pics', 'facebook_comment_icons.png'), -340, -55]
+    ]
+
+    FACEBOOK_RIGHT_PANEL_CONTACT = [
+        [os.path.join('pics', 'facebook_contact.png'), 0, 15]
+    ]
+
+    FACEBOOK_UNDER_RIGHT_PANEL_CONTACT = [
+        [os.path.join('pics', 'facebook_contact.png'), 0, 50]
+    ]
+
+    FACEBOOK_MESSAGE_SEARCH_BAR = [
+        [os.path.join('pics', 'facebook_message_search_bar.png'), 0, 0]
+    ]
+
+    FACEBOOK_CHAT_TAB_TITLE_BAR = [
+        [os.path.join('pics', 'facebook_chat_tab_title_bar.png'), 0, 0]
+    ]
+
+    def wait_for_loaded(self, similarity=0.70):
+        """
+        Wait for facebook loaded, max 15 sec
+        @param similarity: The similarity of FACEBOOK_LOGO component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_LOGO, similarity=similarity, timeout=15)
+
+    def wait_for_close_button_loaded(self, similarity=0.70):
+        """
+        Wait for chat tab close button loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_CHAT_TAB_CLOSE_BUTTON component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON, similarity=similarity, timeout=10)
+
+    def wait_for_comment_icons_loaded(self, similarity=0.70):
+        """
+        Wait for comment icons loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_COMMENT_ICONS component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_COMMENT_ICONS, similarity=similarity, timeout=10)
+
+    def wait_for_message_search_bar(self, similarity=0.70):
+        """
+        Wait for message search bar loaded, max 10 sec
+        @param similarity: The similarity of FACEBOOK_MESSAGE_SEARCH_BAR component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_MESSAGE_SEARCH_BAR, similarity=similarity, timeout=10)
 
     def wait_for_messenger_loaded(self, similarity=0.7):
-        self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
+        """
+        Wait for facebook messenger loaded, max 15 sec
+        @param similarity: The similarity of FACEBOOK_MESSENGER_HEADER component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=facebook.FACEBOOK_MESSENGER_HEADER, similarity=similarity, timeout=15)
 
     def focus_window(self):
-        click(self.fb_logo.targetOffset(0, 15), 10)
+        """
+        Focus on facebook window
+        """
+        return self._click(action_name='Focus Window',
+                           component=facebook.FACEBOOK_LOGO_FOCUS_WINDOW, timeout=10)
 
     def post_content(self, location=None, content_type=None, input_string=None):
         if not location or not input_string or not content_type:
@@ -109,6 +285,11 @@ class facebook(WebApp):
         print('[Facebook] post_content() done.')
 
     def del_post_top(self, location=None):
+        """
+        delete top post
+        @param location:
+        @return:
+        """
         if not location:
             print "[ERROR]: Please specify the location"
             raise Exception
@@ -120,143 +301,304 @@ class facebook(WebApp):
         self.wait_del_button_vanish(location)
         print('[Facebook] del_post_top() done.')
 
-    # paste string then post
     def action_post_text(self, location, string):
+        """
+        paste string then post
+        @param location:
+        @param string:
+        @return:
+        """
         paste(ucode(string))
         self.wait_post_area_vanish(location)
         sleep(2)
-        click(self.post_button)
+        self._click(action_name='Click post button', component=facebook.FACEBOOK_POST_BUTTON)
 
-    # paste file path to file browser, wait for upload finished then post
     def action_post_upload(self, file_path):
-        type("a", Key.CTRL)
+        """
+        paste file path to file browser, wait for upload finished then post
+        @param file_path:
+        @return:
+        """
+        type("a", self.control)
         type(Key.DELETE)
         paste(file_path)
         type(Key.ENTER)
-        while exists(self.post_button) and exists(self.post_area_focused):
-            click(self.post_button)
+        while self._exists(facebook.FACEBOOK_POST_BUTTON) and self._exists(facebook.FACEBOOK_POST_AREA_FOCUSED):
+            self._click(action_name='Click post button', component=facebook.FACEBOOK_POST_BUTTON)
             sleep(1)
 
-    # paste url, wait thumbnail shown then post
     def action_post_url(self, location, url):
+        """
+        paste url, wait thumbnail shown then post
+        @param location:
+        @param url: input url string
+        @return:
+        """
         paste(url)
         self.wait_post_area_vanish(location)
         sleep(2)
-        click(self.post_button)
+        self._click(action_name='Click post button', component=facebook.FACEBOOK_POST_BUTTON)
 
-    # invoke menu of top post from club then delete post
     def action_club_del_post_top(self):
-        click(self.club_post_marker, 10)
-        wait(self.club_delete_post_menu)
-        click(self.club_delete_post_menu.targetOffset(0, -10))
-        wait(self.club_delete_post_button, 10)
-        click(self.club_delete_post_button)
+        """
+        invoke menu of top post from club then delete post
+        @return:
+        """
+        self._click(action_name='Click club post marker',
+                    component=facebook.FACEBOOK_CLUB_POST_MARKER, timeout=10)
+        self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_DELETE_POST_MENU)
+        self._click(action_name='Click click club delete post menu',
+                    component=facebook.FACEBOOK_CLICK_CLUB_DELETE_POST_MENU)
+        self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_DELETE_POST_BUTTON, similarity=0.85, timeout=10)
+        self._click(action_name='Click click club delete post button',
+                    component=facebook.FACEBOOK_CLUB_DELETE_POST_BUTTON)
 
-    # invoke menu of top post from home or personal page then delete post
     def action_non_club_del_post_top(self):
-        click(self.non_club_post_marker)
-        wait(self.non_club_delete_post_menu)
-        click(self.non_club_delete_post_menu.targetOffset(0, -10))
-        wait(self.non_club_delete_post_button, 10)
-        click(self.non_club_delete_post_button)
+        """
+        invoke menu of top post from home or personal page then delete post
+        @return:
+        """
+        self._click(action_name='Click non club post marker',
+                    component=facebook.FACEBOOK_NON_CLUB_POST_MARKER)
+        self._wait_for_loaded(component=facebook.FACEBOOK_NON_CLUB_DELETE_POST_MENU)
+        self._click(action_name='Click click non club post menu',
+                    component=facebook.FACEBOOK_CLICK_NON_CLUB_DELETE_POST_MENU)
+        self._wait_for_loaded(component=facebook.FACEBOOK_NON_CLUB_DELETE_POST_BUTTON, timeout=10)
+        self._click(action_name='Click click non club delete post button',
+                    component=facebook.FACEBOOK_NON_CLUB_DELETE_POST_BUTTON)
 
     def wait_post_area(self, location=None):
+        """
+        wait for post area
+        @param location:
+        @return:
+        """
         if not location:
             print "[ERROR]: Please specify the location"
             raise Exception
 
         if location == 'home':
-            wait(self.home_post_area)
+            self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA)
         elif location == 'club':
-            wait(self.club_post_area)
+            self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_POST_AREA)
         elif location == 'personal':
-            wait(self.personal_post_area)
+            self._wait_for_loaded(component=facebook.FACEBOOK_PERSONAL_POST_AREA)
 
     def wait_post_area_vanish(self, location=None):
+        """
+        wait for post area vanish
+        @param location:
+        @return:
+        """
         if not location:
             print "[ERROR]: Please specify the location"
             raise Exception
 
         if location == 'home':
-            waitVanish(self.home_post_area)
+            pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA)
+            self.wait_pattern_for_vanished(pattern=pattern)
         elif location == 'club':
-            waitVanish(self.club_post_area)
+            pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_POST_AREA)
+            self.wait_pattern_for_vanished(pattern=pattern)
         elif location == 'personal':
-            waitVanish(self.personal_post_area)
+            pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_PERSONAL_POST_AREA)
+            self.wait_pattern_for_vanished(pattern=pattern)
 
     def wait_del_button_vanish(self, location=None):
+        """
+        wait for del button vanish
+        @param location:
+        @return:
+        """
         if not location:
             print "[ERROR]: Please specify the location"
             raise Exception
 
         if location == 'club':
-            waitVanish(self.club_delete_post_button)
+            club_delete_post_button_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_DELETE_POST_BUTTON, similarity=0.85)
+            self.wait_pattern_for_vanished(pattern=club_delete_post_button_pattern)
         else:
-            waitVanish(self.non_club_delete_post_button)
+            non_club_delete_post_button_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_NON_CLUB_DELETE_POST_BUTTON)
+            self.wait_pattern_for_vanished(pattern=non_club_delete_post_button_pattern)
 
-    # base on post type to click different areas from home
     def click_post_area_home(self, type='center'):
+        """
+        base on post type to click different areas from home
+        @param type:
+        @return:
+        """
+        location = None
         if type == 'center':
-            click(self.home_post_area)
-            wait(self.home_post_area_focused)
+            location = self._click(action_name='Click center home post area',
+                                   component=facebook.FACEBOOK_CLICK_CENTER_HOME_POST_AREA)
+            self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA_FOCUSED)
         elif type == 'photo_video':
-            click(self.home_post_area.targetOffset(-180, 50))
-            waitVanish(self.home_post_area, 10)
+            location = self._click(action_name='Click photo video home post area',
+                                   component=facebook.FACEBOOK_CLICK_PHOTO_VIDEO_HOME_POST_AREA)
+            home_post_area_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_HOME_POST_AREA)
+            self.wait_pattern_for_vanished(pattern=home_post_area_pattern)
+        return location
 
-    # base on post type to click different areas from club
     def click_post_area_club(self, type='center'):
+        """
+        base on post type to click different areas from club
+        @param type:
+        @return:
+        """
         if type == 'center':
-            click(self.club_post_area.targetOffset(0, 15))
-            wait(self.post_area_focused)
+            self._click(action_name='Click center club post area',
+                        component=facebook.FACEBOOK_CLICK_CENTER_CLUB_POST_AREA)
+            self._wait_for_loaded(component=facebook.FACEBOOK_POST_AREA_FOCUSED)
         elif type == 'photo_video':
-            click(self.club_post_area.targetOffset(-60, -35))
-            wait(self.club_post_area_upload)
-            click(self.club_post_area_upload.targetOffset(-125, 15))
-            waitVanish(self.club_post_area_upload, 10)
+            self._click(action_name='Click photo video club post area',
+                        component=facebook.FACEBOOK_CLICK_PHOTO_VIDEO_CLUB_POST_AREA)
+            self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_POST_AREA_UPLOAD)
+            self._click(action_name='Click photo video club post area',
+                        component=facebook.FACEBOOK_CLICK_CLUB_POST_AREA_UPLOAD)
+            club_post_area_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_CLUB_POST_AREA_UPLOAD)
+            self.wait_pattern_for_vanished(pattern=club_post_area_pattern)
 
     def click_post_area_personal(self):
-        click(self.personal_post_area)
-        wait(self.post_area_focused)
+        """
+        click personal post area
+        @return:
+        """
+        self._click(action_name='Click personal post area',
+                    component=facebook.FACEBOOK_PERSONAL_POST_AREA)
+        self._wait_for_loaded(component=facebook.FACEBOOK_POST_AREA_FOCUSED)
 
-    # extend a post which is folded
     def extend_post(self):
-        click(self.folding_icon)
-        waitVanish(self.folding_icon)
+        """
+        extend a post which is folded
+        @return:
+        """
+        self._click(action_name='Click folding icon',
+                    component=facebook.FACEBOOK_FOLDING_ICON)
+        folding_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_FOLDING_ICON)
+        self.wait_pattern_for_vanished(pattern=folding_pattern)
 
-    # invoke message list from notification bar
     def invoke_messages(self):
-        click(self.notification_icon)
-        waitVanish(self.notification_icon)
+        """
+        invoke message list from notification bar
+        @return:
+        """
+        self._click(action_name='Click notification icon',
+                    component=facebook.FACEBOOK_NOTIFICATION_ICON)
+        notification_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_NOTIFICATION_ICON)
+        self.wait_pattern_for_vanished(pattern=notification_pattern)
 
     def search_content(self, keyword):
-        click(self.search_bar)
+        """
+        click search bar and paste keyword in it
+        @param keyword:
+        @return:
+        """
+        self._click(action_name='Click search bar',
+                    component=facebook.FACEBOOK_SEARCH_BAR)
         paste(keyword)
-        wait(self.search_icon)
+        self._wait_for_loaded(component=facebook.FACEBOOK_SEARCH_ICON)
 
-    # share an enlarged post, which has previewed pop up screen to post
     def share_enlarged_post(self):
-        wait(self.post_action)
-        click(self.post_action.targetOffset(80, 0))
-        waitVanish(self.post_action)
-        click(self.post_button)
-        waitVanish(self.post_button)
+        """
+        share an enlarged post, which has previewed pop up screen to post
+        @return:
+        """
+        self._click(action_name='Click post action',
+                    component=facebook.FACEBOOK_CLICK_POST_ACTION,
+                    wait_component=facebook.FACEBOOK_POST_ACTION)
+        post_action_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_POST_ACTION)
+        self.wait_pattern_for_vanished(pattern=post_action_pattern)
+        self._click(action_name='Click Post Button',
+                    component=facebook.FACEBOOK_POST_BUTTON)
+        post_button_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_POST_BUTTON)
+        self.wait_pattern_for_vanished(pattern=post_button_pattern)
 
-    # share post, e.g., url link or video
     def share_post(self):
-        click(self.share_button)
-        click(self.share_menu.targetOffset(0, -12))
-        waitVanish(self.share_button)
-        click(self.post_button)
-        waitVanish(self.post_button)
+        """
+        share post, e.g., url link or video
+        @return:
+        """
+        self._click(action_name='Click Share Button',
+                    component=facebook.FACEBOOK_SHARE_BUTTON)
+        self._click(action_name='Click Share Menu',
+                    component=facebook.FACEBOOK_CLICK_SHARE_MENU)
+        share_button_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_SHARE_BUTTON)
+        self.wait_pattern_for_vanished(pattern=share_button_pattern)
+        self._click(action_name='Click Post Button',
+                    component=facebook.FACEBOOK_POST_BUTTON)
+        post_button_pattern, _ = self._wait_for_loaded(component=facebook.FACEBOOK_POST_BUTTON)
+        self.wait_pattern_for_vanished(pattern=post_button_pattern)
 
-    # return all content from file
     def get_text_from_file(self, file_path):
+        """
+        return all content from file
+        @param file_path: the file path you want to read all content
+        @return:
+        """
         f = open(file_path, 'r')
         content = ucode(f.read())
         f.close()
         return content
 
-    # focus on comment box of any post
     def focus_comment_box(self):
-        wait(self.post_action)
-        click(self.post_action)
+        """
+        focus on comment box of any post
+        """
+        return self._click(action_name='Focus comment box',
+                           component=facebook.FACEBOOK_POST_ACTION,
+                           wait_component=facebook.FACEBOOK_POST_ACTION)
+
+    def il_click_close_chat_tab(self, width, height):
+        """
+        Click close button on chat tab.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Close Chat Tab Button',
+                              component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON,
+                              width=width,
+                              height=height,
+                              wait_component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+
+    def click_close_chat_tab(self):
+        """
+        Click close button on chat tab.
+        """
+        return self._click(action_name='Click Close Chat Tab Button',
+                           component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
+
+    def click_right_panel_contact(self):
+        """
+            Click right panel contact to open chat tab.
+            """
+        return self._click(action_name='Click Right Panel Contact',
+                           component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT)
+
+    def il_click_open_chat_tab(self, width, height):
+        """
+        Click right panel contact to open chat tab.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Open Chat Tab',
+                              component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT,
+                              width=width,
+                              height=height)
+
+    def il_click_open_chat_tab_emoji_dialog(self, width, height):
+        """
+        Click emoji button on chat tab to open dialog.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Open Chat Tab Emoji',
+                              component=facebook.FACEBOOK_CHAT_TAB_EMOJI_BUTTON,
+                              width=width,
+                              height=height)
+
+    def il_click_photo_viewer_right_arrow(self, width, height):
+        """
+        Click photo viewer right arrow button to load next pic.
+        (Input Latency)
+        """
+        return self._il_click(action_name='Click Photo Viewer Right Arrow',
+                              component=facebook.FACEBOOK_PHOTO_VIEWER_RIGHT_ARROW,
+                              width=width,
+                              height=height)

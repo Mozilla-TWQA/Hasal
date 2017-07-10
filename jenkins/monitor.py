@@ -32,9 +32,9 @@ for check_key in DEFAULT_CHECK_ENV_KEY_LIST:
         sys.exit(1)
 
 # init variables
-current_build_no = os.environ["BUILD_NUMBER"]
+current_build_tag = os.environ["BUILD_TAG"]
 job_log_full_path = os.environ["OUTPUTLOC"]  # hasal/job.log
-agent_trigger_conf_fn = current_build_no + ".json"
+agent_trigger_conf_fn = current_build_tag + ".json"
 agent_trigger_conf_fp = os.path.join(os.environ["HASAL_WORKSPACE"], "agent", agent_trigger_conf_fn)
 jenkins_conf_path = os.path.join(os.environ["WORKSPACE"], agent_trigger_conf_fn)  # slave machine's jenkins folder
 jenkins_job_log_path = os.path.join(os.environ["WORKSPACE"], os.path.basename(os.environ["OUTPUTLOC"]))
@@ -60,10 +60,10 @@ while True:
     agent_status_file_list = os.listdir(agent_status_dir_path)
     print "DEBUG: current agent status file list [%s]" % agent_status_file_list
     job_id_list = []
-    for job_id in [id.split(".")[0] for id in agent_status_file_list]:
+    for job_id in [os.path.splitext(id)[0] for id in agent_status_file_list]:
         if job_id not in job_id_list:
             job_id_list.append(job_id)
-    if current_build_no not in job_id_list:
+    if current_build_tag not in job_id_list:
         job_start_retry += 1
         print "Can't find the job status file after %s seconds" % str(DEFAULT_SLEEP_TIME * DEFAULT_JOB_START_TIMEOUT)
         if job_start_retry > DEFAULT_JOB_START_TIMEOUT:
@@ -71,7 +71,7 @@ while True:
             sys.exit(1)
         time.sleep(DEFAULT_SLEEP_TIME)
     else:
-        job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == current_build_no]
+        job_status_list = [os.path.splitext(status)[1].split(os.path.extsep)[1] for status in agent_status_file_list if os.path.splitext(status)[0] == current_build_tag]
         job_status_list.sort()
         if len(job_status_list) > 0:
             current_job_status = job_status_list[-1]
@@ -81,7 +81,7 @@ while True:
             if job_start_flag == 0:
                 # init steps after job status is begin
                 # print out current agent trigger configuration content
-                print "INFO: current job [%s] status is [%s], status chain [%s]" % (current_build_no, current_job_status, job_status_list)
+                print "INFO: current job [%s] status is [%s], status chain [%s]" % (current_build_tag, current_job_status, job_status_list)
                 with open(agent_trigger_conf_fp) as fh:
                     conf = json.load(fh)
                     for key, value in conf.items():
@@ -103,7 +103,7 @@ while True:
         elif current_job_status == DEFAULT_AGENT_JOB_STATUS['FINISH']:
             # print out job.log
             job_log_current_lineno = printlog(job_log_full_path, job_log_current_lineno)
-            print "INFO: job [%s] finished!" % current_build_no
+            print "INFO: job [%s] finished!" % current_build_tag
 
             # move job.log to backup folder
             if os.path.exists(jenkins_job_log_path):
@@ -113,7 +113,7 @@ while True:
                 shutil.move(job_log_full_path, jenkins_job_log_path)
             break
         else:
-            print "WARNING: job raise exception, the exception log is [%s]" % (current_build_no + "." + current_job_status)
+            print "WARNING: job raise exception, the exception log is [%s]" % (current_build_tag + os.path.extsep + current_job_status)
 
             # print out job.log
             job_log_current_lineno = printlog(job_log_full_path, job_log_current_lineno)

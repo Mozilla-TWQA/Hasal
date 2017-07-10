@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import gmail
 
@@ -18,15 +17,13 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(False)
+        self.common.infolog_enable(False)
         Settings.MoveMouseDelay = 0
 
         # Prepare
         app = gmail.gMail()
-        sample2_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH,
-                                         self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-        sample2_file_path = sample2_file_path.replace(os.path.splitext(sample2_file_path)[1], '.png')
+        sample1_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_file_path = sample1_file_path.replace(os.path.splitext(sample1_file_path)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
@@ -49,13 +46,15 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Customized Region
         customized_region_name = 'end'
-        type_area = wait('type_area.png', 10)
+        _, reply_btn_region = app.wait_for_component_display(app.GMAIL_TYPE_FOR_REPLY, similarity=0.8)
+        type_area = self.tuning_region(reply_btn_region, x_offset=13, h_offset=50)
         self.set_override_region_settings(customized_region_name, type_area)
         sleep(2)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
-        screenshot, t1 = app.il_type('a', capture_width, capture_height, wait_component=app.GMAIL_SEND)
+        screenshot, t1 = app.il_type('a', capture_width, capture_height,
+                                     wait_component=(app.GMAIL_TYPE_FOR_REPLY + app.GMAIL_SEND))
 
         # In normal condition, a should appear within 100ms,
         # but if lag happened, that could lead the show up after 100 ms,
@@ -70,10 +69,10 @@ class Case(basecase.SikuliInputLatencyCase):
         app.click_reply_del_btn()
 
         # Write timestamp
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
         # Write the snapshot image
-        shutil.move(screenshot, sample2_file_path)
+        shutil.move(screenshot, sample1_file_path)
 
 
 case = Case(sys.argv)

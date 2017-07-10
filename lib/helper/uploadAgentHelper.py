@@ -6,7 +6,7 @@ import urllib2
 import platform
 import desktopHelper
 import videoHelper
-from datetime import date
+from datetime import datetime
 from ..common.pyDriveUtil import PyDriveUtil
 from ..common.environment import Environment
 from ..common.logConfig import get_logger
@@ -40,7 +40,7 @@ class UploadAgent(object):
 
         # convert test comment
         if self.test_comment == "<today>":
-            self.test_comment_str = date.today().strftime("%Y-%m-%d")
+            self.test_comment_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
         else:
             self.test_comment_str = self.test_comment.strip()
 
@@ -48,7 +48,8 @@ class UploadAgent(object):
         url_format = "http://%s:%s/%s"
         if api_root is None:
             api_root = self.svr_config["project_name"]
-        path_str = "/".join([api_root, sys.platform, self.test_target, self.test_comment_str])
+        os_str = platform.system().strip() + "_" + platform.release().strip()
+        path_str = "/".join([api_root, os_str, self.test_target, self.test_comment_str])
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
     def upload_register_data(self, input_suite_fp, test_type, perfherder_suite_name=None):

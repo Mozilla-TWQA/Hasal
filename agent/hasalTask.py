@@ -5,7 +5,7 @@ import json
 import tarfile
 import zipfile
 import shutil
-import subprocess
+from lib.thirdparty.tee import system2
 
 
 class HasalTask(object):
@@ -26,18 +26,6 @@ class HasalTask(object):
     JENKINS_SUITE_NAME = "jenkins_suite.txt"
     DEFAULT_INDEX_CONFIG_NAME = "inputLatencyAnimationDctGenerator.json"
 
-    # this class is designed for output to the terminal and log at same time
-    class Unbuffered:
-        def __init__(self, stream, log_fh):
-            self.stream = stream
-            self.log_fh = log_fh
-
-        def write(self, data):
-            self.stream.write(data)
-            if not self.log_fh:
-                self.log_fh.write(data)
-                self.log_fh.flush()
-
     def __init__(self, name, **kwargs):
         self.name = name
         if "path" in kwargs:
@@ -45,10 +33,13 @@ class HasalTask(object):
         self.read_configuration(**kwargs)
 
         # init variables
-        self.DEFAULT_JOB_LOG_FN = self.configurations.get('BUILD_NUMBER', "job") + ".log"
-        self.BUILD_NO = self.configurations.get('BUILD_NUMBER', "0")
+        self.DEFAULT_JOB_LOG_FN = self.configurations.get('BUILD_TAG', "jenkins-unknown-0") + ".log"
+        self.BUILD_TAG = self.configurations.get('BUILD_TAG', 'jenkins-unknown-0')
         self.CURRENT_WORKING_DIR = os.path.abspath(self.configurations.get('HASAL_WORKSPACE', os.getcwd()))
         self.DEFAULT_CONFIG_DP = os.path.join(self.CURRENT_WORKING_DIR, self.DEFAULT_CONFIG_DN)
+
+        # lambda function
+        self.str2bool = lambda x: x.lower() in ['true', 'yes', 'y', '1', 'ok']
 
     def update(self, **kwargs):
         if 'name' in kwargs:
@@ -79,10 +70,9 @@ class HasalTask(object):
         output_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.JENKINS_CONFIG_NAME)
         with open(default_config_fp) as fh:
             config_data = json.load(fh)
-        config_data['enable'] = self.configurations.get('ENABLE_ONLINE', False).lower() == 'true'
+        config_data['enable'] = self.str2bool(self.configurations.get('ENABLE_ONLINE', "false"))
         config_data['perfherder-revision'] = self.configurations.get('PERFHERDER_REVISION', "")
         config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER_PKG_PLATFORM', "")
-        config_data['jenkins-build-no'] = int(self.BUILD_NO)
         config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER_SUITE_NAME', "")
         config_data['svr-config']['svr_addr'] = self.configurations.get('SVR_ADDR', "127.0.0.1")
         config_data['svr-config']['svr_port'] = self.configurations.get('SVR_PORT', "1234")
@@ -99,11 +89,11 @@ class HasalTask(object):
             config_data = json.load(fh)
         config_data['max-run'] = int(self.configurations.get('MAX_RUN', 30))
         config_data['max-retry'] = int(self.configurations.get('MAX_RETRY', 15))
-        config_data['advance'] = self.configurations.get('ENABLE_ADVANCE', False).lower() == 'true'
+        config_data['advance'] = self.str2bool(self.configurations.get('ENABLE_ADVANCE', "false"))
         config_data['comment'] = self.configurations.get('EXEC_COMMENT', "<today>")
         config_data['exec-suite-fp'] = self.create_suite_file()
-        config_data['output-result-ipynb-file'] = self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', False).lower() == 'true'
-        config_data['output-result-video-file'] = self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', True).lower() == 'true'
+        config_data['output-result-ipynb-file'] = self.str2bool(self.configurations.get('OUTPUT_RESULT_IPYNB_FILE', "false"))
+        config_data['output-result-video-file'] = self.str2bool(self.configurations.get('OUTPUT_RESULT_VIDEO_FILE', "true"))
         with open(output_config_fp, 'w') as write_fh:
             json.dump(config_data, write_fh)
         return output_config_fp
@@ -155,6 +145,8 @@ class HasalTask(object):
         else:
             firefox_fp = self.FIREFOX_BIN_MAC_FP
         # Create and check backup
+        # Move default firefox to backup folder, and we want to always keep one copy of default firefox package,
+        # so we won't always replace the backup one.
         backup_path = firefox_fp + ".bak"
         if os.path.exists(backup_path):
             if os.path.exists(firefox_fp):
@@ -163,7 +155,8 @@ class HasalTask(object):
                 else:
                     shutil.rmtree(firefox_fp)
         else:
-            os.rename(firefox_fp, backup_path)
+            if os.path.exists(firefox_fp):
+                os.rename(firefox_fp, backup_path)
 
         if sys.platform == "linux2":
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
@@ -210,9 +203,6 @@ class HasalTask(object):
         if os.path.exists(self.DEFAULT_JOB_LOG_FN):
             os.remove(self.DEFAULT_JOB_LOG_FN)
             print "WARNING: job.log [%s] exist, removed right now!" % self.DEFAULT_JOB_LOG_FN
-        self.log_fh = open(self.DEFAULT_JOB_LOG_FN, "w+")
-        sys.stdout = self.Unbuffered(sys.stdout, self.log_fh)
-        sys.stderr = self.Unbuffered(sys.stderr, self.log_fh)
 
         # kill legacy process
         if sys.platform == "linux2":
@@ -233,17 +223,13 @@ class HasalTask(object):
             os.mkdir(self.DEFAULT_AGENT_STATUS_DIR)
 
     def touch_status_file(self, status):
-        current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_NO + "." + status)
+        current_status_fp = os.path.join(self.DEFAULT_AGENT_STATUS_DIR, self.BUILD_TAG + "." + status)
         with open(current_status_fp, 'w') as write_fh:
             write_fh.write(" ")
 
     def teardown_job(self):
         # touch finish status
         self.touch_status_file(self.DEFAULT_AGENT_JOB_STATUS['FINISH'])
-        if not self.log_fh.closed:
-            sys.stdout = sys.stdout
-            sys.stderr = sys.stderr
-            self.log_fh.close()
 
     def run(self):
         # clean up the environment
@@ -261,9 +247,10 @@ class HasalTask(object):
         print "INFO: generate new config for Jenkins running Hasal"
         cmd_list = self.generate_command_list()
         print "INFO: start to trigger runtest.py"
-        print " ".join(cmd_list)
+        str_exec_cmd = " ".join(cmd_list)
+        print str_exec_cmd
         try:
-            subprocess.call(cmd_list, env=os.environ.copy())
+            system2(str_exec_cmd, logger=self.DEFAULT_JOB_LOG_FN, stdout=True, exec_env=os.environ.copy())
         except Exception as e:
             print e.message
 

@@ -16,7 +16,7 @@ sleep(2)
 fb.wait_for_loaded()
 fb.focus_window()
 count = 0
-while not exists(fb.activity_end_reminder, 0.3):
+while not fb.exists(fb.FACEBOOK_ACTIVITY_END_REMINDER, timeout=0.3):
     sleep(0.3)
     type(Key.PAGE_DOWN)
     sleep(0.3)

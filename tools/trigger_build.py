@@ -16,6 +16,7 @@ import json
 import copy
 import urllib2
 import requests
+import platform
 
 from thclient import TreeherderClient
 from docopt import docopt
@@ -35,7 +36,7 @@ class TriggerBuild(object):
     ENV_KEY_SKIP_STATUS_CHECK = "SKIP_STATUS_CHECK"
     ENV_KEY_OUTPUT_DP = "OUTPUT_DP"
     ENV_KEY_BUILD_HASH = "BUILD_HASH"
-    ENV_KEY_BUILD_NO = "BUILD_NUMBER"
+    ENV_KEY_BUILD_TAG = "BUILD_TAG"
     REPO_NAME = {'TRY': "try", "NIGHTLY": "nightly"}
     DEFAULT_AGENT_CONF_DIR_LINUX = "/home/hasal/Hasal/agent"
     DEFAULT_AGENT_CONF_DIR_MAC = "/Users/hasal/Hasal/agent"
@@ -89,11 +90,11 @@ class TriggerBuild(object):
             self.output_dp = os.getcwd()
 
         # assign build number to variable
-        if self.ENV_KEY_BUILD_NO in input_env_data.keys():
-            self.jenkins_build_no = input_env_data[self.ENV_KEY_BUILD_NO]
+        if self.ENV_KEY_BUILD_TAG in input_env_data.keys():
+            self.jenkins_build_tag = input_env_data[self.ENV_KEY_BUILD_TAG]
         else:
-            self.jenkins_build_no = 0
-        self.HASAL_JSON_FN = str(self.jenkins_build_no) + ".json"
+            self.jenkins_build_tag = "jenkins-unknown-0"
+        self.HASAL_JSON_FN = str(self.jenkins_build_tag) + ".json"
 
     def check_agent_status(self):
         for i in range(0, self.DEFAULT_AGENT_JOB_WACTH_TIMEOUT):
@@ -106,8 +107,8 @@ class TriggerBuild(object):
             print "DEBUG: current agent status file list [%s]" % agent_status_file_list
 
             # get latest agent id
-            job_id_list = [int(id.split(".")[0]) for id in agent_status_file_list]
-            job_id_list.sort()
+            job_id_list = [os.path.splitext(id)[0] for id in agent_status_file_list]
+            job_id_list.sort(key=lambda x: int(x.rsplit('-', 1)[1]))
             if len(job_id_list) > 0:
                 current_id = job_id_list[-1]
             else:
@@ -115,7 +116,7 @@ class TriggerBuild(object):
 
             # get latest agent status
             # agent status will sort by alphabetical, so the last one will be the latest status
-            job_status_list = [status.split(".")[1] for status in agent_status_file_list if status.split(".")[0] == str(current_id)]
+            job_status_list = [os.path.splitext(status)[1].split(os.path.extsep)[1] for status in agent_status_file_list if os.path.splitext(status)[0] == str(current_id)]
             job_status_list.sort()
             if len(job_status_list) > 0:
                 current_job_status = job_status_list[-1]
@@ -147,23 +148,30 @@ class TriggerBuild(object):
             print "ERROR: something wrong with your build download process, please check the setting and job status."
             sys.exit(1)
         else:
+            current_platform_release = platform.release().strip()
             # generate hasal.json data
             with open(download_json_fp) as dl_json_fh:
                 dl_json_data = json.load(dl_json_fh)
                 perfherder_revision = dl_json_data['moz_source_stamp']
                 build_pkg_platform = dl_json_data['moz_pkg_platform']
                 # mapping the perfherder pkg platform to nomenclature of builddot
-                builddot_mapping_platform = {"linux-i686": "linux32",
-                                             "linux-x86_64": "linux64",
-                                             "mac": "osx-10-10",
-                                             "win32": "windows7-32",
-                                             "win64": "windows8-64"}
+                builddot_mapping_platform = {"linux-i686": {"_": "linux32"},
+                                             "linux-x86_64": {"_": "linux64"},
+                                             "mac": {"_": "osx-10-10"},
+                                             "win32": {"_": "windows7-32"},
+                                             "win64": {"_": "windows8-64",
+                                                       "7": "windows8-64",
+                                                       "10": "windows10-64"}
+                                             }
                 with open(self.HASAL_JSON_FN, "w") as write_fh:
                     write_data = copy.deepcopy(self.env_data)
                     write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
                     write_data['FX-DL-JSON-PATH'] = download_json_fp
                     write_data['PERFHERDER_REVISION'] = perfherder_revision
-                    write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]
+                    if current_platform_release in builddot_mapping_platform[build_pkg_platform].keys():
+                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform][current_platform_release]
+                    else:
+                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
                     json.dump(write_data, write_fh)
 
             if os.path.exists(os.path.join(os.getcwd(), self.HASAL_JSON_FN)):

@@ -155,6 +155,7 @@ class WebApp(object):
         @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
         @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        @return: The object pattern and the match region object. (pattern, match_obj).
         """
         is_exists = False
         p = None
@@ -169,9 +170,18 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     is_exists = True
                     break
-                p = pic
-        wait(p, wait_sec)
-        return p
+        obj = wait(p, wait_sec)
+        return p, obj
+
+    def wait_for_component_display(self, component, similarity=0.7, timeout=10):
+        """
+        Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
+        @param component: Specify the wait component, which is an array of [Sikuli pattern, offset-x, offset-y].
+        @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
+        @return: The object pattern and the match region object. (pattern, match_obj).
+        """
+        return self._wait_for_loaded(component, similarity=similarity, timeout=timeout)
 
     def wait_pattern_for_vanished(self, pattern, timeout=10):
         """
@@ -235,6 +245,32 @@ class WebApp(object):
                         self.common.system_print(action_name)
                     loc = find(p).getTarget()
                     click(p)
+                    return loc
+        raise Exception('Cannot {action}'.format(action=action_name))
+
+    def _doubleclick(self, action_name, component, similarity=0.70, timeout=10, wait_component=None):
+        """
+        Double click the component base on the specify image, offset, and similarity.
+        @param action_name: The action name, which will be printed to stdout before click.
+        @param component: The component you want to click. ex: GMAIL_REPLY.
+        @param similarity: The similarity of image. Default: 0.70.
+        @return: location
+        """
+        # wait component exists
+        if wait_component:
+            self._wait_for_loaded(wait_component, similarity=similarity, timeout=timeout)
+
+        # get the loop time base on the pattern amount of component, min loop time is 10 times
+        wait_sec = 0.5
+        loop_time = self._get_loop_times(object_amount=len(component), total_second=timeout, each_check_second=wait_sec)
+        for counter in range(loop_time):
+            for pic, offset_x, offset_y in component:
+                p = Pattern(pic).similar(similarity).targetOffset(offset_x, offset_y)
+                if exists(p, wait_sec):
+                    if not self.common.is_infolog_enabled():
+                        self.common.system_print(action_name)
+                    loc = find(p).getTarget()
+                    doubleClick(p)
                     return loc
         raise Exception('Cannot {action}'.format(action=action_name))
 

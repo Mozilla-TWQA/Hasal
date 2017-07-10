@@ -147,6 +147,10 @@ class BaseGenerator(object):
         start_fp = start_event.get('file', None)
         end_fp = end_event.get('file', None)
         if not start_fp or not end_fp:
+            logger.warning("Cannot get file path of either start event or end event, stop output video.")
+            return None
+        elif start_fp > end_fp:
+            logger.warning("Start point is behind End point, stop output video.")
             return None
         else:
             if os.path.exists(os.path.join(os.path.dirname(start_fp), self.global_config['default-search-target-browser'])):
@@ -154,6 +158,7 @@ class BaseGenerator(object):
             else:
                 source_dp = os.path.dirname(start_fp)
             img_list = os.listdir(source_dp)
+            img_list = [item for item in img_list if os.path.isfile(os.path.join(source_dp, item))]
             img_list.sort(key=CommonUtil.natural_keys)
             start_fn = os.path.basename(start_fp)
             end_fn = os.path.basename(end_fp)
@@ -270,18 +275,31 @@ class BaseGenerator(object):
     @staticmethod
     def output_suite_result(global_config, index_config, exec_config, output_result_dir):
         # generate ipynb file
-        if exec_config['output-result-ipynb-file']:
-            BaseGenerator.output_ipynb_file(global_config, index_config, output_result_dir)
+        try:
+            if CommonUtil.get_value_from_config(config=exec_config, key='output-result-ipynb-file'):
+                BaseGenerator.output_ipynb_file(global_config, index_config, output_result_dir)
+        except Exception as e:
+            logger.error('Cannot output ipynb file. Error: {exp}'.format(exp=e))
 
         # move statistics file to result folder
-        running_statistics_fp = os.path.join(os.getcwd(), global_config['default-running-statistics-fn'])
-        if os.path.exists(running_statistics_fp):
-            shutil.move(running_statistics_fp, output_result_dir)
+        try:
+            stat_file_name = CommonUtil.get_value_from_config(config=global_config, key='default-running-statistics-fn')
+            if stat_file_name:
+                running_statistics_fp = os.path.join(os.getcwd(), stat_file_name)
+                if os.path.exists(running_statistics_fp):
+                    shutil.move(running_statistics_fp, output_result_dir)
+        except Exception as e:
+            logger.error('Cannot move statistics file to result folder. Error: {exp}'.format(exp=e))
 
         # copy current result file to result folder
-        result_fp = os.path.join(os.getcwd(), global_config['default-result-fn'])
-        if os.path.exists(result_fp):
-            shutil.copy(result_fp, output_result_dir)
+        try:
+            result_file_name = CommonUtil.get_value_from_config(config=global_config, key='default-result-fn')
+            if result_file_name:
+                result_fp = os.path.join(os.getcwd(), result_file_name)
+                if os.path.exists(result_fp):
+                    shutil.copy(result_fp, output_result_dir)
+        except Exception as e:
+            logger.error('Cannot copy result file to result folder. Error: {exp}'.format(exp=e))
 
     @staticmethod
     def get_event_data_in_result_list(event_result_list, event_name):

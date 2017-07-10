@@ -5,7 +5,6 @@ INPUT_LIB_PATH = sys.argv[1]
 sys.path.append(INPUT_LIB_PATH)
 
 import os
-import common
 import basecase
 import facebook
 
@@ -18,34 +17,57 @@ class Case(basecase.SikuliInputLatencyCase):
 
     def run(self):
         # Disable Sikuli action and info log
-        com = common.General()
-        com.infolog_enable(0)
+        self.common.infolog_enable(False)
+        self.common.set_mouse_delay(0)
 
-        ff = browser.Firefox()
-        fb = facebook.facebook()
-
-        ff.clickBar()
-        ff.enterLink(self.INPUT_TEST_TARGET)
-        wait(fb.comment_icons, 15)
-
-        sample2_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-        sleep(2)
+        # Prepare
+        app = facebook.facebook()
+        sample1_fp = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_fp = sample1_fp.replace(os.path.splitext(sample1_fp)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        # Set mouse move delay time to 0 for immediately action requirement
-        Settings.MoveMouseDelay = 0
-        hover(fb.comment_icons.targetOffset(-340, -40))
-        mouseDown(Button.LEFT)
-        capimg2 = capture(0, 0, capture_width, capture_height)
-        t1 = time.time()
+        # Launch browser
+        ff = browser.Firefox()
 
-        com.system_print('[log] Mouse Click - Button Up')
-        mouseUp(Button.LEFT)
+        # Access link and wait
+        ff.clickBar()
+        ff.enterLink(self.INPUT_TEST_TARGET)
+        _, obj = app.wait_for_comment_icons_loaded()
+
+        # Wait for stable
+        sleep(2)
+
+        # PRE ACTIONS
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        # part region of search suggestion list
+        compare_area = self.tuning_region(obj, x_offset=-1060, y_offset=-340, w_offset=715, h_offset=570)
+        pattern = capture(compare_area)
+        self.set_override_region_settings(customized_region_name, compare_area)
+
+        # Record T1, and capture the snapshot image
+        # Input Latency Action
+        loc, screenshot, t1 = app.il_click_photo_viewer_right_arrow(capture_width, capture_height)
+
+        # In normal condition, a should appear within 100ms,
+        # but if lag happened, that could lead the show up after 100 ms,
+        # and that will cause the calculation of AIL much smaller than expected.
         sleep(0.1)
+
+        # Record T2
         t2 = time.time()
-        com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
-        shutil.move(capimg2, sample2_fp.replace(os.path.splitext(sample2_fp)[1], '.png'))
+
+        # POST ACTIONS
+        app.wait_pattern_for_vanished(pattern=pattern)
+
+        # Write timestamp
+        self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
+
+        # Write the snapshot image
+        shutil.move(screenshot, sample1_fp)
 
 
 case = Case(sys.argv)

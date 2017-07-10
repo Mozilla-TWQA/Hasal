@@ -27,11 +27,14 @@
     "intl.accept_languages": "en-US, en",
     "gfx.downloadable_fonts.otl_validation": false,
     "browser.urlbar.daysBeforeHidingSuggestionsPrompt": 0,
-    "browser.urlbar.timesBeforeHidingSuggestionsHint": 0
+    "browser.urlbar.timesBeforeHidingSuggestionsHint": 0,
+    "browser.crashReports.unsubmittedCheck.enabled": false,
+    "browser.tabs.crashReporting.sendReport": false,
+    "dom.ipc.plugins.flash.subprocess.crashreporter.enabled": false
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
-    "filename": "cookies_gsuite_fb.sqlite"
+    "filename": "cookies_gsuite_fb_new_youtube.sqlite"
   },
   "profile_files": {
     "DisableStatusBar": {

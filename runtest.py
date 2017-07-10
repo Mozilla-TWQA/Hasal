@@ -110,25 +110,44 @@ class RunTest(object):
             os.mkdir(upload_dir)
             os.mkdir(self.suite_result_dp)
 
-        if self.online_config['enable']:
-            self.upload_agent_obj = UploadAgent(svr_config=self.online_config['svr-config'], test_comment=self.exec_config['comment'])
+        if CommonUtil.get_value_from_config(config=self.online_config, key='enable'):
+            svr_config = CommonUtil.get_value_from_config(config=self.online_config, key='svr-config')
+            exec_comment = CommonUtil.get_value_from_config(config=self.exec_config, key='comment')
+            self.upload_agent_obj = UploadAgent(svr_config=svr_config, test_comment=exec_comment)
 
     def suite_teardown(self):
         # run generator's output suite result
-        generator_class = getattr(importlib.import_module(self.index_config['module-path']), self.index_config['module-name'])
-        generator_class.output_suite_result(self.global_config, self.index_config, self.exec_config, self.suite_result_dp)
+        try:
+            module_path = CommonUtil.get_value_from_config(config=self.index_config,
+                                                           key='module-path')
+            module_name = CommonUtil.get_value_from_config(config=self.index_config,
+                                                           key='module-name')
+            if module_path and module_name:
+                generator_class = getattr(importlib.import_module(module_path), module_name)
+                generator_class.output_suite_result(self.global_config, self.index_config, self.exec_config, self.suite_result_dp)
+        except Exception as e:
+            self.logger.error('The module {module_name} cannot output suite result. Error: {exp}'.format(module_name=module_name, exp=e))
 
         # do action when online mode is enabled
-        if self.online_config['enable']:
-            self.clean_up_output_data()
-        if self.exec_config['advance']:
-            self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
-            self.logger.debug('Skip removing profile: {}'.format(self._chrome_profile_path))
-        else:
-            if os.path.isdir(self._firefox_profile_path):
-                self.firefox_profile_creator.remove_firefox_profile()
-            if os.path.isdir(self._chrome_profile_path):
-                self.chrome_profile_creator.remove_chrome_profile()
+        try:
+            if CommonUtil.get_value_from_config(config=self.online_config, key='enable'):
+                self.clean_up_output_data()
+        except Exception as e:
+            self.logger.error('Can not clean up output data. Error: {exp}'.format(exp=e))
+
+        # clean browser profile
+        try:
+            if CommonUtil.get_value_from_config(config=self.exec_config, key='advance'):
+                self.logger.debug('Skip removing profile: {}'.format(self._firefox_profile_path))
+                self.logger.debug('Skip removing profile: {}'.format(self._chrome_profile_path))
+            else:
+                if os.path.isdir(self._firefox_profile_path):
+                    self.firefox_profile_creator.remove_firefox_profile()
+                if os.path.isdir(self._chrome_profile_path):
+                    self.chrome_profile_creator.remove_chrome_profile()
+        except Exception as e:
+            self.logger.error('Can not clean browser profile. Error: {exp}'.format(exp=e))
+
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
@@ -152,9 +171,12 @@ class RunTest(object):
 
     def clean_up_output_data(self):
         # clean output folder
-        output_dir = os.path.join(os.getcwd(), self.global_config['default-case-temp-artifact-store-dn'])
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
+        temp_artifact_dir = CommonUtil.get_value_from_config(config=self.global_config,
+                                                             key='default-case-temp-artifact-store-dn')
+        if temp_artifact_dir:
+            output_dir = os.path.join(os.getcwd(), temp_artifact_dir)
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
 
     def get_test_env(self, **kwargs):
         result = os.environ.copy()
@@ -263,7 +285,7 @@ class RunTest(object):
         self.logger.debug(test_env)
         self.logger.debug("========== Environment data ======")
         self.logger.info(" ".join(["python", "-m", "unittest", test_case_module_name]))
-        subprocess.call(["python", "-m", "unittest", test_case_module_name], env=test_env)
+        subprocess.check_call(["python", "-m", "unittest", test_case_module_name], env=test_env)
 
     def suite_validator(self):
         exec_case_list = []
@@ -327,8 +349,10 @@ class RunTest(object):
 
     def run(self):
         self.suite_setup()
-        self.loop_suite()
-        self.suite_teardown()
+        try:
+            self.loop_suite()
+        finally:
+            self.suite_teardown()
 
 
 def main():

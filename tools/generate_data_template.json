@@ -1,0 +1,139 @@
+{
+  "ENABLE_ONLINE": "True",
+  "SVR_ADDR":"10.247.120.208",
+  "SVR_PORT":"4096",
+  "PROJECT_NAME":"hasal",
+  "MAX_RUN": 1,
+  "MAX_RETRY": 10,
+  "ENABLE_ADVANCE": "false",
+  "FIREFOX_CONFIG_NAME": "obs_on_windows.json",
+
+  "nightly_build_date_list":[
+    "2017/01/2017-01-01-03-02-04-mozilla-central/",
+    "2017/01/2017-01-03-03-02-04-mozilla-central/"
+  ],
+  "pkg_target_platform": "win64",
+  "output_config_dp": "output_config",
+  "suite_dict":{
+    "amazon_ail_hover_related_product_thumbnail": {
+      "case_list": [
+        "tests.regression.amazon.test_firefox_amazon_ail_hover_related_product_thumbnail"
+      ],
+      "perfherder_suite_name": "amazon_ail_hover_related_product_thumbnail"
+    },
+    "amazon_ail_select_search_suggestion": {
+      "case_list": [
+        "tests.regression.amazon.test_firefox_amazon_ail_select_search_suggestion"
+      ],
+      "perfherder_suite_name": "amazon_ail_select_search_suggestion"
+    },
+    "amazon_ail_type_in_search_field": {
+      "case_list": [
+        "tests.regression.amazon.test_firefox_amazon_ail_type_in_search_field"
+      ],
+      "perfherder_suite_name": "amazon_ail_type_in_search_field"
+    },
+    "facebook_ail_click_open_chat_tab_emoji": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_click_open_chat_tab_emoji"
+            ],
+    "perfherder_suite_name": "facebook_ail_click_open_chat_tab_emoji"
+    },
+    "facebook_ail_click_open_chat_tab": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_click_open_chat_tab"
+            ],
+    "perfherder_suite_name": "facebook_ail_click_open_chat_tab"
+    },
+    "facebook_ail_click_close_chat_tab": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_click_close_chat_tab"
+            ],
+    "perfherder_suite_name": "facebook_ail_click_close_chat_tab"
+    },
+    "facebook_ail_click_photo_viewer_right_arrow": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_click_photo_viewer_right_arrow"
+            ],
+    "perfherder_suite_name": "facebook_ail_click_photo_viewer_right_arrow"
+    },
+    "facebook_ail_scroll_home_1_txt": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_scroll_home_1_txt"
+            ],
+    "perfherder_suite_name": "facebook_ail_scroll_home_1_txt"
+    },
+    "facebook_ail_type_comment_1_txt": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_type_comment_1_txt"
+            ],
+    "perfherder_suite_name": "facebook_ail_type_comment_1_txt"
+    },
+    "facebook_ail_type_composerbox_1_txt": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_type_composerbox_1_txt"
+            ],
+    "perfherder_suite_name": "facebook_ail_type_composerbox_1_txt"
+    },
+    "facebook_ail_type_message_1_txt": {
+      "case_list": [
+              "tests.regression.facebook.test_firefox_facebook_ail_type_message_1_txt"
+            ],
+    "perfherder_suite_name": "facebook_ail_type_message_1_txt"
+    },
+    "gmail_ail_compose_new_mail_via_keyboard":{
+      "case_list": [
+              "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard"
+            ],
+    "perfherder_suite_name": "gmail_ail_compose_new_mail_via_keyboard"
+    },
+    "gmail_ail_open_mail":{
+      "case_list": [
+              "tests.regression.gmail.test_firefox_gmail_ail_open_mail"
+            ],
+    "perfherder_suite_name": "gmail_ail_open_mail"
+    },
+    "gmail_ail_reply_mail":{
+      "case_list": [
+              "tests.regression.gmail.test_firefox_gmail_ail_reply_mail"
+            ],
+    "perfherder_suite_name": "gmail_ail_reply_mail"
+    },
+    "gmail_ail_type_in_reply_field":{
+      "case_list": [
+              "tests.regression.gmail.test_firefox_gmail_ail_type_in_reply_field"
+            ],
+    "perfherder_suite_name": "gmail_ail_type_in_reply_field"
+    },
+    "gsearch_ail_select_image_cat":{
+      "case_list": [
+              "tests.regression.gsearch.test_firefox_gsearch_ail_select_image_cat"
+            ],
+    "perfherder_suite_name": "gsearch_ail_select_image_cat"
+    },
+    "gsearch_ail_select_search_suggestion":{
+      "case_list": [
+              "tests.regression.gsearch.test_firefox_gsearch_ail_select_search_suggestion"
+            ],
+    "perfherder_suite_name": "gsearch_ail_select_search_suggestion"
+    },
+    "gsearch_ail_type_searchbox":{
+      "case_list": [
+              "tests.regression.gsearch.test_firefox_gsearch_ail_type_searchbox"
+            ],
+    "perfherder_suite_name": "gsearch_ail_type_searchbox"
+    },
+    "youtube_ail_select_search_suggestion":{
+      "case_list": [
+              "tests.regression.youtube.test_firefox_youtube_ail_select_search_suggestion"
+            ],
+    "perfherder_suite_name": "youtube_ail_select_search_suggestion"
+    },
+    "youtube_ail_type_in_search_field":{
+      "case_list": [
+              "tests.regression.youtube.test_firefox_youtube_ail_type_in_search_field"
+            ],
+    "perfherder_suite_name": "youtube_ail_type_in_search_field"
+    }
+  }
+}

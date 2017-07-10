@@ -24,27 +24,28 @@ class githubHook(object):
         else:
             return None
 
-    def update_job_result_by_pr_number(self, pr_number, result):
+    def update_job_result_by_pr_number(self, pr_number, result, description=''):
         pr = self.hasal.pull_request(str(pr_number))
-        self.hasal.create_status(pr.head.sha, result, context='iskakalunan')
+        self.hasal.create_status(pr.head.sha, result, context='iskakalunan', description=description)
 
     def get_requests(self):
         local_queue = []
         for pr in self.hasal.pull_requests():
             issue = pr.issue()
             if KEY_LABEL in [x.name for x in issue.original_labels]:
-                status_list = [x.state for x in self.hasal.statuses(pr.head.sha)]
-                state = '' if len(status_list) == 0 else status_list[0]
+                status_list = [x.state for x in self.hasal.statuses(pr.head.sha) if x.context == 'iskakaklunan']
+                state = '' if len(status_list) == 0 else status_list[-1]
                 if state == '':
-                    self.hasal.crate_status(pr.head.sha, STATE_PENDING, context='iskakalunan')
+                    self.hasal.create_status(pr.head.sha, STATE_PENDING, context='iskakalunan', description='waiting for result')
                     local_queue.append(pr)
                 elif state == STATE_PENDING:
                     local_queue.append(pr)
         return local_queue
 
-    def checkout_pr(pr):
+    def checkout_pr(self, pr):
         os.system('git fetch origin')
         os.system('git checkout pr/' + str(pr.number))
+        return pr.number
 
 if __name__ == '__main__':
     if not os.path.isfile('github.json'):

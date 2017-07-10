@@ -24,9 +24,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Prepare
         app = amazon.Amazon()
-        sample2_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH,
-                                         self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-        sample2_file_path = sample2_file_path.replace(os.path.splitext(sample2_file_path)[1], '.png')
+        sample1_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_file_path = sample1_file_path.replace(os.path.splitext(sample1_file_path)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
@@ -36,13 +35,22 @@ class Case(basecase.SikuliInputLatencyCase):
         # Access link and wait
         my_browser.clickBar()
         my_browser.enterLink(self.INPUT_TEST_TARGET)
-        app.wait_for_loaded()
+        app.wait_for_logo_loaded()
 
         # Wait for stable
         sleep(2)
 
         # PRE ACTIONS
         type(Key.PAGE_DOWN)
+        sleep(2)
+
+        # Customized Region
+        customized_region_name = 'end'
+
+        _, obj = app.wait_for_customer_text_loaded()
+        # product thumbnail list region
+        compare_area = Region(obj.x, obj.y, obj.w + 850, obj.h + 250)
+        self.set_override_region_settings(customized_region_name, compare_area)
         sleep(2)
 
         # Record T1, and capture the snapshot image
@@ -64,7 +72,7 @@ class Case(basecase.SikuliInputLatencyCase):
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
         # Write the snapshot image
-        shutil.move(screenshot, sample2_file_path)
+        shutil.move(screenshot, sample1_file_path)
 
 
 case = Case(sys.argv)

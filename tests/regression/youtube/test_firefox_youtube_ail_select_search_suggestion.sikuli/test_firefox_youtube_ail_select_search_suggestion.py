@@ -24,9 +24,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Prepare
         app = youtube.Youtube()
-        sample2_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH,
-                                         self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME.replace('sample_1', 'sample_2'))
-        sample2_file_path = sample2_file_path.replace(os.path.splitext(sample2_file_path)[1], '.png')
+        sample1_file_path = os.path.join(self.INPUT_IMG_SAMPLE_DIR_PATH, self.INPUT_IMG_OUTPUT_SAMPLE_1_NAME)
+        sample1_file_path = sample1_file_path.replace(os.path.splitext(sample1_file_path)[1], '.png')
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
@@ -49,6 +48,14 @@ class Case(basecase.SikuliInputLatencyCase):
         app.wait_for_search_suggestion_loaded()
         com.loop_type_key(Key.DOWN, 2, 0.5)
 
+        # Customized Region
+        customized_region_name = 'end'
+        type_area_component = [
+            ['search_bar_win.png', 0, 0],
+        ]
+        type_area = self.find_match_region(type_area_component)
+        self.set_override_region_settings(customized_region_name, type_area)
+
         # Record T1, and capture the snapshot image
         # Input Latency Action
         screenshot, t1 = app.il_type_key_down_search_suggestion(capture_width, capture_height)
@@ -68,7 +75,7 @@ class Case(basecase.SikuliInputLatencyCase):
         com.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)
 
         # Write the snapshot image
-        shutil.move(screenshot, sample2_file_path)
+        shutil.move(screenshot, sample1_file_path)
 
 
 case = Case(sys.argv)
