@@ -43,6 +43,8 @@ class UploadAgent(object):
             self.test_comment_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
         else:
             self.test_comment_str = self.test_comment.strip()
+        logger.info('Current Test Comment: {c} (source: {sc})'.format(c=self.test_comment_str,
+                                                                      sc=self.test_comment))
 
     def generate_url_str(self, api_root=None):
         url_format = "http://%s:%s/%s"
@@ -50,6 +52,7 @@ class UploadAgent(object):
             api_root = self.svr_config["project_name"]
         os_str = platform.system().strip() + "_" + platform.release().strip()
         path_str = "/".join([api_root, os_str, self.test_target, self.test_comment_str])
+        logger.debug('URL path: {u}'.format(u=path_str))
         return url_format % (self.svr_config['svr_addr'], self.svr_config['svr_port'], path_str)
 
     def upload_register_data(self, input_suite_fp, test_type, perfherder_suite_name=None):
