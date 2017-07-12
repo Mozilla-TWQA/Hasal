@@ -64,7 +64,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # POST ACTIONS
         sleep(2)
-        app.wait_pattern_for_vanished(pattern=pattern)
+        app.wait_pattern_for_vanished(pattern=pattern, similarity=0.9)
 
         # Write timestamp
         self.common.updateJson({'t1': t1, 't2': t2}, self.INPUT_TIMESTAMP_FILE_PATH)

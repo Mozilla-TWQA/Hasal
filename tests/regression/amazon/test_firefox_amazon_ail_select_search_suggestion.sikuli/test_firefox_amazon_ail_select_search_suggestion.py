@@ -48,7 +48,7 @@ class Case(basecase.SikuliInputLatencyCase):
         sleep(1)
         type('m')
         com.system_print('Wait temp pattern {} vanished.'.format(pattern))
-        app.wait_pattern_for_vanished(pattern=pattern)
+        app.wait_pattern_for_vanished(pattern=pattern, similarity=0.9)
         com.loop_type_key(Key.DOWN, 2, 0.5)
 
         # Customized Region
