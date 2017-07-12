@@ -120,7 +120,14 @@ class SikuliCase(object):
             status = json.load(stat_fh)
             current_status = status.get(self.KEY_NAME_CURRENT_STATUS, {})
             sikuli_status = current_status.get(self.KEY_NAME_SIKULI, {})
-            sikuli_status[key] = value
+            obj = sikuli_status.get(key)
+            if obj:
+                if isinstance(obj, dict) and isinstance(value, dict):
+                    obj.update(value)
+                else:
+                    sikuli_status[key] = value
+            else:
+                sikuli_status[key] = value
         with open(self.INPUT_STAT_FILE, 'w') as stat_fh:
             json.dump(status, stat_fh)
 
