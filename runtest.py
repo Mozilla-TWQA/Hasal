@@ -53,6 +53,7 @@ class RunTest(object):
         self.index_config = {}
         self.global_config = {}
         self.firefox_config = {}
+        self.chrome_config = {}
         # load exec-config, firefox-config, index-config, online-config and global config to self object
         self.exec_config_fp = os.path.abspath(kwargs['exec_config'])
         self.firefox_config_fp = os.path.abspath(kwargs['firefox_config'])
@@ -184,6 +185,7 @@ class RunTest(object):
         result['INDEX_CONFIG_FP'] = self.index_config_fp
         result['GLOBAL_CONFIG_FP'] = self.global_config_fp
         result['FIREFOX_CONFIG_FP'] = self.firefox_config_fp
+        result['CHROME_CONFIG_FP'] = self.chrome_config_fp
         result['ONLINE_CONFIG_FP'] = self.online_config_fp
         result['SUITE_RESULT_DP'] = str(self.suite_result_dp)
         result['FIREFOX_PROFILE_PATH'] = self._firefox_profile_path

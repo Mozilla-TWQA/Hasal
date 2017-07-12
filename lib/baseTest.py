@@ -27,6 +27,7 @@ class BaseTest(unittest.TestCase):
         INDEX = 'index_config'
         GLOBAL = 'global_config'
         FIREFOX = 'firefox_config'
+        CHROME = 'chrome_config'
         ONLINE = 'online_config'
 
     def __init__(self, *args, **kwargs):
@@ -160,7 +161,7 @@ class BaseTest(unittest.TestCase):
     def set_configs(self, config_variable_name, config_value):
         # only the config in the following list can be created or updated
         acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
-                                  self.config_name.FIREFOX, self.config_name.ONLINE]
+                                  self.config_name.FIREFOX, self.config_name.ONLINE, self.config_name.CHROME]
         if config_variable_name not in acceptable_config_list:
             raise Exception('Invalid configuration name {config_name}: {config_value}'
                             .format(config_name=config_variable_name, config_value=config_value))
@@ -182,7 +183,7 @@ class BaseTest(unittest.TestCase):
 
     def load_configs(self):
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP',
-                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP', 'CHROME_CONFIG_FP']
 
         for config_env_name in config_fp_list:
             config_variable_name = config_env_name.rsplit('_', 1)[0].lower()

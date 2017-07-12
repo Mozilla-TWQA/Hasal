@@ -40,7 +40,9 @@ class PerfBaseTest(baseTest.BaseTest):
         # launch browser
         _, self.profile_dir_path = desktopHelper.launch_browser(self.browser_type, env=self.env,
                                                                 profiler_list=self.env.firefox_settings_extensions,
-                                                                exec_config=self.exec_config)
+                                                                exec_config=self.exec_config,
+                                                                firefox_config=self.firefox_config,
+                                                                chrome_config=self.chrome_config)
 
         # wait browser ready
         self.get_browser_done()
