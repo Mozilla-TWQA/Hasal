@@ -38,3 +38,6 @@ class AvconvProfiler(BaseProfiler):
             subprocess.Popen("taskkill /IM ffmpeg.exe /T /F", shell=True)
         else:
             self.process.send_signal(3)
+        timestamp = time.time()
+        timestamp_info = {'end': timestamp}
+        CommonUtil.update_json(timestamp_info, self.env.DEFAULT_TIMESTAMP)

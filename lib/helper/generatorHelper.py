@@ -56,13 +56,13 @@ def run_modules(module_settings, module_data):
     return module_result
 
 
-def get_json_data(input_fp, initial_timestamp_name):
+def get_timestamp_json_data(input_fp, initial_timestamp_name):
     # TODO: need to support multiple sample timestamps in the future
     try:
         with open(input_fp, "r") as fh:
             timestamp = json.load(fh)
             logger.debug('Load timestamps: %s' % timestamp)
-        timestamp_list = map(float, [timestamp[initial_timestamp_name], timestamp["t1"], timestamp["t2"]])
+        timestamp_list = map(float, [timestamp[initial_timestamp_name], timestamp["t1"], timestamp["t2"], timestamp["end"]])
     except Exception as e:
         logger.error(e)
         logger.error('Make timestamp list be empty.')
@@ -97,7 +97,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
     # will do the analyze after validate pass
     validate_result = validate_data(validator_settings, validator_data)
 
-    exec_timestamp_list = get_json_data(env.DEFAULT_TIMESTAMP, env.INITIAL_TIMESTAMP_NAME)
+    exec_timestamp_list = get_timestamp_json_data(env.DEFAULT_TIMESTAMP, env.INITIAL_TIMESTAMP_NAME)
     if validate_result['validate_result']:
         if not validate_result.get(global_config['default-fps-validator-name']):
             current_fps_value = index_config['video-recording-fps']
@@ -110,7 +110,8 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
             index_config['image-converter-name']: {'video_fp': env.video_output_fp, 'output_img_dp': env.img_output_dp,
                                                    'convert_fmt': index_config['image-converter-format'],
                                                    'current_fps': current_fps_value,
-                                                   'exec_timestamp_list': exec_timestamp_list}}
+                                                   'exec_timestamp_list': exec_timestamp_list,
+                                                   'search_margin': index_config['search-margin']}}
         converter_result = run_modules(converter_settings, converter_data[index_config['image-converter-name']])
 
         generator_name = index_config['module-name']

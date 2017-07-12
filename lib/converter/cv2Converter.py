@@ -32,6 +32,14 @@ class Cv2Converter(object):
             header_fps = vidcap.get(cv2.CAP_PROP_FPS)
         else:
             header_fps = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
+
+        if hasattr(cv2, 'CV_CAP_PROP_FRAME_COUNT'):
+            total_frames = int(vidcap.get(cv2.CV_CAP_PROP_FRAME_COUNT))
+        else:
+            total_frames = int(vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
+        total_frames = 0 if total_frames <= 0 else total_frames
+        logger.debug("Total Frames: {}".format(total_frames))
+
         if "current_fps" not in input_data:
             input_data['current_fps'] = header_fps
             logger.info('==== FPS from video header: ' + str(input_data['current_fps']) + '====')
@@ -39,7 +47,7 @@ class Cv2Converter(object):
             logger.info('==== FPS from log file: ' + str(input_data['current_fps']) + '====')
         real_time_shift = float(header_fps) / input_data['current_fps']
         if "exec_timestamp_list" in input_data:
-            search_range = get_search_range(input_data['exec_timestamp_list'], input_data['current_fps'])
+            search_range = get_search_range(input_data['exec_timestamp_list'], input_data['current_fps'], total_frames, input_data['search_margin'])
 
         if "output_image_name" in input_data:
             if os.path.exists(input_data['output_img_dp']) is False:
