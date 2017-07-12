@@ -2,6 +2,15 @@ from sikuli import *  # NOQA
 import json
 
 
+class FlushBeforePrint(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        sys.stdout.flush()
+        return self.func(object, *args)
+
+
 class General():
     def __init__(self):
         self.os = str(Env.getOS())
@@ -360,6 +369,7 @@ class WebApp(object):
                     return loc, screenshot, current_time
         raise Exception('Cannot {action}'.format(action=action_name))
 
+    @FlushBeforePrint
     def _screenshot_and_time(self, width, height,
                              action_name='Task Screenshot and Get Current Timestamp'):
         """
