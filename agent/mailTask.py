@@ -30,14 +30,14 @@ APPLICATION_NAME = 'Iskakalunan'
 
 LABEL_NEW_REQUEST = 'Label_8'
 LABEL_IN_QUEUE = 'Label_4'
-LABEL_IN_PROCESS = 'Label_5'
+LABEL_IN_PROGR          ESS = 'Label_5'
 LABEL_REPLIED = 'Label_6'
 
 RESULT_ZIP = 'result.zip'
 RESULT_JSON = 'result.json'
-UPLOAD_FOLDER = 'results'
-FIREFOX_PATH = r'C:/Program Files/Mozilla Firefox'
-FIREFOX_PATH_BACKUP = r'C:/Program Files/Firefox_backup'
+UPLOAD_FOLDER = 'result'
+FIREFOX_PATH = r'C:/Program Files (x86)/Mozilla Firefox'
+FIREFOX_PATH_BACKUP = r'C:/Program Files (x86)/Firefox_backup'
 
 MSG_TYPE_INVALID_REQUEST = 'This is a notifier that your request is invalid.'
 MSG_TYPE_UNDER_EXECUTION = 'This is a notifier that your request is under execution.'
@@ -76,7 +76,7 @@ class MailTask(object):
 
             pattern = 'href="(.+' + revision + '\/)"'
             m = re.search(pattern, html_try_builds)
-            url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-55.0a1.en-US.win64.zip"
+            url_revision_build = "https://archive.mozilla.org" + m.group(1) + "try-win64/firefox-56.0a1.en-US.win64.zip"
             logger.debug("Download build from %s" % url_revision_build)
             r = requests.get(url_revision_build, stream=True)
             with open('firefox.zip', 'wb') as f:
@@ -142,15 +142,17 @@ class MailTask(object):
 
     def execute_job(self, message):
         update_body = {"removeLabelIds": [LABEL_IN_QUEUE],
-                       "addLabelIds": [LABEL_IN_PROCESS]}
+                       "addLabelIds": [LABEL_IN_PROGRESS]}
         self.update_labels(message, update_body)
         self.reply_status(message, MSG_TYPE_UNDER_EXECUTION)
         self.prepare_job(message)
 
     def reply_status(self, msg=None, status=MSG_TYPE_JOB_FINISHED):
         if msg is None:
-            msg = self.fetch_messages(LABEL_IN_PROCESS)
-            update_body = {"removeLabelIds": [LABEL_IN_PROCESS],
+            msgs = self.fetch_messages(LABEL_IN_PROGRESS)
+            logger.info("Message length: {}".format(len(msgs)))
+            msg = msgs[0]
+            update_body = {"removeLabelIds": [LABEL_IN_PROGRESS],
                            "addLabelIds": [LABEL_REPLIED]}
             self.update_labels(msg, update_body)
 
@@ -189,16 +191,19 @@ class MailTask(object):
     def prepare_job(self, msg):
         """Prepare a json represent a job and update message status
         """
-        shutil.rmtree(UPLOAD_FOLDER)
+        try:
+            shutil.rmtree(UPLOAD_FOLDER)
+        except Exception as e:
+            logger.info("No upload folder in repo")
         self.prepare_try_build(msg.revision)
         hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
         cmd_list = hasal.generate_command_list()
         logger.debug("cmd: %s" % ' '.join(cmd_list))
 
         try:
-            subprocess.call(cmd_list, env=os.environ.copy)
+            subprocess.call(cmd_list, env=os.environ.copy())
         except Exception as e:
-            print(e.message)
+            logger.error(e)
 
     def get_credentials(self):
         """Gets valid user credentials from storage.
@@ -280,18 +285,11 @@ class Message(object):
     def __isValid(self):
         msg_body = base64.urlsafe_b64decode(self.body.encode('utf-8')).split('\r\n')
 
-        isLink = False
         for line in msg_body:
             line = line.replace('\xe2\x80\x8b', '')
-            if isLink:
+            if line.startswith("Build"):
+                # TODO: if input is a link, it will be processed as a new line
                 self.revision = line[-40:]
-                isLink = False
-            elif line.startswith("Build"):
-                if len(line) < 60:
-                    isLink = True
-                    logger.debug("commit is a link")
-                else:
-                    self.revision = line[-40:]
             elif line.startswith("Suite:"):
                 self.test_suite = ''.join(line[6:].split())
                 with open('test.suite', 'w') as f:

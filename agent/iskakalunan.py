@@ -33,9 +33,9 @@ class Iskakalunan(object):
             # if job is finished
             if note['type'] == 'mailTask':
                 if not os.path.isfile('result.json'):
-                    self.mail_handler.update_job_results(status='This is a notifier that your request is failed in execution')
+                    self.mail_handler.reply_status(status='This is a notifier that your request is failed in execution')
                 else:
-                    self.mail_handler.update_job_results(status='This is a notifier that your request is finished.')
+                    self.mail_handler.reply_status(status='This is a notifier that your request is finished.')
             elif note['type'] == 'githubHook':
                 if not os.path.isfile('result.json'):
                     self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'failure', 'no-result')
