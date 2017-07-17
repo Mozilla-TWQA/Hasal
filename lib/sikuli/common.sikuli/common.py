@@ -8,7 +8,7 @@ class FlushBeforePrint(object):
 
     def __call__(self, *args, **kwargs):
         sys.stdout.flush()
-        return self.func(object, *args)
+        return self.func(object, *args, **kwargs)
 
 
 class General():
@@ -386,7 +386,7 @@ class WebApp(object):
         current_time = time.time()
 
         # Print log message for recording
-        self.common.system_print(action_name)
+        General().system_print(action_name)
 
         return screenshot, current_time
 
