@@ -15,12 +15,13 @@ Options:
 
 """
 import os
+import sys
 import json
 import copy
 import shutil
-import platform
 import subprocess
 import importlib
+import platform
 from lib.helper.desktopHelper import close_browser
 import traceback
 from docopt import docopt
@@ -64,6 +65,13 @@ class RunTest(object):
         for variable_name in kwargs.keys():
             setattr(self, variable_name, CommonUtil.load_json_file(kwargs[variable_name]))
 
+        # overwrite platform dep setting in configs
+        self.__dict__.update(
+            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "firefox_config", self.firefox_config,
+                                                                    ["firefox_config"], sys.platform, platform.release()).__dict__)
+        self.__dict__.update(
+            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
+                                                                    ["chrome_config"], sys.platform, platform.release()).__dict__)
         # init logger
         self.logger = get_logger(__file__, self.exec_config['advance'])
 
@@ -76,7 +84,7 @@ class RunTest(object):
         self.suite_result_dp = ''
         self.default_result_fp = os.path.join(os.getcwd(), self.global_config['default-result-fn'])
         if self.firefox_config.get('enable_create_new_profile', False):
-            self.firefox_profile_creator = FirefoxProfileCreator()
+            self.firefox_profile_creator = FirefoxProfileCreator(launch_cmd=self.firefox_config.get('launch-browser-cmd-path'))
             settings_prefs = self.firefox_config.get('prefs', {})
             cookies_settings = self.firefox_config.get('cookies', {})
             profile_files_settings = self.firefox_config.get('profile_files', {})
@@ -91,7 +99,7 @@ class RunTest(object):
 
         # chrome config
         if self.chrome_config.get('enable_create_new_profile', False):
-            self.chrome_profile_creator = ChromeProfileCreator()
+            self.chrome_profile_creator = ChromeProfileCreator(launch_cmd=self.firefox_config.get('launch-browser-cmd-path'))
             chrome_cookies_settings = self.chrome_config.get('cookies', {})
             self._chrome_profile_path = self.chrome_profile_creator.get_chrome_profile(cookies_settings=chrome_cookies_settings)
         else:

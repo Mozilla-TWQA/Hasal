@@ -13,17 +13,23 @@ logger = get_logger(__name__)
 
 
 class ChromeProfileCreator(object):
-    def __init__(self, chrome_profile_path=''):
+    def __init__(self, chrome_profile_path='', launch_cmd=''):
         self.browser_type = "chrome"
         self.current_platform_name = sys.platform
+        if launch_cmd:
+            self.firefox_cmd = launch_cmd
+        else:
+            if self.current_platform_name == 'darwin':
+                self.process_name = "Google Chrome"
+            elif self.current_platform_name == "linux2":
+                self.process_name = "Chrome"
+            else:
+                self.process_name = "chrome.exe"
         if self.current_platform_name == 'darwin':
-            self.chrome_cmd = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
             self.process_name = "Google Chrome"
         elif self.current_platform_name == "linux2":
-            self.chrome_cmd = 'google-chrome'
             self.process_name = "Chrome"
         else:
-            self.chrome_cmd = 'chrome'
             self.process_name = "chrome.exe"
         self._chrome_profile_path = chrome_profile_path
 
