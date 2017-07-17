@@ -254,9 +254,10 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     if not self.common.is_infolog_enabled():
                         self.common.system_print(action_name)
-                    loc = find(p).getTarget()
+                    obj = find(p)
+                    loc = obj.getTarget()
                     click(p)
-                    return loc
+                    return loc, p, obj
         raise Exception('Cannot {action}'.format(action=action_name))
 
     def _doubleclick(self, action_name, component, similarity=0.70, timeout=10, wait_component=None):
