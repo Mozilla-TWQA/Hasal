@@ -120,7 +120,14 @@ class SikuliCase(object):
             status = json.load(stat_fh)
             current_status = status.get(self.KEY_NAME_CURRENT_STATUS, {})
             sikuli_status = current_status.get(self.KEY_NAME_SIKULI, {})
-            sikuli_status[key] = value
+            obj = sikuli_status.get(key)
+            if obj:
+                if isinstance(obj, dict) and isinstance(value, dict):
+                    obj.update(value)
+                else:
+                    sikuli_status[key] = value
+            else:
+                sikuli_status[key] = value
         with open(self.INPUT_STAT_FILE, 'w') as stat_fh:
             json.dump(status, stat_fh)
 
@@ -147,14 +154,14 @@ class SikuliCase(object):
                 customized_region_name: customized_region_dict
             }
             self.append_to_stat_json(self.KEY_REGION_OVERRIDE, customized_region)
-            print('[INFO] Found [{r_name}] with [x,y,w,h]: [{x},{y},{w},{h}]'.format(r_name=customized_region_name,
-                                                                                     x=sikuli_region_obj.x,
-                                                                                     y=sikuli_region_obj.y,
-                                                                                     w=sikuli_region_obj.w,
-                                                                                     h=sikuli_region_obj.h))
+            self.common.system_print('[INFO] Found [{r_name}] with [x,y,w,h]: [{x},{y},{w},{h}]'.format(r_name=customized_region_name,
+                                                                                                        x=sikuli_region_obj.x,
+                                                                                                        y=sikuli_region_obj.y,
+                                                                                                        w=sikuli_region_obj.w,
+                                                                                                        h=sikuli_region_obj.h))
             return True
         else:
-            print('[ERROR] Cannot find the settings [{r_name}] of Customized Region from index-config.'.format(r_name=customized_region_name))
+            self.common.system_print('[ERROR] Cannot find the settings [{r_name}] of Customized Region from index-config.'.format(r_name=customized_region_name))
             return False
 
     def run(self):

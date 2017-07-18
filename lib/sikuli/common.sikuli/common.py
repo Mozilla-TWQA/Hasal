@@ -2,6 +2,15 @@ from sikuli import *  # NOQA
 import json
 
 
+class FlushBeforePrint(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        sys.stdout.flush()
+        return self.func(object, *args, **kwargs)
+
+
 class General():
     def __init__(self):
         self.os = str(Env.getOS())
@@ -183,19 +192,21 @@ class WebApp(object):
         """
         return self._wait_for_loaded(component, similarity=similarity, timeout=timeout)
 
-    def wait_pattern_for_vanished(self, pattern, timeout=10):
+    def wait_pattern_for_vanished(self, pattern, similarity=0.7, timeout=10):
         """
         Wait for component loaded. Default timeout is 10 sec, min is 1 sec.
         @param pattern: Specify the wait vanished pattern, which is an sikuli object pattern.
+        @param similarity: The pattern comparing similarity, from 0 to 1. Default is 0.70.
         @param timeout: Wait timeout second, the min timeout is 1 sec. Default is 10 sec.
         """
         is_exists = True
         # get the loop time base on the pattern amount of component, min loop time is 10 times
         wait_sec = 0.5
         loop_time = self._get_loop_times(object_amount=1, total_second=timeout, each_check_second=wait_sec)
+        p = Pattern(pattern).similar(similarity)
         for counter in range(loop_time):
             sleep(wait_sec)
-            if not exists(pattern, wait_sec):
+            if not exists(p, wait_sec):
                 is_exists = False
                 break
         if is_exists:
@@ -243,9 +254,10 @@ class WebApp(object):
                 if exists(p, wait_sec):
                     if not self.common.is_infolog_enabled():
                         self.common.system_print(action_name)
-                    loc = find(p).getTarget()
+                    obj = find(p)
+                    loc = obj.getTarget()
                     click(p)
-                    return loc
+                    return loc, p, obj
         raise Exception('Cannot {action}'.format(action=action_name))
 
     def _doubleclick(self, action_name, component, similarity=0.70, timeout=10, wait_component=None):
@@ -360,6 +372,7 @@ class WebApp(object):
                     return loc, screenshot, current_time
         raise Exception('Cannot {action}'.format(action=action_name))
 
+    @FlushBeforePrint
     def _screenshot_and_time(self, width, height,
                              action_name='Task Screenshot and Get Current Timestamp'):
         """
@@ -373,7 +386,7 @@ class WebApp(object):
         current_time = time.time()
 
         # Print log message for recording
-        self.common.system_print(action_name)
+        General().system_print(action_name)
 
         return screenshot, current_time
 

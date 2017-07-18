@@ -30,7 +30,10 @@
     "browser.urlbar.timesBeforeHidingSuggestionsHint": 0,
     "browser.crashReports.unsubmittedCheck.enabled": false,
     "browser.tabs.crashReporting.sendReport": false,
-    "dom.ipc.plugins.flash.subprocess.crashreporter.enabled": false
+    "dom.ipc.plugins.flash.subprocess.crashreporter.enabled": false,
+    "browser.onboarding.enabled": false,
+    "browser.onboarding.hidden": true,
+    "browser.onboarding.notification.finished": true
   },
   "profile_files": {
     "DisableStatusBar": {

@@ -32,12 +32,11 @@ class Iskakalunan(object):
                 note = json.load(f)
             # if job is finished
             if note['type'] == 'mailTask':
-                if not self.mail_handler.check_job_status():
-                    return
+                if not os.path.isfile('result.json'):
+                    self.mail_handler.reply_status(status='This is a notifier that your request is failed in execution')
                 else:
-                    self.mail_handler.update_job_results()
+                    self.mail_handler.reply_status(status='This is a notifier that your request is finished.')
             elif note['type'] == 'githubHook':
-                # TODO: add result checker
                 if not os.path.isfile('result.json'):
                     self.github_handler.update_job_result_by_pr_number(note['pr_number'], 'failure', 'no-result')
                 else:
@@ -76,9 +75,6 @@ class Iskakalunan(object):
                 json.dump(note, f)
             self.github_handler.checkout_pr(pull_requests[0])
             # execute
-            self.kwargs['MAX_RUN'] = 1
-            self.kwargs['MAX_RETRY'] = 1
-            self.kwargs['INDEX_CONFIG_NAME'] = 'runtimeDctGenerator.json'
             hasal = HasalTask(name="iskakalunan_task", **self.kwargs)
             cmd_list = hasal.generate_command_list()
             print(' '.join(cmd_list))
@@ -92,53 +88,10 @@ class Iskakalunan(object):
         messages = self.mail_handler.get_requests()
         if messages:
             note['type'] = 'mailTask'
+            with open(ISKAKALUNAN_NOTE, 'w') as f:
+                json.dump(note, f)
             self.mail_handler.execute_job(messages[0])
             return
-
-    def handle_mail_task(self):
-        # HANDLE MAIL AGENT #
-        mail_task = mailTask.MailTask()
-
-        # NewRequest to InQueue
-        messages = mail_task.fetch_messages(mail_task.LABEL_NEW_REQUEST)
-        logger.info("Check New Requests: %d request(s) get" % len(messages))
-
-        for message in messages:
-            if message.validation:
-                update_body = {"removeLabelIds": [mail_task.LABEL_NEW_REQUEST],
-                               "addLabelIds": [mail_task.LABEL_IN_QUEUE]}
-                mail_task.updateLabels(message, update_body)
-            else:
-                update_body = {"removeLabelIds": [mail_task.LABEL_NEW_REQUEST],
-                               "addLabelIds": [mail_task.LABEL_REPLIED]}
-                mail_task.updateLabels(message, update_body)
-                mail_task.reply_status(message, mail_task.MSG_TYPE_INVALID_REQUEST)
-
-        # Check if InProcess exists
-        msg_in_process = mail_task.fetch_messages(mail_task.LABEL_IN_PROCESS)
-        logger.info("Check In Process job exists: %d Job(s) on machine" % len(msg_in_process))
-
-        # Check if in process job is finished
-        job_empty = False
-        if msg_in_process and mail_task.check_job_status():
-            update_body = {"removeLabelIds": [mail_task.LABEL_IN_PROCESS],
-                           "addLabelIds": [mail_task.LABEL_REPLIED]}
-            mail_task.update_labels(msg_in_process[0], update_body)
-            mail_task.reply_status(msg_in_process[0], mail_task.MSG_TYPE_JOB_FINISHED)
-            job_empty = True
-        elif not msg_in_process:
-            job_empty = True
-        if job_empty:
-            messages = mail_task.fetch_messages(mail_task.LABEL_IN_QUEUE)
-            logger.info("Check In Queue tasks: %d tasks in queue" % len(messages))
-
-            # start to execute new job
-            if messages:
-                update_body = {"removeLabelIds": [mail_task.LABEL_IN_QUEUE],
-                               "addLabelIds": [mail_task.LABEL_IN_PROCESS]}
-                mail_task.update_labels(messages[0], update_body)
-                mail_task.reply_status(messages[0], mail_task.MSG_TYPE_UNDER_EXECUTION)
-                mail_task.prepare_job(messages[0])
 
 if __name__ == '__main__':
     iskakalunan = Iskakalunan()

@@ -16,17 +16,20 @@
   "platform-dep-settings"   : {
     "darwin":{
       "default": {
-        "video-recording-fps": 60
+        "video-recording-fps": 60,
+        "search-margin": 10
       }
     },
     "win32":{
       "default": {
-        "video-recording-fps": 60
+        "video-recording-fps": 60,
+        "search-margin": 10
       }
     },
     "linux2":{
       "default": {
-        "video-recording-fps": 60
+        "video-recording-fps": 60,
+        "search-margin": 10
       }
     }
   }

@@ -359,18 +359,18 @@ def compare_with_sample_image_multi_process(input_sample_data, input_image_data,
     return map_result_list
 
 
-def get_search_range(input_time_stamp, input_fps, input_image_list_len=0, input_cover_sec=10):
-    ref_start_point = input_time_stamp[1] - input_time_stamp[0]
-    ref_end_point = input_time_stamp[2] - input_time_stamp[0]
-    if input_image_list_len:
-        search_range = [
-            # For finding the beginning, the range cannot start less than zero.
-            max(int((ref_start_point - input_cover_sec) * input_fps), 0),
-            min(int((ref_start_point + input_cover_sec) * input_fps), input_image_list_len - 1),
-            # For finding the end, the range cannot start less than zero.
-            max(int((ref_end_point - input_cover_sec) * input_fps), 0),
-            min(int((ref_end_point + input_cover_sec) * input_fps), input_image_list_len - 1)]
-    else:
+def get_search_range(input_time_stamp, input_fps, input_image_list_len, input_cover_sec=10):
+    """
+
+    @param input_time_stamp: a list contains [t1 timestamp, t2 timestamp, end timestamp]
+    @param input_fps: number of fps
+    @param input_image_list_len: total number of frames in a video
+    @param input_cover_sec: the search margin which total seconds could be compared in one direction
+    @return:
+    """
+    if input_image_list_len == 0:
+        ref_start_point = input_time_stamp[1] - input_time_stamp[0]
+        ref_end_point = input_time_stamp[2] - input_time_stamp[0]
         search_range = [
             # For finding the beginning, the range cannot start less than zero.
             max(int((ref_start_point - input_cover_sec) * input_fps), 0),
@@ -378,6 +378,16 @@ def get_search_range(input_time_stamp, input_fps, input_image_list_len=0, input_
             # For finding the end, the range cannot start less than zero.
             max(int((ref_end_point - input_cover_sec) * input_fps), 0),
             int((ref_end_point + input_cover_sec) * input_fps)]
+    else:
+        ref_start_point = input_image_list_len - int((input_time_stamp[3] - input_time_stamp[1]) * input_fps)
+        ref_end_point = input_image_list_len - int((input_time_stamp[3] - input_time_stamp[2]) * input_fps)
+        search_range = [
+            # For finding the beginning, the range cannot start less than zero.
+            max(int(ref_start_point - input_cover_sec * input_fps), 0),
+            min(int(ref_start_point + input_cover_sec * input_fps), input_image_list_len - 1),
+            # For finding the end, the range cannot start less than zero.
+            max(int(ref_end_point - input_cover_sec * input_fps), 0),
+            min(int(ref_end_point + input_cover_sec * input_fps), input_image_list_len - 1)]
     logger.info("Image Comparison search range [%s] when image list len is [%s]: " % (str(search_range), str(input_image_list_len)))
     return search_range
 
@@ -392,7 +402,7 @@ def parallel_compare_image(input_sample_data, input_image_data, input_settings, 
     search_margin = input_settings.get('search_margin', 10)
     search_range = get_search_range(input_settings['exec_timestamp_list'],
                                     input_settings['default_fps'],
-                                    len(input_image_data),
+                                    len(input_image_data) - 1,
                                     search_margin)
     total_search_range = input_settings['default_fps'] * search_margin * 2
     search_direction = input_settings.get('search_direction', None)
