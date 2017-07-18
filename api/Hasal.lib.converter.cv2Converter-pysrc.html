@@ -205,48 +205,13 @@ Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doc
 <a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">            <tt class="py-name">header_fps</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CAP_PROP_FPS</tt><tt class="py-op">)</tt> </tt>
 <a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
 <a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">            <tt class="py-name">header_fps</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">cv</tt><tt class="py-op">.</tt><tt class="py-name">CV_CAP_PROP_FPS</tt><tt class="py-op">)</tt> </tt>
-<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"current_fps"</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
-<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">            <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">header_fps</tt> </tt>
-<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">            <tt id="link-10" class="py-name"><a title="Hasal.agent.agent.logger
-Hasal.agent.iskakalunan.logger
-Hasal.agent.mailTask.logger
-Hasal.lib.baseTest.logger
-Hasal.lib.browser.base.logger
-Hasal.lib.browser.chrome.logger
-Hasal.lib.browser.firefox.logger
-Hasal.lib.browser.webdriverFirefox.logger
-Hasal.lib.common.commonUtil.CommonUtil.logger
-Hasal.lib.common.commonUtil.logger
-Hasal.lib.common.environment.logger
-Hasal.lib.common.imageTool.logger
-Hasal.lib.common.imageUtil.logger
-Hasal.lib.common.pyDriveUtil.logger
-Hasal.lib.common.windowController.logger
-Hasal.lib.converter.cv2Converter.logger
-Hasal.lib.converter.ftSampleConverter.logger
-Hasal.lib.converter.sampleConverter.logger
-Hasal.lib.generator.baseGenerator.logger
-Hasal.lib.generator.frameThroughputDctGenerator.logger
-Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
-Hasal.lib.generator.inputLatencyFrameThroughputGenerator.logger
-Hasal.lib.generator.runTimeDctGenerator.logger
-Hasal.lib.helper.chromeProfileCreator.logger
-Hasal.lib.helper.desktopHelper.logger
-Hasal.lib.helper.firefoxProfileCreator.logger
-Hasal.lib.helper.generatorHelper.logger
-Hasal.lib.helper.terminalHelper.logger
-Hasal.lib.helper.uploadAgentHelper.logger
-Hasal.lib.perfBaseTest.logger
-Hasal.lib.profiler.geckoProfiler.logger
-Hasal.lib.profiler.harProfiler.logger
-Hasal.lib.profiler.mitmDumpProfiler.logger
-Hasal.lib.profiler.obsProfiler.logger
-Hasal.lib.thirdparty.tee.logger
-Hasal.lib.validator.fileExistValidator.logger
-Hasal.lib.validator.fpsValidator.logger
-Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-10', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'==== FPS from video header: '</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">'===='</tt><tt class="py-op">)</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">,</tt> <tt class="py-string">'CV_CAP_PROP_FRAME_COUNT'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">            <tt class="py-name">total_frames</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CV_CAP_PROP_FRAME_COUNT</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
-<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">            <tt id="link-11" class="py-name"><a title="Hasal.agent.agent.logger
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">            <tt class="py-name">total_frames</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">cv</tt><tt class="py-op">.</tt><tt class="py-name">CV_CAP_PROP_FRAME_COUNT</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">        <tt class="py-name">total_frames</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> <tt class="py-keyword">if</tt> <tt class="py-name">total_frames</tt> <tt class="py-op">&lt;=</tt> <tt class="py-number">0</tt> <tt class="py-keyword">else</tt> <tt class="py-name">total_frames</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt id="link-10" class="py-name"><a title="Hasal.agent.agent.logger
 Hasal.agent.iskakalunan.logger
 Hasal.agent.mailTask.logger
 Hasal.lib.baseTest.logger
@@ -283,44 +248,11 @@ Hasal.lib.profiler.obsProfiler.logger
 Hasal.lib.thirdparty.tee.logger
 Hasal.lib.validator.fileExistValidator.logger
 Hasal.lib.validator.fpsValidator.logger
-Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-11', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'==== FPS from log file: '</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">'===='</tt><tt class="py-op">)</tt> </tt>
-<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">        <tt class="py-name">real_time_shift</tt> <tt class="py-op">=</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">header_fps</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt> </tt>
-<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"exec_timestamp_list"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
-<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">            <tt class="py-name">search_range</tt> <tt class="py-op">=</tt> <tt id="link-12" class="py-name"><a title="Hasal.lib.common.imageUtil.get_search_range" class="py-name" href="#" onclick="return doclink('link-12', 'get_search_range', 'link-2');">get_search_range</a></tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
-<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line"> </tt>
-<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"output_image_name"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
-<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-name">False</tt><tt class="py-op">:</tt> </tt>
-<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">                <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">mkdir</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
-<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">            <tt class="py-name">str_image_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_image_name'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
-<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">            <tt class="py-name">result</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">            <tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">imwrite</tt><tt class="py-op">(</tt><tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt><tt class="py-op">)</tt> </tt>
-<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
-<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">            <tt class="py-name">io_times</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
-<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">            <tt class="py-name">img_cnt</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
-<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">                <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt class="py-name">rmtree</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
-<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">mkdir</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
-<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">            <tt class="py-name">start_time</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">            <tt class="py-keyword">while</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
-<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">                <tt class="py-name">img_cnt</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
-<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">                <tt class="py-name">bol_write_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
-<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">                <tt class="py-name">in_search_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
-<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">                <tt class="py-name">str_image_fn</tt> <tt class="py-op">=</tt> <tt class="py-string">"image_%05d.bmp"</tt> <tt class="py-op">%</tt> <tt class="py-name">img_cnt</tt> </tt>
-<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                <tt class="py-name">str_image_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">str_image_fn</tt><tt class="py-op">)</tt> </tt>
-<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">input_data</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">)</tt> <tt class="py-keyword">or</tt> <tt class="py-op">(</tt><tt class="py-name">search_range</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">img_cnt</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">search_range</tt><tt class="py-op">[</tt><tt class="py-number">3</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">                    <tt class="py-name">result</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">                    <tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">imwrite</tt><tt class="py-op">(</tt><tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt><tt class="py-op">)</tt> </tt>
-<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">                    <tt class="py-name">bol_write_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
-<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">                    <tt class="py-name">in_search_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
-<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">                    <tt class="py-name">io_times</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
-<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
-<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">                    <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">grab</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">                <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">str_image_fn</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-string">'fp'</tt><tt class="py-op">:</tt> <tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-string">'time_seq'</tt><tt class="py-op">:</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> <tt class="py-op">*</tt> <tt class="py-name">real_time_shift</tt><tt class="py-op">,</tt> <tt class="py-string">'write_to_file'</tt><tt class="py-op">:</tt> <tt class="py-name">bol_write_flag</tt><tt class="py-op">,</tt> <tt class="py-string">'in_search_flag'</tt><tt class="py-op">:</tt> <tt class="py-name">in_search_flag</tt><tt class="py-op">}</tt> </tt>
-<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">result</tt><tt class="py-op">:</tt> </tt>
-<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">                    <tt class="py-keyword">break</tt> </tt>
-<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">            <tt class="py-name">end_time</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">            <tt class="py-name">elapsed_time</tt> <tt class="py-op">=</tt> <tt class="py-name">end_time</tt> <tt class="py-op">-</tt> <tt class="py-name">start_time</tt> </tt>
-<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line">            <tt id="link-13" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-10', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Total Frames: {}"</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">total_frames</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line"> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"current_fps"</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">            <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">header_fps</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">            <tt id="link-11" class="py-name"><a title="Hasal.agent.agent.logger
 Hasal.agent.iskakalunan.logger
 Hasal.agent.mailTask.logger
 Hasal.lib.baseTest.logger
@@ -357,9 +289,122 @@ Hasal.lib.profiler.obsProfiler.logger
 Hasal.lib.thirdparty.tee.logger
 Hasal.lib.validator.fileExistValidator.logger
 Hasal.lib.validator.fpsValidator.logger
-Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-13', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Actual %s Images IO Time Elapsed: [%s]"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">io_times</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">elapsed_time</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
-<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">return_result</tt> </tt>
-</div></div><a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-11', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'==== FPS from video header: '</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">'===='</tt><tt class="py-op">)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">            <tt id="link-12" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.agent.mailTask.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.chrome.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.commonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.baseGenerator.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyFrameThroughputGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.helper.chromeProfileCreator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.terminalHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.profiler.obsProfiler.logger
+Hasal.lib.thirdparty.tee.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-12', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'==== FPS from log file: '</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">'===='</tt><tt class="py-op">)</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">        <tt class="py-name">real_time_shift</tt> <tt class="py-op">=</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">header_fps</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"exec_timestamp_list"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">            <tt class="py-name">search_range</tt> <tt class="py-op">=</tt> <tt id="link-13" class="py-name"><a title="Hasal.lib.common.imageUtil.get_search_range" class="py-name" href="#" onclick="return doclink('link-13', 'get_search_range', 'link-2');">get_search_range</a></tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'current_fps'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">total_frames</tt><tt class="py-op">,</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'search_margin'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line"> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">"output_image_name"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">input_data</tt><tt class="py-op">:</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-name">False</tt><tt class="py-op">:</tt> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">                <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">mkdir</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">            <tt class="py-name">str_image_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_image_name'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">            <tt class="py-name">result</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">            <tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">imwrite</tt><tt class="py-op">(</tt><tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">            <tt class="py-name">io_times</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">            <tt class="py-name">img_cnt</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt class="py-name">rmtree</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">mkdir</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">            <tt class="py-name">start_time</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">            <tt class="py-keyword">while</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">                <tt class="py-name">img_cnt</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">                <tt class="py-name">bol_write_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">                <tt class="py-name">in_search_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">                <tt class="py-name">str_image_fn</tt> <tt class="py-op">=</tt> <tt class="py-string">"image_%05d.bmp"</tt> <tt class="py-op">%</tt> <tt class="py-name">img_cnt</tt> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">                <tt class="py-name">str_image_fp</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">input_data</tt><tt class="py-op">[</tt><tt class="py-string">'output_img_dp'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">str_image_fn</tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">input_data</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'exec_timestamp_list'</tt><tt class="py-op">)</tt> <tt class="py-keyword">or</tt> <tt class="py-op">(</tt><tt class="py-name">search_range</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">img_cnt</tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">search_range</tt><tt class="py-op">[</tt><tt class="py-number">3</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">                    <tt class="py-name">result</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">                    <tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">imwrite</tt><tt class="py-op">(</tt><tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-name">image</tt><tt class="py-op">)</tt> </tt>
+<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">                    <tt class="py-name">bol_write_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">                    <tt class="py-name">in_search_flag</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line">                    <tt class="py-name">io_times</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">                    <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">grab</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line">                <tt class="py-name">return_result</tt><tt class="py-op">[</tt><tt class="py-name">str_image_fn</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-string">'fp'</tt><tt class="py-op">:</tt> <tt class="py-name">str_image_fp</tt><tt class="py-op">,</tt> <tt class="py-string">'time_seq'</tt><tt class="py-op">:</tt> <tt class="py-name">vidcap</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> <tt class="py-op">*</tt> <tt class="py-name">real_time_shift</tt><tt class="py-op">,</tt> <tt class="py-string">'write_to_file'</tt><tt class="py-op">:</tt> <tt class="py-name">bol_write_flag</tt><tt class="py-op">,</tt> <tt class="py-string">'in_search_flag'</tt><tt class="py-op">:</tt> <tt class="py-name">in_search_flag</tt><tt class="py-op">}</tt> </tt>
+<a name="L80"></a><tt class="py-lineno">80</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">result</tt><tt class="py-op">:</tt> </tt>
+<a name="L81"></a><tt class="py-lineno">81</tt>  <tt class="py-line">                    <tt class="py-keyword">break</tt> </tt>
+<a name="L82"></a><tt class="py-lineno">82</tt>  <tt class="py-line">            <tt class="py-name">end_time</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno">83</tt>  <tt class="py-line">            <tt class="py-name">elapsed_time</tt> <tt class="py-op">=</tt> <tt class="py-name">end_time</tt> <tt class="py-op">-</tt> <tt class="py-name">start_time</tt> </tt>
+<a name="L84"></a><tt class="py-lineno">84</tt>  <tt class="py-line">            <tt id="link-14" class="py-name"><a title="Hasal.agent.agent.logger
+Hasal.agent.iskakalunan.logger
+Hasal.agent.mailTask.logger
+Hasal.lib.baseTest.logger
+Hasal.lib.browser.base.logger
+Hasal.lib.browser.chrome.logger
+Hasal.lib.browser.firefox.logger
+Hasal.lib.browser.webdriverFirefox.logger
+Hasal.lib.common.commonUtil.CommonUtil.logger
+Hasal.lib.common.commonUtil.logger
+Hasal.lib.common.environment.logger
+Hasal.lib.common.imageTool.logger
+Hasal.lib.common.imageUtil.logger
+Hasal.lib.common.pyDriveUtil.logger
+Hasal.lib.common.windowController.logger
+Hasal.lib.converter.cv2Converter.logger
+Hasal.lib.converter.ftSampleConverter.logger
+Hasal.lib.converter.sampleConverter.logger
+Hasal.lib.generator.baseGenerator.logger
+Hasal.lib.generator.frameThroughputDctGenerator.logger
+Hasal.lib.generator.inputLatencyAnimationDctGenerator.logger
+Hasal.lib.generator.inputLatencyFrameThroughputGenerator.logger
+Hasal.lib.generator.runTimeDctGenerator.logger
+Hasal.lib.helper.chromeProfileCreator.logger
+Hasal.lib.helper.desktopHelper.logger
+Hasal.lib.helper.firefoxProfileCreator.logger
+Hasal.lib.helper.generatorHelper.logger
+Hasal.lib.helper.terminalHelper.logger
+Hasal.lib.helper.uploadAgentHelper.logger
+Hasal.lib.perfBaseTest.logger
+Hasal.lib.profiler.geckoProfiler.logger
+Hasal.lib.profiler.harProfiler.logger
+Hasal.lib.profiler.mitmDumpProfiler.logger
+Hasal.lib.profiler.obsProfiler.logger
+Hasal.lib.thirdparty.tee.logger
+Hasal.lib.validator.fileExistValidator.logger
+Hasal.lib.validator.fpsValidator.logger
+Hasal.lib.webdriverBaseTest.logger" class="py-name" href="#" onclick="return doclink('link-14', 'logger', 'link-6');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Actual %s Images IO Time Elapsed: [%s]"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">io_times</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">elapsed_time</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L85"></a><tt class="py-lineno">85</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">return_result</tt> </tt>
+</div></div><a name="L86"></a><tt class="py-lineno">86</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
 // -->
@@ -394,7 +439,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jul 10 06:57:36 2017
+    Generated by Epydoc 3.0.1 on Tue Jul 18 09:45:49 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
