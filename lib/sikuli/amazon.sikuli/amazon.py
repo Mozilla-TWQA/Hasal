@@ -41,6 +41,11 @@ class Amazon(WebApp):
         [os.path.join('pics', 'function_under_search_field_moztpeqa_win10.png'), 0, 0],
     ]
 
+    AMAZON_SEARCH_BAR = [
+        [os.path.join('pics', 'search_bar_chrome.png'), 0, 0],
+        [os.path.join('pics', 'search_bar_firefox.png'), 0, 0],
+    ]
+
     def wait_for_logo_loaded(self, similarity=0.70):
         """
         @param similarity: The similarity of AMAZON_LOGO component. Default: 0.70.

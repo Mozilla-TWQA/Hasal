@@ -59,7 +59,25 @@ class FrameThroughputDctGenerator(BaseGenerator):
 
             # calculate viewport variations between start point and end point
             # based on variation to determine if frame is freeze and result in frame throughput related values
-            start_target_fp = input_image_list[image_fn_list[start_event_index]][CropRegion.VIEWPORT]
+            start_visual_event = dict()
+            end_visual_event = dict()
+            ft_compare_area = CropRegion.VIEWPORT
+            for _, event_list in self.visual_event_points.items():
+                if not start_visual_event:
+                    start_visual_event = self.get_event_data_in_result_list(event_list, self.EVENT_START)
+                if not end_visual_event:
+                    end_visual_event = self.get_event_data_in_result_list(event_list, self.EVENT_END)
+            if start_visual_event['search_target'] == end_visual_event['search_target'] or \
+                    (start_visual_event.get('x', None) and end_visual_event.get('x', None) and
+                        start_visual_event.get('x', None) == end_visual_event.get('x', None) and
+                        start_visual_event.get('y', None) and end_visual_event.get('y', None) and
+                        start_visual_event.get('y', None) == end_visual_event.get('y', None) and
+                        start_visual_event.get('w', None) and end_visual_event.get('w', None) and
+                        start_visual_event.get('w', None) == end_visual_event.get('w', None) and
+                        start_visual_event.get('h', None) and end_visual_event.get('h', None) and
+                        start_visual_event.get('h', None) == end_visual_event.get('h', None)):
+                ft_compare_area = start_visual_event['search_target']
+            start_target_fp = input_image_list[image_fn_list[start_event_index]][ft_compare_area]
             start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
             current_img_dct_array = convert_to_dct(start_target_fp)
             weight, height = current_img_dct_array.shape
@@ -72,7 +90,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
                 image_fn = image_fn_list[img_index]
                 image_data = copy.deepcopy(input_image_list[image_fn])
                 previous_img_dct_array = copy.deepcopy(current_img_dct_array)
-                current_img_dct_array = convert_to_dct(image_data[CropRegion.VIEWPORT])
+                current_img_dct_array = convert_to_dct(image_data[ft_compare_area])
                 mismatch_rate = np.sum(np.absolute(np.subtract(previous_img_dct_array, current_img_dct_array))) / (weight * height)
                 mismatch_rate_threshold = self.index_config.get('mismatch-rate-threshold', 0)
                 if mismatch_rate <= mismatch_rate_threshold:
