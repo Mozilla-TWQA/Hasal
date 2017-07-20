@@ -12,11 +12,14 @@ logger = get_logger(__name__)
 
 
 class FirefoxProfileCreator(object):
-    def __init__(self, firefox_profile_path=''):
-        if sys.platform == 'darwin':
-            self.firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
+    def __init__(self, firefox_profile_path='', launch_cmd=''):
+        if launch_cmd:
+            self.firefox_cmd = launch_cmd
         else:
-            self.firefox_cmd = 'firefox'
+            if sys.platform == 'darwin':
+                self.firefox_cmd = '/Applications/Firefox.app/Contents/MacOS/firefox'
+            else:
+                self.firefox_cmd = 'firefox'
         self._firefox_profile_path = firefox_profile_path
 
     def get_firefox_profile(self, prefs={}, cookies_settings={}, profile_files_settings={}, extensions_settings={}):

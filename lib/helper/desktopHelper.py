@@ -24,6 +24,8 @@ def _load_browser_class(type="sikuli"):
 def launch_browser(browser_type, **kwargs):
     env = kwargs['env']
     exec_config = kwargs['exec_config']
+    firefox_config = kwargs['firefox_config']
+    chrome_config = kwargs['chrome_config']
     # default set engine type as sikuli since type would not be specified in perfBaseTest
     if 'type' in kwargs:
         engine_type = kwargs['type']
@@ -37,20 +39,24 @@ def launch_browser(browser_type, **kwargs):
 
     if browser_type == env.DEFAULT_BROWSER_TYPE_CHROME:
         profile_path = env.chrome_profile_path
+        browser_launch_cmd_path = chrome_config.get("launch-browser-cmd-path", None)
         if env.PROFILER_FLAG_CHROMETRACING in enabled_profiler_list:
             browser_obj = chrome_class(exec_config['browser-height'], exec_config['browser-width'],
                                        tracing_path=env.chrome_tracing_file_fp,
-                                       profile_path=profile_path)
+                                       profile_path=profile_path,
+                                       browser_launch_cmd_path=browser_launch_cmd_path)
         else:
-            browser_obj = chrome_class(exec_config['browser-height'], exec_config['browser-width'], profile_path=profile_path)
+            browser_obj = chrome_class(exec_config['browser-height'], exec_config['browser-width'],
+                                       profile_path=profile_path, browser_launch_cmd_path=browser_launch_cmd_path)
     elif browser_type == env.DEFAULT_BROWSER_TYPE_FIREFOX:
         profile_path = env.firefox_profile_path
+        browser_launch_cmd_path = firefox_config.get("launch-browser-cmd-path", None)
         if env.PROFILER_FLAG_FXTRACELOGGER in enabled_profiler_list:
             browser_obj = firefox_class(exec_config['browser-height'], exec_config['browser-width'], tracelogger=True,
-                                        profile_path=profile_path)
+                                        profile_path=profile_path, browser_launch_cmd_path=browser_launch_cmd_path)
         else:
             browser_obj = firefox_class(exec_config['browser-height'], exec_config['browser-width'],
-                                        profile_path=profile_path)
+                                        profile_path=profile_path, browser_launch_cmd_path=browser_launch_cmd_path)
 
     browser_obj.launch()
     return browser_obj, profile_path

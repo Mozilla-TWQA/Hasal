@@ -11,12 +11,15 @@ class BrowserFirefox(BrowserBase):
     def get_browser_settings(self, **kwargs):
         self.browser_process = "firefox"
         self.process_name = "firefox"
-        if self.current_platform_name == "darwin":
-            self.command = self.darwin_firefox_command
-        elif self.current_platform_name == "linux2":
-            self.command = self.ubuntu_firefox_command
+        if self.config_launch_cmd_path:
+            self.command = self.config_launch_cmd_path
         else:
-            self.command = self.ubuntu_firefox_command
+            if self.current_platform_name == "darwin":
+                self.command = self.darwin_firefox_command
+            elif self.current_platform_name == "linux2":
+                self.command = self.ubuntu_firefox_command
+            else:
+                self.command = self.ubuntu_firefox_command
         self.launch_cmd = [self.command, "-height", self.window_size_height, "-width",
                            self.windows_size_width]
 
