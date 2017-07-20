@@ -508,6 +508,14 @@ class CommonUtil(object):
             fh.write(json.dumps(origin_data))
 
     @staticmethod
+    def subprocess_checkoutput_wrapper(input_cmd_list, **kwargs):
+        try:
+            output = subprocess.check_output(input_cmd_list, **kwargs)
+            return 0, output
+        except subprocess.CalledProcessError as e:
+            return e.returncode, e.message
+
+    @staticmethod
     # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
     def extract_platform_dep_settings(config_value, current_platform_name, current_platform_ver):
         platform_dep_variables = {}
