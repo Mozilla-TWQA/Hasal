@@ -1,0 +1,99 @@
+{
+  "type": "object",
+  "properties": {
+    "enable_create_new_profile": {
+      "description": "it will create new chrome profile before running the whole suite if enabled",
+      "type": "boolean"
+    },
+    "env": {
+      "description": "runtime env settings",
+      "type": "object"
+    },
+    "prefs": {
+      "description": "user perfs settings",
+      "type": "object"
+    },
+    "cookies": {
+      "description": "cookies settings",
+      "type": "object",
+      "properties": {
+        "folder": {
+          "description": "the G-Drive folder of pre-defined cookie file",
+          "type": "string"
+        },
+        "filename": {
+          "description": "pre-defined cookie file name on G-Drive",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder",
+        "filename"
+      ],
+      "additionalProperties": false
+    },
+    "profile_files": {
+      "description": "profiler file settings",
+      "type": "object",
+      "properties": {
+        "DisableStatusBar": {
+          "description": "disable status bar settings",
+          "type": "object",
+          "properties": {
+            "filename": {
+              "description": "pre-defined css file name",
+              "type": "string"
+            },
+            "destination": {
+              "description": "destination folder",
+              "type": "string"
+            }
+          },
+          "required": [
+            "filename",
+            "destination"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "extensions": {
+      "description": "extensions settings",
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "description": "any extensions",
+          "type": "object",
+          "properties": {
+            "enable":{
+              "type": "boolean"
+            },
+            "XPI": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "validate-fps": {
+              "type": "boolean"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enable",
+            "XPI"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "required": [
+    "enable_create_new_profile",
+    "profile_files",
+    "extensions"
+  ],
+  "additionalProperties": false
+}

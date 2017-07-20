@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "properties": {
+    "module-name": {
+      "description": "",
+      "type": "string"
+    },
+    "module-path": {
+      "description": "",
+      "type": "string"
+    },
+    "sample-converter-name": {
+      "description": "",
+      "type": "string"
+    },
+    "sample-converter-path": {
+      "description": "",
+      "type": "string"
+    },
+    "image-converter-name": {
+      "description": "",
+      "type": "string"
+    },
+    "image-converter-path": {
+      "description": "",
+      "type": "string"
+    },
+    "image-converter-format": {
+      "description": "",
+      "type": "string"
+    },
+    "case-type": {
+      "description": "",
+      "type": "string",
+      "enum": [
+        "re",
+        "pt"
+      ]
+    },
+    "ipynb-template-name": {
+      "description": "",
+      "type": "string"
+    },
+    "snapshot-base-sample1": {
+      "description": "",
+      "type": "boolean"
+    },
+    "snapshot-base-sample2": {
+      "description": "",
+      "type": "boolean"
+    },
+    "supported-suite-fp": {
+      "description": "",
+      "type": "string"
+    },
+    "drop-outlier-flag": {
+      "description": "",
+      "type": "boolean"
+    },
+    "calculate-speed-index": {
+      "description": "",
+      "type": "boolean"
+    },
+    "region": {
+      "description": "",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "description": "",
+            "type": "string"
+          },
+          "search_target": {
+            "description": "",
+            "type": "string"
+          },
+          "direction": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event",
+          "search_target"
+        ]
+      }
+    },
+    "platform-dep-settings": {
+      "description": "",
+      "type": "object"
+    }
+  },
+  "required": [
+    "module-name",
+    "module-path",
+    "sample-converter-name",
+    "sample-converter-path",
+    "image-converter-name",
+    "image-converter-path",
+    "image-converter-format",
+    "case-type",
+    "snapshot-base-sample1",
+    "snapshot-base-sample2",
+    "supported-suite-fp",
+    "drop-outlier-flag"
+  ],
+  "additionalProperties": false
+}
