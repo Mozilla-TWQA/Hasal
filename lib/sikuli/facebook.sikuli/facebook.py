@@ -195,6 +195,10 @@ class facebook(WebApp):
         [os.path.join('pics', 'facebook_message_search_bar.png'), 0, 0]
     ]
 
+    FACEBOOK_MESSAGE_TYPE_AREA = [
+        [os.path.join('pics', 'facebook_message_icons.png'), 0, -25]
+    ]
+
     FACEBOOK_CHAT_TAB_TITLE_BAR = [
         [os.path.join('pics', 'facebook_chat_tab_title_bar.png'), 0, 0]
     ]
@@ -547,6 +551,14 @@ class facebook(WebApp):
         return self._click(action_name='Focus comment box',
                            component=facebook.FACEBOOK_POST_ACTION,
                            wait_component=facebook.FACEBOOK_POST_ACTION)
+
+    def focus_message_type_area(self):
+        """
+        focus on comment box of any post
+        """
+        return self._click(action_name='Focus message type area',
+                           component=facebook.FACEBOOK_MESSAGE_TYPE_AREA,
+                           wait_component=facebook.FACEBOOK_MESSAGE_TYPE_AREA)
 
     def il_click_close_chat_tab(self, width, height):
         """
