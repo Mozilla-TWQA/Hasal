@@ -33,6 +33,10 @@
         "Preferences"
       ],
       "additionalProperties": false
+    },
+    "platform-dep-settings": {
+      "description": "",
+      "type": "object"
     }
   },
   "required": [

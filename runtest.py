@@ -67,13 +67,6 @@ class RunTest(object):
         for variable_name in kwargs.keys():
             setattr(self, variable_name, CommonUtil.load_json_file(kwargs[variable_name]))
 
-        # overwrite platform dep setting in configs
-        self.__dict__.update(
-            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "firefox_config", self.firefox_config,
-                                                                    ["firefox_config"], sys.platform, platform.release()).__dict__)
-        self.__dict__.update(
-            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
-                                                                    ["chrome_config"], sys.platform, platform.release()).__dict__)
         # init logger
         self.logger = get_logger(__file__, self.exec_config['advance'])
 
@@ -82,8 +75,16 @@ class RunTest(object):
             self.logger.debug(
                 'Loading Settings from {}:\n{}\n'.format(v_name, json.dumps(getattr(self, v_name), indent=4)))
 
-        # validate all configs, raise Exception if failed
+        # validate all configs before overwrite platform depend setting, raise Exception if failed
         self.validate_configs()
+
+        # overwrite platform dep setting in configs
+        self.__dict__.update(
+            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "firefox_config", self.firefox_config,
+                                                                    ["firefox_config"], sys.platform, platform.release()).__dict__)
+        self.__dict__.update(
+            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
+                                                                    ["chrome_config"], sys.platform, platform.release()).__dict__)
 
         # init values
         self.suite_result_dp = ''

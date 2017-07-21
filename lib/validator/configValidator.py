@@ -1,9 +1,9 @@
 import os
 import json
 import jsonschema
-import logging
+from lib.common.logConfig import get_logger
 
-logger = logging.getLogger(os.path.basename(__file__))
+logger = get_logger(__name__)
 
 
 class ConfigValidator(object):
@@ -174,7 +174,6 @@ class ConfigValidator(object):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
     result = ConfigValidator.validate_default_configs()
     exit(0 if result else 1)
 
