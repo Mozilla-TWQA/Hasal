@@ -67,15 +67,13 @@ class FrameThroughputDctGenerator(BaseGenerator):
                     start_visual_event = self.get_event_data_in_result_list(event_list, self.EVENT_START)
                 if not end_visual_event:
                     end_visual_event = self.get_event_data_in_result_list(event_list, self.EVENT_END)
+            region_key = ['x', 'y', 'w', 'h']
+            is_event_override = (set(start_visual_event) & set(end_visual_event) & set(region_key) == set(region_key))
+            is_static_region = False
+            if is_event_override:
+                is_static_region = ([start_visual_event[key] for key in region_key] == [end_visual_event[key] for key in region_key])
             if start_visual_event['search_target'] == end_visual_event['search_target'] or \
-                    (start_visual_event.get('x', None) and end_visual_event.get('x', None) and
-                        start_visual_event.get('x', None) == end_visual_event.get('x', None) and
-                        start_visual_event.get('y', None) and end_visual_event.get('y', None) and
-                        start_visual_event.get('y', None) == end_visual_event.get('y', None) and
-                        start_visual_event.get('w', None) and end_visual_event.get('w', None) and
-                        start_visual_event.get('w', None) == end_visual_event.get('w', None) and
-                        start_visual_event.get('h', None) and end_visual_event.get('h', None) and
-                        start_visual_event.get('h', None) == end_visual_event.get('h', None)):
+                    is_event_override and is_static_region:
                 ft_compare_area = start_visual_event['search_target']
             start_target_fp = input_image_list[image_fn_list[start_event_index]][ft_compare_area]
             start_target_time_seq = input_image_list[image_fn_list[start_event_index]]['time_seq']
