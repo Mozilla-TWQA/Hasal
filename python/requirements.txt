@@ -8,4 +8,7 @@ flake8 == 2.4.1
 pep8 == 1.5.7
 pyflakes == 0.8.1
 
+# For JSON schema
+jsonschema==2.6.0
+
 -e python/tidy

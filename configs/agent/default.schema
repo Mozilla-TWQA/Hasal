@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "AGENT_MODULE_PATH": {
+      "description": "agent module path",
+      "type": "string"
+    },
+    "AGENT_OBJECT_NAME": {
+      "description": "agent object name",
+      "type": "string"
+    },
+    "JOB_NAME": {
+      "description": "job name",
+      "type": "string"
+    },
+    "MAX_RUN": {
+      "description": "max running time(s)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "MAX_RETRY": {
+      "description": "max try time(s)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "INDEX_CONFIG_NAME": {
+      "description": "default index config file",
+      "type": "string"
+    }
+  },
+  "required": [
+    "AGENT_MODULE_PATH",
+    "AGENT_OBJECT_NAME",
+    "JOB_NAME",
+    "MAX_RUN",
+    "MAX_RETRY",
+    "INDEX_CONFIG_NAME"
+  ],
+  "additionalProperties": false
+}

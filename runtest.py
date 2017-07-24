@@ -32,6 +32,8 @@ from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
 from lib.helper.chromeProfileCreator import ChromeProfileCreator
+from lib.validator.configValidator import ConfigValidator
+
 
 if platform.system().lower() == "linux":
     DEFAULT_TASK_KILL_LIST = ["ffmpeg"]
@@ -50,20 +52,31 @@ else:
 class RunTest(object):
     def __init__(self, **kwargs):
         self.exec_config = {}
-        self.online_config = {}
         self.index_config = {}
+        self.online_config = {}
         self.global_config = {}
         self.firefox_config = {}
         self.chrome_config = {}
         # load exec-config, firefox-config, index-config, online-config and global config to self object
         self.exec_config_fp = os.path.abspath(kwargs['exec_config'])
-        self.firefox_config_fp = os.path.abspath(kwargs['firefox_config'])
         self.index_config_fp = os.path.abspath(kwargs['index_config'])
         self.online_config_fp = os.path.abspath(kwargs['online_config'])
         self.global_config_fp = os.path.abspath(kwargs['global_config'])
+        self.firefox_config_fp = os.path.abspath(kwargs['firefox_config'])
         self.chrome_config_fp = os.path.abspath(kwargs['chrome_config'])
         for variable_name in kwargs.keys():
             setattr(self, variable_name, CommonUtil.load_json_file(kwargs[variable_name]))
+
+        # init logger
+        self.logger = get_logger(__file__, self.exec_config['advance'])
+
+        self.logger.debug('\n###############\n#  Important  #\n###############\n')
+        for v_name in kwargs.keys():
+            self.logger.debug(
+                'Loading Settings from {}:\n{}\n'.format(v_name, json.dumps(getattr(self, v_name), indent=4)))
+
+        # validate all configs before overwrite platform depend setting, raise Exception if failed
+        self.validate_configs()
 
         # overwrite platform dep setting in configs
         self.__dict__.update(
@@ -72,13 +85,6 @@ class RunTest(object):
         self.__dict__.update(
             CommonUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
                                                                     ["chrome_config"], sys.platform, platform.release()).__dict__)
-        # init logger
-        self.logger = get_logger(__file__, self.exec_config['advance'])
-
-        self.logger.debug('\n###############\n#  Important  #\n###############\n')
-        for v_name in kwargs.keys():
-            self.logger.debug(
-                'Loading Settings from {}:\n{}\n'.format(v_name, json.dumps(getattr(self, v_name), indent=4)))
 
         # init values
         self.suite_result_dp = ''
@@ -107,6 +113,35 @@ class RunTest(object):
 
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
+
+    def validate_configs(self):
+        """
+        Validating all input configs. Raise exception if failed.
+        @return:
+        """
+        mapping_config_schema = {
+            'exec_config': os.path.join('configs', 'exec'),
+            'index_config': os.path.join('configs', 'index'),
+            'online_config': os.path.join('configs', 'online'),
+            'global_config': os.path.join('configs', 'global'),
+            'firefox_config': os.path.join('configs', 'firefox'),
+            'chrome_config': os.path.join('configs', 'chrome')
+        }
+
+        for config_name, schema_folder in mapping_config_schema.items():
+            config_obj = getattr(self, config_name)
+            schema_list = ConfigValidator.get_schema_list(schema_folder)
+            for schema_path in schema_list:
+                schema_obj = ConfigValidator.load_json_file(schema_path)
+                validate_result = ConfigValidator.validate(config_obj, schema_obj)
+                self.logger.info('Validate {c} by {s} ... {r}'.format(c=config_name,
+                                                                      s=os.path.relpath(schema_path),
+                                                                      r='Pass' if validate_result else 'Failed'))
+                if not validate_result:
+                    message = 'Config settings {} does not pass the schema {} validation.'.format(config_name,
+                                                                                                  os.path.relpath(
+                                                                                                      schema_path))
+                    raise Exception(message)
 
     def suite_setup(self):
         upload_dir = os.path.join(os.getcwd(), self.global_config['default-case-complete-artifact-store-dn'])

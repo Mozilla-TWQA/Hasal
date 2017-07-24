@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "properties": {
+    "max-run": {
+      "description": "max running time(s)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "max-retry": {
+      "description": "max try time(s)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "advance": {
+      "description": "by enabling this option, it will output the debug log and generate the mitmdump flow files automatically",
+      "type": "boolean"
+    },
+    "keep-browser": {
+      "description": "after running the test, the browser will keep open",
+      "type": "boolean"
+    },
+    "comment": {
+      "description": "differentiate the same build in server, default is <today>",
+      "type": "string"
+    },
+    "user-simulation-tool": {
+      "description": "sikuli/webdriver",
+      "enum": ["sikuli", "webdriver"]
+    },
+    "webdriver-run-browser": {
+      "description": "an array which contains firefox and/or chrome",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exec-suite-fp": {
+      "description": "case suite file path",
+      "type": "string"
+    },
+    "output-result-ipynb-file": {
+      "description": "output ipynb file to result folder when suite is running completed",
+      "type": "boolean"
+    },
+    "output-result-video-file": {
+      "description": "output result video file to result folder when suite is running completed",
+      "type": "boolean"
+    },
+    "clean-unnecessary-images": {
+      "description": "clean unnecessary images when suite is running completed for saving disk space",
+      "type": "boolean"
+    },
+    "clean-unnecessary-images-extend-buffer": {
+      "description": "keep buffer images before/after target image range",
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "max-run",
+    "max-retry",
+    "advance",
+    "keep-browser",
+    "comment",
+    "user-simulation-tool",
+    "webdriver-run-browser",
+    "exec-suite-fp",
+    "output-result-ipynb-file",
+    "output-result-video-file",
+    "clean-unnecessary-images",
+    "clean-unnecessary-images-extend-buffer"
+  ],
+  "additionalProperties": false
+}
