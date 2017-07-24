@@ -1,7 +1,7 @@
 import os
-import json
 import jsonschema
 from lib.common.logConfig import get_logger
+from lib.common.commonUtil import CommonUtil
 
 logger = get_logger(__name__)
 
@@ -16,24 +16,6 @@ class ConfigValidator(object):
     SCHEMA_EXT = '.schema'
 
     @staticmethod
-    def load_json_file(fp):
-        """
-        Loading the JSON file and return the dict object.
-        @param fp: The path of JSON file.
-        @return: The dict object of JSON file's content. If it cannot be parsed to dict, it will be {}.
-        """
-        if os.path.exists(fp):
-            try:
-                with open(fp) as fh:
-                    json_obj = json.load(fh)
-                return json_obj
-            except Exception as e:
-                print e
-                return {}
-        else:
-            return {}
-
-    @staticmethod
     def validate(dict_obj, schema_obj):
         """
         Validating the dict_obj base on schema_obj.
@@ -42,9 +24,9 @@ class ConfigValidator(object):
         @return: True or False.
         """
         if isinstance(dict_obj, str):
-            dict_obj = ConfigValidator.load_json_file(dict_obj)
+            dict_obj = CommonUtil.load_json_file(dict_obj)
         if isinstance(schema_obj, str):
-            schema_obj = ConfigValidator.load_json_file(schema_obj)
+            schema_obj = CommonUtil.load_json_file(schema_obj)
 
         try:
             jsonschema.validate(dict_obj, schema_obj)
@@ -158,8 +140,8 @@ class ConfigValidator(object):
                 for schema_path in schema_list:
                     logger.info('  Schema: {s}'.format(s=os.path.basename(schema_path)))
                     for config_path in config_list:
-                        config_obj = ConfigValidator.load_json_file(config_path)
-                        schema_obj = ConfigValidator.load_json_file(schema_path)
+                        config_obj = CommonUtil.load_json_file(config_path)
+                        schema_obj = CommonUtil.load_json_file(schema_path)
                         validate_result = ConfigValidator.validate(config_obj, schema_obj)
                         if validate_result:
                             logger.info('    Config: {c} ... {r}'.format(c=os.path.basename(config_path), r='Pass'))
