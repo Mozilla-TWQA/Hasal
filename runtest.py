@@ -132,7 +132,7 @@ class RunTest(object):
             config_obj = getattr(self, config_name)
             schema_list = ConfigValidator.get_schema_list(schema_folder)
             for schema_path in schema_list:
-                schema_obj = ConfigValidator.load_json_file(schema_path)
+                schema_obj = CommonUtil.load_json_file(schema_path)
                 validate_result = ConfigValidator.validate(config_obj, schema_obj)
                 self.logger.info('Validate {c} by {s} ... {r}'.format(c=config_name,
                                                                       s=os.path.relpath(schema_path),
