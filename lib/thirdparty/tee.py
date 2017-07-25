@@ -84,8 +84,16 @@ def system2(cmd, cwd=None, logger=_sentinel, stdout=_sentinel, log_command=_sent
             msg += '\n'
             try:
                 f.write(msg)
-            except TypeError:
-                f.write(msg.encode("utf-8"))
+            except Exception:
+                try:
+                    write_ctnt = msg.encode("utf-8", "ignore")
+                except Exception:
+                    print("WARNING: encode utf-8 error, message will be skipped!!!")
+                    write_ctnt = ""
+                try:
+                    f.write(write_ctnt)
+                except Exception:
+                    print("write to stdout with utf-8 error")
         except Exception:
             type, e, tb = sys.exc_info()
             import traceback
