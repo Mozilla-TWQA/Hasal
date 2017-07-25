@@ -7,9 +7,9 @@ class TestSikuli(PerfBaseTest):
         super(TestSikuli, self).setUp()
         self.set_configs(self.config_name.INDEX,
                          self.extract_platform_dep_settings(
-                             {'win32': {'7': {'search-margin': 2, 'mismatch-rate-threshold': 0.005,
+                             {'win32': {'7': {'search-margin': 2, 'mismatch-rate-threshold': 0.01,
                                               'compare-threshold': 0.025},
-                                        '10': {'search-margin': 2, 'mismatch-rate-threshold': 0.005,
+                                        '10': {'search-margin': 2, 'mismatch-rate-threshold': 0.01,
                                                'compare-threshold': 0.025}}}))
 
     def test_chrome_amazon_ft_type_100_txt_in_search_field_delay_30ms(self):
