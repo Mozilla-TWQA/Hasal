@@ -61,7 +61,8 @@ class Case(basecase.SikuliInputLatencyCase):
         capimg1 = capture(0, 0, capture_width, capture_height)
 
         char_len = 100
-        char_str = (string.ascii_lowercase * (char_len / 26 + 1))[:char_len]
+        sample_str = string.letters + string.letters[::-1]
+        char_str = (sample_str * (char_len / len(sample_str) + 1))[:char_len]
         com.system_print('Type char')
         type(char_str)
         sleep(1)
