@@ -75,7 +75,7 @@ class HasalTask(object):
         config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER_PKG_PLATFORM', "")
         config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER_SUITE_NAME', "")
         config_data['svr-config']['svr_addr'] = self.configurations.get('SVR_ADDR', "127.0.0.1")
-        config_data['svr-config']['svr_port'] = self.configurations.get('SVR_PORT', "1234")
+        config_data['svr-config']['svr_port'] = int(self.configurations.get('SVR_PORT', 1234))
         config_data['svr-config']['project_name'] = self.configurations.get('PROJECT_NAME', "hasal")
         with open(output_config_fp, 'w') as write_fh:
             json.dump(config_data, write_fh)
