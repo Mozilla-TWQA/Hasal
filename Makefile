@@ -18,7 +18,8 @@ dev-env: $(VENV)/bin/python
 # for testing
 .PHONY: test
 test: dev-env
-	$(VENV)/bin/python -m unittest tests.test_chrome_gdoc_create_copypaste_table_1
+	./mach test-config
+	./mach test-tidy --no-progress --all
 
 #####################################
 # below are origin makrfile scripts #

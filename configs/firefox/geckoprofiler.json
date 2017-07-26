@@ -31,9 +31,11 @@
     "browser.crashReports.unsubmittedCheck.enabled": false,
     "browser.tabs.crashReporting.sendReport": false,
     "dom.ipc.plugins.flash.subprocess.crashreporter.enabled": false,
+    "browser.crashReports.unsubmittedCheck.autoSubmit": true,
     "browser.onboarding.enabled": false,
     "browser.onboarding.hidden": true,
-    "browser.onboarding.notification.finished": true
+    "browser.onboarding.notification.finished": true,
+    "layout.css.servo.enabled": true
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
@@ -75,6 +77,23 @@
     "ChromeTracing": {
       "enable": false,
       "XPI": []
+    }
+  },
+  "platform-dep-settings"   : {
+    "darwin":{
+      "default": {
+        "launch-browser-cmd-path": "/Applications/Firefox.app/Contents/MacOS/firefox"
+      }
+    },
+    "win32": {
+      "default": {
+        "launch-browser-cmd-path": "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"
+      }
+    },
+    "linux2":{
+      "default": {
+        "launch-browser-cmd-path": "firefox"
+      }
     }
   }
 }

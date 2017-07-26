@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "enable_create_new_profile": {
+      "description": "it will create new chrome profile before running the whole suite if enabled",
+      "type": "boolean"
+    },
+    "cookies": {
+      "description": "cookies settings",
+      "type": "object",
+      "properties": {
+        "folder": {
+          "description": "the G-Drive folder of pre-defined cookie file",
+          "type": "string"
+        },
+        "Cookies": {
+          "description": "pre-defined cookie file name on G-Drive",
+          "type": "string"
+        },
+        "Secure Preferences": {
+          "description": "Secure Preferences folder name",
+          "type": "string"
+        },
+        "Preferences": {
+          "description": "Preferences folder name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder",
+        "Cookies",
+        "Secure Preferences",
+        "Preferences"
+      ],
+      "additionalProperties": false
+    },
+    "platform-dep-settings": {
+      "description": "",
+      "type": "object"
+    }
+  },
+  "required": [
+    "enable_create_new_profile"
+  ],
+  "additionalProperties": false
+}

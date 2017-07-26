@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import copy
 import json
 import platform
 import subprocess
@@ -505,3 +506,49 @@ class CommonUtil(object):
             origin_data.update(input_data)
             fh.seek(0)
             fh.write(json.dumps(origin_data))
+
+    @staticmethod
+    def subprocess_checkoutput_wrapper(input_cmd_list, **kwargs):
+        try:
+            output = subprocess.check_output(input_cmd_list, **kwargs)
+            return 0, output
+        except subprocess.CalledProcessError as e:
+            return e.returncode, e.message
+
+    @staticmethod
+    # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
+    def extract_platform_dep_settings(config_value, current_platform_name, current_platform_ver):
+        platform_dep_variables = {}
+        # get current platform value or default value of it
+        if current_platform_name in config_value:
+            if current_platform_ver in config_value[current_platform_name]:
+                platform_dep_variables = copy.deepcopy(
+                    config_value[current_platform_name][current_platform_ver])
+            elif 'default' in config_value[current_platform_name]:
+                platform_dep_variables = copy.deepcopy(config_value[current_platform_name]['default'])
+
+        # return {} if no matching system platform and no default value
+        return platform_dep_variables
+
+    @staticmethod
+    def overwrite_platform_dep_settings_into_configs(selfObj, config_variable_name, config_value, acceptable_config_list, current_platform_name, current_platform_ver):
+        if config_variable_name not in acceptable_config_list:
+            raise Exception('Invalid configuration name {config_name}: {config_value}'
+                            .format(config_name=config_variable_name, config_value=config_value))
+
+        default_platform_dep_settings_key = "platform-dep-settings"
+        if default_platform_dep_settings_key in config_value:
+            # Load the index config's settings under "platform-dep-settings" base on platform
+            platform_dep_variables = CommonUtil.extract_platform_dep_settings(config_value[default_platform_dep_settings_key], current_platform_name, current_platform_ver)
+            config_value.update(platform_dep_variables)
+            config_value.pop(default_platform_dep_settings_key)
+
+        if hasattr(selfObj, config_variable_name):
+            # getattr is a way to get variable by reference and doesn't need to be set back
+            new_config_value = getattr(selfObj, config_variable_name)
+            new_config_value.update(config_value)
+            setattr(selfObj, config_variable_name, new_config_value)
+        else:
+            setattr(selfObj, config_variable_name, config_value)
+
+        return selfObj

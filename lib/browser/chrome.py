@@ -15,12 +15,15 @@ class BrowserChrome(BrowserBase):
         default_tracing_capture_period = 900  # sec
         self.browser_process = "chrome"
         self.process_name = "chrome"
-        if self.current_platform_name == "darwin":
-            self.command = self.darwin_chrome_command
-        elif self.current_platform_name == "linux2":
-            self.command = self.ubuntu_chrome_command
+        if self.config_launch_cmd_path:
+            self.command = self.config_launch_cmd_path
         else:
-            self.command = self.windows_chrome_command
+            if self.current_platform_name == "darwin":
+                self.command = self.darwin_chrome_command
+            elif self.current_platform_name == "linux2":
+                self.command = self.ubuntu_chrome_command
+            else:
+                self.command = self.windows_chrome_command
 
         self.launch_cmd = [self.command,
                            "--window-size=" + str(self.windows_size_width) + "," + str(self.window_size_height)]

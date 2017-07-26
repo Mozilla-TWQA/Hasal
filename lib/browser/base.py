@@ -17,10 +17,11 @@ class BrowserBase(object):
         self.current_platform_name = sys.platform
         self.window_size_height = str(window_size_height)
         self.windows_size_width = str(windows_size_width)
-        self.get_browser_settings(**kwargs)
-
+        self.config_launch_cmd_path = kwargs.get('browser_launch_cmd_path', None)
         self.profile_path = kwargs.get('profile_path', '')
         self.driver = None
+
+        self.get_browser_settings(**kwargs)
 
     def get_browser_settings(self, **kwargs):
         pass

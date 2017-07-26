@@ -1,0 +1,81 @@
+{
+  "type": "object",
+  "properties": {
+    "default-result-fn": {
+      "description": "default result file name",
+      "type": "string"
+    },
+  "default-test-dn": {
+      "description": "default test case's folder name",
+      "type": "string"
+    },
+  "default-current-running-status-fn": {
+      "description": "default current running status file name",
+      "type": "string"
+    },
+  "default-running-statistics-fn": {
+      "description": "default running statistics file name",
+      "type": "string"
+    },
+  "default-case-complete-artifact-store-dn": {
+      "description": "default result artifact storing folder name",
+      "type": "string"
+    },
+  "default-case-temp-artifact-store-dn": {
+      "description": "default temporary artifact storing folder name",
+      "type": "string"
+    },
+  "ipynb-template-default-dn": {
+      "description": "ipynb report's template folder name",
+      "type": "string"
+    },
+  "default-error-case-list": {
+      "description": "the file to store the error case list",
+      "type": "string"
+    },
+  "default-fps-validator-name": {
+      "description": "default FPS validator class name",
+      "type": "string"
+    },
+  "default-fps-validator-module-path": {
+      "description": "default FPS validator module path",
+      "type": "string"
+    },
+  "default-file-exist-validator-name": {
+      "description": "default File validator class name",
+      "type": "string"
+    },
+  "default-file-exist-validator-module-path": {
+      "description": "default File validator module path",
+      "type": "string"
+    },
+  "default-user-simulation-tool-webdriver": {
+      "description": "",
+      "type": "string"
+    },
+  "default-search-target-browser": {
+      "description": "",
+      "type": "string"
+    }
+  },
+  "required": [
+    "default-result-fn",
+    "default-test-dn",
+    "default-current-running-status-fn",
+    "default-running-statistics-fn",
+    "default-case-complete-artifact-store-dn",
+    "default-case-temp-artifact-store-dn",
+    "ipynb-template-default-dn",
+    "default-error-case-list",
+    "default-fps-validator-name",
+    "default-fps-validator-module-path",
+    "default-file-exist-validator-name",
+    "default-file-exist-validator-module-path",
+    "default-user-simulation-tool-webdriver",
+    "default-search-target-browser"
+  ],
+  "additionalProperties": {
+    "description": "Other case suite settings should contain in an object",
+    "type": "object"
+  }
+}

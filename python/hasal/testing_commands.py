@@ -1,12 +1,3 @@
-# Copyright 2013 The Servo Project Developers. See the COPYRIGHT
-# file at the top-level directory of this distribution.
-#
-# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-# http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-# <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-# option. This file may not be copied, modified, or distributed
-# except according to those terms.
-
 from __future__ import print_function, unicode_literals
 
 import os
@@ -44,3 +35,12 @@ class MachCommands():
             return test_tidy.do_tests()
         else:
             return tidy.scan(not all_files, not no_progress)
+
+    @Command('test-config',
+             description='Run the config files check',
+             category='testing')
+    def test_configs(self):
+        from lib.validator.configValidator import ConfigValidator
+        print('Checking config files ...')
+        result = ConfigValidator.validate_default_configs()
+        return int(0 if result else 1)

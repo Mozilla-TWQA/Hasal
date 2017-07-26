@@ -1,7 +1,6 @@
 # coding=utf-8
 import os
 import sys
-import copy
 import time
 import json
 import platform
@@ -27,6 +26,7 @@ class BaseTest(unittest.TestCase):
         INDEX = 'index_config'
         GLOBAL = 'global_config'
         FIREFOX = 'firefox_config'
+        CHROME = 'chrome_config'
         ONLINE = 'online_config'
 
     def __init__(self, *args, **kwargs):
@@ -143,46 +143,21 @@ class BaseTest(unittest.TestCase):
         if hasattr(self, "test_url_id"):
             self.target_helper.delete_target(self.test_url_id)
 
-    # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
     def extract_platform_dep_settings(self, config_value):
-        platform_dep_variables = {}
-        # get current platform value or default value of it
-        if self.current_platform_name in config_value:
-            if self.current_platform_ver in config_value[self.current_platform_name]:
-                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name][self.current_platform_ver])
-            elif 'default' in config_value[self.current_platform_name]:
-                platform_dep_variables = copy.deepcopy(config_value[self.current_platform_name]['default'])
-
-        # return {} if no matching system platform and no default value
-        return platform_dep_variables
+        return CommonUtil.extract_platform_dep_settings(config_value, self.current_platform_name, self.current_platform_ver)
 
     # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
         # only the config in the following list can be created or updated
         acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
-                                  self.config_name.FIREFOX, self.config_name.ONLINE]
-        if config_variable_name not in acceptable_config_list:
-            raise Exception('Invalid configuration name {config_name}: {config_value}'
-                            .format(config_name=config_variable_name, config_value=config_value))
-
-        default_platform_dep_settings_key = "platform-dep-settings"
-        if default_platform_dep_settings_key in config_value:
-            # Load the index config's settings under "platform-dep-settings" base on platform
-            platform_dep_variables = self.extract_platform_dep_settings(config_value[default_platform_dep_settings_key])
-            config_value.update(platform_dep_variables)
-            config_value.pop(default_platform_dep_settings_key)
-
-        if hasattr(self, config_variable_name):
-            # getattr is a way to get variable by reference and doesn't need to be set back
-            new_config_value = getattr(self, config_variable_name)
-            new_config_value.update(config_value)
-            setattr(self, config_variable_name, new_config_value)
-        else:
-            setattr(self, config_variable_name, config_value)
+                                  self.config_name.FIREFOX, self.config_name.ONLINE, self.config_name.CHROME]
+        self.__dict__.update(
+            CommonUtil.overwrite_platform_dep_settings_into_configs(self, config_variable_name, config_value,
+                                                                    acceptable_config_list, self.current_platform_name, self.current_platform_ver).__dict__)
 
     def load_configs(self):
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP',
-                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP']
+                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP', 'CHROME_CONFIG_FP']
 
         for config_env_name in config_fp_list:
             config_variable_name = config_env_name.rsplit('_', 1)[0].lower()

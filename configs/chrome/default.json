@@ -5,5 +5,22 @@
     "Cookies"             : "Cookies_gsuite_fb_linda",
     "Secure Preferences"  : "Secure Preferences",
     "Preferences"         : "Preferences"
+  },
+  "platform-dep-settings"   : {
+    "darwin":{
+      "default": {
+        "launch-browser-cmd-path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+      }
+    },
+    "win32": {
+      "default": {
+        "launch-browser-cmd-path": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+      }
+    },
+    "linux2":{
+      "default": {
+        "launch-browser-cmd-path": "google-chrome"
+      }
+    }
   }
 }

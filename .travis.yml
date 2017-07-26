@@ -20,14 +20,14 @@ matrix:
       script:
         - ./scripts/make_docs.sh
     # Test tidy
-    - env: GOAL=test-tidy
+    - env: GOAL=static-test
       os: linux
       dist: trusty
       python: 2.7
       install:
         - ./mach
       script:
-        - ./mach test-tidy --no-progress --all
+        - make test
     # Test bootstrap-linux
     - env: GOAL=bootstrap
       os: linux
