@@ -1,8 +1,8 @@
-import os
 import logging
 from lib.common.commonUtil import CommonUtil
 from baseTasks import init_task
 from baseTasks import parse_cmd_parameters
+from baseTasks import get_hasal_repo_path
 
 
 # After few survey about gitPython, I may not choose gitPython as an operator lib for git cmd due to the issue below
@@ -10,18 +10,6 @@ from baseTasks import parse_cmd_parameters
 # "Leakage of System Resources"
 # "GitPython is not suited for long-running processes (like daemons) as it tends to leak system resources."
 # "It was written in a time where destructors (as implemented in the __del__ method) still ran deterministically."
-
-
-def get_hasal_repo_path(task_config):
-    current_path_list = os.getcwd().split(os.sep)
-    for d_name in reversed(current_path_list):
-        if d_name.lower() != "hasal":
-            current_path_list.pop()
-        else:
-            break
-    default_repo_path = os.sep.join(current_path_list)
-    repo_path = task_config.get("repo_path", default_repo_path)
-    return repo_path
 
 
 def get_remote_url_list(input_repo_path):
@@ -148,8 +136,8 @@ def git_fetch(**kwargs):
         return False
 
 
-def git_clean(**kwargs):
-    DEFAULT_GIT_CMD_CLEAN = ["git", "clean", "-fd"]
+def git_reset(**kwargs):
+    DEFAULT_GIT_CMD_RESET = ["git", "reset", "--hard", "HEAD"]
 
     # get queue msg, consumer config from kwargs
     queue_msg, consumer_config, task_config = init_task(kwargs)
@@ -157,8 +145,8 @@ def git_clean(**kwargs):
     # get default repo path
     repo_path = get_hasal_repo_path(task_config)
 
-    logging.debug("git clean execute cmd [%s]" % DEFAULT_GIT_CMD_CLEAN)
-    return_code, output = CommonUtil.subprocess_checkoutput_wrapper(DEFAULT_GIT_CMD_CLEAN, cwd=repo_path)
+    logging.debug("git reset execute cmd [%s]" % DEFAULT_GIT_CMD_RESET)
+    return_code, output = CommonUtil.subprocess_checkoutput_wrapper(DEFAULT_GIT_CMD_RESET, cwd=repo_path)
     if return_code == 0:
         logging.info("git clean command execute success [%s]! output [%s]" % (queue_msg['input_cmd_str'], output))
         return True

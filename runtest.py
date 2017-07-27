@@ -28,6 +28,7 @@ from docopt import docopt
 from datetime import datetime
 from lib.common.commonUtil import StatusRecorder
 from lib.common.commonUtil import CommonUtil
+from lib.common.commonUtil import HasalConfigUtil
 from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
 from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
@@ -80,11 +81,13 @@ class RunTest(object):
 
         # overwrite platform dep setting in configs
         self.__dict__.update(
-            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "firefox_config", self.firefox_config,
-                                                                    ["firefox_config"], sys.platform, platform.release()).__dict__)
+            HasalConfigUtil.overwrite_platform_dep_settings_into_configs(self, "firefox_config", self.firefox_config,
+                                                                         ["firefox_config"], sys.platform,
+                                                                         platform.release()).__dict__)
         self.__dict__.update(
-            CommonUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
-                                                                    ["chrome_config"], sys.platform, platform.release()).__dict__)
+            HasalConfigUtil.overwrite_platform_dep_settings_into_configs(self, "chrome_config", self.chrome_config,
+                                                                         ["chrome_config"], sys.platform,
+                                                                         platform.release()).__dict__)
 
         # init values
         self.suite_result_dp = ''

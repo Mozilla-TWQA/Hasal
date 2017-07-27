@@ -20,7 +20,7 @@ The config file structure:
   "interactive_cmd_polling_interval": 5,
   "log_level": "debug",
   "log_filter": ["apscheduler.executors.default", "apscheduler.scheduler"]
-}}
+}
 ```
 
 * job_config.json
@@ -79,8 +79,8 @@ The config file structure:
     "run-hasal-on-latest-nightly":
     {
       "desc": "run hasal test on latest nightly, which will include download nightly and deploy it",
-      "module-path": "tasks.runHasalTasks",
-      "func-name": "hasal_run_on_latest_nightly",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "run_hasal_on_latest_nightly",
       "queue-type": "sync",
       "configs":{}
     },
@@ -97,6 +97,54 @@ The config file structure:
       "desc": "deploy downloaded firefox package in your system, need to specify dl pkg path after your cmd",
       "module-path": "tasks.firefoxBuildTasks",
       "func-name": "deploy_fx_package",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "git-pull":
+    {
+      "desc": "git pull remote branch",
+      "module-path": "tasks.githubTasks",
+      "func-name": "git_pull",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "git-checkout":
+    {
+      "desc": "git checkout revision/branch",
+      "module-path": "tasks.githubTasks",
+      "func-name": "git_checkout",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "git-fetch":
+    {
+      "desc": "git fetch remote",
+      "module-path": "tasks.githubTasks",
+      "func-name": "git_fetch",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "git-reset":
+    {
+      "desc": "git reset --hard HEAD",
+      "module-path": "tasks.githubTasks",
+      "func-name": "git_reset",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "generate-hasal-config":
+    {
+      "desc": "generate hasal configs for ejenti",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "generate_hasal_config",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "exec-hasal-runtest":
+    {
+      "desc": "wrapper to direct call runtest",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "exec_hasal_runtest",
       "queue-type": "sync",
       "configs":{}
     }
