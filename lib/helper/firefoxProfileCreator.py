@@ -39,7 +39,7 @@ class FirefoxProfileCreator(object):
         tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
 
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
-        subprocess.check_call('"{}" --profile {} -silent'.format(self.firefox_cmd.strip(), tmp_profile_dir))
+        subprocess.check_call([self.firefox_cmd.strip(), '--profile', tmp_profile_dir, '-silent'])
 
         self._firefox_profile_path = tmp_profile_dir
         logger.info('Creating Profile success: {}'.format(self._firefox_profile_path))
