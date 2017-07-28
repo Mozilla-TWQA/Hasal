@@ -410,6 +410,14 @@ class CommonUtil(object):
             return ":0.0"
 
     @staticmethod
+    def load_json_string(input_string):
+        try:
+            json_object = json.loads(input_string)
+        except ValueError:
+            return {}
+        return json_object
+
+    @staticmethod
     def load_json_file(fp):
         if os.path.exists(fp):
             try:
@@ -516,6 +524,28 @@ class CommonUtil(object):
             return e.returncode, e.message
 
     @staticmethod
+    def deep_merge_dict(source_dict, destination_dict):
+        """
+        >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
+        >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
+        >>> merge(b, a) == { 'first' : { 'all_rows' : { 'pass' : 'dog', 'fail' : 'cat', 'number' : '5' } } }
+        @param source_dict:
+        @param destination_dict:
+        @return:
+        """
+        for key, value in source_dict.items():
+            if isinstance(value, dict):
+                # get node or create one
+                node = destination_dict.setdefault(key, {})
+                CommonUtil.deep_merge_dict(value, node)
+            else:
+                destination_dict[key] = value
+        return destination_dict
+
+
+class HasalConfigUtil(object):
+
+    @staticmethod
     # be careful to have "default" value for each and every platform in conf file, or it would raise exception.
     def extract_platform_dep_settings(config_value, current_platform_name, current_platform_ver):
         platform_dep_variables = {}
@@ -531,7 +561,9 @@ class CommonUtil(object):
         return platform_dep_variables
 
     @staticmethod
-    def overwrite_platform_dep_settings_into_configs(selfObj, config_variable_name, config_value, acceptable_config_list, current_platform_name, current_platform_ver):
+    def overwrite_platform_dep_settings_into_configs(selfObj, config_variable_name, config_value,
+                                                     acceptable_config_list, current_platform_name,
+                                                     current_platform_ver):
         if config_variable_name not in acceptable_config_list:
             raise Exception('Invalid configuration name {config_name}: {config_value}'
                             .format(config_name=config_variable_name, config_value=config_value))
@@ -539,7 +571,8 @@ class CommonUtil(object):
         default_platform_dep_settings_key = "platform-dep-settings"
         if default_platform_dep_settings_key in config_value:
             # Load the index config's settings under "platform-dep-settings" base on platform
-            platform_dep_variables = CommonUtil.extract_platform_dep_settings(config_value[default_platform_dep_settings_key], current_platform_name, current_platform_ver)
+            platform_dep_variables = HasalConfigUtil.extract_platform_dep_settings(
+                config_value[default_platform_dep_settings_key], current_platform_name, current_platform_ver)
             config_value.update(platform_dep_variables)
             config_value.pop(default_platform_dep_settings_key)
 

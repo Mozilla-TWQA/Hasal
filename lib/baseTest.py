@@ -13,6 +13,7 @@ import helper.generatorHelper as generatorHelper
 from common.environment import Environment
 from common.logConfig import get_logger
 from common.commonUtil import CommonUtil
+from common.commonUtil import HasalConfigUtil
 from common.commonUtil import StatusRecorder
 from common.visualmetricsWrapper import find_image_viewport
 
@@ -144,7 +145,7 @@ class BaseTest(unittest.TestCase):
             self.target_helper.delete_target(self.test_url_id)
 
     def extract_platform_dep_settings(self, config_value):
-        return CommonUtil.extract_platform_dep_settings(config_value, self.current_platform_name, self.current_platform_ver)
+        return HasalConfigUtil.extract_platform_dep_settings(config_value, self.current_platform_name, self.current_platform_ver)
 
     # This will set new configs into variables and update if the variables already exist
     def set_configs(self, config_variable_name, config_value):
@@ -152,8 +153,10 @@ class BaseTest(unittest.TestCase):
         acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
                                   self.config_name.FIREFOX, self.config_name.ONLINE, self.config_name.CHROME]
         self.__dict__.update(
-            CommonUtil.overwrite_platform_dep_settings_into_configs(self, config_variable_name, config_value,
-                                                                    acceptable_config_list, self.current_platform_name, self.current_platform_ver).__dict__)
+            HasalConfigUtil.overwrite_platform_dep_settings_into_configs(self, config_variable_name, config_value,
+                                                                         acceptable_config_list,
+                                                                         self.current_platform_name,
+                                                                         self.current_platform_ver).__dict__)
 
     def load_configs(self):
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP',
