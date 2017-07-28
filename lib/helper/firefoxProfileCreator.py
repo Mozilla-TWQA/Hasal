@@ -4,6 +4,7 @@ import time
 import json
 import shutil
 import tempfile
+import subprocess
 from lib.common.logConfig import get_logger
 from lib.common.pyDriveUtil import PyDriveUtil
 from ..common.environment import Environment
@@ -36,10 +37,13 @@ class FirefoxProfileCreator(object):
 
     def _create_firefox_profile(self):
         tmp_profile_dir = tempfile.mkdtemp(prefix='firefoxprofile_')
+
         logger.info('Creating Profile: {}'.format(tmp_profile_dir))
-        os.system('{} --profile {} -silent'.format(self.firefox_cmd, tmp_profile_dir))
+        subprocess.check_call([self.firefox_cmd.strip(), '--profile', tmp_profile_dir, '-silent'])
+
         self._firefox_profile_path = tmp_profile_dir
         logger.info('Creating Profile success: {}'.format(self._firefox_profile_path))
+
         return self._firefox_profile_path
 
     def _set_prefs(self, prefs={}):
