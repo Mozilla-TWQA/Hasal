@@ -1,3 +1,4 @@
 APScheduler==3.0.3
 docopt==0.6.2
 SQLAlchemy==1.1.11
+mozillapulse==1.3
