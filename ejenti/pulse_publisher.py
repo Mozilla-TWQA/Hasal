@@ -129,6 +129,8 @@ def main():
         "pulse_username": "<PULSE_USERNAME>",
         "pulse_password": "<PULSE_PASSWORD>"
     }
+
+    Also, you can monitor the Pulse Message Queue from https://pulseguardian.mozilla.org/ website.
     """
     logging.basicConfig()
 

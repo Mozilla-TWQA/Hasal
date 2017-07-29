@@ -68,7 +68,14 @@ def listen_pulse(**kwargs):
     topic = get_topic()
     consumer_label = topic
 
+    queue_type_sync = 'sync'
+    queue_type_async = 'async'
+    sync_queue = kwargs.get('sync_queue')
     async_queue = kwargs.get('async_queue')
+    queue_mapping = {
+        queue_type_sync: sync_queue,
+        queue_type_async: async_queue
+    }
 
     # define the callback
     def got_msg(body, message):
@@ -81,12 +88,23 @@ def listen_pulse(**kwargs):
                                                                                                      line='-' * 20))
 
         data_payload = body.get('payload')
-        data = data_payload.get(PULSE_KEY_TASK)
-        data_obj = pickle.loads(data)
+        meta_task = data_payload.get(PULSE_KEY_TASK)
+        meta_task_object = pickle.loads(meta_task)
 
+        task_command_key = meta_task_object.command_key
+        task_queue_type = meta_task_object.queue_type
+        logging.debug('Task Command Key: {}, and Queue Type: {}'.format(task_command_key, task_queue_type))
+
+        if task_queue_type not in queue_mapping:
+            logging.error('Not supported queue type. Skip push task into queue.')
+            return
+
+        target_queue = queue_mapping.get(task_queue_type)
         # push task into queue
-        task_obj = data_obj.get_cmd()
-        async_queue.put(task_obj)
+        task_obj = meta_task_object.get_cmd()
+        target_queue.put(task_obj)
+        logging.debug('Push task into [{}] queue with command name {}.'.format(task_queue_type,
+                                                                               task_command_key))
 
     c = HasalConsumer(user=username, password=password, applabel=consumer_label)
     c.configure(topic=topic, callback=got_msg)
