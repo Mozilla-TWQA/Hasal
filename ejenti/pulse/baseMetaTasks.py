@@ -4,11 +4,13 @@ class BaseMetaTask(object):
 
     COMMAND_SETTINGS = 'cmd-settings'
 
+    COMMAND_OBJECT_CONFIG = 'configs'
+
     COMMAND_TASK_KEY_OBJECT = 'cmd_obj'
     COMMAND_TASK_KEY_PATTERN = 'cmd_pattern'
     COMMAND_TASK_KEY_INPUT_STR = 'input_cmd_str'
 
-    def __init__(self, queue_type, command_key, command_config):
+    def __init__(self, queue_type, command_key, command_config, overwrite_cmd_configs=None):
         """
 
         @param queue_type: the queue_type, 'sync' or 'async'.
@@ -16,6 +18,7 @@ class BaseMetaTask(object):
         @param command_config: the dict object which contains the command config.
         """
         self.command_key = command_key
+        self.overwrite_command_config = overwrite_cmd_configs
 
         if queue_type == self.QUEUE_TYPE_SYNC or queue_type == self.QUEUE_TYPE_ASYNC:
             self.queue_type = queue_type
@@ -56,6 +59,9 @@ class BaseMetaTask(object):
 
         command_pattern = self.command_key
         command_object = self.command_config_settings.get(command_pattern)
+        # if has the setting of overwrite the command config, then overwrite it.
+        if self.overwrite_command_config:
+            command_object[self.COMMAND_OBJECT_CONFIG] = self.overwrite_command_config
         task_object = self._generate_task_template(obj=command_object,
                                                    pattern=command_pattern)
         return task_object
