@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "job_store_url": {
+      "description": "apscheduler physical job store location path",
+      "type": "string"
+    },
+    "interactive_cmd_polling_interval": {
+      "description": "console interactive cmd polling interval",
+      "type": "integer",
+      "minimum": 1
+    },
+    "log_level": {
+      "description": "ejenti log level",
+      "type": "string"
+    },
+    "log_filter": {
+      "description": "logger filter, will replace the specify logger output to empty",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "job_store_url",
+    "interactive_cmd_polling_interval",
+    "log_level",
+    "log_filter"
+  ],
+  "additionalProperties": false
+}

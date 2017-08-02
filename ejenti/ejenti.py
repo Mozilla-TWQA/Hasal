@@ -6,10 +6,11 @@ Usage:
 
 Options:
   -h --help                       Show this screen.
-  --config=<str>                  Specify the config.json file path. [default: config.json]
-  --cmd-config=<str>              Specify the cmd_config.json file path. [default: cmd_config.json]
-  --job-config=<str>              Specify the job_config.json file path. [default: job_config.json]
+  --config=<str>                  Specify the config.json file path. [default: configs/ejenti/ejenti_config.json]
+  --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
+  --job-config=<str>              Specify the job_config.json file path. [default: configs/ejenti/job_config.json]
 """
+import os
 import re
 import sys
 import time
@@ -30,7 +31,12 @@ class MainRunner(object):
         def filter(self, record):
             return ""
 
-    def __init__(self, cmd_config_fp, job_config_fp, config_fp):
+    def __init__(self, input_cmd_config_fp, input_job_config_fp, input_config_fp):
+
+        # init value
+        cmd_config_fp = os.path.abspath(input_cmd_config_fp)
+        job_config_fp = os.path.abspath(input_job_config_fp)
+        config_fp = os.path.abspath(input_config_fp)
 
         # load configuration json files
         self.cmd_config = CommonUtil.load_json_file(cmd_config_fp)
