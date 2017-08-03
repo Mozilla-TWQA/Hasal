@@ -2,12 +2,12 @@
 # -*- encoding: utf-8 -*-
 """
 Usage:
-  pulse_publisher.py [--config=<str>] [--cmd-config=<str>]
-  pulse_publisher.py (-h | --help)
+  pulse_trigger.py [--config=<str>] [--cmd-config=<str>]
+  pulse_trigger.py (-h | --help)
 
 Options:
   -h --help                       Show this screen.
-  --config=<str>                  Specify the config.json file path. [default: pulse_config.json]
+  --config=<str>                  Specify the trigger_config.json file path. [default: trigger_config.json]
   --cmd-config=<str>              Specify the cmd_config.json file path. [default: cmd_config.json]
 """
 
@@ -21,14 +21,15 @@ import urllib2
 import hashlib
 import urlparse
 from docopt import docopt
+from datetime import datetime, timedelta
 from mozillapulse.messages.base import GenericMessage
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from pulse.hasal_publisher import HasalPublisher
-from pulse.syncMetaTasks import SyncMetaTask
-from pulse.asyncMetaTasks import AsyncMetaTask
+from pulse_modules.hasal_consumer import HasalConsumer
+from pulse_modules.hasal_publisher import HasalPublisher
+from pulse_modules.syncMetaTasks import SyncMetaTask
+from pulse_modules.asyncMetaTasks import AsyncMetaTask
 from jobs.pulse import PULSE_KEY_TASK
-from jobs.modules.hasal_consumer import HasalConsumer
 from lib.common.commonUtil import CommonUtil
 
 
@@ -131,7 +132,6 @@ class HasalPulsePublisher(object):
 
         # send
         p.publish(mymessage)
-
         # disconnect
         p.disconnect()
 
@@ -350,30 +350,32 @@ class TasksTrigger(object):
         """
         def got_msg(body, message):
             # does not ack, so broker will keep this message
-            logging.debug('\n{line}\n### Pulse got message###\nBody:\n{b}\nMessage:\n{m}\n{line}'.format(b=body,
-                                                                                                         m=message,
-                                                                                                         line='-' * 20))
-        listen_topic = topic
-        listen_label = topic
-
-        c = HasalConsumer(user=username, password=password, applabel=listen_label)
-        c.configure(topic=listen_topic, callback=got_msg)
-        logging.info('Adding Pulse Listener on Topic [{}].'.format(topic))
-        c.listen()
+            logging.debug('do nothing here')
+        c = HasalConsumer(user=username, password=password, applabel=topic)
+        c.configure(topic=topic, callback=got_msg)
+        queue_exist = c.queue_exists()
+        if not queue_exist:
+            logging.warn('Try to declare queue on Topic [{}]'.format(topic))
+            try:
+                c._build_consumer()
+            except Exception as e:
+                logging.error(e)
+        queue_exists = c.queue_exists()
+        logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
 
     @staticmethod
     def job_pushing_meta_task(username, password, command_config, job_name, topic, platform_build, cmd_name, overwrite_cmd_config=None):
         """
-
-        @param username:
-        @param password:
-        @param command_config:
-        @param job_name:
-        @param topic:
-        @param platform_build:
-        @param cmd_name:
-        @param overwrite_cmd_config:
-        @return:
+        [JOB]
+        Pushing the MetaTask if the remote build's MD5 was changed.
+        @param username: Pulse username.
+        @param password: Pulse password.
+        @param command_config: The overall command config dict object.
+        @param job_name: The job name which be defined in trigger_config.json.
+        @param topic: The Topic on Pulse. Refer to `get_topic()` method of `jobs.pulse`.
+        @param platform_build: The platform on Archive server.
+        @param cmd_name: The MetaTask command name.
+        @param overwrite_cmd_config: The overwrite command config.
         """
         changed = TasksTrigger.check_latest_info_json_md5_changed(job_name=job_name, platform=platform_build)
         if changed:
@@ -394,9 +396,6 @@ class TasksTrigger(object):
             publisher.push_meta_task(topic=push_topic,
                                      command_name=command_name,
                                      overwrite_cmd_configs=overwrite_cmd_config)
-        else:
-            # no changed, skip
-            pass
 
     def run(self):
         for job_name, job_detail in self.jobs_config.items():
@@ -431,18 +430,18 @@ class TasksTrigger(object):
 
                 # adding Fake Pulse Listener (without ACK)
 
-                # listener_name = '{}_listener'.format(job_name)
-                # time_ten_seconds_after = datetime.now() + timedelta(seconds=10)
-                # self.scheduler.add_job(func=TasksTrigger.job_adding_dumy_listener,
-                #                        trigger='interval',
-                #                        id=listener_name,
-                #                        max_instances=1,
-                #                        start_date=time_ten_seconds_after,
-                #                        minutes=1,
-                #                        args=[],
-                #                        kwargs={'username': self.pulse_username,
-                #                                'password': self.pulse_password,
-                #                                'topic': topic})
+                listener_name = '{}_listener'.format(job_name)
+                time_ten_seconds_after = datetime.now() + timedelta(seconds=10)
+                self.scheduler.add_job(func=TasksTrigger.job_adding_dumy_listener,
+                                       trigger='interval',
+                                       id=listener_name,
+                                       max_instances=1,
+                                       start_date=time_ten_seconds_after,
+                                       minutes=1,
+                                       args=[],
+                                       kwargs={'username': self.pulse_username,
+                                               'password': self.pulse_password,
+                                               'topic': topic})
 
                 # adding Job Trigger
                 self.scheduler.add_job(func=TasksTrigger.job_pushing_meta_task,

@@ -2,7 +2,8 @@ import sys
 import pickle
 import platform
 import logging
-from modules.hasal_consumer import HasalConsumer
+# The job will be imported by ejenti. Top level will be ejenti, not hasal.
+from pulse_modules.hasal_consumer import HasalConsumer  # NOQA
 
 
 PULSE_KEY_TASK = 'task'
