@@ -23,7 +23,7 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
-ejenti/.md5/
+ejenti/**/.md5/
 ! thirdParty/userChrome.css
 ! thirdParty/extensions
 ! thirdParty/obsConfigs

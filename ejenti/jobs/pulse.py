@@ -1,8 +1,8 @@
 import sys
 import pickle
-import platform
 import logging
-# The job will be imported by ejenti. Top level will be ejenti, not hasal.
+import platform
+# The job will be imported by ejenti. Top level will be `ejenti`, not `hasal` or `ejenti.jobs`.
 from pulse_modules.hasal_consumer import HasalConsumer  # NOQA
 
 
@@ -92,7 +92,7 @@ def listen_pulse(**kwargs):
             debug_message += '{key}: {value}\n'.format(key=debug_key, value=data_payload.get(debug_key, ''))
         if debug_message:
             logging.debug('### Pulse Got MSG ###\n{line}\n{dbg_msg}{line}'.format(dbg_msg=debug_message,
-                                                                                    line='-' * 20))
+                                                                                  line='-' * 20))
 
         meta_task = data_payload.get(PULSE_KEY_TASK)
         meta_task_object = pickle.loads(meta_task)
