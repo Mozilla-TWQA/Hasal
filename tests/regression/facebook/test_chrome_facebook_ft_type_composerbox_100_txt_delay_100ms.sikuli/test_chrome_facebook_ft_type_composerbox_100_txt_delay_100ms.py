@@ -38,7 +38,7 @@ class Case(basecase.SikuliInputLatencyCase):
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        com.set_type_delay(0.01)
+        com.set_type_delay(0.08)
 
         # Customized Region
         customized_region_name_start = 'start'

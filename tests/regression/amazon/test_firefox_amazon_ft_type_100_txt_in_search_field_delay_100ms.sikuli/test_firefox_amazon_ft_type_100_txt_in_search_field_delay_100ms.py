@@ -33,7 +33,7 @@ class Case(basecase.SikuliInputLatencyCase):
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
         # Launch browser
-        my_browser = browser.Chrome()
+        my_browser = browser.Firefox()
 
         # Access link and wait
         my_browser.clickBar()
@@ -48,7 +48,7 @@ class Case(basecase.SikuliInputLatencyCase):
         sleep(1)
 
         # Set additional delay time of type command, default base is 0.02s(20ms)
-        com.set_type_delay(0.03)
+        com.set_type_delay(0.08)
 
         # Customized Region
         customized_region_name_start = 'start'

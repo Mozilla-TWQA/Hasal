@@ -22,11 +22,11 @@ class Case(basecase.SikuliInputLatencyCase):
         com = common.General()
         com.infolog_enable(False)
 
-        chrome = browser.Chrome()
+        ff = browser.Firefox()
         fb = facebook.facebook()
 
-        chrome.clickBar()
-        chrome.enterLink(self.INPUT_TEST_TARGET)
+        ff.clickBar()
+        ff.enterLink(self.INPUT_TEST_TARGET)
         fb.wait_for_loaded()
 
         sleep(2)
@@ -38,7 +38,7 @@ class Case(basecase.SikuliInputLatencyCase):
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        com.set_type_delay(0.01)
+        com.set_type_delay(0.08)
 
         # Customized Region
         customized_region_name_start = 'start'

@@ -12,7 +12,7 @@ class TestSikuli(PerfBaseTest):
                                         '10': {'search-margin': 2, 'mismatch-rate-threshold': 0.01,
                                                'compare-threshold': 0.013}}}))
 
-    def test_chrome_facebook_ft_type_composerbox_100_txt_delay_30ms(self):
+    def test_firefox_facebook_ft_type_composerbox_100_txt_delay_100ms(self):
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.env.TEST_FB_HOME,
                                                  script_dp=self.env.test_script_py_dp,
                                                  args_list=[self.env.img_sample_dp, self.env.img_output_sample_1_fn,
