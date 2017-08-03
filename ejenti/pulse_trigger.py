@@ -54,6 +54,7 @@ class HasalPulsePublisher(object):
     DEBUG_COMMAND_NAME = 'debug_command_name'
     DEBUG_COMMAND_CONFIG = 'debug_command_config'
     DEBUG_OVERWRITE_COMMAND_CONFIGS = 'debug_overwrite_command_configs'
+    DEBUG_UID = 'debug_UID'
 
     def __init__(self, username, password, command_config):
         """
@@ -100,12 +101,13 @@ class HasalPulsePublisher(object):
             return None
         return meta_task
 
-    def push_meta_task(self, topic, command_name, overwrite_cmd_configs=None):
+    def push_meta_task(self, topic, command_name, overwrite_cmd_configs=None, uid=''):
         """
         Push MetaTask into Pulse.
         @param topic: The topic channel.
         @param command_name: the specified command name, which base on cmd_config.json.
         @param overwrite_cmd_configs: overwrite the Command's config.
+        @param uid: unique ID string.
         @return:
         """
         # get MetaTask
@@ -129,6 +131,7 @@ class HasalPulsePublisher(object):
         mymessage.set_data(self.DEBUG_COMMAND_NAME, command_name)
         mymessage.set_data(self.DEBUG_COMMAND_CONFIG, self.command_config)
         mymessage.set_data(self.DEBUG_OVERWRITE_COMMAND_CONFIGS, overwrite_cmd_configs)
+        mymessage.set_data(self.DEBUG_UID, uid)
 
         # send
         p.publish(mymessage)
@@ -145,6 +148,7 @@ class TasksTrigger(object):
     KEY_CONFIG_PULSE_PWD = 'pulse_password'
     KEY_CONFIG_JOBS = 'jobs'
     KEY_JOBS_ENABLE = 'enable'
+    KEY_JOBS_AMOUNT = 'amount'
     KEY_JOBS_TOPIC = 'topic'
     KEY_JOBS_PLATFORM_BUILD = 'platform_build'
     KEY_JOBS_INTERVAL_MINUTES = 'interval_minutes'
@@ -339,14 +343,14 @@ class TasksTrigger(object):
         return True
 
     @staticmethod
-    def job_adding_dumy_listener(username, password, topic):
+    def check_pulse_queue_exists(username, password, topic):
         """
-        [JOB]
-        Adding the Pulse listener for creating Queues on Pulse.
-        If there is no Queues listen on topic, the message will disappear TwT.
+        Checking does the Queue of Topic exist, if not, then create Queue for Topic on Pulse.
+        Note: If there is no Queues listen on topic, the message will be ignored by Pulse.
         @param username: Pulse username.
         @param password: Pulse password.
         @param topic: Topic.
+        @return: True if queue exists or be created successfully. False if not.
         """
         def got_msg(body, message):
             # does not ack, so broker will keep this message
@@ -355,16 +359,19 @@ class TasksTrigger(object):
         c.configure(topic=topic, callback=got_msg)
         queue_exist = c.queue_exists()
         if not queue_exist:
-            logging.warn('Try to declare queue on Topic [{}]'.format(topic))
+            logging.warn('Queue not exists, try to declare queue on Topic [{}]'.format(topic))
             try:
-                c._build_consumer()
+                # declare the Queue by building consumer
+                c._build_consumer()  # NOQA
             except Exception as e:
                 logging.error(e)
+                return False
         queue_exists = c.queue_exists()
         logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
+        return True
 
     @staticmethod
-    def job_pushing_meta_task(username, password, command_config, job_name, topic, platform_build, cmd_name, overwrite_cmd_config=None):
+    def job_pushing_meta_task(username, password, command_config, job_name, topic, amount, platform_build, cmd_name, overwrite_cmd_config=None):
         """
         [JOB]
         Pushing the MetaTask if the remote build's MD5 was changed.
@@ -373,29 +380,50 @@ class TasksTrigger(object):
         @param command_config: The overall command config dict object.
         @param job_name: The job name which be defined in trigger_config.json.
         @param topic: The Topic on Pulse. Refer to `get_topic()` method of `jobs.pulse`.
+        @param amount: The MetaTask amount per time.
         @param platform_build: The platform on Archive server.
         @param cmd_name: The MetaTask command name.
         @param overwrite_cmd_config: The overwrite command config.
         """
         changed = TasksTrigger.check_latest_info_json_md5_changed(job_name=job_name, platform=platform_build)
         if changed:
-            # prepare the topic
-            push_topic = topic
-            # prepare command name
-            command_name = cmd_name
+            # check queue
+            queue_exists = TasksTrigger.check_pulse_queue_exists(username=username,
+                                                                 password=password,
+                                                                 topic=topic)
+            if not queue_exists:
+                logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
+
             # Push MetaTask to Pulse
             publisher = HasalPulsePublisher(username=username,
                                             password=password,
                                             command_config=command_config)
+
+            uid_prefix = '{time}.{job}'.format(time=datetime.now(), job=job_name)
             # push meta task
-            logging.info('Pushing to Pulse, topic [{topic}], command [{cmd}], cmd_config [{cmd_config}]'.format(
-                topic=topic,
-                cmd=command_name,
-                cmd_config=overwrite_cmd_config
-            ))
-            publisher.push_meta_task(topic=push_topic,
-                                     command_name=command_name,
-                                     overwrite_cmd_configs=overwrite_cmd_config)
+            logging.info('Pushing to Pulse...\n'
+                         '{line}\n'
+                         'UID prefix: {uid_prefix}\n'
+                         'Trigger Job: {job_name}\n'
+                         'Platform: {platform}\n'
+                         'Topic: {topic}\n'
+                         'Amount: {amount}\n'
+                         'command {cmd}\n'
+                         'cmd_config: {cmd_config}\n'
+                         '{line}\n'.format(uid_prefix=uid_prefix,
+                                           job_name=job_name,
+                                           platform=platform_build,
+                                           topic=topic,
+                                           amount=amount,
+                                           cmd=cmd_name,
+                                           cmd_config=overwrite_cmd_config,
+                                           line='-' * 10))
+            for idx in range(amount):
+                uid = '{prefix}.{idx}'.format(prefix=uid_prefix, idx=idx + 1)
+                publisher.push_meta_task(topic=topic,
+                                         command_name=cmd_name,
+                                         overwrite_cmd_configs=overwrite_cmd_config,
+                                         uid=uid)
 
     def run(self):
         for job_name, job_detail in self.jobs_config.items():
@@ -420,6 +448,7 @@ class TasksTrigger(object):
             enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
             interval_minutes = job_detail.get(TasksTrigger.KEY_JOBS_INTERVAL_MINUTES, 10)
             configs = job_detail.get(TasksTrigger.KEY_JOBS_CONFIGS, {})
+            amount = job_detail.get(TasksTrigger.KEY_JOBS_AMOUNT, 1)
             # required
             topic = job_detail.get(TasksTrigger.KEY_JOBS_TOPIC)
             platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
@@ -427,21 +456,6 @@ class TasksTrigger(object):
 
             if enable:
                 logging.info('Job [{}] is enabled.'.format(job_name))
-
-                # adding Fake Pulse Listener (without ACK)
-
-                listener_name = '{}_listener'.format(job_name)
-                time_ten_seconds_after = datetime.now() + timedelta(seconds=10)
-                self.scheduler.add_job(func=TasksTrigger.job_adding_dumy_listener,
-                                       trigger='interval',
-                                       id=listener_name,
-                                       max_instances=1,
-                                       start_date=time_ten_seconds_after,
-                                       minutes=1,
-                                       args=[],
-                                       kwargs={'username': self.pulse_username,
-                                               'password': self.pulse_password,
-                                               'topic': topic})
 
                 # adding Job Trigger
                 self.scheduler.add_job(func=TasksTrigger.job_pushing_meta_task,
@@ -455,6 +469,7 @@ class TasksTrigger(object):
                                                'command_config': self.cmd_config_obj,
                                                'job_name': job_name,
                                                'topic': topic,
+                                               'amount': amount,
                                                'platform_build': platform_build,
                                                'cmd_name': cmd,
                                                'overwrite_cmd_config': configs})
