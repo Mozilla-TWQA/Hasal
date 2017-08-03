@@ -52,7 +52,7 @@ class TasksTrigger(object):
         },
         'win64': {
             'key': 'win64',
-            'ext': 'zip',
+            'ext': 'zip'
         }
     }
 
@@ -188,9 +188,8 @@ class TasksTrigger(object):
                 with open(job_md5_file, 'w') as f:
                     f.write(new_hash)
                 return True
-            pass
         else:
-            # 1st check
+            # found the file for the 1st time
             logging.info('Job "{}" platform "{}": Latest Hash [{}], no origin hash.'.format(job_name,
                                                                                             platform,
                                                                                             new_hash))
@@ -272,7 +271,9 @@ class TasksTrigger(object):
                                             password=password,
                                             command_config=command_config)
 
-            uid_prefix = '{time}.{job}'.format(time=datetime.now(), job=job_name)
+            now = datetime.now()
+            now_string = now.strftime('%Y-%m-%d_%H:%M:%S.%f')
+            uid_prefix = '{time}.{job}'.format(time=now_string, job=job_name)
             # push meta task
             logging.info('Pushing to Pulse...\n'
                          '{line}\n'
