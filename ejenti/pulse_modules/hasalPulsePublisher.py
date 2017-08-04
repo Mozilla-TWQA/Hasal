@@ -1,28 +1,18 @@
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
-"""
-Usage:
-  pulse_publisher.py [--config=<str>] [--cmd-config=<str>]
-  pulse_publisher.py (-h | --help)
-
-Options:
-  -h --help                       Show this screen.
-  --config=<str>                  Specify the config.json file path. [default: pulse_config.json]
-  --cmd-config=<str>              Specify the cmd_config.json file path. [default: cmd_config.json]
-"""
 import pickle
 import logging
-from docopt import docopt
 from mozillapulse.messages.base import GenericMessage
 
-from pulse.hasal_publisher import HasalPublisher
-from pulse.syncMetaTasks import SyncMetaTask
-from pulse.asyncMetaTasks import AsyncMetaTask
-from jobs.pulse import PULSE_KEY_TASK
-from lib.common.commonUtil import CommonUtil
+from asyncMetaTasks import AsyncMetaTask
+from hasal_publisher import HasalPublisher
+from syncMetaTasks import SyncMetaTask
+
+PULSE_KEY_TASK = 'task'
 
 
 class HasalPulsePublisher(object):
+    """
+    Push MetaTask into Pulse.
+    """
 
     # refer to `get_topic()` method of `jobs.pulse`
     TOPIC_WIN7 = 'win7'
@@ -42,6 +32,8 @@ class HasalPulsePublisher(object):
     DEBUG_QUEUE_TYPE = 'debug_queue_type'
     DEBUG_COMMAND_NAME = 'debug_command_name'
     DEBUG_COMMAND_CONFIG = 'debug_command_config'
+    DEBUG_OVERWRITE_COMMAND_CONFIGS = 'debug_overwrite_command_configs'
+    DEBUG_UID = 'debug_UID'
 
     def __init__(self, username, password, command_config):
         """
@@ -60,10 +52,11 @@ class HasalPulsePublisher(object):
             raise Exception('The command config was failed.\n{}'.format(self.command_config))
         self.command_config_settings = self.command_config.get(self.COMMAND_SETTINGS)
 
-    def get_meta_task(self, command_name):
+    def get_meta_task(self, command_name, overwrite_cmd_configs=None):
         """
         Getting Sync or Async MetaTask object.
         @param command_name: the specified command name, which base on cmd_config.json.
+        @param overwrite_cmd_configs: overwrite the Command's config.
         @return: SyncMetaTask or AsyncMetaTask object. Return None if there is not valid queue_type.
         """
         if command_name not in self.command_config_settings:
@@ -72,27 +65,32 @@ class HasalPulsePublisher(object):
 
         command_setting = self.command_config_settings.get(command_name)
         queue_type = command_setting.get(self.COMMAND_SETTING_QUEUE_TYPE, '')
+
         if queue_type == self.COMMAND_SETTING_QUEUE_TYPE_SYNC:
             meta_task = SyncMetaTask(command_key=command_name,
-                                     command_config=self.command_config)
+                                     command_config=self.command_config,
+                                     overwrite_cmd_configs=overwrite_cmd_configs)
         elif queue_type == self.COMMAND_SETTING_QUEUE_TYPE_ASYNC:
             meta_task = AsyncMetaTask(command_key=command_name,
-                                      command_config=self.command_config)
+                                      command_config=self.command_config,
+                                      overwrite_cmd_configs=overwrite_cmd_configs)
         else:
             self.logger.error('Does not support this command: {}, with the queue type: {}'.format(command_name,
                                                                                                   queue_type))
             return None
         return meta_task
 
-    def push_meta_task(self, topic, command_name):
+    def push_meta_task(self, topic, command_name, overwrite_cmd_configs=None, uid=''):
         """
         Push MetaTask into Pulse.
         @param topic: The topic channel.
         @param command_name: the specified command name, which base on cmd_config.json.
+        @param overwrite_cmd_configs: overwrite the Command's config.
+        @param uid: unique ID string.
         @return:
         """
         # get MetaTask
-        meta_task = self.get_meta_task(command_name)
+        meta_task = self.get_meta_task(command_name, overwrite_cmd_configs=overwrite_cmd_configs)
         if not meta_task:
             self.logger.error('Skip pushing task.')
         pickle_meta_task = pickle.dumps(meta_task)
@@ -111,54 +109,10 @@ class HasalPulsePublisher(object):
         mymessage.set_data(self.DEBUG_QUEUE_TYPE, meta_task.queue_type)
         mymessage.set_data(self.DEBUG_COMMAND_NAME, command_name)
         mymessage.set_data(self.DEBUG_COMMAND_CONFIG, self.command_config)
+        mymessage.set_data(self.DEBUG_OVERWRITE_COMMAND_CONFIGS, overwrite_cmd_configs)
+        mymessage.set_data(self.DEBUG_UID, uid)
 
         # send
         p.publish(mymessage)
-
         # disconnect
         p.disconnect()
-
-
-def main():
-    """
-    Demo of pushing MetaTask to Pulse.
-    It will load Pulse config from `--config`, please create the config json file before run this demo.
-
-    ex:
-    {
-        "pulse_username": "<PULSE_USERNAME>",
-        "pulse_password": "<PULSE_PASSWORD>"
-    }
-
-    Also, you can monitor the Pulse Message Queue from https://pulseguardian.mozilla.org/ website.
-    """
-    logging.basicConfig()
-
-    # loading docopt
-    arguments = docopt(__doc__)
-
-    # loading config
-    config_file = arguments['--config']
-    config = CommonUtil.load_json_file(config_file)
-    username = config.get('pulse_username')
-    password = config.get('pulse_password')
-
-    # loading cmd_config
-    cmd_config_file = arguments['--cmd-config']
-    command_config = CommonUtil.load_json_file(cmd_config_file)
-    if not command_config:
-        raise Exception('There is not command config. (Loaded from {})'.format(cmd_config_file))
-
-    # prepare the topic, ex: darwin, win10, win7, linux2
-    topic = HasalPulsePublisher.TOPIC_DARWAN
-    # prepare command name
-    command_name = 'download-latest-nightly'
-
-    # Push MetaTask to Pulse
-    publisher = HasalPulsePublisher(username, password, command_config)
-    publisher.push_meta_task(topic=topic,
-                             command_name=command_name)
-
-
-if __name__ == '__main__':
-    main()

@@ -1,11 +1,13 @@
 import sys
 import pickle
-import platform
 import logging
-from modules.hasal_consumer import HasalConsumer
+import platform
+# The job will be imported by ejenti. Top level will be `ejenti`, not `hasal` or `ejenti.jobs`.
+from pulse_modules.hasal_consumer import HasalConsumer  # NOQA
 
 
 PULSE_KEY_TASK = 'task'
+PULSE_KEY_DEBUG_PREFIX = 'debug_'
 DEFAULT_VERIFY_KWARGS_LIST = ["sync_queue", "async_queue", "configs"]
 
 
@@ -83,11 +85,15 @@ def listen_pulse(**kwargs):
         # ack then broker will remove this message from queue
         message.ack()
 
-        logging.debug('\n{line}\n### Pulse got message###\nBody:\n{b}\nMessage:\n{m}\n{line}'.format(b=body,
-                                                                                                     m=message,
-                                                                                                     line='-' * 20))
-
         data_payload = body.get('payload')
+
+        debug_message = ''
+        for debug_key in [key for key in data_payload.keys() if key.startswith(PULSE_KEY_DEBUG_PREFIX)]:
+            debug_message += '{key}: {value}\n'.format(key=debug_key, value=data_payload.get(debug_key, ''))
+        if debug_message:
+            logging.debug('### Pulse Got MSG ###\n{line}\n{dbg_msg}{line}'.format(dbg_msg=debug_message,
+                                                                                  line='-' * 20))
+
         meta_task = data_payload.get(PULSE_KEY_TASK)
         meta_task_object = pickle.loads(meta_task)
 
