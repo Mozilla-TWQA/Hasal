@@ -65,8 +65,16 @@ class TasksTrigger(object):
         self.pulse_username = config.get(TasksTrigger.KEY_CONFIG_PULSE_USER)
         self.pulse_password = config.get(TasksTrigger.KEY_CONFIG_PULSE_PWD)
 
+        self._validate_data()
+
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
+
+    def _validate_data(self):
+        # validate Pulse account
+        if not self.pulse_username or not self.pulse_password:
+            # there is no Pulse account information in "job_config.json"
+            raise Exception('Cannot access Pulse due to there is no Pulse account information.')
 
     @staticmethod
     def get_all_latest_files():

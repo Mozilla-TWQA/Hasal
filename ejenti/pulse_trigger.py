@@ -49,6 +49,9 @@ def main():
     config_arg = arguments['--config']
     config_file = os.path.abspath(config_arg)
     config = CommonUtil.load_json_file(config_file)
+    if not config:
+        logging.error('There is not trigger config. (Loaded from {})'.format(config_file))
+        exit(1)
 
     # filter the logger
     log_filter = LogFilter()
@@ -60,13 +63,18 @@ def main():
     cmd_config_file = os.path.abspath(cmd_config_arg)
     command_config = CommonUtil.load_json_file(cmd_config_file)
     if not command_config:
-        raise Exception('There is not command config. (Loaded from {})'.format(cmd_config_file))
+        logging.error('There is not command config. (Loaded from {})'.format(cmd_config_file))
+        exit(1)
 
-    trigger = TasksTrigger(config=config, cmd_config_obj=command_config)
-    trigger.run()
+    try:
+        trigger = TasksTrigger(config=config, cmd_config_obj=command_config)
+        trigger.run()
 
-    while True:
-        time.sleep(10)
+        while True:
+            time.sleep(10)
+    except Exception as e:
+        logging.error(e)
+        exit(1)
 
 
 if __name__ == '__main__':

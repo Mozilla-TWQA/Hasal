@@ -67,6 +67,13 @@ def listen_pulse(**kwargs):
     configs = kwargs.get('configs')
     username = configs.get('username')
     password = configs.get('password')
+
+    if not username or not password:
+        # there is no Pulse account information in "job_config.json"
+        logging.error('Cannot access Pulse due to there is no Pulse account information,'
+                      ' please check {} file.'.format('job_config'))
+        return
+
     topic = get_topic()
     consumer_label = topic
 
