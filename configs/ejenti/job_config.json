@@ -1,20 +1,29 @@
 {
-  "async_tasks_consumer":
-  {
+  "async_tasks_consumer": {
     "module-path": "jobs.tasks_consumer",
     "trigger-type": "interval",
     "interval": 3,
     "max-instances": 1,
     "default-loaded": true,
-    "configs":{}
+    "configs": {}
   },
-  "sync_tasks_consumer":
-  {
+  "sync_tasks_consumer": {
     "module-path": "jobs.tasks_consumer",
     "trigger-type": "interval",
     "interval": 3,
     "max-instances": 1,
     "default-loaded": true,
-    "configs":{}
+    "configs": {}
+  },
+  "listen_pulse": {
+    "module-path": "jobs.pulse",
+    "trigger-type": "interval",
+    "interval": 60,
+    "max-instances": 1,
+    "default-loaded": false,
+    "configs": {
+      "username": "",
+      "password": ""
+    }
   }
 }
