@@ -28,10 +28,14 @@ class Amazon(WebApp):
 
     AMAZON_PRODUCT_THUMBNAIL = [
         [os.path.join('pics', 'customers_text.png'), 665, 140],
+        [os.path.join('pics', 'customers_text_ch_win7.png'), 665, 140],
+        [os.path.join('pics', 'customers_text_ff_win7.png'), 665, 140],
     ]
 
     AMAZON_CUSTOMER_TEXT = [
         [os.path.join('pics', 'customers_text.png'), 0, 0],
+        [os.path.join('pics', 'customers_text_ch_win7.png'), 0, 0],
+        [os.path.join('pics', 'customers_text_ff_win7.png'), 0, 0],
     ]
 
     AMAZON_FUNCTION_UNDER_SEARCH_FIELD = [
