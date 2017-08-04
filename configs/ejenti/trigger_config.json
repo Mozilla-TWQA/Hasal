@@ -1,0 +1,37 @@
+{
+  "pulse_username": "",
+  "pulse_password": "",
+  "jobs": {
+    "win7_x64": {
+      "enable": false,
+      "topic": "win7",
+      "platform_build": "win64",
+      "interval_minutes": 1,
+      "amount": 1,
+      "cmd": "download-latest-nightly",
+      "configs": {}
+    },
+    "win10_x64": {
+      "enable": false,
+      "topic": "win10",
+      "platform_build": "win64",
+      "interval_minutes": 1,
+      "amount": 1,
+      "cmd": "download-latest-nightly",
+      "configs": {}
+    },
+    "mac": {
+      "enable": false,
+      "topic": "darwin",
+      "platform_build": "mac",
+      "interval_minutes": 1,
+      "amount": 1,
+      "cmd": "download-latest-nightly",
+      "configs": {}
+    }
+  },
+  "log_filter": [
+    "apscheduler.executors.default",
+    "apscheduler.scheduler"
+  ]
+}

@@ -7,10 +7,11 @@ Usage:
 
 Options:
   -h --help                       Show this screen.
-  --config=<str>                  Specify the trigger_config.json file path. [default: trigger_config.json]
-  --cmd-config=<str>              Specify the cmd_config.json file path. [default: cmd_config.json]
+  --config=<str>                  Specify the trigger_config.json file path. [default: configs/ejenti/trigger_config.json]
+  --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
 """
 
+import os
 import time
 import logging
 from docopt import docopt
@@ -45,7 +46,8 @@ def main():
     arguments = docopt(__doc__)
 
     # loading config
-    config_file = arguments['--config']
+    config_arg = arguments['--config']
+    config_file = os.path.abspath(config_arg)
     config = CommonUtil.load_json_file(config_file)
 
     # filter the logger
@@ -54,7 +56,8 @@ def main():
         logging.getLogger(disabled_logger).addFilter(log_filter)
 
     # loading cmd_config
-    cmd_config_file = arguments['--cmd-config']
+    cmd_config_arg = arguments['--cmd-config']
+    cmd_config_file = os.path.abspath(cmd_config_arg)
     command_config = CommonUtil.load_json_file(cmd_config_file)
     if not command_config:
         raise Exception('There is not command config. (Loaded from {})'.format(cmd_config_file))
