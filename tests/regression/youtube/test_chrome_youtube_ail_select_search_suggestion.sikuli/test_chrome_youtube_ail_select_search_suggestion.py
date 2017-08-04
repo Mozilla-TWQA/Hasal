@@ -44,9 +44,6 @@ class Case(basecase.SikuliInputLatencyCase):
         app.close_ad()
         app.click_search_field()
         sleep(1)
-        type('mozilla')
-        app.wait_for_search_suggestion_loaded()
-        com.loop_type_key(Key.DOWN, 2, 0.5)
 
         # Customized Region
         customized_region_name = 'end'
@@ -55,6 +52,10 @@ class Case(basecase.SikuliInputLatencyCase):
         ]
         type_area = self.find_match_region(type_area_component)
         self.set_override_region_settings(customized_region_name, type_area)
+
+        type('mozilla')
+        app.wait_for_search_suggestion_loaded()
+        com.loop_type_key(Key.DOWN, 2, 0.5)
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
