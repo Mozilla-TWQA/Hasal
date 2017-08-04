@@ -125,6 +125,32 @@ class ConfigValidator(object):
         return config_ret, schema_ret
 
     @staticmethod
+    def get_mapping_config_and_schema(input_folder):
+        """
+        get the actual mapping dict for config and schema
+        @param input_folder: parent config folder
+        @return: dict {"config path": "schema path"}
+        """
+        mapping_data = {}
+        input_config_list, input_schema_list = ConfigValidator.get_config_and_schema(input_folder)
+        for config_name in input_config_list:
+            dir_name = os.path.dirname(config_name)
+            ref_name = dir_name + os.path.sep + os.path.basename(config_name).split(os.path.extsep)[0]
+            possible_schema_name = ref_name + ".schema"
+            if possible_schema_name in input_schema_list:
+                # default the flow will find the schema according to your config name
+                mapping_data[config_name] = possible_schema_name
+            else:
+                # if the program cannot find the corresponding config name's schema, the flow will assign the first
+                # schema find in this folder to the config dict, if not schema is found, will assign empty string
+                possible_schema_list = [s_name for s_name in input_schema_list if os.path.dirname(s_name) == dir_name]
+                if len(possible_schema_list) == 0:
+                    mapping_data[config_name] = ""
+                else:
+                    mapping_data[config_name] = possible_schema_list[0]
+        return mapping_data
+
+    @staticmethod
     def validate_default_configs():
         """
         Validating all default configs under default configs folder.
@@ -134,24 +160,26 @@ class ConfigValidator(object):
         all_config_folders = ConfigValidator.get_all_sub_configs_folder()
         for c_folder in all_config_folders:
             logger.info('Validating Configs under {}'.format(os.path.relpath(c_folder)))
-            config_list, schema_list = ConfigValidator.get_config_and_schema(c_folder)
-            if len(config_list) > 0 and len(schema_list) > 0:
-
-                for schema_path in schema_list:
-                    logger.info('  Schema: {s}'.format(s=os.path.basename(schema_path)))
-                    for config_path in config_list:
-                        config_obj = CommonUtil.load_json_file(config_path)
-                        schema_obj = CommonUtil.load_json_file(schema_path)
-                        validate_result = ConfigValidator.validate(config_obj, schema_obj)
-                        if validate_result:
-                            logger.info('    Config: {c} ... {r}'.format(c=os.path.basename(config_path), r='Pass'))
-                        else:
-                            logger.error('    Config: {c} ... {r}'.format(c=os.path.relpath(config_path), r='Failed'))
-                            msg = 'Config settings {c} does not pass the schema {s} validation.'.format(
-                                c=os.path.relpath(config_path),
-                                s=os.path.relpath(schema_path))
-                            logger.error(msg)
-                            final_result = False
+            config_schema_mapping_data = ConfigValidator.get_mapping_config_and_schema(c_folder)
+            for config_path, schema_path in config_schema_mapping_data.items():
+                if schema_path:
+                    config_obj = CommonUtil.load_json_file(config_path)
+                    schema_obj = CommonUtil.load_json_file(schema_path)
+                    validate_result = ConfigValidator.validate(config_obj, schema_obj)
+                    if validate_result:
+                        logger.info('    Config: {c} ... {r}'.format(c=os.path.basename(config_path), r='Pass'))
+                    else:
+                        logger.error('    Config: {c} ... {r}'.format(c=os.path.relpath(config_path), r='Failed'))
+                        msg = 'Config settings {c} does not pass the schema {s} validation.'.format(
+                            c=os.path.relpath(config_path),
+                            s=os.path.relpath(schema_path))
+                        logger.error(msg)
+                        final_result = False
+                else:
+                    logger.error('    Config: {c} ... {r}'.format(c=os.path.relpath(config_path), r='Failed'))
+                    msg = 'Config settings {c} does not have schema file {s}.'.format(c=config_path, s=schema_path)
+                    logger.error(msg)
+                    final_result = False
         return final_result
 
 
