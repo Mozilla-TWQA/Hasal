@@ -134,6 +134,7 @@ class Firefox(GeneralBrowser):
     def clickBar(self):
         urlbar_pics = [('pics/ff_urlbar_blue_win7.png', 250, 0, 0.7),
                        ('pics/ff_urlbar_deepblue_win10.png', 250, 0, 0.8),
+                       ('pics/ff_urlbar_square_win7.png', 250, 0, 0.7),
                        ('pics/ff_urlbar_gray_win7.png', 250, 0, 0.7),
                        ('pics/ff_urlbar_gray_win10.png', 250, 0, 0.7),
                        ('pics/ff_urlbar_gray_win.png', -80, 0, 0.7),
