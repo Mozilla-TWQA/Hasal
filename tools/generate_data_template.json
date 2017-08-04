@@ -1,7 +1,7 @@
 {
   "ENABLE_ONLINE": "True",
   "SVR_ADDR":"10.247.120.208",
-  "SVR_PORT":"4096",
+  "SVR_PORT":4096,
   "PROJECT_NAME":"hasal",
   "MAX_RUN": 1,
   "MAX_RETRY": 10,
