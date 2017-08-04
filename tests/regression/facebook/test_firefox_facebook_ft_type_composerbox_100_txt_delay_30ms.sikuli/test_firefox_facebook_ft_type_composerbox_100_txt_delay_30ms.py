@@ -45,7 +45,7 @@ class Case(basecase.SikuliInputLatencyCase):
         customized_region_name_end = 'end'
 
         # part region of search suggestion list
-        compare_area = self.tuning_region(obj, x_offset=50, y_offset=45, w_offset=-80, h_offset=-60)
+        compare_area = self.tuning_region(obj, x_offset=50, y_offset=45, w_offset=-65, h_offset=-60)
         self.set_override_region_settings(customized_region_name_start, compare_area)
         self.set_override_region_settings(customized_region_name_end, compare_area)
 
