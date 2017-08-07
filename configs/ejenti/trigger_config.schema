@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "properties": {
+    "pulse_username": {
+      "description": "Pulse username",
+      "type": "string"
+    },
+    "pulse_password": {
+      "description": "Pulse password",
+      "type": "string"
+    },
+    "jobs": {
+      "description": "Trigger jobs",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "enable": {
+            "description": "enable or disable. Default is false.",
+            "type": "boolean"
+          },
+          "topic": {
+            "description": "which topic on Pulse. Required.",
+            "type": "string"
+          },
+          "platform_build": {
+            "description": "the platform of builds on archive server. Required.",
+            "type": "string"
+          },
+          "interval_minutes": {
+            "description": "the trigger interval (minutes). Default is 10.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "amount": {
+            "description": "the MetaTask amount of each build change. Default is 1.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "cmd": {
+            "description": "which command will contains in MetaTask. Required.",
+            "type": "string"
+          },
+          "configs": {
+            "description": "other command overwrite config arguments.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "topic",
+          "platform_build",
+          "cmd"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "log_filter": {
+      "description": "the logger filter",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "pulse_username",
+    "pulse_password",
+    "jobs",
+    "log_filter"
+  ],
+  "additionalProperties": false
+}

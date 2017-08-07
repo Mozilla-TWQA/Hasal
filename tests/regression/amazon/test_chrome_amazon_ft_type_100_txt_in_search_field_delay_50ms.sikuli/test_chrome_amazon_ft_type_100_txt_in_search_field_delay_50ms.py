@@ -48,7 +48,7 @@ class Case(basecase.SikuliInputLatencyCase):
         sleep(1)
 
         # Set additional delay time of type command, default base is 0.02s(20ms)
-        com.set_type_delay(0.01)
+        com.set_type_delay(0.03)
 
         # Customized Region
         customized_region_name_start = 'start'

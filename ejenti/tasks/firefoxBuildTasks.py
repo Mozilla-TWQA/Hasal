@@ -264,7 +264,9 @@ def deploy_fx_package(**kwargs):
     if fx_dl_pkg_path:
         if extract_fx_pkg(fx_dl_pkg_path):
             link_fx_pkg()
+            return True
         else:
             logging.error("cannot extract firefox package [%s]" % fx_dl_pkg_path)
     else:
         logging.warn("please specify firefox downloaded package path after cmd")
+    return False

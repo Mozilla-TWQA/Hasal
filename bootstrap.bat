@@ -289,7 +289,7 @@ IF "%APPVEYOR%"=="True" (
     ECHO [INFO] Setup in virtualenv
     activate env-python
     pip install pywin32-ctypes==0.0.1
-    pip install coverage mitmproxy
+    pip install coverage
     pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     python setup.py install
 ) ELSE (

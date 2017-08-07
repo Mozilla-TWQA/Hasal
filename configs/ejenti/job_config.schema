@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "module-path": {
+        "description": "job module path",
+        "type": "string"
+      },
+      "trigger-type": {
+        "description": "job trigger type ex:interavl, datetime etc.",
+        "type": "string"
+      },
+      "interval": {
+        "description": "job execute interval",
+        "type": "integer",
+        "minimum": 1
+      },
+      "max-instances": {
+        "description": "max concurrent job instance number",
+        "type": "integer",
+        "minimum": 1
+      },
+      "default-loaded": {
+        "description": "default loaded option",
+        "type": "boolean"
+      },
+      "configs": {
+        "description": "job configs",
+        "type": "object",
+        "additionalProperties": {
+          "description": "Other case suite settings should contain in an object",
+          "type": [
+            "integer",
+            "string",
+            "boolean",
+            "object",
+            "array"
+          ]
+        }
+      }
+    },
+    "required": [
+      "module-path",
+      "trigger-type",
+      "interval",
+      "max-instances",
+      "default-loaded",
+      "configs"
+    ],
+    "additionalProperties": false
+  }
+}

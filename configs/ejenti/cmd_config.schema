@@ -1,0 +1,493 @@
+{
+    "type": "object",
+    "properties": {
+        "cmd-settings": {
+            "description": "store all command settings",
+            "type": "object",
+            "properties": {
+                "del-job": {
+                    "description": "delete a existing job",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "func-name",
+                        "configs"
+                    ]
+                },
+                "list-job": {
+                    "description": "list all running job",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "func-name",
+                        "configs"
+                    ]
+                },
+                "help": {
+                    "description": "show help page",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "func-name",
+                        "configs"
+                    ]
+                },
+                "exit": {
+                    "description": "Graceful shutdown",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "func-name",
+                        "configs"
+                    ]
+                },
+                "run-hasal-on-latest-nightly": {
+                    "description": "run hasal on latest nighlty build",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "output_dp": {
+                                    "description": "output directory path, nightly build will store in this path",
+                                    "type": "string"
+                                },
+                                "fx_dl_pkg_path": {
+                                    "description": "firefox download package path",
+                                    "type": "string"
+                                },
+                                "default_config_settings": {
+                                    "description": "dict for hasal config override",
+                                    "type": "object"
+                                },
+                                "default_runtest_configs": {
+                                    "description": "dict for hasal runtest parameter format ",
+                                    "type": "object"
+                                },
+                                "default_cmd_fmt": {
+                                    "description": "runtest command format",
+                                    "type": "string"
+                                },
+                                "default_log_fn": {
+                                    "description": "exec runtest output log file name",
+                                    "type": "string"
+                                },
+                                "specify_config_settings": {
+                                    "description": "config settings",
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "download-latest-nightly": {
+                    "description": "download latest nighlty build",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "output_dp": {
+                                    "description": "output directory path, nightly build will store in this path",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "deploy-fx-package": {
+                    "description": "deploy firefox package",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "fx_dl_pkg_path": {
+                                    "description": "firefox download package path",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "git-pull": {
+                    "description": "git pull command",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "remote_url": {
+                                    "description": "remote url string",
+                                    "type": "string"
+                                },
+                                "branch_name": {
+                                    "description": "branch name",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "git-checkout": {
+                    "description": "git checkout command",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "branch_name": {
+                                    "description": "branch name",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "git-fetch": {
+                    "description": "git fetch command",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "remote_url": {
+                                    "description": "remote url string",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "git-reset": {
+                    "description": "git reset command",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object"
+
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "generate-hasal-config": {
+                    "description": "generate hasal config",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "default_config_settings": {
+                                    "description": "dict for hasal config override",
+                                    "type": "object"
+                                },
+                                "default_runtest_configs": {
+                                    "description": "dict for hasal runtest parameter format ",
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                },
+                "exec-hasal-runtest": {
+                    "description": "exec hasal runtest",
+                    "type": "object",
+                    "properties":{
+                        "desc": {
+                            "description": "command description",
+                            "type": "string"
+                        },
+                        "module-path":{
+                            "description": "module path",
+                            "type": "string"
+                        },
+                        "func-name": {
+                            "description": "reference calling function name",
+                            "type": "string"
+                        },
+                        "queue-type": {
+                            "description": "handle queue type",
+                            "type": "string"
+                        },
+                        "configs": {
+                            "description": "command configs",
+                            "type": "object",
+                            "properties": {
+                                "default_cmd_fmt": {
+                                    "description": "runtest command format",
+                                    "type": "string"
+                                },
+                                "default_log_fn": {
+                                    "description": "exec runtest output log file name",
+                                    "type": "string"
+                                },
+                                "specify_config_settings": {
+                                    "description": "config settings",
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "desc",
+                        "module-path",
+                        "func-name",
+                        "queue-type",
+                        "configs"
+                    ]
+                }
+            }
+        }
+    },
+    "required": [
+        "cmd-settings"
+    ],
+    "additionalProperties": false
+}
