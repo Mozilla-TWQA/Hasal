@@ -300,7 +300,7 @@ class TasksTrigger(object):
 
         # create Rotating File Handler, 1 day, backup 30 times.
         rotating_handler = TimedRotatingFileHandler(rotating_file_path,
-                                                    when='d',
+                                                    when='midnight',
                                                     interval=1,
                                                     backupCount=30)
 
