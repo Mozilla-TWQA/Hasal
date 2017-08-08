@@ -97,25 +97,28 @@ brew install wget
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
     func_log "[INFO] Installing opencv without ffmpeg (on Travis CI) ..."
-    brew install homebrew/science/opencv || brew link --overwrite homebrew/python/numpy
+    brew install --build-from-source homebrew/science/opencv || brew link --overwrite homebrew/python/numpy
 else
     func_log "[INFO] Installing ffmpeg ..."
     brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
     func_log "[INFO] Installing opencv with ffmpeg ..."
-    brew install homebrew/science/opencv --with-ffmpeg -v
+    brew install --build-from-source homebrew/science/opencv --with-ffmpeg -v
 fi
 
 # libav (avconv)
 func_log "[INFO] Installing libav ..."
 brew install libav
+brew info libav
 
 # imagemagick, for Speed Index
 func_log "[INFO] Installing imagemagick ..."
 brew install imagemagick
+brew info imagemagick
 
 # mitmproxy
 func_log "[INFO] Installing mitmproxy ..."
 brew install mitmproxy
+brew info mitmproxy
 
 # sikulix
 func_log "[INFO] Installing Sikulix 1.1.0 ..."
