@@ -51,7 +51,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # Record T1, and capture the snapshot image
         # Input Latency Action
-        loc, screenshot, t1 = app.il_click_open_chat_tab(capture_width, capture_height)
+        loc, screenshot, t1 = app.il_click_open_chat_tab(capture_width, capture_height, similarity=0.85)
 
         # In normal condition, a should appear within 100ms,
         # but if lag happened, that could lead the show up after 100 ms,
