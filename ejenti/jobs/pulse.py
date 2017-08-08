@@ -9,6 +9,7 @@ from mozillapulse.messages.base import GenericMessage
 # The job will be imported by ejenti. Top level will be `ejenti`, not `hasal` or `ejenti.jobs`.
 from pulse_modules.hasal_consumer import HasalConsumer  # NOQA
 from pulse_modules.hasal_publisher import HasalPublisher  # NOQA
+from pulse_modules.hasalPulsePublisher import HasalPulsePublisher  # NOQA
 
 
 PULSE_KEY_TASK = 'task'
@@ -174,6 +175,14 @@ def listen_pulse(**kwargs):
             PULSE_MGT_OBJECT_CMD_CFG: ret_cmd_cfg,
             PULSE_MGT_OBJECT_QUEUE_TYPE: ret_queue_type
         }
+
+        # check queue
+        queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,
+                                                                    password=password,
+                                                                    topic=topic)
+        if not queue_exists:
+            logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
+
         # make publisher
         p = HasalPublisher(user=username, password=password)
         # prepare message
