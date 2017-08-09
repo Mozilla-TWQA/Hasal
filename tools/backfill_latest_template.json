@@ -1,0 +1,19 @@
+{
+  "ENABLE_ONLINE": "True",
+  "SVR_ADDR":"10.247.120.208",
+  "SVR_PORT":1234,
+  "PROJECT_NAME":"hasal",
+  "MAX_RUN": 1,
+  "MAX_RETRY": 1,
+  "ENABLE_ADVANCE": "false",
+  "FIREFOX_CONFIG_NAME": "obs_on_windows.json",
+
+  "nightly_build_date_list":[
+    "ADD_FIREFOX_BUILD_PATH"
+  ],
+  "pkg_target_platform": "win64",
+  "output_config_dp": "output_config",
+  "suite_dict":{
+    "TEMPLATE": "ADD_SUITE_HERE"
+  }
+}
