@@ -184,6 +184,7 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_RIGHT_PANEL_CONTACT = [
+        [os.path.join('pics', 'facebook_contact_linda_win7.png'), 0, 15],
         [os.path.join('pics', 'facebook_contact.png'), 0, 15]
     ]
 
@@ -578,14 +579,15 @@ class facebook(WebApp):
         return self._click(action_name='Click Close Chat Tab Button',
                            component=facebook.FACEBOOK_CHAT_TAB_CLOSE_BUTTON)
 
-    def click_right_panel_contact(self):
+    def click_right_panel_contact(self, similarity=0.70):
         """
             Click right panel contact to open chat tab.
             """
         return self._click(action_name='Click Right Panel Contact',
-                           component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT)
+                           component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT,
+                           similarity=similarity)
 
-    def il_click_open_chat_tab(self, width, height):
+    def il_click_open_chat_tab(self, width, height, similarity=0.70):
         """
         Click right panel contact to open chat tab.
         (Input Latency)
@@ -593,7 +595,8 @@ class facebook(WebApp):
         return self._il_click(action_name='Click Open Chat Tab',
                               component=facebook.FACEBOOK_RIGHT_PANEL_CONTACT,
                               width=width,
-                              height=height)
+                              height=height,
+                              similarity=similarity)
 
     def il_click_open_chat_tab_emoji_dialog(self, width, height):
         """

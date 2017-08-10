@@ -39,7 +39,7 @@ class Case(basecase.SikuliInputLatencyCase):
         sleep(2)
 
         # PRE ACTIONS
-        app.click_right_panel_contact()
+        app.click_right_panel_contact(similarity=0.85)
         sleep(2)
         _, obj = app.wait_for_close_button_loaded()
 
