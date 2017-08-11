@@ -105,6 +105,9 @@ class FrameThroughputDctGenerator(BaseGenerator):
             actual_paint_frames = expected_frames - freeze_count
             frame_throughput = float(actual_paint_frames) / expected_frames
 
+            freeze_frame_intervals = np.diff(non_freeze_frame_timestamps)
+            third_quartile = np.nanpercentile(freeze_frame_intervals, 75)
+
             return_result = dict()
             return_result['long_frame'] = long_frame
             return_result['frame_throughput'] = frame_throughput
@@ -112,6 +115,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
             return_result['expected_frames'] = expected_frames
             return_result['actual_paint_frames'] = actual_paint_frames
             return_result['non_freeze_frame_timestamps'] = non_freeze_frame_timestamps
+            return_result['third_quartile'] = third_quartile
 
         except Exception as e:
             logger.error(e)
@@ -247,6 +251,7 @@ class FrameThroughputDctGenerator(BaseGenerator):
             history_result_data = CommonUtil.load_json_file(self.env.DEFAULT_TEST_RESULT)
             event_time_dict = self.compare_result.get('event_time_dict', {})
             non_freeze_frame_timestamps = self.compare_result.get('non_freeze_frame_timestamps', [])
+            third_quartile = self.compare_result.get('third_quartile', 0)
             long_frame = self.compare_result.get('long_frame', 0)
             frame_throughput = self.compare_result.get('frame_throughput', 0)
             freeze_frames = self.compare_result.get('freeze_frames', 0)
@@ -261,7 +266,8 @@ class FrameThroughputDctGenerator(BaseGenerator):
                              'expected_frames': expected_frames,
                              'actual_paint_frames': actual_paint_frames,
                              'event_time': event_time_dict,
-                             'non_freeze_frame_timestamps': non_freeze_frame_timestamps}
+                             'non_freeze_frame_timestamps': non_freeze_frame_timestamps,
+                             'third_quartile': third_quartile}
 
             # init result dict if not exist
             init_result_dict = self.init_result_dict_variable(
