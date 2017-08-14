@@ -129,8 +129,12 @@ class MainRunner(object):
                                            id=job_name,
                                            seconds=input_job_config[job_name]['interval'],
                                            max_instances=input_job_config[job_name]['max-instances'],
-                                           kwargs={'async_queue': self.async_queue, 'sync_queue': self.sync_queue,
-                                                   'configs': input_job_config[job_name]['configs']})
+                                           kwargs={
+                                               'async_queue': self.async_queue,
+                                               'sync_queue': self.sync_queue,
+                                               'configs': input_job_config[job_name]['configs'],
+                                               'cmd_config': self.cmd_config}
+                                           )
 
     def job_exception_listener(self, event):
         if event.exception:
