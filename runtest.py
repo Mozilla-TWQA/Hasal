@@ -314,7 +314,7 @@ class RunTest(object):
                     upload_result_data[current_time_stamp]['upload_status_json'] = uploader_response.json()
                     self.logger.info("upload to perfherder failed, status code: [%s], json: [%s]" % (uploader_response.status_code, uploader_response.json()))
             else:
-                self.logger.info("upload to perfherder failed, unknown exception happened in submitting to perfherder" )
+                self.logger.info("upload to perfherder failed, unknown exception happened in submitting to perfherder")
 
         # remove success time stamp from upload result data
         for del_time_stamp in upload_success_timestamp_list:
