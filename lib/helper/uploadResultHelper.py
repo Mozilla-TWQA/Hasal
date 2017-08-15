@@ -33,6 +33,8 @@ class PerfherderUploader(object):
 
     @staticmethod
     def gen_guid(length=32):
+        min_length = 32
+        length = max(length, min_length)
         return ''.join(random.choice(string.letters + string.digits) for _ in xrange(length))
 
     def create_job_dataset(self, revision, browser, timestamp, perf_data, version='', repo_link='', video_links='', extra_info_obj={}):
