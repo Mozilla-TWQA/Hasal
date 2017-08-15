@@ -32,7 +32,6 @@ from lib.common.commonUtil import CommonUtil
 from lib.common.commonUtil import StatusRecorder
 from lib.common.commonUtil import HasalConfigUtil
 from lib.helper.desktopHelper import close_browser
-from lib.helper.uploadAgentHelper import UploadAgent
 from lib.helper.uploadResultHelper import VideoUploader
 from lib.helper.uploadResultHelper import PerfherderUploader
 from lib.helper.uploadResultHelper import PerfherderUploadDataGenerator
@@ -124,6 +123,10 @@ class RunTest(object):
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
 
+        # check the upload config revision, raise exception if upload config enabled without revision
+        if self.upload_config.get("perfherder-revision", "") == "" and self.upload_config.get("enable", False):
+            raise Exception("Your current upload config is enabled [%s], but revision is empty [%s], please make sure your config set correctly" % (self.upload_config.get("perfherder-revision", ""), self.upload_config.get("enable", False)))
+
     def validate_configs(self):
         """
         Validating all input configs. Raise exception if failed.
@@ -164,11 +167,6 @@ class RunTest(object):
             os.mkdir(upload_dir)
             os.mkdir(self.suite_result_dp)
 
-        if CommonUtil.get_value_from_config(config=self.upload_config, key='enable'):
-            svr_config = CommonUtil.get_value_from_config(config=self.upload_config, key='svr-config')
-            exec_comment = CommonUtil.get_value_from_config(config=self.exec_config, key='comment')
-            self.upload_agent_obj = UploadAgent(svr_config=svr_config, test_comment=exec_comment)
-
     def suite_teardown(self):
         # run generator's output suite result
         try:
@@ -205,9 +203,7 @@ class RunTest(object):
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
-        if self.upload_config['enable'] and os.path.exists(self.default_result_fp):
-            os.remove(self.default_result_fp)
-            # clean output data
+        pass
 
     def case_teardown(selfc):
         pass
@@ -239,15 +235,6 @@ class RunTest(object):
         result['SUITE_RESULT_DP'] = str(self.suite_result_dp)
         result['FIREFOX_PROFILE_PATH'] = self._firefox_profile_path
         result['CHROME_PROFILE_PATH'] = self._chrome_profile_path
-
-        if self.upload_config['perfherder-revision']:
-            result['PERFHERDER_REVISION'] = str(self.upload_config['perfherder-revision'])
-        else:
-            result['PERFHERDER_REVISION'] = ""
-        if self.upload_config['perfherder-pkg-platform']:
-            result['PERFHERDER_PKG_PLATFORM'] = str(self.upload_config['perfherder-pkg-platform'])
-        else:
-            result['PERFHERDER_PKG_PLATFORM'] = ""
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
@@ -365,9 +352,6 @@ class RunTest(object):
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
                 objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
-                # when upload mode is enabled, the result file will be removed before trigger the runtest.py everytime.
-                if self.upload_config['enable'] and os.path.exists(self.default_result_fp):
-                    os.remove(self.default_result_fp)
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
                 current_run, current_retry, analyze_result = self.run_test_result_analyzer(current_run, current_retry)
