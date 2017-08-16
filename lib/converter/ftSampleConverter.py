@@ -44,7 +44,7 @@ class FTSampleConverter(object):
                     generator_class = getattr(importlib.import_module(input_data['configuration']['generator'][generator_name]['path']), generator_name)
                     generator_obj = generator_class(input_data['index_config'],
                                                     input_data['exec_config'],
-                                                    input_data['online_config'],
+                                                    input_data['upload_config'],
                                                     input_data['global_config'],
                                                     input_data['input_env'])
                     return_result[sample_index].update(generator_obj.generate_sample_result(generator_name, return_result, sample_index))

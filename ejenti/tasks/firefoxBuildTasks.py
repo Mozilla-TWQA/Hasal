@@ -178,12 +178,12 @@ def download_latest_nightly_build(**kwargs):
                                                    "10": "windows10-64"}
                                          }
 
-            return_result['PERFHERDER_REVISION'] = perfherder_revision
+            return_result['PERFHERDER-REVISION'] = perfherder_revision
             if current_platform_release in builddot_mapping_platform[build_pkg_platform].keys():
-                return_result['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform][
+                return_result['PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform][
                     current_platform_release]
             else:
-                return_result['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
+                return_result['PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
 
         return return_result
 

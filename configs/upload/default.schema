@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "enable": {
+      "description": "it will submit result to Perfherder if enabled",
+      "type": "boolean"
+    },
+    "perfherder-revision": {
+      "description": "the running browser revision",
+      "type": "string"
+    },
+    "perfherder-pkg-platform": {
+      "description": "the running browser package platform",
+      "type": "string"
+    },
+    "perfherder-suitename": {
+      "description": "the running cases suite name",
+      "type": "string"
+    },
+    "perfherder-protocol": {
+      "description": "perfherder protocol",
+      "type": "string"
+    },
+    "perfherder-host": {
+      "description": "perfherder host name",
+      "type": "string"
+    },
+    "perfherder-client-id": {
+      "description": "perfherder client id",
+      "type": "string"
+    },
+    "perfherder-secret": {
+      "description": "perfherder secret password",
+      "type": "string"
+    },
+    "perfherder-repo": {
+      "description": "perfherder repo name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "enable",
+    "perfherder-protocol",
+    "perfherder-host",
+    "perfherder-client-id",
+    "perfherder-secret",
+    "perfherder-repo",
+    "perfherder-revision",
+    "perfherder-pkg-platform",
+    "perfherder-suitename"
+  ],
+  "additionalProperties": false
+}

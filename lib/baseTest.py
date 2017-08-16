@@ -28,7 +28,7 @@ class BaseTest(unittest.TestCase):
         GLOBAL = 'global_config'
         FIREFOX = 'firefox_config'
         CHROME = 'chrome_config'
-        ONLINE = 'online_config'
+        UPLOAD = 'upload_config'
 
     def __init__(self, *args, **kwargs):
         super(BaseTest, self).__init__(*args, **kwargs)
@@ -151,7 +151,7 @@ class BaseTest(unittest.TestCase):
     def set_configs(self, config_variable_name, config_value):
         # only the config in the following list can be created or updated
         acceptable_config_list = [self.config_name.EXEC, self.config_name.INDEX, self.config_name.GLOBAL,
-                                  self.config_name.FIREFOX, self.config_name.ONLINE, self.config_name.CHROME]
+                                  self.config_name.FIREFOX, self.config_name.UPLOAD, self.config_name.CHROME]
         self.__dict__.update(
             HasalConfigUtil.overwrite_platform_dep_settings_into_configs(self, config_variable_name, config_value,
                                                                          acceptable_config_list,
@@ -160,7 +160,7 @@ class BaseTest(unittest.TestCase):
 
     def load_configs(self):
         config_fp_list = ['EXEC_CONFIG_FP', 'INDEX_CONFIG_FP', 'GLOBAL_CONFIG_FP',
-                          'FIREFOX_CONFIG_FP', 'ONLINE_CONFIG_FP', 'CHROME_CONFIG_FP']
+                          'FIREFOX_CONFIG_FP', 'UPLOAD_CONFIG_FP', 'CHROME_CONFIG_FP']
 
         for config_env_name in config_fp_list:
             config_variable_name = config_env_name.rsplit('_', 1)[0].lower()
@@ -231,10 +231,10 @@ class BaseTest(unittest.TestCase):
         # output result
         if self.round_status == 0:
             if hasattr(self, "crop_data"):
-                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.upload_config,
                                           os.getenv("SUITE_RESULT_DP"), self.crop_data)
             else:
-                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.online_config,
+                generatorHelper.calculate(self.env, self.global_config, self.exec_config, self.index_config, self.firefox_config, self.upload_config,
                                           os.getenv("SUITE_RESULT_DP"))
         else:
             logger.warning("This running result of execution is not successful, return code: " + str(self.round_status))

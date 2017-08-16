@@ -12,6 +12,7 @@
   "snapshot-base-sample2"   : false,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : false,
+  "upload-perfherder-data-field": "med_time",
   "region"                  : {
     "start": {"event": "start", "search_target": "start_region", "direction": "backward"},
     "end": {"event": "end", "search_target": "end_region", "direction": "forward"}

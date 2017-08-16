@@ -18,10 +18,10 @@ class BaseGenerator(object):
     EVENT_START = 'start'
     EVENT_END = 'end'
 
-    def __init__(self, index_config, exec_config, online_config, global_config, input_env):
+    def __init__(self, index_config, exec_config, upload_config, global_config, input_env):
         self.index_config = index_config
         self.exec_config = exec_config
-        self.online_config = online_config
+        self.upload_config = upload_config
         self.global_config = global_config
         self.status_recorder = StatusRecorder(global_config['default-running-statistics-fn'])
         self.env = input_env
@@ -96,8 +96,8 @@ class BaseGenerator(object):
             update_result['time_list'].append(input_run_time_dict)
         update_result['video_fp'] = self.env.video_output_fp
         update_result['web_app_name'] = self.env.web_app_name
-        update_result['revision'] = self.online_config['perfherder-revision']
-        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+        update_result['revision'] = self.upload_config['perfherder-revision']
+        update_result['pkg_platform'] = self.upload_config['perfherder-pkg-platform']
         return update_result
 
     def generate_update_result_for_runtime(self, input_update_result, input_compare_result, input_run_time_dict):
@@ -123,8 +123,8 @@ class BaseGenerator(object):
         update_result['std_dev'] = sigma
         update_result['video_fp'] = self.env.video_output_fp
         update_result['web_app_name'] = self.env.web_app_name
-        update_result['revision'] = self.online_config['perfherder-revision']
-        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+        update_result['revision'] = self.upload_config['perfherder-revision']
+        update_result['pkg_platform'] = self.upload_config['perfherder-pkg-platform']
         return sorted_list, median_time_index, update_result
 
     def output_runtime_result_video(self, running_time_result, suite_upload_dp):
@@ -148,10 +148,10 @@ class BaseGenerator(object):
         end_fp = end_event.get('file', None)
         if not start_fp or not end_fp:
             logger.warning("Cannot get file path of either start event or end event, stop output video.")
-            return None
+            return ""
         elif start_fp > end_fp:
             logger.warning("Start point is behind End point, stop output video.")
-            return None
+            return ""
         else:
             if os.path.exists(os.path.join(os.path.dirname(start_fp), self.global_config['default-search-target-browser'])):
                 source_dp = os.path.join(os.path.dirname(start_fp), self.global_config['default-search-target-browser'])
@@ -193,6 +193,7 @@ class BaseGenerator(object):
             shutil.move(self.env.converted_video_output_fp, upload_case_dp)
             filename = os.path.basename(self.env.converted_video_output_fp)
             return os.path.join(upload_case_dp, filename)
+        return ""
 
     def clean_output_images(self, running_time_result, img_dp):
         # Start to clean image files only if flag enabled
@@ -291,13 +292,13 @@ class BaseGenerator(object):
         except Exception as e:
             logger.error('Cannot move statistics file to result folder. Error: {exp}'.format(exp=e))
 
-        # copy current result file to result folder
+        # move current result file to result folder
         try:
             result_file_name = CommonUtil.get_value_from_config(config=global_config, key='default-result-fn')
             if result_file_name:
                 result_fp = os.path.join(os.getcwd(), result_file_name)
                 if os.path.exists(result_fp):
-                    shutil.copy(result_fp, output_result_dir)
+                    shutil.move(result_fp, output_result_dir)
         except Exception as e:
             logger.error('Cannot copy result file to result folder. Error: {exp}'.format(exp=e))
 

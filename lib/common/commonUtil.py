@@ -90,6 +90,9 @@ class StatusRecorder(object):
     def get_current_status(self):
         return self.current_data[self.DEFAULT_FIELD_CURRENT_STATUS]
 
+    def get_case_basic_info(self):
+        return self.current_data[self.DEFAULT_FIELD_CASE_INFO]
+
     def set_case_basic_info(self, case_name):
         current_time_stamp = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
         if self.DEFAULT_FIELD_CASE_INFO in self.current_data:
