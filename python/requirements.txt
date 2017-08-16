@@ -4,9 +4,9 @@ mach == 0.6.0
 epydoc == 3.0.1
 
 # For Python linting
-flake8 == 2.4.1
-pep8 == 1.5.7
-pyflakes == 0.8.1
+flake8==3.4.1
+pep8==1.7.0
+pyflakes==1.6.0
 
 # For JSON schema
 jsonschema==2.6.0
