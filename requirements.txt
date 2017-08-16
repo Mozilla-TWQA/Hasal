@@ -22,5 +22,5 @@ pandas>=0.19.2
 runipy==0.1.5
 
 python-dateutil==2.6.1
-keyring
+keyring==10.4.0
 requests
