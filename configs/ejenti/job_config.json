@@ -25,5 +25,18 @@
       "username": "",
       "password": ""
     }
+  },
+  "init_slack_bot": {
+    "module-path": "jobs.slack_bot",
+    "trigger-type": "interval",
+    "interval": 60,
+    "max-instances": 1,
+    "default-loaded": false,
+    "configs": {
+      "bot_name": "",
+      "bot_api_token": "",
+      "bot_mgt_channel": "",
+      "bot_election_channel": ""
+    }
   }
 }
