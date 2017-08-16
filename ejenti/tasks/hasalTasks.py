@@ -47,9 +47,9 @@ def run_hasal_on_latest_nightly(**kwargs):
 
         # generate hasal
         meta_task_input_config = kwargs['queue_msg']['cmd_obj']['configs'].get("input_config", {})
-        auto_generate_config = {"configs": {"online": {
-            "default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER_REVISION'],
-                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER_PKG_PLATFORM']}}}}
+        auto_generate_config = {"configs": {"upload": {
+            "default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
+                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}}}}
         merge_input_config = CommonUtil.deep_merge_dict(meta_task_input_config, auto_generate_config)
         kwargs['queue_msg']['cmd_obj']['configs']['input_config'] = merge_input_config
         ejenti_hasal_config = generate_hasal_config(**kwargs)
@@ -98,7 +98,7 @@ def generate_hasal_config(**kwargs):
             "firefox": {"default.json": {}},
             "chrome": {"default.json": {}},
             "index": {"runtimeDctGenerator.json": {}},
-            "online": {"default.json": {}},
+            "upload": {"default.json": {}},
             "global": {"default.json": {}}
         }
     }
@@ -107,7 +107,7 @@ def generate_hasal_config(**kwargs):
         "--exec-config": "",
         "--firefox-config": "",
         "--index-config": "",
-        "--online-config": "",
+        "--upload-config": "",
         "--global-config": "",
         "--chrome-config": ""
     }

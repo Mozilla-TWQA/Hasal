@@ -167,11 +167,11 @@ class TriggerBuild(object):
                     write_data = copy.deepcopy(self.env_data)
                     write_data['FX-DL-PACKAGE-PATH'] = download_fx_fp
                     write_data['FX-DL-JSON-PATH'] = download_json_fp
-                    write_data['PERFHERDER_REVISION'] = perfherder_revision
+                    write_data['PERFHERDER-REVISION'] = perfherder_revision
                     if current_platform_release in builddot_mapping_platform[build_pkg_platform].keys():
-                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform][current_platform_release]
+                        write_data['PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform][current_platform_release]
                     else:
-                        write_data['PERFHERDER_PKG_PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
+                        write_data['PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
                     json.dump(write_data, write_fh)
 
             if os.path.exists(os.path.join(os.getcwd(), self.HASAL_JSON_FN)):

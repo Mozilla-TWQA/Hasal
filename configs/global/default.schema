@@ -56,6 +56,10 @@
   "default-search-target-browser": {
       "description": "",
       "type": "string"
+    },
+  "default-upload-result-failed-fn": {
+      "description": "",
+      "type": "string"
     }
   },
   "required": [
@@ -72,7 +76,8 @@
     "default-file-exist-validator-name",
     "default-file-exist-validator-module-path",
     "default-user-simulation-tool-webdriver",
-    "default-search-target-browser"
+    "default-search-target-browser",
+    "default-upload-result-failed-fn"
   ],
   "additionalProperties": {
     "description": "Other case suite settings should contain in an object",

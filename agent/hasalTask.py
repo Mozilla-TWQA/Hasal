@@ -64,19 +64,16 @@ class HasalTask(object):
                 write_fh.write(case_path.strip() + '\n')
         return jenkins_suite_fp
 
-    def create_online_config(self):
-        config_dn = "online"
+    def create_upload_config(self):
+        config_dn = "upload"
         default_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.DEFAULT_CONFIG_NAME)
         output_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.JENKINS_CONFIG_NAME)
         with open(default_config_fp) as fh:
             config_data = json.load(fh)
         config_data['enable'] = self.str2bool(self.configurations.get('ENABLE_ONLINE', "false"))
-        config_data['perfherder-revision'] = self.configurations.get('PERFHERDER_REVISION', "")
-        config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER_PKG_PLATFORM', "")
-        config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER_SUITE_NAME', "")
-        config_data['svr-config']['svr_addr'] = self.configurations.get('SVR_ADDR', "127.0.0.1")
-        config_data['svr-config']['svr_port'] = int(self.configurations.get('SVR_PORT', 1234))
-        config_data['svr-config']['project_name'] = self.configurations.get('PROJECT_NAME', "hasal")
+        config_data['perfherder-revision'] = self.configurations.get('PERFHERDER-REVISION', "")
+        config_data['perfherder-pkg-platform'] = self.configurations.get('PERFHERDER-PKG-PLATFORM', "")
+        config_data['perfherder-suitename'] = self.configurations.get('PERFHERDER-SUITE-NAME', "")
         with open(output_config_fp, 'w') as write_fh:
             json.dump(config_data, write_fh)
         return output_config_fp
@@ -126,8 +123,8 @@ class HasalTask(object):
 
     def generate_command_list(self):
         result_list = ['python', 'runtest.py', '--firefox-config', self.create_firefox_config(), '--index-config',
-                       self.create_index_config(), '--exec-config', self.create_exec_config(), '--online-config',
-                       self.create_online_config()]
+                       self.create_index_config(), '--exec-config', self.create_exec_config(), '--upload-config',
+                       self.create_upload_config()]
         return result_list
 
     def deploy_fx_pkg(self):

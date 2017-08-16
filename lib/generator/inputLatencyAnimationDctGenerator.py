@@ -162,19 +162,21 @@ class InputLatencyAnimationDctGenerator(BaseGenerator):
             # write fps to history_result_data
             history_result_data['video-recording-fps'] = self.index_config['video-recording-fps']
 
+            # output upload video
+            if self.exec_config['output-result-video-file']:
+                start_time = time.time()
+                upload_result_video_fp = self.output_runtime_result_video(self.compare_result['running_time_result'], suite_upload_dp)
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+                history_result_data[self.env.test_name]['upload_video_fp'] = upload_result_video_fp
+
             # dump to json file
             with open(self.env.DEFAULT_TEST_RESULT, "wb") as fh:
                 json.dump(history_result_data, fh, indent=2)
             self.status_recorder.record_current_status({self.status_recorder.STATUS_TIME_LIST_COUNTER: str(len(history_result_data[self.env.test_name]['time_list']))})
         else:
             self.status_recorder.record_current_status({self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_COMPARE_RESULT_IS_NONE})
-
-        if self.exec_config['output-result-video-file']:
-            start_time = time.time()
-            self.output_runtime_result_video(self.compare_result['running_time_result'], suite_upload_dp)
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
         self.clean_output_images(self.compare_result['running_time_result'], self.env.img_output_dp)
 

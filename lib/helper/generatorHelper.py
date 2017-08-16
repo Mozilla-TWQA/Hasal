@@ -70,7 +70,7 @@ def get_timestamp_json_data(input_fp, initial_timestamp_name):
     return timestamp_list
 
 
-def calculate(env, global_config, exec_config, index_config, firefox_config, online_config, suite_upload_dp="", crop_data=None):
+def calculate(env, global_config, exec_config, index_config, firefox_config, upload_config, suite_upload_dp="", crop_data=None):
     """
 
     @param env: from lib.common.environment.py
@@ -123,7 +123,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
                        'orig_sample': env.img_output_sample_1_fn,
                        'index_config': index_config,
                        'exec_config': exec_config,
-                       'online_config': online_config,
+                       'upload_config': upload_config,
                        'global_config': global_config,
                        'input_env': env}
 
@@ -135,7 +135,7 @@ def calculate(env, global_config, exec_config, index_config, firefox_config, onl
                           'exec_timestamp_list': exec_timestamp_list}
 
         generator_class = getattr(importlib.import_module(generator_module_path), generator_name)
-        generator_obj = generator_class(index_config, exec_config, online_config, global_config, env)
+        generator_obj = generator_class(index_config, exec_config, upload_config, global_config, env)
         start_time = time.time()
         generator_result = generator_obj.generate_result(generator_data)
         last_end = time.time()
