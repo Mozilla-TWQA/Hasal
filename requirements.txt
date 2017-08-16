@@ -23,4 +23,4 @@ runipy==0.1.5
 
 python-dateutil
 keyring
-requests
+requests==2.18.4
