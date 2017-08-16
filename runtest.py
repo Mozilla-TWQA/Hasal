@@ -200,13 +200,13 @@ class RunTest(object):
     def case_setup(self):
         if self.online_config['enable'] and os.path.exists(self.default_result_fp):
             os.remove(self.default_result_fp)
-
-    def case_teardown(self, data):
-        if self.online_config['enable']:
             if self.online_config['perfherder-revision']:
                 self.upload_agent_obj.upload_register_data(self.exec_config['exec-suite-fp'],
                                                            self.index_config['case-type'],
                                                            self.online_config['perfherder-suitename'])
+
+    def case_teardown(self, data):
+        if self.online_config['enable']:
             self.upload_agent_obj.upload_videos(data)
 
     def kill_legacy_process(self):
