@@ -2,7 +2,7 @@ theano==0.8.2
 numpy>=1.10.0
 psutil>=4.1.0
 oauth2client==3.0.0
-google-api-python-client==1.5.3
+google-api-python-client==1.6.2
 PyDrive==1.0.1
 pyperclip>=1.5.27
 web.py>=0.38
