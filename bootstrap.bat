@@ -291,10 +291,12 @@ IF "%APPVEYOR%"=="True" (
     pip install pywin32-ctypes==0.0.1
     pip install coverage
     pip install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
+    pip install -r requirements.txt
+    pip install -r ejenti\requirements.txt
     python setup.py install
 ) ELSE (
     @REM Installing mitmproxy & opencv2 & Hasal
-    activate env-python & pip install pywin32-ctypes==0.0.1 mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & python setup.py install & python scripts\cv2_checker.py
+    activate env-python & pip install pywin32-ctypes==0.0.1 mitmproxy thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl & certutil -p "" thirdParty\mitmproxy-ca-cert.p12 & pip install -r requirements.txt & pip install -r ejenti\requirements.txt & python setup.py install & python scripts\cv2_checker.py
 )
 
 

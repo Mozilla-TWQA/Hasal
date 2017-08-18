@@ -161,6 +161,7 @@ pip install requests[security] numpy scipy
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
+pip install -r ejenti/requirements.txt
 python setup.py install
 
 ############
