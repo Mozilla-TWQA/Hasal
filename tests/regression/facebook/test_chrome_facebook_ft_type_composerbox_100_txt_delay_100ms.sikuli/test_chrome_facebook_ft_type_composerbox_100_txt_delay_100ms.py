@@ -21,6 +21,7 @@ class Case(basecase.SikuliInputLatencyCase):
         # Disable Sikuli action and info log
         com = common.General()
         com.infolog_enable(False)
+        delay = com.find_key_type_delay()
 
         chrome = browser.Chrome()
         fb = facebook.facebook()
@@ -38,8 +39,6 @@ class Case(basecase.SikuliInputLatencyCase):
         capture_width = int(self.INPUT_RECORD_WIDTH)
         capture_height = int(self.INPUT_RECORD_HEIGHT)
 
-        com.set_type_delay(0.08)
-
         # Customized Region
         customized_region_name_start = 'start'
         customized_region_name_end = 'end'
@@ -55,7 +54,7 @@ class Case(basecase.SikuliInputLatencyCase):
         char_len = 100
         char_str = (string.ascii_lowercase * (char_len / 26 + 1))[:char_len]
         com.system_print('Type char')
-        type(char_str)
+        com.delayed_type(char_str, 0.1, delay)
 
         sleep(1)
         t2 = time.time()

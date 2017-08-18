@@ -11,6 +11,21 @@ from firefoxBuildTasks import download_latest_nightly_build
 from firefoxBuildTasks import deploy_fx_package
 
 
+def merge_user_input_config_with_default_config(user_input_config, default_config):
+    return_config = copy.deepcopy(default_config)
+    for config_parent_name in return_config:
+        config_parent_obj = user_input_config.get(config_parent_name, {})
+        if config_parent_obj:
+            for config_name in config_parent_obj:
+                if config_name in return_config[config_parent_name]:
+                    return_config[config_parent_name][config_name] = config_parent_obj[config_name]
+                else:
+                    logging.error("User input config [%s] is not match with default config [%s]" % (user_input_config, default_config))
+        else:
+            logging.error("User input config [%s] is not match with default config [%s]" % (user_input_config, default_config))
+    return return_config
+
+
 def generate_config_path_json_mapping(input_path, input_json_obj, output_result):
     for path in input_json_obj:
         n_path = os.path.join(input_path, path)
@@ -30,9 +45,13 @@ def run_hasal_on_latest_nightly(**kwargs):
     kwargs['queue_msg']['cmd_obj']['configs']['fx_dl_pkg_path'] = pkg_download_info_json['FX-DL-PACKAGE-PATH']
     if deploy_fx_package(**kwargs):
 
-        # generate hasal config
-        kwargs['queue_msg']['cmd_obj']['configs']['input_config'] = {"configs": {"online": {"default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER_REVISION'],
-                                                                                                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER_PKG_PLATFORM']}}}}
+        # generate hasal
+        meta_task_input_config = kwargs['queue_msg']['cmd_obj']['configs'].get("input_config", {})
+        auto_generate_config = {"configs": {"upload": {
+            "default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
+                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}}}}
+        merge_input_config = CommonUtil.deep_merge_dict(meta_task_input_config, auto_generate_config)
+        kwargs['queue_msg']['cmd_obj']['configs']['input_config'] = merge_input_config
         ejenti_hasal_config = generate_hasal_config(**kwargs)
 
         # exec hasal runtest
@@ -79,7 +98,7 @@ def generate_hasal_config(**kwargs):
             "firefox": {"default.json": {}},
             "chrome": {"default.json": {}},
             "index": {"runtimeDctGenerator.json": {}},
-            "online": {"default.json": {}},
+            "upload": {"default.json": {}},
             "global": {"default.json": {}}
         }
     }
@@ -88,7 +107,7 @@ def generate_hasal_config(**kwargs):
         "--exec-config": "",
         "--firefox-config": "",
         "--index-config": "",
-        "--online-config": "",
+        "--upload-config": "",
         "--global-config": "",
         "--chrome-config": ""
     }
@@ -118,7 +137,7 @@ def generate_hasal_config(**kwargs):
         json_path = get_hasal_repo_path(task_config)
 
         # merge default and input
-        full_config_obj = CommonUtil.deep_merge_dict(default_config_settings, input_json_obj)
+        full_config_obj = merge_user_input_config_with_default_config(input_json_obj, default_config_settings)
 
         # generate config path and need to modify key-value pair dict
         full_config_path_mapping = generate_config_path_json_mapping(json_path, full_config_obj, {})

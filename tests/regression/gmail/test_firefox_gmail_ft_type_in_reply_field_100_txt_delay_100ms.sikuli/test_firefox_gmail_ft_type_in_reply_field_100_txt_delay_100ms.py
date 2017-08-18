@@ -20,7 +20,7 @@ class Case(basecase.SikuliInputLatencyCase):
         # Disable Sikuli action and info log
         self.common.infolog_enable(False)
         Settings.MoveMouseDelay = 0
-        self.common.set_type_delay(0.08)
+        delay = self.common.find_key_type_delay()
 
         # Prepare
         app = gmail.gMail()
@@ -65,7 +65,7 @@ class Case(basecase.SikuliInputLatencyCase):
             .replace("I", "Q").replace("J", "Q")
         char_str = (sample_str * (char_len / len(sample_str) + 1))[:char_len]
         self.common.system_print('Type char')
-        type(char_str)
+        self.common.delayed_type(char_str, 0.1, delay)
 
         sleep(1)
         t2 = time.time()

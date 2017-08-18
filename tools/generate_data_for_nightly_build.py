@@ -82,8 +82,8 @@ class GenerateData(object):
                     write_fh.write(case_path.strip() + '\n')
         return suite_fp
 
-    def create_online_config(self, output_config_fn, perfherder_revision, perfherder_pkg_platform, perfherder_suite_name):
-        config_dn = "online"
+    def create_upload_config(self, output_config_fn, perfherder_revision, perfherder_pkg_platform, perfherder_suite_name):
+        config_dn = "upload"
         default_config_fp = os.path.join(self.DEFAULT_CONFIG_DP, config_dn, self.DEFAULT_CONFIG_NAME)
         output_config_dp = os.path.join(self.output_config_dp, config_dn)
         output_config_fp = os.path.join(self.output_config_dp, config_dn, output_config_fn)
@@ -96,9 +96,6 @@ class GenerateData(object):
             config_data['perfherder-revision'] = perfherder_revision
             config_data['perfherder-pkg-platform'] = perfherder_pkg_platform
             config_data['perfherder-suitename'] = perfherder_suite_name
-            config_data['svr-config']['svr_addr'] = self.configuration.get('SVR_ADDR', "127.0.0.1")
-            config_data['svr-config']['svr_port'] = self.configuration.get('SVR_PORT', "1234")
-            config_data['svr-config']['project_name'] = self.configuration.get('PROJECT_NAME', "hasal")
             with open(output_config_fp, 'w') as write_fh:
                 json.dump(config_data, write_fh)
         return output_config_fp
@@ -158,10 +155,10 @@ class GenerateData(object):
 
     def generate_command_list(self, nightly_build_date_id, suite_name, suite_fp, perfherder_revision, perfherder_pkg_platform, perfherder_suite_name):
         exec_output_config_fn = suite_name + ".json"
-        online_output_config_fn = nightly_build_date_id + "-" + suite_name + ".json"
+        upload_output_config_fn = nightly_build_date_id + "-" + suite_name + ".json"
         result_list = ['python', 'runtest.py', '--firefox-config', self.create_firefox_config(self.DEFAULT_COFNIG_FN), '--index-config',
-                       self.create_index_config(self.DEFAULT_COFNIG_FN), '--exec-config', self.create_exec_config(exec_output_config_fn, suite_fp), '--online-config',
-                       self.create_online_config(online_output_config_fn, perfherder_revision, perfherder_pkg_platform, perfherder_suite_name)]
+                       self.create_index_config(self.DEFAULT_COFNIG_FN), '--exec-config', self.create_exec_config(exec_output_config_fn, suite_fp), '--upload-config',
+                       self.create_upload_config(upload_output_config_fn, perfherder_revision, perfherder_pkg_platform, perfherder_suite_name)]
         return result_list
 
     def trigger(self):
@@ -208,7 +205,7 @@ class GenerateData(object):
                     # generate command list
                     cmd_list = self.generate_command_list(nightly_build_date_id, suite_name, suite_fp, perfherder_revision,
                                                           perfherder_pkg_platform,
-                                                          self.suite_data[suite_name]['perfherder_suite_name'])
+                                                          self.suite_data[suite_name]['perfherder-suitename'])
                     print " ".join(cmd_list)
                     subprocess.call(cmd_list, env=os.environ.copy())
 

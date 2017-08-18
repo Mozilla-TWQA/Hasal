@@ -57,6 +57,10 @@
       "description": "",
       "type": "boolean"
     },
+    "upload-perfherder-data-field": {
+      "description": "",
+      "type": "string"
+    },
     "calculate-speed-index": {
       "description": "",
       "type": "boolean"
@@ -103,7 +107,8 @@
     "snapshot-base-sample1",
     "snapshot-base-sample2",
     "supported-suite-fp",
-    "drop-outlier-flag"
+    "drop-outlier-flag",
+    "upload-perfherder-data-field"
   ],
   "additionalProperties": false
 }

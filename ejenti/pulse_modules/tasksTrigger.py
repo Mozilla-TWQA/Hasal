@@ -1,12 +1,16 @@
 import os
 import re
 import shutil
+import socket
+import json
 import hashlib
 import logging
 import urllib2
 import urlparse
 from datetime import datetime
+from logging.handlers import TimedRotatingFileHandler
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 from hasal_consumer import HasalConsumer
 from hasalPulsePublisher import HasalPulsePublisher
@@ -65,8 +69,16 @@ class TasksTrigger(object):
         self.pulse_username = config.get(TasksTrigger.KEY_CONFIG_PULSE_USER)
         self.pulse_password = config.get(TasksTrigger.KEY_CONFIG_PULSE_PWD)
 
+        self._validate_data()
+
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
+
+    def _validate_data(self):
+        # validate Pulse account
+        if not self.pulse_username or not self.pulse_password:
+            # there is no Pulse account information in "job_config.json"
+            raise Exception('Cannot access Pulse due to there is no Pulse account information.')
 
     @staticmethod
     def get_all_latest_files():
@@ -215,34 +227,6 @@ class TasksTrigger(object):
         return True
 
     @staticmethod
-    def check_pulse_queue_exists(username, password, topic):
-        """
-        Checking does the Queue of Topic exist, if not, then create Queue for Topic on Pulse.
-        Note: If there is no Queues listen on topic, the message will be ignored by Pulse.
-        @param username: Pulse username.
-        @param password: Pulse password.
-        @param topic: Topic.
-        @return: True if queue exists or be created successfully. False if not.
-        """
-        def got_msg(body, message):
-            # does not ack, so broker will keep this message
-            logging.debug('do nothing here')
-        c = HasalConsumer(user=username, password=password, applabel=topic)
-        c.configure(topic=topic, callback=got_msg)
-        queue_exist = c.queue_exists()
-        if not queue_exist:
-            logging.warn('Queue not exists, try to declare queue on Topic [{}]'.format(topic))
-            try:
-                # declare the Queue by building consumer
-                c._build_consumer()  # NOQA
-            except Exception as e:
-                logging.error(e)
-                return False
-        queue_exists = c.queue_exists()
-        logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
-        return True
-
-    @staticmethod
     def job_pushing_meta_task(username, password, command_config, job_name, topic, amount, platform_build, cmd_name, overwrite_cmd_config=None):
         """
         [JOB]
@@ -260,9 +244,9 @@ class TasksTrigger(object):
         changed = TasksTrigger.check_latest_info_json_md5_changed(job_name=job_name, platform=platform_build)
         if changed:
             # check queue
-            queue_exists = TasksTrigger.check_pulse_queue_exists(username=username,
-                                                                 password=password,
-                                                                 topic=topic)
+            queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,
+                                                                        password=password,
+                                                                        topic=topic)
             if not queue_exists:
                 logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
 
@@ -299,7 +283,84 @@ class TasksTrigger(object):
                                          overwrite_cmd_configs=overwrite_cmd_config,
                                          uid=uid)
 
+    @staticmethod
+    def job_listen_response_from_agent(username, password, rotating_file_path):
+        """
+        [JOB]
+        Logging the message from Agent by Pulse "mgt" topic channel.
+        @param username: Pulse username.
+        @param password: Pulse password.
+        @param rotating_file_path: The rotating file path.
+        """
+        PULSE_MGT_TOPIC = 'mgt'
+        PULSE_MGT_OBJECT_KEY = 'message'
+
+        rotating_logger = logging.getLogger("RotatingLog")
+        rotating_logger.setLevel(logging.INFO)
+
+        # create Rotating File Handler, 1 day, backup 30 times.
+        rotating_handler = TimedRotatingFileHandler(rotating_file_path,
+                                                    when='midnight',
+                                                    interval=1,
+                                                    backupCount=30)
+
+        rotating_formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(message)s')
+        rotating_handler.setFormatter(rotating_formatter)
+        rotating_logger.addHandler(rotating_handler)
+
+        def got_response(body, message):
+            """
+            handle the message
+            ack then broker will remove this message from queue
+            """
+            message.ack()
+            data_payload = body.get('payload')
+            msg_dict_obj = data_payload.get(PULSE_MGT_OBJECT_KEY)
+            try:
+                msg_str = json.dumps(msg_dict_obj)
+                rotating_logger.info(msg_str)
+            except:
+                rotating_logger.info(msg_dict_obj)
+
+        hostname = socket.gethostname()
+        consumer_label = 'TRIGGER-{hostname}'.format(hostname=hostname)
+        topic = PULSE_MGT_TOPIC
+        c = HasalConsumer(user=username, password=password, applabel=consumer_label)
+        c.configure(topic=topic, callback=got_response)
+
+        c.listen()
+
+    def _job_exception_listener(self, event):
+        if event.exception:
+            logging.error("Job [%s] crashed [%s]" % (event.job_id, event.exception))
+            logging.error(event.traceback)
+
+    def _add_event_listener(self):
+        self.scheduler.add_listener(self._job_exception_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+
     def run(self):
+        """
+        Adding jobs into scheduler.
+        """
+        # add event listener
+        self._add_event_listener()
+
+        # create "mgt" channel listener
+        logging.info('Adding Rotating Logger for listen Agent information ...')
+        MGT_ID = 'trigger_mgt_listener'
+        MGT_LOG_PATH = 'rotating_mgt.log'
+        self.scheduler.add_job(func=TasksTrigger.job_listen_response_from_agent,
+                               trigger='interval',
+                               id=MGT_ID,
+                               max_instances=1,
+                               seconds=10,
+                               args=[],
+                               kwargs={'username': self.pulse_username,
+                                       'password': self.pulse_password,
+                                       'rotating_file_path': MGT_LOG_PATH})
+        logging.info('Adding Rotating Logger done: {fp}'.format(fp=os.path.abspath(MGT_LOG_PATH)))
+
+        # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():
             """
             ex:

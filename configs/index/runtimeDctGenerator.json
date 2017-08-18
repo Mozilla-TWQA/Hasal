@@ -12,6 +12,7 @@
   "snapshot-base-sample2"   : true,
   "supported-suite-fp"      : "",
   "drop-outlier-flag"       : true,
+  "upload-perfherder-data-field": "med_time",
   "calculate-speed-index"   : false,
   "platform-dep-settings"   : {
     "darwin":{

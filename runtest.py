@@ -1,7 +1,7 @@
 """runtest.
 
 Usage:
-  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--online-config=<str>] [--global-config=<str>] [--chrome-config=<str>]
+  runtest.py [--exec-config=<str>] [--firefox-config=<str>] [--index-config=<str>] [--upload-config=<str>] [--global-config=<str>] [--chrome-config=<str>]
   runtest.py (-h | --help)
 
 Options:
@@ -9,7 +9,7 @@ Options:
   --exec-config=<str>             Specify the test execution config file; max-run, max-retry, advance, keep-browser etc. settings can be controlled in here. [default: configs/exec/default.json]
   --firefox-config=<str>          Specify the test Firefox config file; [default: configs/firefox/default.json]
   --index-config=<str>            Specify the index config file; you can specify which index you want to generate here. [default: configs/index/runtimeDctGenerator.json]
-  --online-config=<str>           Specify the online config file; you can specify if you want to enable online data submission and other related settings here. [default: configs/online/default.json]
+  --upload-config=<str>           Specify the upload config file; you can specify if you want to enable data submission and other related settings here. [default: configs/upload/default.json]
   --global-config=<str>           Specify the global config file; you can modify the output fn and status fn here. [default: configs/global/default.json]
   --chrome-config=<str>           Specify the test Chrome config file; [default: configs/chrome/default.json]
 
@@ -19,21 +19,25 @@ import sys
 import json
 import copy
 import shutil
+import requests
 import subprocess
 import importlib
 import platform
-from lib.helper.desktopHelper import close_browser
 import traceback
+
 from docopt import docopt
 from datetime import datetime
-from lib.common.commonUtil import StatusRecorder
-from lib.common.commonUtil import CommonUtil
-from lib.common.commonUtil import HasalConfigUtil
-from lib.helper.uploadAgentHelper import UploadAgent
 from lib.common.logConfig import get_logger
-from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
-from lib.helper.chromeProfileCreator import ChromeProfileCreator
+from lib.common.commonUtil import CommonUtil
+from lib.common.commonUtil import StatusRecorder
+from lib.common.commonUtil import HasalConfigUtil
+from lib.helper.desktopHelper import close_browser
+from lib.helper.uploadResultHelper import VideoUploader
+from lib.helper.uploadResultHelper import PerfherderUploader
+from lib.helper.uploadResultHelper import PerfherderUploadDataGenerator
 from lib.validator.configValidator import ConfigValidator
+from lib.helper.chromeProfileCreator import ChromeProfileCreator
+from lib.helper.firefoxProfileCreator import FirefoxProfileCreator
 
 
 if platform.system().lower() == "linux":
@@ -52,16 +56,18 @@ else:
 
 class RunTest(object):
     def __init__(self, **kwargs):
+        # init variables
         self.exec_config = {}
         self.index_config = {}
-        self.online_config = {}
+        self.upload_config = {}
         self.global_config = {}
         self.firefox_config = {}
         self.chrome_config = {}
-        # load exec-config, firefox-config, index-config, online-config and global config to self object
+
+        # load exec-config, firefox-config, index-config, upload-config and global config to self object
         self.exec_config_fp = os.path.abspath(kwargs['exec_config'])
         self.index_config_fp = os.path.abspath(kwargs['index_config'])
-        self.online_config_fp = os.path.abspath(kwargs['online_config'])
+        self.upload_config_fp = os.path.abspath(kwargs['upload_config'])
         self.global_config_fp = os.path.abspath(kwargs['global_config'])
         self.firefox_config_fp = os.path.abspath(kwargs['firefox_config'])
         self.chrome_config_fp = os.path.abspath(kwargs['chrome_config'])
@@ -117,6 +123,10 @@ class RunTest(object):
         # check the video recording, raise exception if more than one recorders
         CommonUtil.is_video_recording(self.firefox_config)
 
+        # check the upload config revision, raise exception if upload config enabled without revision
+        if self.upload_config.get("perfherder-revision", "") == "" and self.upload_config.get("enable", False):
+            raise Exception("Your current upload config is enabled [%s], but revision is empty [%s], please make sure your config set correctly" % (self.upload_config.get("perfherder-revision", ""), self.upload_config.get("enable", False)))
+
     def validate_configs(self):
         """
         Validating all input configs. Raise exception if failed.
@@ -125,7 +135,7 @@ class RunTest(object):
         mapping_config_schema = {
             'exec_config': os.path.join('configs', 'exec'),
             'index_config': os.path.join('configs', 'index'),
-            'online_config': os.path.join('configs', 'online'),
+            'upload_config': os.path.join('configs', 'upload'),
             'global_config': os.path.join('configs', 'global'),
             'firefox_config': os.path.join('configs', 'firefox'),
             'chrome_config': os.path.join('configs', 'chrome')
@@ -157,11 +167,6 @@ class RunTest(object):
             os.mkdir(upload_dir)
             os.mkdir(self.suite_result_dp)
 
-        if CommonUtil.get_value_from_config(config=self.online_config, key='enable'):
-            svr_config = CommonUtil.get_value_from_config(config=self.online_config, key='svr-config')
-            exec_comment = CommonUtil.get_value_from_config(config=self.exec_config, key='comment')
-            self.upload_agent_obj = UploadAgent(svr_config=svr_config, test_comment=exec_comment)
-
     def suite_teardown(self):
         # run generator's output suite result
         try:
@@ -175,9 +180,9 @@ class RunTest(object):
         except Exception as e:
             self.logger.error('The module {module_name} cannot output suite result. Error: {exp}'.format(module_name=module_name, exp=e))
 
-        # do action when online mode is enabled
+        # do action when upload mode is enabled
         try:
-            if CommonUtil.get_value_from_config(config=self.online_config, key='enable'):
+            if CommonUtil.get_value_from_config(config=self.upload_config, key='enable'):
                 self.clean_up_output_data()
         except Exception as e:
             self.logger.error('Can not clean up output data. Error: {exp}'.format(exp=e))
@@ -198,16 +203,10 @@ class RunTest(object):
         os.system(DEFAULT_EDITOR_CMD + " end.txt")
 
     def case_setup(self):
-        if self.online_config['enable'] and os.path.exists(self.default_result_fp):
-            os.remove(self.default_result_fp)
+        pass
 
-    def case_teardown(self, data):
-        if self.online_config['enable']:
-            if self.online_config['perfherder-revision']:
-                self.upload_agent_obj.upload_register_data(self.exec_config['exec-suite-fp'],
-                                                           self.index_config['case-type'],
-                                                           self.online_config['perfherder-suitename'])
-            self.upload_agent_obj.upload_videos(data)
+    def case_teardown(selfc):
+        pass
 
     def kill_legacy_process(self):
         for process_name in DEFAULT_TASK_KILL_LIST:
@@ -232,24 +231,87 @@ class RunTest(object):
         result['GLOBAL_CONFIG_FP'] = self.global_config_fp
         result['FIREFOX_CONFIG_FP'] = self.firefox_config_fp
         result['CHROME_CONFIG_FP'] = self.chrome_config_fp
-        result['ONLINE_CONFIG_FP'] = self.online_config_fp
+        result['UPLOAD_CONFIG_FP'] = self.upload_config_fp
         result['SUITE_RESULT_DP'] = str(self.suite_result_dp)
         result['FIREFOX_PROFILE_PATH'] = self._firefox_profile_path
         result['CHROME_PROFILE_PATH'] = self._chrome_profile_path
-
-        if self.online_config['perfherder-revision']:
-            result['PERFHERDER_REVISION'] = str(self.online_config['perfherder-revision'])
-        else:
-            result['PERFHERDER_REVISION'] = ""
-        if self.online_config['perfherder-pkg-platform']:
-            result['PERFHERDER_PKG_PLATFORM'] = str(self.online_config['perfherder-pkg-platform'])
-        else:
-            result['PERFHERDER_PKG_PLATFORM'] = ""
         for variable_name in kwargs.keys():
             result[variable_name] = str(kwargs[variable_name])
         return result
 
-    def run_test_result_analyzer(self, test_case_module_name, test_name, current_run, current_retry, video_result):
+    def upload_test_result_handler(self):
+        # load failed result
+        upload_result_data = CommonUtil.load_json_file(self.global_config['default-upload-result-failed-fn'])
+
+        # init status recorder
+        objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
+
+        # get case basic info
+        case_time_stamp = objStatusRecorder.get_case_basic_info()[objStatusRecorder.DEFAULT_FIELD_CASE_TIME_STAMP]
+        case_name = objStatusRecorder.get_case_basic_info()[objStatusRecorder.DEFAULT_FIELD_CASE_NAME]
+
+        # get test result data by case name
+        current_test_result = CommonUtil.load_json_file(self.global_config['default-result-fn']).get(case_name, {})
+
+        if current_test_result:
+            # get upload related data
+            objGeneratePerfherderData = PerfherderUploadDataGenerator(case_name, current_test_result, self.upload_config, self.index_config)
+            upload_result_data[case_time_stamp] = objGeneratePerfherderData.generate_upload_data()
+        else:
+            self.logger.error("Can't find result json file[%s], please check the current environment!" % self.global_config['default-result-fn'])
+
+        perfherder_uploader = PerfherderUploader(self.upload_config['perfherder-client-id'],
+                                                 self.upload_config['perfherder-secret'],
+                                                 os_name=sys.platform,
+                                                 platform=self.upload_config['perfherder-pkg-platform'],
+                                                 machine_arch=self.upload_config['perfherder-pkg-platform'],
+                                                 build_arch=self.upload_config['perfherder-pkg-platform'],
+                                                 repo=self.upload_config['perfherder-repo'],
+                                                 protocol=self.upload_config['perfherder-protocol'],
+                                                 host=self.upload_config['perfherder-host'])
+
+        upload_success_timestamp_list = []
+        for current_time_stamp in upload_result_data:
+            # upload video first, if failed, put the log into status recorder
+            if not upload_result_data[current_time_stamp]['video_link']:
+                if upload_result_data[current_time_stamp]['upload_video_fp']:
+                    upload_result_data[current_time_stamp]['video_link'] = {
+                        "adjusted_running_video": VideoUploader.upload_video(upload_result_data[current_time_stamp]['upload_video_fp'])
+                    }
+                else:
+                    self.logger.error("Can't find the upload video fp in result json file!")
+
+            # if video is not uploaded success, will continue upload data, leave the video blank
+            uploader_response = perfherder_uploader.submit(upload_result_data[current_time_stamp]['revision'],
+                                                           upload_result_data[current_time_stamp]['browser'],
+                                                           upload_result_data[current_time_stamp]['timestamp'],
+                                                           upload_result_data[current_time_stamp]['perf_data'],
+                                                           upload_result_data[current_time_stamp]['version'],
+                                                           upload_result_data[current_time_stamp]['repo_link'],
+                                                           upload_result_data[current_time_stamp]['video_link'],
+                                                           upload_result_data[current_time_stamp]['extra_info_obj'])
+
+            if uploader_response:
+                if uploader_response.status_code == requests.codes.ok:
+                    upload_success_timestamp_list.append(current_time_stamp)
+                    self.logger.debug("upload to perfherder success, result ::: %s" % upload_result_data[current_time_stamp])
+                    self.logger.info("upload to perfherder success, status code: [%s], json: [%s]" % (uploader_response.status_code, uploader_response.json()))
+                else:
+                    upload_result_data[current_time_stamp]['upload_status_code'] = uploader_response.status_code
+                    upload_result_data[current_time_stamp]['upload_status_json'] = uploader_response.json()
+                    self.logger.info("upload to perfherder failed, status code: [%s], json: [%s]" % (uploader_response.status_code, uploader_response.json()))
+            else:
+                self.logger.info("upload to perfherder failed, unknown exception happened in submitting to perfherder")
+
+        # remove success time stamp from upload result data
+        for del_time_stamp in upload_success_timestamp_list:
+            upload_result_data.pop(del_time_stamp)
+
+        # dump all remaining upload failed data to json file
+        with open(self.global_config['default-upload-result-failed-fn'], 'w') as write_fh:
+            json.dump(upload_result_data, write_fh)
+
+    def run_test_result_analyzer(self, current_run, current_retry):
         status_result = None
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
         if os.path.exists(self.global_config['default-running-statistics-fn']):
@@ -261,29 +323,12 @@ class RunTest(object):
             if round_status == 0 and fps_stat == 0 and compare_img_result == objStatusRecorder.PASS_IMG_COMPARE_RESULT:
                 # check the field status_img_compare_result of current status in running_statistics.json
                 # only continue when status equal to PASS otherwise retry count plus one
-                if self.online_config['enable']:
-                    # Online mode handling
-                    upload_result = self.upload_agent_obj.upload_result(self.default_result_fp)
-                    if upload_result:
-                        self.logger.info("===== upload success =====")
-                        self.logger.info(upload_result)
-                        video_result['ip'] = upload_result['ip']
-                        video_result['video_path'] = upload_result['video']
-                        video_result['test_name'] = test_name
-                        self.logger.info("===== upload success =====")
-                        if "current_test_times" in upload_result:
-                            current_run = upload_result["current_test_times"]
-                            self.exec_config['max-run'] = upload_result['config_test_times']
-                        else:
-                            current_run += 1
-                    else:
 
-                        current_run += 1
+                if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
+                    current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
                 else:
-                    if objStatusRecorder.STATUS_TIME_LIST_COUNTER in status_result:
-                        current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
-                    else:
-                        current_run += 1
+                    current_run += 1
+                return current_run, current_retry, True
             else:
                 if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
                     objStatusRecorder.record_case_status_history(compare_img_result, None)
@@ -297,24 +342,19 @@ class RunTest(object):
             objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
                                                          StatusRecorder.ERROR_CANT_FIND_STATUS_FILE)
             current_retry += 1
-        return current_run, current_retry, video_result
+        return current_run, current_retry, False
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
         objStatusRecorder.set_case_basic_info(test_name)
-        return_result = {"ip": None, "video_path": None, "test_name": None}
+        analyze_result = False
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
                 objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
-                # when online mode is enabled, the result file will be removed before trigger the runtest.py everytime.
-                if self.online_config['enable'] and os.path.exists(self.default_result_fp):
-                    os.remove(self.default_result_fp)
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
-                current_run, current_retry, return_result = self.run_test_result_analyzer(test_case_module_name,
-                                                                                          test_name, current_run,
-                                                                                          current_retry, return_result)
+                current_run, current_retry, analyze_result = self.run_test_result_analyzer(current_run, current_retry)
                 objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
             except:
                 self.logger.warn('Exception happened during running test!')
@@ -322,11 +362,10 @@ class RunTest(object):
                 objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
                                                              StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION)
                 current_retry += 1
-
             if current_retry >= self.exec_config['max-retry']:
                 self.logger.warn("current retry [%s] exceed the max retry count [%s]" % (current_retry, self.exec_config['max-retry']))
-                break
-        return return_result
+                return False
+        return analyze_result
 
     def run_test(self, test_case_module_name, test_env):
         self.logger.debug("========== Environment data ======")
@@ -385,12 +424,14 @@ class RunTest(object):
                                 for browser_type in self.exec_config['webdriver-run-browser']:
                                     runtime_case_data['browser_type'] = browser_type
                                     test_env = self.get_test_env(**runtime_case_data)
-                                    data = self.loop_test(test_case_module_name, test_name, test_env)
-                                    self.case_teardown(data)
+                                    if self.loop_test(test_case_module_name, test_name, test_env) and self.upload_config['enable']:
+                                        self.upload_test_result_handler()
+                                    self.case_teardown()
                             else:
                                 test_env = self.get_test_env(**runtime_case_data)
-                                data = self.loop_test(test_case_module_name, test_name, test_env)
-                                self.case_teardown(data)
+                                if self.loop_test(test_case_module_name, test_name, test_env):
+                                    self.upload_test_result_handler()
+                                self.case_teardown()
 
         else:
             self.logger.error("Current suite file [%s] contains test cases which are not supported." % self.exec_config['exec-suite-fp'])
@@ -406,7 +447,7 @@ class RunTest(object):
 def main():
     arguments = docopt(__doc__)
     run_test_obj = RunTest(exec_config=arguments['--exec-config'], firefox_config=arguments['--firefox-config'],
-                           index_config=arguments['--index-config'], online_config=arguments['--online-config'],
+                           index_config=arguments['--index-config'], upload_config=arguments['--upload-config'],
                            global_config=arguments['--global-config'], chrome_config=arguments['--chrome-config'])
     run_test_obj.run()
 

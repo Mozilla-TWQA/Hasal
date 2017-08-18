@@ -6,7 +6,7 @@
       "enable": false,
       "topic": "win7",
       "platform_build": "win64",
-      "interval_minutes": 1,
+      "interval_minutes": 10,
       "amount": 1,
       "cmd": "download-latest-nightly",
       "configs": {}
@@ -15,7 +15,7 @@
       "enable": false,
       "topic": "win10",
       "platform_build": "win64",
-      "interval_minutes": 1,
+      "interval_minutes": 10,
       "amount": 1,
       "cmd": "download-latest-nightly",
       "configs": {}
@@ -24,7 +24,7 @@
       "enable": false,
       "topic": "darwin",
       "platform_build": "mac",
-      "interval_minutes": 1,
+      "interval_minutes": 10,
       "amount": 1,
       "cmd": "download-latest-nightly",
       "configs": {}

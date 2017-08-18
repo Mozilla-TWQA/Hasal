@@ -13,6 +13,7 @@
   "default-file-exist-validator-module-path" : "lib.validator.fileExistValidator",
   "default-user-simulation-tool-webdriver"   : "webdriver",
   "default-search-target-browser"            : "browser",
+  "default-upload-result-failed-fn"          : "upload_result_failed.json",
   "gsearch": {
     "gsearch-home-english"                   : "https://www.google.com/?hl=en",
     "gsearch-image-english"                  : "https://www.google.com/imghp?hl=en&tbm=isch",

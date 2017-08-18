@@ -15,11 +15,11 @@ class InputLatencyFrameThroughputGenerator(BaseGenerator):
 
     BROWSER_VISUAL_EVENT_POINTS = {}
 
-    def __init__(self, index_config, exec_config, online_config, global_config, input_env):
-        super(InputLatencyFrameThroughputGenerator, self).__init__(index_config, exec_config, online_config,
+    def __init__(self, index_config, exec_config, upload_config, global_config, input_env):
+        super(InputLatencyFrameThroughputGenerator, self).__init__(index_config, exec_config, upload_config,
                                                                    global_config, input_env)
-        self.ft_generator = FrameThroughputDctGenerator(index_config, exec_config, online_config, global_config, input_env)
-        self.il_generator = InputLatencyAnimationDctGenerator(index_config, exec_config, online_config, global_config, input_env)
+        self.ft_generator = FrameThroughputDctGenerator(index_config, exec_config, upload_config, global_config, input_env)
+        self.il_generator = InputLatencyAnimationDctGenerator(index_config, exec_config, upload_config, global_config, input_env)
         self.compare_result = {}
 
     def generate_update_result_for_combination(self, input_update_result, input_compare_result, input_run_time_dict):
@@ -34,8 +34,8 @@ class InputLatencyFrameThroughputGenerator(BaseGenerator):
 
         update_result['video_fp'] = self.env.video_output_fp
         update_result['web_app_name'] = self.env.web_app_name
-        update_result['revision'] = self.online_config['perfherder-revision']
-        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+        update_result['revision'] = self.upload_config['perfherder-revision']
+        update_result['pkg_platform'] = self.upload_config['perfherder-pkg-platform']
 
         for time_type in ['il_', 'ft_']:
             _, _, update_result[time_type + 'med_time'], update_result[time_type + 'avg_time'], \
@@ -45,8 +45,8 @@ class InputLatencyFrameThroughputGenerator(BaseGenerator):
 
         update_result['video_fp'] = self.env.video_output_fp
         update_result['web_app_name'] = self.env.web_app_name
-        update_result['revision'] = self.online_config['perfherder-revision']
-        update_result['pkg_platform'] = self.online_config['perfherder-pkg-platform']
+        update_result['revision'] = self.upload_config['perfherder-revision']
+        update_result['pkg_platform'] = self.upload_config['perfherder-pkg-platform']
         return update_result
 
     def generate_sample_result(self, input_generator_name, input_sample_dict, input_sample_index):
@@ -133,20 +133,23 @@ class InputLatencyFrameThroughputGenerator(BaseGenerator):
             # write fps to history_result_data
             history_result_data['video-recording-fps'] = self.index_config['video-recording-fps']
 
+            # output upload video
+            # running time result was handled specially in this generator
+            if self.exec_config['output-result-video-file']:
+                start_time = time.time()
+                upload_result_video_fp = self.output_runtime_result_video(self.compare_result['running_time_result'],
+                                                                          suite_upload_dp)
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
+                history_result_data[self.env.test_name]['upload_video_fp'] = upload_result_video_fp
+
             # dump to json file
             with open(self.env.DEFAULT_TEST_RESULT, "wb") as fh:
                 json.dump(history_result_data, fh, indent=2)
             self.status_recorder.record_current_status({self.status_recorder.STATUS_TIME_LIST_COUNTER: str(len(history_result_data[self.env.test_name]['time_list']))})
         else:
             self.status_recorder.record_current_status({self.status_recorder.STATUS_IMG_COMPARE_RESULT: self.status_recorder.ERROR_COMPARE_RESULT_IS_NONE})
-
-        # running time result was handled specially in this generator
-        if self.exec_config['output-result-video-file']:
-            start_time = time.time()
-            self.output_runtime_result_video(self.compare_result['running_time_result'], suite_upload_dp)
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            logger.debug("Generate Video Elapsed: [%s]" % elapsed_time)
 
         # clean up redundant image files
         self.clean_output_images(self.compare_result['running_time_result'], self.env.img_output_dp)

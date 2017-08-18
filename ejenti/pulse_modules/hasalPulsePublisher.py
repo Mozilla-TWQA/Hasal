@@ -3,6 +3,7 @@ import logging
 from mozillapulse.messages.base import GenericMessage
 
 from asyncMetaTasks import AsyncMetaTask
+from hasal_consumer import HasalConsumer
 from hasal_publisher import HasalPublisher
 from syncMetaTasks import SyncMetaTask
 
@@ -51,6 +52,36 @@ class HasalPulsePublisher(object):
         if self.COMMAND_SETTINGS not in self.command_config:
             raise Exception('The command config was failed.\n{}'.format(self.command_config))
         self.command_config_settings = self.command_config.get(self.COMMAND_SETTINGS)
+
+    @staticmethod
+    def check_pulse_queue_exists(username, password, topic):
+        """
+        Checking does the Queue of Topic exist, if not, then create Queue for Topic on Pulse.
+        Note: If there is no Queues listen on topic, the message will be ignored by Pulse.
+        @param username: Pulse username.
+        @param password: Pulse password.
+        @param topic: Topic.
+        @return: True if queue exists or be created successfully. False if not.
+        """
+
+        def got_msg(body, message):
+            # does not ack, so broker will keep this message
+            logging.debug('do nothing here')
+
+        c = HasalConsumer(user=username, password=password, applabel=topic)
+        c.configure(topic=topic, callback=got_msg)
+        queue_exist = c.queue_exists()
+        if not queue_exist:
+            logging.warn('Queue not exists, try to declare queue on Topic [{}]'.format(topic))
+            try:
+                # declare the Queue by building consumer
+                c._build_consumer()  # NOQA
+            except Exception as e:
+                logging.error(e)
+                return False
+        queue_exists = c.queue_exists()
+        logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
+        return True
 
     def get_meta_task(self, command_name, overwrite_cmd_configs=None):
         """

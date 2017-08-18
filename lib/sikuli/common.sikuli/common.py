@@ -1,4 +1,5 @@
 from sikuli import *  # NOQA
+import platform
 import json
 
 
@@ -108,6 +109,40 @@ class General():
 
     def set_type_delay(self, sec=0):
         Settings.TypeDelay = sec
+
+    def delayed_type_fixed(self, text="", sec=0):
+        # In Java 8, the default typing delay for each character is:
+        # 60ms (0.06 second) in windows 7 and 40~50ms (0.04~0.05 second) in windows
+        # In this function, we used default value so that you don't need to detect the delay in advance
+        default_windows_delay = {"7": 0.06, "10": 0.045}
+
+        # We only support Windows for now. We do not set delay for other OSs
+        if "Windows_" in platform.platform():
+            win_ver = platform.platform().split("Windows_")[1].split("-")[0]
+            if win_ver in default_windows_delay:
+                Settings.TypeDelay = sec - default_windows_delay[win_ver]
+                print "Current Key Delay: " + str(Settings.TypeDelay)
+
+        type(text)
+
+    def find_key_type_delay(self):
+        # Type SHIFT for 4 times to get the average delay time
+        start_time = time.time()
+        type(Key.SHIFT * 4)
+        end_time = time.time()
+        delay = (end_time - start_time) / 4
+        return delay
+
+    def delayed_type(self, text="", sec=0, delay=0.06):
+        # In Java 8, the default typing delay for each character is:
+        # 60ms (0.06 second) in windows 7 and 40~50ms (0.04~0.05 second) in windows 10
+        # We set delay to 0.06 just to guarantee the typing is slow enough.
+        # However, we should use find_key_type_delay() to get delay first
+        type_delay = sec - delay
+        print "Current Key Delay: " + str(type_delay)
+        Settings.TypeDelay = type_delay
+
+        type(text)
 
     def system_print(self, content):
         sys.stdout.write(content + '\n')

@@ -22,6 +22,7 @@ class Case(basecase.SikuliInputLatencyCase):
         com = common.General()
         com.infolog_enable(False)
         com.set_mouse_delay(0)
+        delay = com.find_key_type_delay()
 
         # Prepare
         app = amazon.Amazon()
@@ -47,9 +48,6 @@ class Case(basecase.SikuliInputLatencyCase):
         app.click_search_field()
         sleep(1)
 
-        # Set additional delay time of type command, default base is 0.02s(20ms)
-        com.set_type_delay(0.08)
-
         # Customized Region
         customized_region_name_start = 'start'
         customized_region_name_end = 'end'
@@ -64,7 +62,7 @@ class Case(basecase.SikuliInputLatencyCase):
         sample_str = string.letters + string.letters[::-1]
         char_str = (sample_str * (char_len / len(sample_str) + 1))[:char_len]
         com.system_print('Type char')
-        type(char_str)
+        com.delayed_type(char_str, 0.1, delay)
         sleep(1)
 
         # Record T2
