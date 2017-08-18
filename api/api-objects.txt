@@ -134,6 +134,8 @@ Hasal.lib.helper.uploadAgentHelper.DEFAULT_UPLOAD_VIDEO_QUEUE_JSON	Hasal.lib.hel
 Hasal.lib.helper.uploadAgentHelper.DEFAULT_UPLOAD_FOLDER_URI	Hasal.lib.helper.uploadAgentHelper-module.html#DEFAULT_UPLOAD_FOLDER_URI
 Hasal.lib.helper.uploadAgentHelper.DEFAULT_BUILD_RESULT_URL_FOR_JENKINS_DESC	Hasal.lib.helper.uploadAgentHelper-module.html#DEFAULT_BUILD_RESULT_URL_FOR_JENKINS_DESC
 Hasal.lib.helper.uploadAgentHelper.DEFAULT_UPLOAD_VIDEO_STATUS	Hasal.lib.helper.uploadAgentHelper-module.html#DEFAULT_UPLOAD_VIDEO_STATUS
+Hasal.lib.helper.uploadResultHelper	Hasal.lib.helper.uploadResultHelper-module.html
+Hasal.lib.helper.uploadResultHelper.logger	Hasal.lib.helper.uploadResultHelper-module.html#logger
 Hasal.lib.helper.videoHelper	Hasal.lib.helper.videoHelper-module.html
 Hasal.lib.helper.videoHelper.convert_video_to_specify_size	Hasal.lib.helper.videoHelper-module.html#convert_video_to_specify_size
 Hasal.lib.helper.videoHelper.capture_screen	Hasal.lib.helper.videoHelper-module.html#capture_screen
@@ -257,7 +259,6 @@ Hasal.agent.hasalTask.HasalTask.init_environment	Hasal.agent.hasalTask.HasalTask
 Hasal.agent.hasalTask.HasalTask.DEFAULT_AGENT_JOB_STATUS	Hasal.agent.hasalTask.HasalTask-class.html#DEFAULT_AGENT_JOB_STATUS
 Hasal.agent.hasalTask.HasalTask.run	Hasal.agent.hasalTask.HasalTask-class.html#run
 Hasal.agent.hasalTask.HasalTask.__init__	Hasal.agent.hasalTask.HasalTask-class.html#__init__
-Hasal.agent.hasalTask.HasalTask.create_online_config	Hasal.agent.hasalTask.HasalTask-class.html#create_online_config
 Hasal.agent.hasalTask.HasalTask.link_fx_pkg	Hasal.agent.hasalTask.HasalTask-class.html#link_fx_pkg
 Hasal.agent.hasalTask.HasalTask.FIREFOX_BIN_MAC_FP	Hasal.agent.hasalTask.HasalTask-class.html#FIREFOX_BIN_MAC_FP
 Hasal.agent.hasalTask.HasalTask.teardown	Hasal.agent.hasalTask.HasalTask-class.html#teardown
@@ -266,6 +267,7 @@ Hasal.agent.hasalTask.HasalTask.create_firefox_config	Hasal.agent.hasalTask.Hasa
 Hasal.agent.hasalTask.HasalTask.create_suite_file	Hasal.agent.hasalTask.HasalTask-class.html#create_suite_file
 Hasal.agent.hasalTask.HasalTask.DEFAULT_INDEX_CONFIG_NAME	Hasal.agent.hasalTask.HasalTask-class.html#DEFAULT_INDEX_CONFIG_NAME
 Hasal.agent.hasalTask.HasalTask.deploy_fx_pkg	Hasal.agent.hasalTask.HasalTask-class.html#deploy_fx_pkg
+Hasal.agent.hasalTask.HasalTask.create_upload_config	Hasal.agent.hasalTask.HasalTask-class.html#create_upload_config
 Hasal.agent.hasalTask.HasalTask.read_configuration	Hasal.agent.hasalTask.HasalTask-class.html#read_configuration
 Hasal.agent.hasalTask.HasalTask.JENKINS_CONFIG_NAME	Hasal.agent.hasalTask.HasalTask-class.html#JENKINS_CONFIG_NAME
 Hasal.agent.hasalTask.HasalTask.cmd_parameter_keys	Hasal.agent.hasalTask.HasalTask-class.html#cmd_parameter_keys
@@ -326,7 +328,7 @@ Hasal.lib.baseTest.BaseTest.ConfigName.FIREFOX	Hasal.lib.baseTest.BaseTest.Confi
 Hasal.lib.baseTest.BaseTest.ConfigName.EXEC	Hasal.lib.baseTest.BaseTest.ConfigName-class.html#EXEC
 Hasal.lib.baseTest.BaseTest.ConfigName.CHROME	Hasal.lib.baseTest.BaseTest.ConfigName-class.html#CHROME
 Hasal.lib.baseTest.BaseTest.ConfigName.GLOBAL	Hasal.lib.baseTest.BaseTest.ConfigName-class.html#GLOBAL
-Hasal.lib.baseTest.BaseTest.ConfigName.ONLINE	Hasal.lib.baseTest.BaseTest.ConfigName-class.html#ONLINE
+Hasal.lib.baseTest.BaseTest.ConfigName.UPLOAD	Hasal.lib.baseTest.BaseTest.ConfigName-class.html#UPLOAD
 Hasal.lib.browser.base.BrowserBase	Hasal.lib.browser.base.BrowserBase-class.html
 Hasal.lib.browser.base.BrowserBase.browser_process	Hasal.lib.browser.base.BrowserBase-class.html#browser_process
 Hasal.lib.browser.base.BrowserBase.launch_cmd	Hasal.lib.browser.base.BrowserBase-class.html#launch_cmd
@@ -436,6 +438,7 @@ Hasal.lib.common.commonUtil.StatusRecorder.SIKULI_KEY_REGION	Hasal.lib.common.co
 Hasal.lib.common.commonUtil.StatusRecorder.__init__	Hasal.lib.common.commonUtil.StatusRecorder-class.html#__init__
 Hasal.lib.common.commonUtil.StatusRecorder.ERROR_COMPARING_IMAGE_FAILED	Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_COMPARING_IMAGE_FAILED
 Hasal.lib.common.commonUtil.StatusRecorder.record_case_status_history	Hasal.lib.common.commonUtil.StatusRecorder-class.html#record_case_status_history
+Hasal.lib.common.commonUtil.StatusRecorder.get_case_basic_info	Hasal.lib.common.commonUtil.StatusRecorder-class.html#get_case_basic_info
 Hasal.lib.common.commonUtil.StatusRecorder.get_current_sikuli_status	Hasal.lib.common.commonUtil.StatusRecorder-class.html#get_current_sikuli_status
 Hasal.lib.common.commonUtil.StatusRecorder.get_current_status	Hasal.lib.common.commonUtil.StatusRecorder-class.html#get_current_status
 Hasal.lib.common.commonUtil.StatusRecorder.ERROR_ROUND_STAT_ABNORMAL	Hasal.lib.common.commonUtil.StatusRecorder-class.html#ERROR_ROUND_STAT_ABNORMAL
@@ -718,6 +721,20 @@ Hasal.lib.helper.uploadAgentHelper.UploadAgent.upload_result	Hasal.lib.helper.up
 Hasal.lib.helper.uploadAgentHelper.UploadAgent.generate_url_str	Hasal.lib.helper.uploadAgentHelper.UploadAgent-class.html#generate_url_str
 Hasal.lib.helper.uploadAgentHelper.UploadAgent.__init__	Hasal.lib.helper.uploadAgentHelper.UploadAgent-class.html#__init__
 Hasal.lib.helper.uploadAgentHelper.UploadAgent.upload_videos	Hasal.lib.helper.uploadAgentHelper.UploadAgent-class.html#upload_videos
+Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator	Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator-class.html
+Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator.generate_upload_data	Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator-class.html#generate_upload_data
+Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator.__init__	Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator-class.html#__init__
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.gen_guid	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#gen_guid
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.submit	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#submit
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.create_job_dataset	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#create_job_dataset
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.__init__	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#__init__
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.create_job_collection	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#create_job_collection
+Hasal.lib.helper.uploadResultHelper.VideoUploader	Hasal.lib.helper.uploadResultHelper.VideoUploader-class.html
+Hasal.lib.helper.uploadResultHelper.VideoUploader.upload_video	Hasal.lib.helper.uploadResultHelper.VideoUploader-class.html#upload_video
+Hasal.lib.helper.uploadResultHelper.VideoUploader.DEFAULT_UPLOAD_VIDEO_MYCRED_TXT	Hasal.lib.helper.uploadResultHelper.VideoUploader-class.html#DEFAULT_UPLOAD_VIDEO_MYCRED_TXT
+Hasal.lib.helper.uploadResultHelper.VideoUploader.DEFAULT_UPLOAD_VIDEO_YAML_SETTING	Hasal.lib.helper.uploadResultHelper.VideoUploader-class.html#DEFAULT_UPLOAD_VIDEO_YAML_SETTING
+Hasal.lib.helper.uploadResultHelper.VideoUploader.DEFAULT_UPLOAD_FOLDER_URI	Hasal.lib.helper.uploadResultHelper.VideoUploader-class.html#DEFAULT_UPLOAD_FOLDER_URI
 Hasal.lib.perfBaseTest.PerfBaseTest	Hasal.lib.perfBaseTest.PerfBaseTest-class.html
 Hasal.lib.baseTest.BaseTest.args_parser	Hasal.lib.baseTest.BaseTest-class.html#args_parser
 Hasal.lib.baseTest.BaseTest.clone_test_file	Hasal.lib.baseTest.BaseTest-class.html#clone_test_file
