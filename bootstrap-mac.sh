@@ -152,6 +152,7 @@ ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
+pip install -r ejenti/requirements.txt
 python setup.py install
 
 ############

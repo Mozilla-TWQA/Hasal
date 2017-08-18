@@ -216,6 +216,8 @@ If (Test-Path C:\Miniconda2\) {
     CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install mitmproxy
     CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13.2-cp27-cp27m-win_amd64.whl
+    CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install -r requirements.txt
+    CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install -r ejenti\requirements.txt
     CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
     CMD /C "C:\Miniconda2\envs\env-python\python" setup.py install
     CMD /C "C:\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
@@ -223,6 +225,8 @@ If (Test-Path C:\Miniconda2\) {
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install mitmproxy
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13-cp27-cp27m-win32.whl
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\Scripts\pip" install thirdParty\opencv_python-2.4.13.2-cp27-cp27m-win_amd64.whl
+    CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install -r requirements.txt
+    CMD /C "C:\Miniconda2\envs\env-python\Scripts\pip" install -r ejenti\requirements.txt
     CMD /C certutil -p "" thirdParty\mitmproxy-ca-cert.p12
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" setup.py install
     CMD /C "C:\Program Files\Miniconda2\envs\env-python\python" scripts\cv2_checker.py
