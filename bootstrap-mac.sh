@@ -215,7 +215,7 @@ if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_
         func_log "[NOTE] Skip download Certificates into Hasal's folder ..."
     else
         func_log "[NOTE] Please login your Mozilla account, and download Certificates into Hasal's folder ..."
-        open -a firefox -g http://goo.gl/ALcw0B
+        open -a firefox -g http://goo.gl/ALcw0B || open -a firefoxnightly -g http://goo.gl/ALcw0B
     fi
     func_log ""
 
