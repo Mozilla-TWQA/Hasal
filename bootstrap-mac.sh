@@ -87,6 +87,7 @@ func_log "[INFO] Running brew install homebrew/science ..."
 brew update
 brew tap homebrew/science
 brew tap caskroom/cask
+brew tap homebrew/python
 brew update
 
 # tools
@@ -96,13 +97,13 @@ brew install wget
 # OpenCV
 if [[ ${TRAVIS} ]]; then
     func_log "[WARN] Skip installing ffmpeg on Travis CI, due to it is very slow!"
-    func_log "[INFO] Installing opencv without ffmpeg (on Travis CI) ..."
-    brew install homebrew/science/opencv || brew link --overwrite homebrew/python/numpy
+    func_log "[INFO] Installing opencv@2 without ffmpeg (on Travis CI) ..."
+    brew install opencv@2 || brew link --overwrite homebrew/python/numpy
 else
     func_log "[INFO] Installing ffmpeg ..."
     brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
-    func_log "[INFO] Installing opencv with ffmpeg ..."
-    brew install homebrew/science/opencv --with-ffmpeg -v
+    func_log "[INFO] Installing opencv@2 with ffmpeg ..."
+    brew install opencv@2 --with-ffmpeg -v
 fi
 
 # libav (avconv)
@@ -146,12 +147,13 @@ source .env-python/bin/activate
 func_log "[INFO] Upgrading pip itself ..."
 pip install -U pip
 
-func_log "[INFO] Linking opencv's cv2.so to virtualenv ..."
-CV2_SO_PATH=`find /usr/local/Cellar/opencv/ -name "cv2.so" | tail -1`
+func_log "[INFO] Linking opencv@2's cv2.so to virtualenv ..."
+CV2_SO_PATH=`find /usr/local/Cellar/opencv@2/ -name "cv2.so" | tail -1`
 ln -s ${CV2_SO_PATH} .env-python/lib/python2.7/site-packages/cv2.so
 
 func_log "[INFO] Python Setup Install ..."
 pip install -r requirements.txt
+pip install -r ejenti/requirements.txt
 python setup.py install
 
 ############
@@ -214,7 +216,7 @@ if [[ ${RET_SUCCESS} == ${CHECK_CV2_RET} ]] && [[ ${RET_SUCCESS} == ${CHECK_SYS_
         func_log "[NOTE] Skip download Certificates into Hasal's folder ..."
     else
         func_log "[NOTE] Please login your Mozilla account, and download Certificates into Hasal's folder ..."
-        open -a firefox -g http://goo.gl/ALcw0B
+        open -a firefox -g http://goo.gl/ALcw0B || open -a firefoxnightly -g http://goo.gl/ALcw0B
     fi
     func_log ""
 

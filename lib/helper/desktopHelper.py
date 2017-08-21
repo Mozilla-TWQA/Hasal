@@ -106,7 +106,7 @@ def lock_window_pos(browser_type, exec_config={}, height_adjustment=0, width_adj
     window_obj = WindowObject(window_title_list)
 
     # First launch or just move position only need to get browser size from settings
-    if not height_adjustment and not width_adjustment:
+    if (not height_adjustment and not width_adjustment) or sys.platform == 'linux2':
         if not exec_config:
             height = Environment.DEFAULT_BROWSER_HEIGHT
             width = Environment.DEFAULT_BROWSER_WIDTH
