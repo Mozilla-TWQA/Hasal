@@ -35,6 +35,8 @@ class Cv2Converter(object):
 
         if hasattr(cv2, 'CV_CAP_PROP_FRAME_COUNT'):
             total_frames = int(vidcap.get(cv2.CV_CAP_PROP_FRAME_COUNT))
+        elif hasattr(cv2, 'CAP_PROP_FRAME_COUNT'):
+            total_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         else:
             total_frames = int(vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
         total_frames = 0 if total_frames <= 0 else total_frames
