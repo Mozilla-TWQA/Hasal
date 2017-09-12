@@ -4,6 +4,7 @@ import time
 import random
 import string
 import traceback
+from datetime import datetime
 from ..common.pyDriveUtil import PyDriveUtil
 from ..common.logConfig import get_logger
 from lib.helper.desktopHelper import get_browser_version
@@ -13,10 +14,10 @@ logger = get_logger(__name__)
 
 
 class PerfherderUploader(object):
-    def __init__(self, client_id, secret, os_name, platform, machine_arch, build_arch, repo='mozilla-central', protocol='http', host='local.treeherder.mozilla.org'):
+
+    def __init__(self, client_id, secret, os_name, platform, machine_arch, build_arch, server_url=None, repo='mozilla-central'):
         # Perfherder Information
-        self.potocol = protocol
-        self.host = host
+        self.server_url = server_url
         self.client_id = client_id
         self.secret = secret
         self.repo = repo
@@ -248,12 +249,14 @@ class PerfherderUploader(object):
                                             extra_info_obj=extra_info_obj)
         tjc = self.create_job_collection(j_dataset)
 
-        client = TreeherderClient(protocol=self.potocol,
-                                  host=self.host,
-                                  client_id=self.client_id,
-                                  secret=self.secret)
-        # don't post resultset, that overwrites existing data. see: https://bugzilla.mozilla.org/show_bug.cgi?id=1320694
-        # client.post_collection(self.repo, trsc)
+        if self.server_url:
+            client = TreeherderClient(server_url=self.server_url,
+                                      client_id=self.client_id,
+                                      secret=self.secret)
+        else:
+            client = TreeherderClient(client_id=self.client_id,
+                                      secret=self.secret)
+
         try:
             return_result = client.post_collection(self.repo, tjc)
         except Exception as e:
@@ -321,7 +324,7 @@ class PerfherderUploadDataGenerator(object):
 class VideoUploader(object):
     DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
     DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
-    DEFAULT_UPLOAD_FOLDER_URI = "0B9g1GJPq5xo8Ry1jV0s3Y3F6ZFE"
+    DEFAULT_UPLOAD_FOLDER_URI = "0B6LePZQnd-uOMWpEVFN2NXVBTG8"
 
     @staticmethod
     def upload_video(upload_video_fp):
@@ -330,8 +333,13 @@ class VideoUploader(object):
                                            "local_cred_file": VideoUploader.DEFAULT_UPLOAD_VIDEO_MYCRED_TXT})
         video_perview_url = ""
         if os.path.exists(upload_video_fp):
+            # generate folder of current month
+            upload_subfolder_name = datetime.now().strftime('%Y-%m')
+            upload_subfolder_obj = pyDriveObj.create_folder_object(VideoUploader.DEFAULT_UPLOAD_FOLDER_URI, upload_subfolder_name)
+
+            upload_folder_uri_id = upload_subfolder_obj.get('id', VideoUploader.DEFAULT_UPLOAD_FOLDER_URI)
             # upload to pydrive
-            upload_result = pyDriveObj.upload_file(VideoUploader.DEFAULT_UPLOAD_FOLDER_URI, upload_video_fp)
+            upload_result = pyDriveObj.upload_file(upload_folder_uri_id, upload_video_fp)
             if upload_result:
                 video_perview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
             else:

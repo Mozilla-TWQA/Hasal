@@ -260,15 +260,16 @@ class RunTest(object):
         else:
             self.logger.error("Can't find result json file[%s], please check the current environment!" % self.global_config['default-result-fn'])
 
+        server_url = '{protocol}://{host}'.format(protocol=self.upload_config['perfherder-protocol'],
+                                                  host=self.upload_config['perfherder-host'])
         perfherder_uploader = PerfherderUploader(self.upload_config['perfherder-client-id'],
                                                  self.upload_config['perfherder-secret'],
                                                  os_name=sys.platform,
                                                  platform=self.upload_config['perfherder-pkg-platform'],
                                                  machine_arch=self.upload_config['perfherder-pkg-platform'],
                                                  build_arch=self.upload_config['perfherder-pkg-platform'],
-                                                 repo=self.upload_config['perfherder-repo'],
-                                                 protocol=self.upload_config['perfherder-protocol'],
-                                                 host=self.upload_config['perfherder-host'])
+                                                 server_url=server_url,
+                                                 repo=self.upload_config['perfherder-repo'])
 
         upload_success_timestamp_list = []
         for current_time_stamp in upload_result_data:
@@ -351,6 +352,7 @@ class RunTest(object):
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
             try:
+                objStatusRecorder.clean_legacy_status()
                 objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
@@ -429,7 +431,7 @@ class RunTest(object):
                                     self.case_teardown()
                             else:
                                 test_env = self.get_test_env(**runtime_case_data)
-                                if self.loop_test(test_case_module_name, test_name, test_env):
+                                if self.loop_test(test_case_module_name, test_name, test_env) and self.upload_config['enable']:
                                     self.upload_test_result_handler()
                                 self.case_teardown()
 
