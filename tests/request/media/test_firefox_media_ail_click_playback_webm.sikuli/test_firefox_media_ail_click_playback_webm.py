@@ -36,6 +36,7 @@ class Case(basecase.SikuliInputLatencyCase):
         my_browser.enterLink(self.INPUT_TEST_TARGET)
         navigation_bar = [
             ['navigation_bar_ff.png', -38, 0],
+            ['navigation_bar_ff_win10.png', -10, 0],
         ]
         pattern, obj = app._wait_for_loaded(navigation_bar)
 
