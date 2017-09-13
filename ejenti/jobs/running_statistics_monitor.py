@@ -98,14 +98,14 @@ class RunningStatisticsHandler(PatternMatchingEventHandler):
                         case_info = running_statistics.get(KEY_CASE_INFO, {})
                         current_status = running_statistics.get(KEY_CURRENT_STATUS, {})
 
-                        # checking the status_img_compare_result
-                        if current_status.get(
-                                KEY_CURRENT_STATUS_STATUS_IMG_COMPARE_RESULT) != DEFAULT_SUCCESS_STATUS_IMG_COMPARE_RESULT:
+                        # checking the status_img_compare_result, skip when result is None
+                        img_result = current_status.get(KEY_CURRENT_STATUS_STATUS_IMG_COMPARE_RESULT)
+                        if img_result is not None and img_result != DEFAULT_SUCCESS_STATUS_IMG_COMPARE_RESULT:
                             error_img_compare = True
 
-                        # checking the sikuli_running_stat
-                        if current_status.get(
-                                KEY_CURRENT_STATUS_SIKULI_RUNNING_STAT) != DEFAULT_SUCCESS_SIKULI_RUNNING_STAT:
+                        # checking the sikuli_running_stat, skip when result is None
+                        sikuli_result = current_status.get(KEY_CURRENT_STATUS_SIKULI_RUNNING_STAT)
+                        if sikuli_result is not None and sikuli_result != DEFAULT_SUCCESS_SIKULI_RUNNING_STAT:
                             error_sikuli_running = True
 
                         if error_img_compare or error_sikuli_running:
