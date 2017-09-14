@@ -277,7 +277,7 @@ class RunTest(object):
             if not upload_result_data[current_time_stamp]['video_link']:
                 if upload_result_data[current_time_stamp]['upload_video_fp']:
                     upload_result_data[current_time_stamp]['video_link'] = {
-                        "adjusted_running_video": VideoUploader.upload_video(upload_result_data[current_time_stamp]['upload_video_fp'])
+                        "adjusted_running_video": VideoUploader.upload_video(self.upload_config, upload_result_data[current_time_stamp]['upload_video_fp'])
                     }
                 else:
                     self.logger.error("Can't find the upload video fp in result json file!")

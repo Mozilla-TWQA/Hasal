@@ -7,5 +7,9 @@
   "perfherder-repo": "mozilla-central",
   "perfherder-revision"     : "",
   "perfherder-pkg-platform" : "",
-  "perfherder-suitename"    : ""
+  "perfherder-suitename"    : "",
+  "b2-account-id"           : "",
+  "b2-account-key"          : "",
+  "b2-upload-video-bucket-name" : "HasalVideo1",
+  "b2-upload-video-bucket-lifecyclerule" : {}
 }

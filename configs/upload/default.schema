@@ -36,6 +36,22 @@
     "perfherder-repo": {
       "description": "perfherder repo name",
       "type": "string"
+    },
+    "b2-account-id": {
+      "description": "b2 account id",
+      "type": "string"
+    },
+    "b2-account-key": {
+      "description": "b2 account key",
+      "type": "string"
+    },
+    "b2-upload-video-bucket-name": {
+      "description": "b2 upload video bucket name",
+      "type": "string"
+    },
+    "b2-upload-video-bucket-lifecyclerule": {
+      "description": "b2 upload video bucket life cycle rule ",
+      "type": "object"
     }
   },
   "required": [
@@ -47,7 +63,11 @@
     "perfherder-repo",
     "perfherder-revision",
     "perfherder-pkg-platform",
-    "perfherder-suitename"
+    "perfherder-suitename",
+    "b2-account-id",
+    "b2-account-key",
+    "b2-upload-video-bucket-name",
+    "b2-upload-video-bucket-lifecyclerule"
   ],
   "additionalProperties": false
 }
