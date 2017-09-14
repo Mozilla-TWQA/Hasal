@@ -176,20 +176,24 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_COMMENT_ICONS = [
-        [os.path.join('pics', 'facebook_comment_icons.png'), 0, 0]
+        [os.path.join('pics', 'facebook_comment_icons.png'), 0, 0],
+        [os.path.join('pics', 'facebook_comment_icons_20170906.png'), 0, 0]
     ]
 
     FACEBOOK_PHOTO_VIEWER_RIGHT_ARROW = [
-        [os.path.join('pics', 'facebook_comment_icons.png'), -340, -55]
+        [os.path.join('pics', 'facebook_comment_icons.png'), -340, -55],
+        [os.path.join('pics', 'facebook_comment_icons_20170906.png'), -340, -55]
     ]
 
     FACEBOOK_RIGHT_PANEL_CONTACT = [
         [os.path.join('pics', 'facebook_contact_linda_win7.png'), 0, 15],
-        [os.path.join('pics', 'facebook_contact.png'), 0, 15]
+        [os.path.join('pics', 'facebook_contact.png'), 0, 15],
+        [os.path.join('pics', 'facebook_contact_20170908.png'), 0, 15]
     ]
 
     FACEBOOK_UNDER_RIGHT_PANEL_CONTACT = [
-        [os.path.join('pics', 'facebook_contact.png'), 0, 50]
+        [os.path.join('pics', 'facebook_contact.png'), 0, 50],
+        [os.path.join('pics', 'facebook_contact_20170908.png'), 0, 50]
     ]
 
     FACEBOOK_MESSAGE_SEARCH_BAR = [

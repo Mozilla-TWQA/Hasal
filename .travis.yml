@@ -68,6 +68,7 @@ matrix:
 branches:
   only:
     - master
+    - dev
 
 notifications:
   email: false

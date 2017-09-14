@@ -54,6 +54,10 @@ class MainRunner(object):
         self.async_queue = mananger.Queue()
         self.current_job_list = []
 
+        # Slack Sending Queue
+        # TODO: prevent the Slack bot is disable, the sending queue will use too much memory.
+        self.slack_sending_queue = mananger.Queue(50)
+
         # init logger
         self.set_logging(self.config['log_level'], self.config['log_filter'])
 
@@ -132,6 +136,7 @@ class MainRunner(object):
                                            kwargs={
                                                'async_queue': self.async_queue,
                                                'sync_queue': self.sync_queue,
+                                               'slack_sending_queue': self.slack_sending_queue,
                                                'configs': input_job_config[job_name]['configs'],
                                                'cmd_config': self.cmd_config}
                                            )
