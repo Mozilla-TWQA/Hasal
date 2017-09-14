@@ -454,6 +454,7 @@ Hasal.lib.common.commonUtil.StatusRecorder.ERROR_EVENT_IMAGE_START_AFTER_END	Has
 Hasal.lib.common.commonUtil.StatusRecorder.STATUS_TIME_LIST_COUNTER	Hasal.lib.common.commonUtil.StatusRecorder-class.html#STATUS_TIME_LIST_COUNTER
 Hasal.lib.common.commonUtil.StatusRecorder.DEFAULT_FIELD_CASE_NAME	Hasal.lib.common.commonUtil.StatusRecorder-class.html#DEFAULT_FIELD_CASE_NAME
 Hasal.lib.common.commonUtil.StatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME	Hasal.lib.common.commonUtil.StatusRecorder-class.html#STATUS_DESC_CASE_TOTAL_EXEC_TIME
+Hasal.lib.common.commonUtil.StatusRecorder.clean_legacy_status	Hasal.lib.common.commonUtil.StatusRecorder-class.html#clean_legacy_status
 Hasal.lib.common.commonUtil.StatusRecorder.DEFAULT_FIELD_CURRENT_STATUS	Hasal.lib.common.commonUtil.StatusRecorder-class.html#DEFAULT_FIELD_CURRENT_STATUS
 Hasal.lib.common.commonUtil.StatusRecorder.DEFAULT_FIELD_CASE_TIME_STAMP	Hasal.lib.common.commonUtil.StatusRecorder-class.html#DEFAULT_FIELD_CASE_TIME_STAMP
 Hasal.lib.common.environment.Environment	Hasal.lib.common.environment.Environment-class.html
@@ -555,12 +556,16 @@ Hasal.lib.common.imageUtil.CropRegion.TERMINAL	Hasal.lib.common.imageUtil.CropRe
 Hasal.lib.common.imageUtil.CropRegion.TAB_VIEW	Hasal.lib.common.imageUtil.CropRegion-class.html#TAB_VIEW
 Hasal.lib.common.pyDriveUtil.PyDriveUtil	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html
 Hasal.lib.common.pyDriveUtil.PyDriveUtil.get_file_object	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#get_file_object
-Hasal.lib.common.pyDriveUtil.PyDriveUtil.delete_file	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#delete_file
-Hasal.lib.common.pyDriveUtil.PyDriveUtil.copy_file	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#copy_file
 Hasal.lib.common.pyDriveUtil.PyDriveUtil.get_gauth	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#get_gauth
-Hasal.lib.common.pyDriveUtil.PyDriveUtil.update_file_content	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#update_file_content
 Hasal.lib.common.pyDriveUtil.PyDriveUtil.__init__	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#__init__
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.get_file_list	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#get_file_list
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.copy_file	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#copy_file
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.update_file_content	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#update_file_content
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.KEY_MIME_TYPE	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#KEY_MIME_TYPE
 Hasal.lib.common.pyDriveUtil.PyDriveUtil.upload_file	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#upload_file
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.FOLDER_MIME_TYPE	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#FOLDER_MIME_TYPE
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.delete_file	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#delete_file
+Hasal.lib.common.pyDriveUtil.PyDriveUtil.create_folder_object	Hasal.lib.common.pyDriveUtil.PyDriveUtil-class.html#create_folder_object
 Hasal.lib.common.windowController.WindowObject	Hasal.lib.common.windowController.WindowObject-class.html
 Hasal.lib.common.windowController.WindowObject.close_window	Hasal.lib.common.windowController.WindowObject-class.html#close_window
 Hasal.lib.common.windowController.WindowObject._get_window_rect_darwin	Hasal.lib.common.windowController.WindowObject-class.html#_get_window_rect_darwin
