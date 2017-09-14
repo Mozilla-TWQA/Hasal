@@ -1,7 +1,7 @@
 {
   "job_store_url": "sqlite:///job_store.db",
   "interactive_cmd_polling_interval": 5,
-  "log_level": "debug",
+  "log_level": "info",
   "log_filter": [
     "apscheduler.executors.default",
     "apscheduler.scheduler",
