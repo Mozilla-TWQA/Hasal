@@ -196,3 +196,14 @@ $ python ejenti/pulse_trigger.py --config PATH/TO/my_trigger_config.json
 You can remove or modify the content of `ejenti/pulse_modules/.md5/<TRIGGER_JOB_NAME>`.
 
 For example, remove the `ejenti/pulse_modules/.md5/win10_x64_gmail` will re-trigger the job `win10_x64_gmail`.
+
+Or you can run `pulse_trigger_cli.py` with your `trigger_config.json`, ex:
+
+```bash
+$ python ejenti/pulse_trigger_cli.py --config PATH/TO/trigger_config.json --remove
+Job [FOO]: disabled
+Job [BAR]: disabled
+Job [win10_x64_gmail]: enabled
+>>> Remove the checking file of Job [win10_x64_gmail] (y/N): y
+    cleaning checking file ...  OK
+```
