@@ -113,7 +113,7 @@ class RunningStatisticsHandler(PatternMatchingEventHandler):
                                   '*[Case Name]* {casename}\n' \
                                   '*[Timestamp]* {ts}\n' \
                                   '*[Sikuli Running Stat]* {stat_s}\n' \
-                                  '*[Image Comapre Stat]* {stat_i}\n' \
+                                  '*[Image Compare Stat]* {stat_i}\n' \
                                   '*[FPS Stat]* {stat_f}'.format(casename=case_info.get(KEY_CASE_INFO_CASE_NAME),
                                                                  ts=case_info.get(KEY_CASE_INFO_CASE_TIMESTAMP),
                                                                  stat_s=current_status.get(KEY_CURRENT_STATUS_SIKULI_RUNNING_STAT),
@@ -123,7 +123,7 @@ class RunningStatisticsHandler(PatternMatchingEventHandler):
                 msg = 'Can not loading *{}* file.'.format(running_statistics_file_path)
 
             if msg:
-                logging.warn(msg)
+                logging.debug(msg)
                 slack_msg = '{level} {msg}\n*[Time]* {time}\n{line}'.format(level=SLACK_LOGGING_LEVEL_ERROR,
                                                                             msg=msg,
                                                                             time=datetime.now().strftime(
