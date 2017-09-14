@@ -103,7 +103,6 @@ class B2Util(object):
                 logger.error("The file[%s] you specify for uploading is not exist!" % input_file_path)
                 return None
 
-
             headers = {
                 'Authorization': self.auth_token,
                 'Content-Length': str(os.path.getsize(input_file_path)),
