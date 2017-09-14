@@ -70,4 +70,3 @@ class Case(basecase.SikuliInputLatencyCase):
 
 case = Case(sys.argv)
 case.run()
-
