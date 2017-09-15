@@ -6,6 +6,10 @@ class TestSikuli(PerfBaseTest):
     def setUp(self):
         self.set_variable(test_target=self.global_config['gsuite']['gsheet-empty-number-enchar-2tabs'])
         super(TestSikuli, self).setUp()
+        self.set_configs(self.config_name.INDEX,
+                         self.extract_platform_dep_settings(
+                             {'win32': {'7': {'search-margin': 1, 'compare-threshold': 0.008},
+                                        '10': {'search-margin': 1, 'compare-threshold': 0.008}}}))
 
     def test_firefox_gsheet_ail_clicktab_0(self):
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.test_url,

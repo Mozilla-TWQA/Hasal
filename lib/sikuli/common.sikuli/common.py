@@ -9,6 +9,7 @@ class FlushBeforePrint(object):
 
     def __call__(self, *args, **kwargs):
         sys.stdout.flush()
+        sleep(0.3)
         return self.func(object, *args, **kwargs)
 
 
