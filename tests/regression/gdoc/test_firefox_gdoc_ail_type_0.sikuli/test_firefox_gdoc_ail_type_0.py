@@ -47,7 +47,7 @@ class Case(basecase.SikuliInputLatencyCase):
         # Customized Region
         customized_region_name = 'end'
         type_area = self.find_match_region(app.GDOC_CONTENT_LEFT_TOP_PAGE_REGION, similarity=0.85)
-        modified_area = self.tuning_region(type_area, w_offset=120, h_offset=120)
+        modified_area = self.tuning_region(type_area, x_offset=120, w_offset=120, h_offset=120)
         self.set_override_region_settings(customized_region_name, modified_area)
         click(modified_area)
 
