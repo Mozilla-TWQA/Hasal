@@ -6,6 +6,9 @@ class TestSikuli(PerfBaseTest):
     def setUp(self):
         self.set_variable(test_target=self.global_config['gsuite']['gslide-2-page-text'])
         super(TestSikuli, self).setUp()
+        self.set_configs(self.config_name.INDEX,
+                         self.extract_platform_dep_settings({'win32': {'7': {'compare-threshold': 0.008},
+                                                                       '10': {'compare-threshold': 0.008}}}))
 
     def test_firefox_gslide_ail_pagedown_0(self):
         self.round_status = self.sikuli.run_test(self.env.test_name, self.env.output_name, test_target=self.test_url,
