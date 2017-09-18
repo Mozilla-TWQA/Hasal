@@ -247,7 +247,7 @@ class QueryData(object):
         """
         if not csv_filename.endswith('.csv'):
             csv_filename = '{}.csv'.format(csv_filename)
-        print('\nStarting output to {} ...'.format(csv_filename))
+        print('Starting output to {} ...'.format(csv_filename))
         with open(csv_filename, 'w') as f:
             csv_writer = csv.writer(f)
             csv_writer.writerow(['suite_name', '_', 'browser_type', 'machine_platform', 'date', 'time', 'value'])
@@ -259,7 +259,7 @@ class QueryData(object):
                                      ret.get('date'),
                                      ret.get('time'),
                                      ret.get('value')])
-        print('\nOutput to {} done.'.format(csv_filename))
+        print('Output to {} done.'.format(csv_filename))
 
     @staticmethod
     def print_result(all_result_list):
@@ -275,7 +275,21 @@ class QueryData(object):
                                                               '{} {}'.format(ret.get('date'), ret.get('time')),
                                                               ret.get('value')))
 
-    def query_data(self, query_interval, query_keyword, query_btype, query_platform, query_suite_name, query_begin_date, query_end_date, csv_filename=None):
+    def query_data(self, query_interval, query_keyword, query_btype, query_platform, query_suite_name,
+                   query_begin_date, query_end_date, csv_filename=None, silent_mode=False):
+        """
+        Query Hasal data from Perfherder, return a list which contains all result.
+        @param query_interval: seconds
+        @param query_keyword:
+        @param query_btype: browser type
+        @param query_platform: platform
+        @param query_suite_name: suite name
+        @param query_begin_date: begin date
+        @param query_end_date: end date
+        @param csv_filename: specify CSV file name if want to output to CSV file
+        @param silent_mode: only get the returned list object, not print to stdout
+        @return: a list which contains all result
+        """
         if not os.path.exists(DEFAULT_HASAL_SIGNATURES):
             signature_data = self.query_signatures()
         else:
@@ -287,21 +301,28 @@ class QueryData(object):
                                                  query_suite_name.lower().strip())
 
         all_result_list = []
-        print('Starting query result ...')
+        if not silent_mode:
+            print('Starting query result ...', end='')
+        counter = 0
         for signature in signature_list:
+            counter += 1
             url_str = API_URL_QUERY_DATA % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO), str(query_interval), signature)
             query_obj = self.send_url_data(url_str)
             if query_obj:
                 json_obj = json.loads(query_obj.read())
 
-                print('.', end='')
-                sys.stdout.flush()
+                print('\rStarting query result ... {counter}/{total}'.format(counter=counter, total=len(signature_list)), end='')
                 all_result_list += self.get_result_by_signature(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip())
+                sys.stdout.flush()
+        if not silent_mode:
+            print('\nQuery result done.')
 
         if csv_filename:
             self.output_csv(all_result_list, csv_filename)
-        else:
+        elif not silent_mode:
+            # silent mode only return all result list
             self.print_result(all_result_list)
+        return all_result_list
 
 
 def main():
