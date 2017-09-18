@@ -118,56 +118,40 @@ class QueryData(object):
 
         return list(set(btype_sig_list) & set(platform_sig_list) & set(suite_sig_list) & set(keyword_sig_list))
 
-    def print_data(self, input_json, signature_data, b_date, e_date):
-        b_timestamp = 0.0
-        e_timestamp = 0.0
-        try:
-            if b_date != DEFAULT_QUERY_OPTION:
-                b_date_obj = datetime.strptime(b_date, '%Y-%m-%d')
-                b_timestamp = time.mktime(b_date_obj.timetuple())
-            if e_date != DEFAULT_QUERY_OPTION:
-                e_date_obj = datetime.strptime(e_date, '%Y-%m-%d')
-                e_timestamp = time.mktime(e_date_obj.timetuple())
-        except ValueError:
-            print("Incorrect data format, should be YYYY-MM-DD!!, the begin_date and end_date filter will be ignored!")
+    @staticmethod
+    def generate_result_obj(suite_name, suite_type, browser, platform, ret_date, ret_time, value):
+        """
+        Input values, return a dict object which contains following values.
+        @param suite_name:
+        @param suite_type:
+        @param browser:
+        @param platform:
+        @param ret_date:
+        @param ret_time:
+        @param value:
+        @return: a dict object.
+        """
+        obj = {
+            'suite_name': suite_name,
+            'suite_type': suite_type,
+            'browser': browser,
+            'platform': platform,
+            'date': ret_date,
+            'time': ret_time,
+            'value': value
+        }
+        return obj
 
-        for sig in input_json:
-            for data in input_json[sig]:
-                if b_timestamp != 0.0:
-                    if e_timestamp != 0.0:
-                        if b_timestamp <= data['push_timestamp'] <= e_timestamp:
-                            print('{:50s} {:10s} {:20s} {:30s}  {:20f}'.format(
-                                signature_data['signature_data'][sig]['suite_name'],
-                                signature_data['signature_data'][sig]['browser_type'],
-                                signature_data['signature_data'][sig]['machine_platform'],
-                                datetime.utcfromtimestamp(data['push_timestamp']).strftime("%Y-%m-%d %H-%M-%S-%f"),
-                                data['value']))
-                    else:
-                        if b_timestamp <= data['push_timestamp']:
-                            print('{:50s} {:10s} {:20s} {:30s}  {:20f}'.format(
-                                signature_data['signature_data'][sig]['suite_name'],
-                                signature_data['signature_data'][sig]['browser_type'],
-                                signature_data['signature_data'][sig]['machine_platform'],
-                                datetime.utcfromtimestamp(data['push_timestamp']).strftime("%Y-%m-%d %H-%M-%S-%f"),
-                                data['value']))
-                else:
-                    if e_timestamp != 0.0:
-                        if data['push_timestamp'] <= e_timestamp:
-                            print('{:50s} {:10s} {:20s} {:30s}  {:20f}'.format(
-                                signature_data['signature_data'][sig]['suite_name'],
-                                signature_data['signature_data'][sig]['browser_type'],
-                                signature_data['signature_data'][sig]['machine_platform'],
-                                datetime.utcfromtimestamp(data['push_timestamp']).strftime("%Y-%m-%d %H-%M-%S-%f"),
-                                data['value']))
-                    else:
-                        print('{:50s} {:10s} {:20s} {:30s}  {:20f}'.format(
-                            signature_data['signature_data'][sig]['suite_name'],
-                            signature_data['signature_data'][sig]['browser_type'],
-                            signature_data['signature_data'][sig]['machine_platform'],
-                            datetime.utcfromtimestamp(data['push_timestamp']).strftime("%Y-%m-%d %H-%M-%S-%f"),
-                            data['value']))
-
-    def output_csv(self, input_json, signature_data, b_date, e_date, csv_writer):
+    def get_result_by_signature(self, input_json, signature_data, b_date, e_date):
+        """
+        generate a list which contains the result from input_json and signature_data between begin and end date.
+        @param input_json:
+        @param signature_data:
+        @param b_date: begin date
+        @param e_date: end date
+        @return: a list which contains result
+        """
+        result_list = []
         try:
             b_timestamp = 0.0
             e_timestamp = 0.0
@@ -192,13 +176,15 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                csv_writer.writerow([suite_name,
-                                                     suite_name_type,
-                                                     signature_data['signature_data'][sig]['browser_type'],
-                                                     signature_data['signature_data'][sig]['machine_platform'],
-                                                     data_date,
-                                                     data_time,
-                                                     data['value']])
+                                result_list.append(self.generate_result_obj(suite_name,
+                                                                            suite_name_type,
+                                                                            signature_data['signature_data'][sig][
+                                                                                'browser_type'],
+                                                                            signature_data['signature_data'][sig][
+                                                                                'machine_platform'],
+                                                                            data_date,
+                                                                            data_time,
+                                                                            data['value']))
                         else:
                             if b_timestamp <= data['push_timestamp']:
                                 suite_name_full = signature_data['signature_data'][sig]['suite_name'].split()
@@ -206,13 +192,15 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                csv_writer.writerow([suite_name,
-                                                     suite_name_type,
-                                                     signature_data['signature_data'][sig]['browser_type'],
-                                                     signature_data['signature_data'][sig]['machine_platform'],
-                                                     data_date,
-                                                     data_time,
-                                                     data['value']])
+                                result_list.append(self.generate_result_obj(suite_name,
+                                                                            suite_name_type,
+                                                                            signature_data['signature_data'][sig][
+                                                                                'browser_type'],
+                                                                            signature_data['signature_data'][sig][
+                                                                                'machine_platform'],
+                                                                            data_date,
+                                                                            data_time,
+                                                                            data['value']))
                     else:
                         if e_timestamp != 0.0:
                             if data['push_timestamp'] <= e_timestamp:
@@ -221,28 +209,71 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                csv_writer.writerow([suite_name,
-                                                     suite_name_type,
-                                                     signature_data['signature_data'][sig]['browser_type'],
-                                                     signature_data['signature_data'][sig]['machine_platform'],
-                                                     data_date,
-                                                     data_time,
-                                                     data['value']])
+                                result_list.append(self.generate_result_obj(suite_name,
+                                                                            suite_name_type,
+                                                                            signature_data['signature_data'][sig][
+                                                                                'browser_type'],
+                                                                            signature_data['signature_data'][sig][
+                                                                                'machine_platform'],
+                                                                            data_date,
+                                                                            data_time,
+                                                                            data['value']))
                         else:
                             suite_name_full = signature_data['signature_data'][sig]['suite_name'].split()
                             suite_name = suite_name_full[0]
                             suite_name_type = suite_name_full[1]
                             data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                             data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                            csv_writer.writerow([suite_name,
-                                                 suite_name_type,
-                                                 signature_data['signature_data'][sig]['browser_type'],
-                                                 signature_data['signature_data'][sig]['machine_platform'],
-                                                 data_date,
-                                                 data_time,
-                                                 data['value']])
+                            result_list.append(self.generate_result_obj(suite_name,
+                                                                        suite_name_type,
+                                                                        signature_data['signature_data'][sig][
+                                                                            'browser_type'],
+                                                                        signature_data['signature_data'][sig][
+                                                                            'machine_platform'],
+                                                                        data_date,
+                                                                        data_time,
+                                                                        data['value']))
         except Exception as e:
             print(e)
+        return result_list
+
+    @staticmethod
+    def output_csv(all_result_list, csv_filename):
+        """
+        read result from list, then output to CSV file.
+        @param all_result_list:
+        @param csv_filename:
+        @return:
+        """
+        if not csv_filename.endswith('.csv'):
+            csv_filename = '{}.csv'.format(csv_filename)
+        print('\nStarting output to {} ...'.format(csv_filename))
+        with open(csv_filename, 'w') as f:
+            csv_writer = csv.writer(f)
+            csv_writer.writerow(['suite_name', '_', 'browser_type', 'machine_platform', 'date', 'time', 'value'])
+            for ret in all_result_list:
+                csv_writer.writerow([ret.get('suite_name'),
+                                     ret.get('suite_type'),
+                                     ret.get('browser'),
+                                     ret.get('platform'),
+                                     ret.get('date'),
+                                     ret.get('time'),
+                                     ret.get('value')])
+        print('\nOutput to {} done.'.format(csv_filename))
+
+    @staticmethod
+    def print_result(all_result_list):
+        """
+        read result from list, then output to stdout.
+        @param all_result_list:
+        @return:
+        """
+        for ret in all_result_list:
+            print('{:50s} {:10s} {:20s} {:30s} {:20f}'.format('{} {}'.format(ret.get('suite_name'), ret.get('suite_type')),
+                                                              ret.get('browser'),
+                                                              ret.get('platform'),
+                                                              '{} {}'.format(ret.get('date'), ret.get('time')),
+                                                              ret.get('value')))
 
     def query_data(self, query_interval, query_keyword, query_btype, query_platform, query_suite_name, query_begin_date, query_end_date, csv_filename=None):
         if not os.path.exists(DEFAULT_HASAL_SIGNATURES):
@@ -255,30 +286,22 @@ class QueryData(object):
                                                  query_btype.lower().strip(), query_platform.lower().strip(),
                                                  query_suite_name.lower().strip())
 
-        csv_writer = None
-        if csv_filename:
-            if not csv_filename.endswith('.csv'):
-                csv_filename = '{}.csv'.format(csv_filename)
-            print('Starting output to {} ...'.format(csv_filename))
-            csv_fh = open(csv_filename, 'w')
-            csv_writer = csv.writer(csv_fh)
-            csv_writer.writerow(['suite_name', '_', 'browser_type', 'machine_platform', 'date', 'time', 'value'])
-
+        all_result_list = []
+        print('Starting query result ...')
         for signature in signature_list:
             url_str = API_URL_QUERY_DATA % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO), str(query_interval), signature)
             query_obj = self.send_url_data(url_str)
             if query_obj:
                 json_obj = json.loads(query_obj.read())
-                if csv_filename:
-                    print('.', end='')
-                    sys.stdout.flush()
-                    self.output_csv(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip(),
-                                    csv_writer)
-                else:
-                    self.print_data(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip())
+
+                print('.', end='')
+                sys.stdout.flush()
+                all_result_list += self.get_result_by_signature(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip())
 
         if csv_filename:
-            print('\nOutput to {} done.'.format(csv_filename))
+            self.output_csv(all_result_list, csv_filename)
+        else:
+            self.print_result(all_result_list)
 
 
 def main():
