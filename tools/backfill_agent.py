@@ -224,7 +224,7 @@ class BFagent(object):
         # TODO: add file checker
 
         # Assume back fill dates are in 3 months
-        create_csv(90)
+        create_csv(14)
 
         # loop through all the dates picked
         for nightly_build_link in self.history_dates:

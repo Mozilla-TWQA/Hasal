@@ -174,40 +174,45 @@ class GenerateData(object):
 
             # check download result
             if download_fx_fp is None or download_json_fp is None:
-                print "ERROR: something wrong with your build download process, please check the setting and job status."
+                print("ERROR: something wrong with your build download process, please check the setting and job status.")
                 sys.exit(1)
             else:
                 # link firefox package to correct path
                 if self.extract_fx_pkg(download_fx_fp):
-                    self.link_fx_pkg()
+                    if self.link_fx_pkg():
 
-                # get config value from nightly json file
-                with open(download_json_fp) as dl_json_fh:
-                    dl_json_data = json.load(dl_json_fh)
-                current_platform_release = platform.release().strip()
-                perfherder_revision = dl_json_data['moz_source_stamp']
-                build_pkg_platform = dl_json_data['moz_pkg_platform']
+                        # get config value from nightly json file
+                        with open(download_json_fp) as dl_json_fh:
+                            dl_json_data = json.load(dl_json_fh)
+                        current_platform_release = platform.release().strip()
+                        perfherder_revision = dl_json_data['moz_source_stamp']
+                        build_pkg_platform = dl_json_data['moz_pkg_platform']
 
-                # mapping the perfherder pkg platform to nomenclature of builddot
-                if current_platform_release in self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform].keys():
-                    perfherder_pkg_platform = self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform][
-                        current_platform_release]
+                        # mapping the perfherder pkg platform to nomenclature of builddot
+                        if current_platform_release in self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform].keys():
+                            perfherder_pkg_platform = self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform][
+                                current_platform_release]
+                        else:
+                            perfherder_pkg_platform = self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform]["_"]
+
+                        # loop suite file
+                        for suite_name in self.suite_data:
+
+                            # create suite file
+                            print "working on suite fp [%s]" % suite_name
+                            suite_fp = self.create_suite_file(self.output_config_dp, suite_name, self.suite_data)
+
+                            # generate command list
+                            cmd_list = self.generate_command_list(nightly_build_date_id, suite_name, suite_fp, perfherder_revision,
+                                                                  perfherder_pkg_platform,
+                                                                  self.suite_data[suite_name]['perfherder-suitename'])
+                            print " ".join(cmd_list)
+                            subprocess.call(cmd_list, env=os.environ.copy())
+                    else:
+                        print("ERROR: failed when link fx package to correct path")
+
                 else:
-                    perfherder_pkg_platform = self.BUILDBOT_MAPPING_PLATFORM[build_pkg_platform]["_"]
-
-                # loop suite file
-                for suite_name in self.suite_data:
-
-                    # create suite file
-                    print "working on suite fp [%s]" % suite_name
-                    suite_fp = self.create_suite_file(self.output_config_dp, suite_name, self.suite_data)
-
-                    # generate command list
-                    cmd_list = self.generate_command_list(nightly_build_date_id, suite_name, suite_fp, perfherder_revision,
-                                                          perfherder_pkg_platform,
-                                                          self.suite_data[suite_name]['perfherder-suitename'])
-                    print " ".join(cmd_list)
-                    subprocess.call(cmd_list, env=os.environ.copy())
+                    print("ERROR: failed when extracting fx package!, the download fx fp:[%s]" % download_fx_fp)
 
     def extract_fx_pkg(self, input_fx_pkg_fp):
         if input_fx_pkg_fp.endswith(".tar.bz2"):
@@ -255,7 +260,12 @@ class GenerateData(object):
 
         if sys.platform == "linux2":
             src_link = os.path.join(os.getcwd(), "firefox", "firefox")
-            os.symlink(src_link, self.FIREFOX_BIN_LINUX_FP)
+            if os.path.exists(src_link):
+                os.symlink(src_link, self.FIREFOX_BIN_LINUX_FP)
+                return True
+            else:
+                print("ERROR: can't find firefox dir in specify path [%s]" % src_link)
+                return False
         elif sys.platform == "darwin":
             DEFAULT_NIGHLTY_ATTACTED_PATH = "/Volumes/Nightly"
             if os.path.exists(DEFAULT_NIGHLTY_ATTACTED_PATH):
@@ -263,12 +273,27 @@ class GenerateData(object):
                 detach_cmd_format = "hdiutil detach %s"
                 detach_cmd_str = detach_cmd_format % DEFAULT_NIGHLTY_ATTACTED_PATH
                 if os.system(detach_cmd_str) != 0:
-                    print "ERROR: detach dmg file[%s] failed! cmd string: [%s]" % (DEFAULT_NIGHLTY_ATTACTED_PATH, detach_cmd_str)
+                    print("ERROR: detach dmg file[%s] failed! cmd string: [%s]" % (DEFAULT_NIGHLTY_ATTACTED_PATH, detach_cmd_str))
+                    return False
             else:
                 print "ERROR: can't find the nightly attached path [%s]" % DEFAULT_NIGHLTY_ATTACTED_PATH
+                return False
+            return True
         else:
             src_path = os.path.join(os.getcwd(), "firefox")
-            os.rename(src_path, self.FIREFOX_BIN_WIN_FP)
+            retry_count = 0
+            max_retry_count = 10
+            if os.path.exists(src_path):
+                while retry_count < max_retry_count:
+                    try:
+                        os.rename(src_path, self.FIREFOX_BIN_WIN_FP)
+                        return True
+                    except Exception as e:
+                        retry_count += 1
+                print("ERROR: failed on renaming the firefox downlaod package!")
+                print(e.message)
+                return False
+
 
     def get_files_from_remote_url_folder(self, remote_url_str):
         return_dict = {}
