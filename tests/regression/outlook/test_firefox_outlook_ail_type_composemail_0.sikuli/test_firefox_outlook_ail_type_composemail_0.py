@@ -43,6 +43,7 @@ class Case(basecase.SikuliInputLatencyCase):
         app.mouse_move_to_compose_new_mail_button()
         app._click(action_name='Click  compose new mail icon', component=app.OUTLOOK_COMPOSE_NEW_MAIL_ICON)
         app.click_compose_new_mail_content()
+        sleep(2)
 
         # Customized Region
         customized_region_name = 'end'
