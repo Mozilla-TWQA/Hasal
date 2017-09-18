@@ -13,21 +13,16 @@ Options:
 
 import os
 import csv
-import sys
 import json
 import random
+import shutil
 import platform
 import datetime
-import subprocess
 from dateutil import tz
 from docopt import docopt
 
-
-# common function
-def call_subprocess(input_cmd):
-    ret_code = subprocess.call(input_cmd, shell=True)
-    if ret_code != 0:
-        sys.exit(ret_code)
+from query_data_from_perfherder import QueryData
+from generate_data_for_nightly_build import GenerateData
 
 
 # predefine static data
@@ -38,7 +33,6 @@ tmp_file = 'tmp.txt'
 csv_file = 'tmp.csv'
 backfill_json_template = os.path.join('tools', 'backfill_latest_template.json')
 backfill_json_run = os.path.join('tools', 'backfill_latest_run.json')
-backfill_python = os.path.join('tools', 'generate_data_for_nightly_build.py')
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
 
@@ -69,25 +63,30 @@ task_schedule = [
 
 def create_csv(query_days):
     # query data
+    DEFAULT_QUERY_OPTION = "all"
     query_sec = query_days * 24 * 60 * 60
     print "Start querying data... might takes a while!"
-    cmd = 'python tools/query_data_from_perfherder.py --interval={} > {}'.format(query_sec, tmp_file)
-    call_subprocess(cmd)
-    with open(tmp_file) as fin, open(csv_file, 'w') as fout:
-        o = csv.writer(fout)
-        o.writerow(['suite_name', '_', 'browser_type', 'machine_platform', 'date', 'time', 'value'])
-        for line in fin:
-            o.writerow(line.split())
+
+    query_data_obj = QueryData()
+    query_data_obj.query_data(query_interval=str(query_sec),
+                              query_keyword=DEFAULT_QUERY_OPTION,
+                              query_btype=DEFAULT_QUERY_OPTION,
+                              query_platform=DEFAULT_QUERY_OPTION,
+                              query_suite_name=DEFAULT_QUERY_OPTION,
+                              query_begin_date=DEFAULT_QUERY_OPTION,
+                              query_end_date=DEFAULT_QUERY_OPTION,
+                              csv_filename=csv_file)
     print "Done query data!"
-    os.remove(tmp_file)
 
 
 def run_backfill():
     # clean space, remove output_config
-    call_subprocess('del /F/S/Q output_config')
+    dest = 'output_config'
+    shutil.rmtree(dest, ignore_errors=True)
 
     # run generate data
-    call_subprocess('python {} -i {}'.format(backfill_python, backfill_json_run))
+    generate_data_obj = GenerateData(backfill_json_run)
+    generate_data_obj.trigger()
 
 
 class BFagent(object):
@@ -201,6 +200,7 @@ class BFagent(object):
         """ Refill latest Nightly """
         if need_query or not os.path.isfile(csv_file):
             create_csv(2)  # just query last two dates data
+
         self.reset_date_list_dict()
         self.analyze_csv()
         self.list_recover_data()
