@@ -191,7 +191,7 @@ class QueryData(object):
                                 suite_name = suite_name_full[0]
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
-                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H:%M:%S.%f')
+                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
                                 csv_writer.writerow([suite_name,
                                                      suite_name_type,
                                                      signature_data['signature_data'][sig]['browser_type'],
@@ -205,7 +205,7 @@ class QueryData(object):
                                 suite_name = suite_name_full[0]
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
-                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H:%M:%S.%f')
+                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
                                 csv_writer.writerow([suite_name,
                                                      suite_name_type,
                                                      signature_data['signature_data'][sig]['browser_type'],
@@ -220,7 +220,7 @@ class QueryData(object):
                                 suite_name = suite_name_full[0]
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
-                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H:%M:%S.%f')
+                                data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
                                 csv_writer.writerow([suite_name,
                                                      suite_name_type,
                                                      signature_data['signature_data'][sig]['browser_type'],
@@ -233,7 +233,7 @@ class QueryData(object):
                             suite_name = suite_name_full[0]
                             suite_name_type = suite_name_full[1]
                             data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
-                            data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H:%M:%S.%f')
+                            data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
                             csv_writer.writerow([suite_name,
                                                  suite_name_type,
                                                  signature_data['signature_data'][sig]['browser_type'],
