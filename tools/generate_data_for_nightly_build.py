@@ -294,7 +294,6 @@ class GenerateData(object):
                 print(e.message)
                 return False
 
-
     def get_files_from_remote_url_folder(self, remote_url_str):
         return_dict = {}
         try:
