@@ -1,7 +1,7 @@
 """
 
 Usage:
-  backfill_agent.py [--query] [--latest] [-i=<str>]
+  backfill_agent.py [--query] [--latest] [-i=<str>] [--debug]
   backfill_agent.py (-h | --help)
 
 Options:
@@ -9,6 +9,7 @@ Options:
   --query                   Query latest data.
   --latest                  Automatically check latest nightly build.
   -i=<str>                  Automatically refill data from json file.
+  --debug                   Debug Mode [default: False]
 """
 
 import os
@@ -16,6 +17,7 @@ import csv
 import json
 import random
 import shutil
+import logging
 import platform
 import datetime
 from dateutil import tz
@@ -251,6 +253,14 @@ class BFagent(object):
 
 def main():
     arguments = docopt(__doc__)
+
+    default_log_format = '%(asctime)s %(levelname)s [%(name)s.%(funcName)s] %(message)s'
+    default_datefmt = '%Y-%m-%d %H:%M'
+    if arguments['--debug']:
+        logging.basicConfig(level=logging.DEBUG, format=default_log_format, datefmt=default_datefmt)
+    else:
+        logging.basicConfig(level=logging.INFO, format=default_log_format, datefmt=default_datefmt)
+
     agent = BFagent()
 
     # run in different mode
