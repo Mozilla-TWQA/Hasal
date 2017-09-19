@@ -119,7 +119,7 @@ class QueryData(object):
         return list(set(btype_sig_list) & set(platform_sig_list) & set(suite_sig_list) & set(keyword_sig_list))
 
     @staticmethod
-    def generate_result_obj(suite_name, suite_type, browser, platform, ret_date, ret_time, value):
+    def generate_result_obj(suite_name, suite_type, browser, platform, ret_date, ret_time, push_timestamp, value):
         """
         Input values, return a dict object which contains following values.
         @param suite_name:
@@ -128,6 +128,7 @@ class QueryData(object):
         @param platform:
         @param ret_date:
         @param ret_time:
+        @param push_timestamp:
         @param value:
         @return: a dict object.
         """
@@ -138,6 +139,7 @@ class QueryData(object):
             'platform': platform,
             'date': ret_date,
             'time': ret_time,
+            'push_timestamp': push_timestamp,
             'value': value
         }
         return obj
@@ -176,15 +178,14 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                result_list.append(self.generate_result_obj(suite_name,
-                                                                            suite_name_type,
-                                                                            signature_data['signature_data'][sig][
-                                                                                'browser_type'],
-                                                                            signature_data['signature_data'][sig][
-                                                                                'machine_platform'],
-                                                                            data_date,
-                                                                            data_time,
-                                                                            data['value']))
+                                result_list.append(self.generate_result_obj(suite_name=suite_name,
+                                                                            suite_type=suite_name_type,
+                                                                            browser=signature_data['signature_data'][sig]['browser_type'],
+                                                                            platform=signature_data['signature_data'][sig]['machine_platform'],
+                                                                            ret_date=data_date,
+                                                                            ret_time=data_time,
+                                                                            push_timestamp=data['push_timestamp'],
+                                                                            value=data['value']))
                         else:
                             if b_timestamp <= data['push_timestamp']:
                                 suite_name_full = signature_data['signature_data'][sig]['suite_name'].split()
@@ -192,15 +193,14 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                result_list.append(self.generate_result_obj(suite_name,
-                                                                            suite_name_type,
-                                                                            signature_data['signature_data'][sig][
-                                                                                'browser_type'],
-                                                                            signature_data['signature_data'][sig][
-                                                                                'machine_platform'],
-                                                                            data_date,
-                                                                            data_time,
-                                                                            data['value']))
+                                result_list.append(self.generate_result_obj(suite_name=suite_name,
+                                                                            suite_type=suite_name_type,
+                                                                            browser=signature_data['signature_data'][sig]['browser_type'],
+                                                                            platform=signature_data['signature_data'][sig]['machine_platform'],
+                                                                            ret_date=data_date,
+                                                                            ret_time=data_time,
+                                                                            push_timestamp=data['push_timestamp'],
+                                                                            value=data['value']))
                     else:
                         if e_timestamp != 0.0:
                             if data['push_timestamp'] <= e_timestamp:
@@ -209,30 +209,28 @@ class QueryData(object):
                                 suite_name_type = suite_name_full[1]
                                 data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                                 data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                                result_list.append(self.generate_result_obj(suite_name,
-                                                                            suite_name_type,
-                                                                            signature_data['signature_data'][sig][
-                                                                                'browser_type'],
-                                                                            signature_data['signature_data'][sig][
-                                                                                'machine_platform'],
-                                                                            data_date,
-                                                                            data_time,
-                                                                            data['value']))
+                                result_list.append(self.generate_result_obj(suite_name=suite_name,
+                                                                            suite_type=suite_name_type,
+                                                                            browser=signature_data['signature_data'][sig]['browser_type'],
+                                                                            platform=signature_data['signature_data'][sig]['machine_platform'],
+                                                                            ret_date=data_date,
+                                                                            ret_time=data_time,
+                                                                            push_timestamp=data['push_timestamp'],
+                                                                            value=data['value']))
                         else:
                             suite_name_full = signature_data['signature_data'][sig]['suite_name'].split()
                             suite_name = suite_name_full[0]
                             suite_name_type = suite_name_full[1]
                             data_date = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%Y-%m-%d')
                             data_time = datetime.utcfromtimestamp(data['push_timestamp']).strftime('%H-%M-%S-%f')
-                            result_list.append(self.generate_result_obj(suite_name,
-                                                                        suite_name_type,
-                                                                        signature_data['signature_data'][sig][
-                                                                            'browser_type'],
-                                                                        signature_data['signature_data'][sig][
-                                                                            'machine_platform'],
-                                                                        data_date,
-                                                                        data_time,
-                                                                        data['value']))
+                            result_list.append(self.generate_result_obj(suite_name=suite_name,
+                                                                        suite_type=suite_name_type,
+                                                                        browser=signature_data['signature_data'][sig]['browser_type'],
+                                                                        platform=signature_data['signature_data'][sig]['machine_platform'],
+                                                                        ret_date=data_date,
+                                                                        ret_time=data_time,
+                                                                        push_timestamp=data['push_timestamp'],
+                                                                        value=data['value']))
         except Exception as e:
             print(e)
         return result_list
@@ -309,7 +307,7 @@ class QueryData(object):
             url_str = API_URL_QUERY_DATA % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO), str(query_interval), signature)
             query_obj = self.send_url_data(url_str)
             if query_obj:
-                json_obj = json.loads(query_obj.read())
+                json_obj = json.loads(query_obj.read().decode('utf-8'))
 
                 print('\rStarting query result ... {counter}/{total}'.format(counter=counter, total=len(signature_list)), end='')
                 all_result_list += self.get_result_by_signature(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip())
