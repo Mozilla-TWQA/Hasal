@@ -7,6 +7,7 @@ from lib.thirdparty.tee import system2
 from baseTasks import init_task
 from baseTasks import get_hasal_repo_path
 from baseTasks import parse_cmd_parameters
+from githubTasks import git_checkout
 from githubTasks import git_pull
 from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
@@ -74,8 +75,12 @@ def run_hasal_on_latest_nightly(**kwargs):
 
     @return:
     """
+
     # git reset
     git_reset(**kwargs)
+
+    # git checkout
+    git_checkout(**kwargs)
 
     # git pull the latest code
     git_pull(**kwargs)
