@@ -39,6 +39,28 @@ def generate_config_path_json_mapping(input_path, input_json_obj, output_result)
     return output_result
 
 
+def checkout_latest_code(**kwargs):
+    """
+    Will operate the git command to checkout the latest code for certain branch
+    @param kwargs:
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: checkout and pull branch name
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
+    @return:
+    """
+    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
+    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+
+    # git reset
+    git_reset(**kwargs)
+
+    # git checkout
+    git_checkout(**kwargs)
+
+    # git pull the latest code
+    git_pull(**kwargs)
+
+
 def run_hasal_on_latest_nightly(**kwargs):
     """
     Combination task for daily nightly trigger test
@@ -77,14 +99,8 @@ def run_hasal_on_latest_nightly(**kwargs):
     @return:
     """
 
-    # git reset
-    git_reset(**kwargs)
-
-    # git checkout
-    git_checkout(**kwargs)
-
-    # git pull the latest code
-    git_pull(**kwargs)
+    # checkout latest code
+    checkout_latest_code(**kwargs)
 
     # download latest nightly build
     pkg_download_info_json = download_latest_nightly_build(**kwargs)
