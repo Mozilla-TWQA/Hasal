@@ -47,9 +47,9 @@ def checkout_latest_code(**kwargs):
         kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
     @return:
     """
-    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
-    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
-    kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
 
     # git reset
     git_reset(**kwargs)
