@@ -176,9 +176,11 @@ class TasksTrigger(object):
 
         # prepare MD5 folder
         if os.path.exists(md5_folder):
-            if not os.path.isdir(md5_folder):
+            if os.path.isdir(md5_folder):
                 shutil.rmtree(md5_folder)
                 os.makedirs(md5_folder)
+            elif os.path.isfile(md5_folder):
+                os.remove(md5_folder)
         else:
             os.makedirs(md5_folder)
 
@@ -213,9 +215,9 @@ class TasksTrigger(object):
             return True
 
     @staticmethod
-    def clean_md5_by_jobname(job_name):
+    def clean_md5_by_job_name(job_name):
         """
-        clean the md5 file by jobname.
+        clean the md5 file by job name.
         @param job_name: the job name which will set as identify name.
         """
         current_file_folder = os.path.dirname(os.path.realpath(__file__))
@@ -224,9 +226,11 @@ class TasksTrigger(object):
 
         # prepare MD5 folder
         if os.path.exists(md5_folder):
-            if not os.path.isdir(md5_folder):
+            if os.path.isdir(md5_folder):
                 shutil.rmtree(md5_folder)
                 os.makedirs(md5_folder)
+            elif os.path.isfile(md5_folder):
+                os.remove(md5_folder)
         else:
             os.makedirs(md5_folder)
 

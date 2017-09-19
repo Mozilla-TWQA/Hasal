@@ -51,17 +51,17 @@ def main():
         try:
             jobs = trigger_config.get('jobs')
 
-            for jobs_name, jobs_obj in sorted(jobs.items()):
-                is_enabled = jobs_obj.get('enable')
+            for job_name, job_obj in sorted(jobs.items()):
+                is_enabled = job_obj.get('enable')
 
-                print('Job [{name}]: {status}'.format(name=jobs_name, status='enabled' if is_enabled else 'disabled'))
+                print('Job [{name}]: {status}'.format(name=job_name, status='enabled' if is_enabled else 'disabled'))
 
                 if is_remove and is_enabled:
-                    input_value = raw_input('>>> Remove the checking file of Job [{name}] (y/N): '.format(name=jobs_name))
+                    input_value = raw_input('>>> Remove the checking file of Job [{name}] (y/N): '.format(name=job_name))
 
                     if input_value.lower() == 'y' or input_value.lower() == 'yes':
                         print('    cleaning checking file ... ', end='')
-                        ret = TasksTrigger.clean_md5_by_jobname(jobs_name)
+                        ret = TasksTrigger.clean_md5_by_job_name(job_name)
                         if ret:
                             print(' OK')
                         else:
