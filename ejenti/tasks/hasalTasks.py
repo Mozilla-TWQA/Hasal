@@ -46,6 +46,7 @@ def run_hasal_on_latest_nightly(**kwargs):
 
         kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] :: git pull remote url (should be origin)
         kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] :: git pull remote url (current will be dev)
+        kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] :: git checkout branch name
 
         kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
         tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2
