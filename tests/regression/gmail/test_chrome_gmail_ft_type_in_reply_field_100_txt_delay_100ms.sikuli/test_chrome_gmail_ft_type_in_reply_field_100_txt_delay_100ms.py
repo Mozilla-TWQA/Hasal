@@ -58,12 +58,8 @@ class Case(basecase.SikuliInputLatencyCase):
 
         t1 = time.time()
         capimg1 = capture(0, 0, capture_width, capture_height)
+        char_str = "orempsumdorstametconsecteturadpscngetsedoeusmodtem\nporncduntutaboretdoremagnaquatenmadmnvenamqusnoex"
 
-        char_len = 100
-        sample_str = string.letters + "\n" + string.letters[::-1]
-        sample_str.replace("t", "Q").replace("i", "Q").replace("j", "Q").replace("l", "Q")\
-            .replace("I", "Q").replace("J", "Q")
-        char_str = (sample_str * (char_len / len(sample_str) + 1))[:char_len]
         self.common.system_print('Type char')
         self.common.delayed_type(char_str, 0.1, delay)
 
