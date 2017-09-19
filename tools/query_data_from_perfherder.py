@@ -27,8 +27,8 @@ import sys
 import json
 import copy
 import time
-import urllib2
 import logging
+import requests
 from docopt import docopt
 from datetime import datetime
 
@@ -45,15 +45,19 @@ API_URL_QUERY_DATA = "%s/api/project/%s/performance/data/?format=json&framework=
 class QueryData(object):
 
     def send_url_data(self, url_str):
+        """
+
+        @param url_str:
+        @return: dict object
+        """
         DEFAULT_URL_HEADER = {'User-Agent': "Hasal Query Perfherder Tool"}
-        request_obj = urllib2.Request(url_str, headers=DEFAULT_URL_HEADER)
         try:
-            response_obj = urllib2.urlopen(request_obj)
+            response_obj = requests.get(url_str, headers=DEFAULT_URL_HEADER)
         except Exception as e:
             logging.error("Send post data failed, error message [%s]" % e.message)
             return None
-        if response_obj.getcode() == 200:
-            return response_obj
+        if response_obj.status_code == 200:
+            return response_obj.json()
         else:
             logging.error("response status code is [%d]" % response_obj.getcode())
             return None
@@ -323,12 +327,10 @@ class QueryData(object):
             url_str = API_URL_QUERY_DATA % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO), str(query_interval), signature)
 
             logging.debug('Query with sig [{}] ...'.format(signature))
-            query_obj = self.send_url_data(url_str)
+            json_obj = self.send_url_data(url_str)
             logging.debug('Query with sig [{}] done.'.format(signature))
 
-            if query_obj:
-                json_obj = json.loads(query_obj.read().decode('utf-8'))
-
+            if json_obj:
                 print('\rStarting query result ... {counter}/{total}'.format(counter=counter, total=len(signature_list)), end='')
                 all_result_list += self.get_result_by_signature(json_obj, signature_data, query_begin_date.strip(), query_end_date.strip())
                 sys.stdout.flush()
