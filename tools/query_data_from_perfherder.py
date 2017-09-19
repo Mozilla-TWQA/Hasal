@@ -1,7 +1,7 @@
 """
 
 Usage:
-  query_data_from_perfherder.py [--query-signatures] [--interval=<str>] [--keyword=<str>] [--browser-type=<str>] [--platform=<str>] [--suite-name=<str>] [--begin-date=<str>] [--end-date=<str>] [--csv=<filename>]
+  query_data_from_perfherder.py [--query-signatures] [--interval=<str>] [--keyword=<str>] [--browser-type=<str>] [--platform=<str>] [--suite-name=<str>] [--begin-date=<str>] [--end-date=<str>] [--csv=<filename>] [--debug]
   query_data_from_perfherder.py (-h | --help)
 
 Options:
@@ -15,17 +15,20 @@ Options:
   --begin-date=<str>        Query by begin date [default: all]
   --end-date=<str>          Query by end date [default: all]
   --csv=<filename>          Output to CSV file
+  --debug                   Debug Mode [default: False]
 """
 
 from __future__ import print_function
 
 import os
+import re
 import csv
 import sys
 import json
 import copy
 import time
 import urllib2
+import logging
 from docopt import docopt
 from datetime import datetime
 
@@ -47,12 +50,12 @@ class QueryData(object):
         try:
             response_obj = urllib2.urlopen(request_obj)
         except Exception as e:
-            print("Send post data failed, error message [%s]" % e.message)
+            logging.error("Send post data failed, error message [%s]" % e.message)
             return None
         if response_obj.getcode() == 200:
             return response_obj
         else:
-            print("response status code is [%d]" % response_obj.getcode())
+            logging.error("response status code is [%d]" % response_obj.getcode())
             return None
 
     def query_signatures(self):
@@ -87,7 +90,7 @@ class QueryData(object):
             btype_sig_list = [sig for sig, data in signature_data['signature_data'].items() if
                               data.get('browser_type').lower() == input_btype]
             if len(btype_sig_list) == 0:
-                print("The current input browser type [%s] is not in support list [%s]" % (input_btype, signature_data['browser_type_list']))
+                logging.warn("The current input browser type [%s] is not in support list [%s]" % (input_btype, signature_data['browser_type_list']))
                 return None
         else:
             btype_sig_list = copy.deepcopy(signature_data['signature_data'].keys())
@@ -96,7 +99,7 @@ class QueryData(object):
             platform_sig_list = [sig for sig, data in signature_data['signature_data'].items() if
                                  data.get('machine_platform').lower() == input_platform]
             if len(platform_sig_list) == 0:
-                print("The current input platform [%s] is not in support list [%s]" % (input_platform, signature_data['machine_platform_list']))
+                logging.warn("The current input platform [%s] is not in support list [%s]" % (input_platform, signature_data['machine_platform_list']))
                 return None
         else:
             platform_sig_list = copy.deepcopy(signature_data['signature_data'].keys())
@@ -105,7 +108,7 @@ class QueryData(object):
             suite_sig_list = [sig for sig, data in signature_data['signature_data'].items() if
                               data.get('suite_name').lower() == input_suite_name]
             if len(suite_sig_list) == 0:
-                print("The current input suite [%s] is not in support list [%s]" % (input_suite_name, signature_data['suite_list']))
+                logging.warn("The current input suite [%s] is not in support list [%s]" % (input_suite_name, signature_data['suite_list']))
                 return None
         else:
             suite_sig_list = copy.deepcopy(signature_data['signature_data'].keys())
@@ -165,8 +168,7 @@ class QueryData(object):
                     e_date_obj = datetime.strptime(e_date, '%Y-%m-%d')
                     e_timestamp = time.mktime(e_date_obj.timetuple())
             except ValueError:
-                print(
-                    "Incorrect data format, should be YYYY-MM-DD!!, the begin_date and end_date filter will be ignored!")
+                logging.error("Incorrect data format, should be YYYY-MM-DD!!, the begin_date and end_date filter will be ignored!")
 
             for sig in input_json:
                 for data in input_json[sig]:
@@ -232,7 +234,7 @@ class QueryData(object):
                                                                         push_timestamp=data['push_timestamp'],
                                                                         value=data['value']))
         except Exception as e:
-            print(e)
+            logging.error(e)
         return result_list
 
     @staticmethod
@@ -273,6 +275,17 @@ class QueryData(object):
                                                               '{} {}'.format(ret.get('date'), ret.get('time')),
                                                               ret.get('value')))
 
+    @staticmethod
+    def filter_signature(signature_data, re_black_word_list=[]):
+        for pattern in re_black_word_list:
+            logging.debug('Filter Black word by pattern: {}'.format(pattern))
+            for sig_key, sig_obj in signature_data['signature_data'].items():
+                suite_name = sig_obj.get('suite_name', '')
+                if re.match(pattern, suite_name):
+                    logging.debug('Del sig [{sig}] with suite name [{suite_name}]'.format(sig=sig_key, suite_name=suite_name))
+                    del signature_data['signature_data'][sig_key]
+        return signature_data
+
     def query_data(self, query_interval, query_keyword, query_btype, query_platform, query_suite_name,
                    query_begin_date, query_end_date, csv_filename=None, silent_mode=False):
         """
@@ -293,6 +306,9 @@ class QueryData(object):
         else:
             with open(DEFAULT_HASAL_SIGNATURES) as fh:
                 signature_data = json.load(fh)
+
+        filter_black_word_list = ['^re_']
+        signature_data = self.filter_signature(signature_data=signature_data, re_black_word_list=filter_black_word_list)
 
         signature_list = self.get_signature_list(signature_data, query_keyword.lower().strip(),
                                                  query_btype.lower().strip(), query_platform.lower().strip(),
@@ -324,8 +340,14 @@ class QueryData(object):
 
 
 def main():
-
     arguments = docopt(__doc__)
+    default_log_format = '%(asctime)s %(levelname)s [%(name)s.%(funcName)s] %(message)s'
+    default_datefmt = '%Y-%m-%d %H:%M'
+    if arguments['--debug']:
+        logging.basicConfig(level=logging.DEBUG, format=default_log_format, datefmt=default_datefmt)
+    else:
+        logging.basicConfig(level=logging.INFO, format=default_log_format, datefmt=default_datefmt)
+
     query_data_obj = QueryData()
     if arguments['--query-signatures']:
         query_data_obj.query_signatures()
