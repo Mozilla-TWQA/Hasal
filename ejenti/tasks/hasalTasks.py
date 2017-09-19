@@ -7,6 +7,9 @@ from lib.thirdparty.tee import system2
 from baseTasks import init_task
 from baseTasks import get_hasal_repo_path
 from baseTasks import parse_cmd_parameters
+from githubTasks import git_checkout
+from githubTasks import git_pull
+from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
 from firefoxBuildTasks import deploy_fx_package
 
@@ -36,10 +39,36 @@ def generate_config_path_json_mapping(input_path, input_json_obj, output_result)
     return output_result
 
 
+def checkout_latest_code(**kwargs):
+    """
+    Will operate the git command to checkout the latest code for certain branch
+    @param kwargs:
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: checkout and pull branch name
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
+    @return:
+    """
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+
+    # git reset
+    git_reset(**kwargs)
+
+    # git checkout
+    git_checkout(**kwargs)
+
+    # git pull the latest code
+    git_pull(**kwargs)
+
+
 def run_hasal_on_latest_nightly(**kwargs):
     """
     Combination task for daily nightly trigger test
     @param kwargs:
+
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] :: git pull remote url (should be origin)
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] :: git pull remote url (current will be dev)
+        kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] :: git checkout branch name
 
         kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
         tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2
@@ -69,6 +98,10 @@ def run_hasal_on_latest_nightly(**kwargs):
 
     @return:
     """
+
+    # checkout latest code
+    checkout_latest_code(**kwargs)
+
     # download latest nightly build
     pkg_download_info_json = download_latest_nightly_build(**kwargs)
 
