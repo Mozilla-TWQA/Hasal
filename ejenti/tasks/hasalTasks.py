@@ -43,13 +43,13 @@ def checkout_latest_code(**kwargs):
     """
     Will operate the git command to checkout the latest code for certain branch
     @param kwargs:
-        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: checkout and pull branch name
-        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: checkout and pull branch name
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
     @return:
     """
-    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
-    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
-    kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
+    kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
 
     # git reset
     git_reset(**kwargs)
