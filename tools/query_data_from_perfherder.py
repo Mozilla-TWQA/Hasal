@@ -321,7 +321,11 @@ class QueryData(object):
         for signature in signature_list:
             counter += 1
             url_str = API_URL_QUERY_DATA % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO), str(query_interval), signature)
+
+            logging.debug('Query with sig [{}] ...'.format(signature))
             query_obj = self.send_url_data(url_str)
+            logging.debug('Query with sig [{}] done.'.format(signature))
+
             if query_obj:
                 json_obj = json.loads(query_obj.read().decode('utf-8'))
 
@@ -341,6 +345,7 @@ class QueryData(object):
 
 def main():
     arguments = docopt(__doc__)
+
     default_log_format = '%(asctime)s %(levelname)s [%(name)s.%(funcName)s] %(message)s'
     default_datefmt = '%Y-%m-%d %H:%M'
     if arguments['--debug']:
