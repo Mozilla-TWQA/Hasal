@@ -65,10 +65,7 @@ class QueryData(object):
     def query_signatures(self):
         url_str = API_URL_QUERY_SIGNATURE_LIST % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO))
         return_result = {'signature_data': {}, 'suite_list': [], 'browser_type_list': [], 'machine_platform_list': []}
-        json_obj = None
-        query_obj = self.send_url_data(url_str)
-        if query_obj:
-            json_obj = json.loads(query_obj.read())
+        json_obj = self.send_url_data(url_str)
         if json_obj:
             for revision in json_obj.keys():
                 if 'test' not in json_obj[revision] and 'parent_signature' not in json_obj[revision] and 'has_subtests' in json_obj[revision]:
