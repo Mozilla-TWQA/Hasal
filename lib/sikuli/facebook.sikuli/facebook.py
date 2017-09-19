@@ -198,6 +198,8 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_MESSAGE_SEARCH_BAR = [
+        [os.path.join('pics', 'facebook_message_search_bar_win10.png'), 0, 0],
+        [os.path.join('pics', 'facebook_message_search_bar_win7.png'), 0, 0],
         [os.path.join('pics', 'facebook_message_search_bar.png'), 0, 0]
     ]
 
