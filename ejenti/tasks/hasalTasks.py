@@ -7,6 +7,8 @@ from lib.thirdparty.tee import system2
 from baseTasks import init_task
 from baseTasks import get_hasal_repo_path
 from baseTasks import parse_cmd_parameters
+from githubTasks import git_pull
+from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
 from firefoxBuildTasks import deploy_fx_package
 
@@ -41,6 +43,9 @@ def run_hasal_on_latest_nightly(**kwargs):
     Combination task for daily nightly trigger test
     @param kwargs:
 
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] :: git pull remote url (should be origin)
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] :: git pull remote url (current will be dev)
+
         kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
         tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2
 
@@ -69,6 +74,12 @@ def run_hasal_on_latest_nightly(**kwargs):
 
     @return:
     """
+    # git reset
+    git_reset(**kwargs)
+
+    # git pull the latest code
+    git_pull(**kwargs)
+
     # download latest nightly build
     pkg_download_info_json = download_latest_nightly_build(**kwargs)
 
