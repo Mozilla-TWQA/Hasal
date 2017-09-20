@@ -1,8 +1,8 @@
 import os
 import re
+import json
 import shutil
 import socket
-import json
 import hashlib
 import logging
 import urllib2
@@ -63,7 +63,7 @@ class TasksTrigger(object):
         }
     }
 
-    def __init__(self, config, cmd_config_obj):
+    def __init__(self, config, cmd_config_obj, clean_at_begin=False):
         self.all_config = config
         self.cmd_config_obj = cmd_config_obj
 
@@ -74,6 +74,9 @@ class TasksTrigger(object):
 
         self._validate_data()
 
+        if clean_at_begin:
+            self.clean_pulse_queues()
+
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
@@ -82,6 +85,29 @@ class TasksTrigger(object):
         if not self.pulse_username or not self.pulse_password:
             # there is no Pulse account information in "job_config.json"
             raise Exception('Cannot access Pulse due to there is no Pulse account information.')
+
+    def clean_pulse_queues(self):
+        """
+        Cleaning and re-creating enabled Pulse Queues for cleaning Dead Consumer Client on Pulse.
+        Dead Consumer Client will get messages without ack(), so messages will always stay on Pulse, and no one can handle it.
+        """
+        logging.info('Cleaning and re-creating Pulse Queues ...')
+        queues_set = set()
+        for job_name, job_detail in self.jobs_config.items():
+            # have default config
+            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
+            topic = job_detail.get(TasksTrigger.KEY_JOBS_TOPIC, '')
+            if enable and topic:
+                queues_set.add(topic)
+        logging.info('Enabled Pulse Queues: {}'.format(queues_set))
+
+        for topic in queues_set:
+            ret = HasalPulsePublisher.re_create_pulse_queue(username=self.pulse_username,
+                                                            password=self.pulse_password,
+                                                            topic=topic)
+            if not ret:
+                logging.error('Queue [{}] has been deleted, but not be re-created successfully.'.format(topic))
+        logging.info('Clean and re-create Pulse Queues done.')
 
     @staticmethod
     def get_all_latest_files():

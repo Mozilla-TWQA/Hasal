@@ -1,3 +1,4 @@
+import time
 import pickle
 import logging
 from mozillapulse.messages.base import GenericMessage
@@ -82,6 +83,37 @@ class HasalPulsePublisher(object):
         queue_exists = c.queue_exists()
         logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
         return True
+
+    @staticmethod
+    def re_create_pulse_queue(username, password, topic):
+        """
+        Re-create the Pulse queue for cleaning Dead Consumer Client on Pulse.
+        Dead Consumer Client will get messages without ack(), so messages will always stay on Pulse, and no one can handle it.
+        @param username: Pulse username
+        @param password: Pulse password
+        @param topic: Topic
+        @return: True if queue re-create successfully. False if not.
+        """
+        def got_msg(body, message):
+            # does not ack, so broker will keep this message
+            logging.debug('do nothing here')
+
+        c = HasalConsumer(user=username, password=password, applabel=topic)
+        c.configure(topic=topic, callback=got_msg)
+        queue_exist = c.queue_exists()
+        if queue_exist:
+            logging.info('Queue Topic [{}] exists, deleting ...'.format(topic))
+            c.delete_queue()
+            # wait for deleting ...
+            for _ in range(10):
+                queue_exist = c.queue_exists()
+                if not queue_exist:
+                    break
+                time.sleep(1)
+            logging.info('Queue Topic [{}] delete ... {}'.format(topic, 'OK' if not queue_exist else 'Failed'))
+
+        # re-create Queue
+        return HasalPulsePublisher.check_pulse_queue_exists(username=username, password=password, topic=topic)
 
     def get_meta_task(self, command_name, overwrite_cmd_configs=None):
         """
