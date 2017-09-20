@@ -113,6 +113,8 @@ class BFagent(object):
             if p in platform.platform():
                 self.current_platform = PLATFORM_DICT[p]
 
+        print('Current Platform: {}'.format(self.current_platform))
+
     def reset_date_list_dict(self):
         # Reset the reference date, back fill task list, and counter
         self.backfill_list = []
@@ -124,26 +126,42 @@ class BFagent(object):
             for s in task_schedule:
                 self.dot_count[b][s] = 0
 
+    def find_ref_date_from_csv(self):
+        """
+        Default ref_date is previous day, if there is any today result in CSV, then change ref_date to today.
+        @return:
+        """
+        _ref_datetime = datetime.datetime.strptime(self.ref_date, '%Y-%m-%d')
+
+        with open(csv_file) as f:
+            r = csv.DictReader(f)
+            for row in r:
+                _d = row['date']
+
+                # find the latest date in query result (default ref_date is previous day)
+                _input_datetime = datetime.datetime.strptime(_d, '%Y-%m-%d')
+                if _input_datetime > _ref_datetime:
+                    self.ref_date = _d
+        print('Current Date after analyze CSV: {}'.format(self.ref_date))
+        return self.ref_date
+
     def analyze_csv(self):
+
+        self.find_ref_date_from_csv()
+
         with open(csv_file) as f:
             r = csv.DictReader(f)
             for row in r:
                 _s = '{} {}'.format(row['suite_name'], row['_'])
                 _m = row['machine_platform']
                 _b = row['browser_type']
+                _d = row['date']
+                # _t = '{} {}'.format(row['date'], row['time'])
 
                 if _s not in task_schedule:
                     continue
                 elif _m != self.current_platform or _b not in BROWSER_SET:
                     continue
-
-                # convert UTC to local time
-                _t = '{} {}'.format(row['date'], row['time'])
-                utc = datetime.datetime.strptime(_t, "%Y-%m-%d %H-%M-%S-000000")
-                utc = utc.replace(tzinfo=from_zone)
-                central = utc.astimezone(to_zone)
-                # _t = central.strftime("%Y-%m-%d %H-%M-%S-000000")
-                _d = central.strftime("%Y-%m-%d")
 
                 if self.ref_date != _d:
                     continue
