@@ -176,9 +176,11 @@ class TasksTrigger(object):
 
         # prepare MD5 folder
         if os.path.exists(md5_folder):
-            if not os.path.isdir(md5_folder):
+            if os.path.isdir(md5_folder):
                 shutil.rmtree(md5_folder)
                 os.makedirs(md5_folder)
+            elif os.path.isfile(md5_folder):
+                os.remove(md5_folder)
         else:
             os.makedirs(md5_folder)
 
@@ -210,6 +212,43 @@ class TasksTrigger(object):
                                                                                             new_hash))
             with open(job_md5_file, 'w') as f:
                 f.write(new_hash)
+            return True
+
+    @staticmethod
+    def clean_md5_by_job_name(job_name):
+        """
+        clean the md5 file by job name.
+        @param job_name: the job name which will set as identify name.
+        """
+        current_file_folder = os.path.dirname(os.path.realpath(__file__))
+
+        md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
+
+        # prepare MD5 folder
+        if os.path.exists(md5_folder):
+            if os.path.isdir(md5_folder):
+                shutil.rmtree(md5_folder)
+                os.makedirs(md5_folder)
+            elif os.path.isfile(md5_folder):
+                os.remove(md5_folder)
+        else:
+            os.makedirs(md5_folder)
+
+        # check MD5 file
+        job_md5_file = os.path.join(md5_folder, job_name)
+        if os.path.exists(job_md5_file):
+            if os.path.isfile(job_md5_file):
+                try:
+                    os.remove(job_md5_file)
+                    return True
+                except Exception as e:
+                    logging.error(e)
+                    return False
+            else:
+                logging.warn('The {} is not a file.'.format(job_md5_file))
+                return False
+        else:
+            logging.debug('The {} not exists.'.format(job_md5_file))
             return True
 
     @staticmethod
