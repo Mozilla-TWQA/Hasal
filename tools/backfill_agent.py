@@ -31,8 +31,7 @@ from generate_data_for_nightly_build import GenerateData
 BROWSER_SET = ['firefox', 'chrome']
 MACHINE_SET = ['windows8-64', 'windows10-64']
 PLATFORM_DICT = {'Windows-10': 'windows10-64', 'Windows-7': 'windows8-64'}
-tmp_file = 'tmp.txt'
-csv_file = 'tmp.csv'
+csv_file = 'backfill.csv'
 backfill_json_template = os.path.join('tools', 'backfill_latest_template.json')
 backfill_json_run = os.path.join('tools', 'backfill_latest_run.json')
 from_zone = tz.tzutc()
@@ -126,7 +125,7 @@ class BFagent(object):
             for s in task_schedule:
                 self.dot_count[b][s] = 0
 
-    def find_ref_date_from_csv(self):
+    def find_ref_date_from_csv_for_latest(self):
         """
         Default ref_date is previous day, if there is any today result in CSV, then change ref_date to today.
         @return:
@@ -142,12 +141,13 @@ class BFagent(object):
                 _input_datetime = datetime.datetime.strptime(_d, '%Y-%m-%d')
                 if _input_datetime > _ref_datetime:
                     self.ref_date = _d
-        print('Current Date after analyze CSV: {}'.format(self.ref_date))
+        print('Set Reference Date after analyze CSV: {}'.format(self.ref_date))
         return self.ref_date
 
-    def analyze_csv(self):
+    def analyze_csv(self, latest=True):
 
-        self.find_ref_date_from_csv()
+        if latest:
+            self.find_ref_date_from_csv_for_latest()
 
         with open(csv_file) as f:
             r = csv.DictReader(f)
@@ -170,14 +170,18 @@ class BFagent(object):
 
     def list_recover_data(self):
         # There must be at least 6 points each day
-        ref_count = 6
-        for s in task_schedule:
-            for b in BROWSER_SET:
-                __count = self.dot_count[b][s]
-                missing = ref_count - __count
+        target_count = 6
+        for case in task_schedule:
+            for browser in BROWSER_SET:
+                case_value_count = self.dot_count[browser][case]
+                missing = max((target_count - case_value_count), 0)
                 if missing > 0:
-                    self.backfill_list.append([b, s, missing])
-                    print 'Missing', b, s, missing
+                    self.backfill_list.append([browser, case, missing])
+                    print('Missing {browser} {case} ... {missing} ({count}/{target})'.format(browser=browser,
+                                                                                             case=case,
+                                                                                             missing=missing,
+                                                                                             count=case_value_count,
+                                                                                             target=target_count))
 
     def create_json(self, refill_date='latest'):
         # create json file for running
@@ -222,7 +226,7 @@ class BFagent(object):
             create_csv(2)  # just query last two dates data
 
         self.reset_date_list_dict()
-        self.analyze_csv()
+        self.analyze_csv(latest=True)
         self.list_recover_data()
         if len(self.backfill_list) == 0:
             print 'Congratulation! Everything was fine recently.'
@@ -255,7 +259,9 @@ class BFagent(object):
                   "=======================".format(date)
             self.reset_date_list_dict()
             self.ref_date = date
-            self.analyze_csv()
+            self.analyze_csv(latest=False)
+            print('Set Reference Date: {}'.format(self.ref_date))
+
             self.list_recover_data()
             if len(self.backfill_list) == 0:
                 print 'Congratulation! Everything was fine on {}.'.format(self.ref_date)
