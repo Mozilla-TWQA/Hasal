@@ -2,13 +2,14 @@
 # -*- encoding: utf-8 -*-
 """
 Usage:
-  pulse_trigger.py [--config=<str>] [--cmd-config=<str>]
+  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean]
   pulse_trigger.py (-h | --help)
 
 Options:
   -h --help                       Show this screen.
   --config=<str>                  Specify the trigger_config.json file path. [default: configs/ejenti/trigger_config.json]
   --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
+  --clean                         Clean Pulse Queue on Pulse service. [default: False]
 """
 
 import os
@@ -68,8 +69,9 @@ def main():
         logging.error('There is not command config. (Loaded from {})'.format(cmd_config_file))
         exit(1)
 
+    clean_flag = arguments['--clean']
     try:
-        trigger = TasksTrigger(config=config, cmd_config_obj=command_config)
+        trigger = TasksTrigger(config=config, cmd_config_obj=command_config, clean_at_begin=clean_flag)
         trigger.run()
 
         while True:
