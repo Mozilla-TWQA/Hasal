@@ -1,7 +1,6 @@
 import os
 import re
 import json
-import shutil
 import socket
 import hashlib
 import logging
@@ -190,6 +189,27 @@ class TasksTrigger(object):
         return hash_string
 
     @staticmethod
+    def check_folder(checked_folder):
+        """
+        Checking folder.
+        @param checked_folder:
+        @return: Return True if folder already exists and is folder, or re-create folder successfully.
+        """
+        try:
+            if os.path.exists(checked_folder):
+                if os.path.isfile(checked_folder):
+                    os.remove(checked_folder)
+                    os.makedirs(checked_folder)
+                return True
+            else:
+                # there is no valid MD5 folder
+                os.makedirs(checked_folder)
+                return True
+        except Exception as e:
+            logging.error(e)
+            return False
+
+    @staticmethod
     def check_latest_info_json_md5_changed(job_name, platform):
         """
         @param job_name: the job name which will set as identify name.
@@ -201,14 +221,8 @@ class TasksTrigger(object):
         md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
 
         # prepare MD5 folder
-        if os.path.exists(md5_folder):
-            if os.path.isdir(md5_folder):
-                shutil.rmtree(md5_folder)
-                os.makedirs(md5_folder)
-            elif os.path.isfile(md5_folder):
-                os.remove(md5_folder)
-        else:
-            os.makedirs(md5_folder)
+        if not TasksTrigger.check_folder(md5_folder):
+            return False
 
         # get new MD5 hash
         new_hash = TasksTrigger.get_latest_info_json_md5_hash(platform)
@@ -251,14 +265,8 @@ class TasksTrigger(object):
         md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
 
         # prepare MD5 folder
-        if os.path.exists(md5_folder):
-            if os.path.isdir(md5_folder):
-                shutil.rmtree(md5_folder)
-                os.makedirs(md5_folder)
-            elif os.path.isfile(md5_folder):
-                os.remove(md5_folder)
-        else:
-            os.makedirs(md5_folder)
+        if not TasksTrigger.check_folder(md5_folder):
+            return False
 
         # check MD5 file
         job_md5_file = os.path.join(md5_folder, job_name)
