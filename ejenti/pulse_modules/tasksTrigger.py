@@ -1,7 +1,6 @@
 import os
 import re
 import json
-import shutil
 import socket
 import hashlib
 import logging
@@ -202,10 +201,7 @@ class TasksTrigger(object):
 
         # prepare MD5 folder
         if os.path.exists(md5_folder):
-            if os.path.isdir(md5_folder):
-                shutil.rmtree(md5_folder)
-                os.makedirs(md5_folder)
-            elif os.path.isfile(md5_folder):
+            if os.path.isfile(md5_folder):
                 os.remove(md5_folder)
         else:
             os.makedirs(md5_folder)
@@ -252,10 +248,7 @@ class TasksTrigger(object):
 
         # prepare MD5 folder
         if os.path.exists(md5_folder):
-            if os.path.isdir(md5_folder):
-                shutil.rmtree(md5_folder)
-                os.makedirs(md5_folder)
-            elif os.path.isfile(md5_folder):
+            if os.path.isfile(md5_folder):
                 os.remove(md5_folder)
         else:
             os.makedirs(md5_folder)
