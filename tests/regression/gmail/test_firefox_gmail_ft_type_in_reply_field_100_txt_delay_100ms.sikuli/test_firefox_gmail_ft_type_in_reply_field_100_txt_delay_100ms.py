@@ -8,7 +8,6 @@ import os
 import basecase
 import gmail
 
-import string
 import shutil
 import browser
 import time
