@@ -82,7 +82,7 @@ class HasalPulsePublisher(object):
                 return False
         queue_exists = c.queue_exists()
         logging.debug('Pulse Queue on Topic [{}] exists ... {}'.format(topic, queue_exists))
-        return True
+        return queue_exists
 
     @staticmethod
     def re_create_pulse_queue(username, password, topic):
