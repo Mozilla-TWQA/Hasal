@@ -1,12 +1,17 @@
 import os
 import copy
 import json
+import shutil
 import logging
+from datetime import datetime
+
 from lib.common.commonUtil import CommonUtil
 from lib.thirdparty.tee import system2
 from baseTasks import init_task
 from baseTasks import get_hasal_repo_path
 from baseTasks import parse_cmd_parameters
+from baseTasks import task_checking_sending_queue
+from baseTasks import task_generate_slack_sending_message
 from githubTasks import git_checkout
 from githubTasks import git_pull
 from githubTasks import git_reset
@@ -293,3 +298,100 @@ def exec_hasal_runtest(**kwargs):
 
     exec_cmd_str = " ".join(exec_cmd_list)
     system2(exec_cmd_str, cwd=workding_dir, logger=default_log_fn, stdout=True, exec_env=os.environ.copy())
+
+
+def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=False):
+    """
+    task for querying and removing Hasal output folder
+    """
+
+    # verify remove date
+    if remove_date is None:
+        remove_date = datetime.now().strftime('%Y-%m-%d')
+    try:
+        remove_date_datetime = datetime.strptime(remove_date, '%Y-%m-%d')
+    except:
+        return 'Remove Date is not correct: {}'.format(remove_date)
+
+    # get Hasal working dir path
+    hasal_working_dir = get_hasal_repo_path(task_config)
+
+    output_folder_name = 'output'
+    image_folder_name = 'images'
+    image_output_folder_name = 'output'
+
+    image_output_folder_path = os.path.join(hasal_working_dir, output_folder_name, image_folder_name, image_output_folder_name)
+    abs_image_output_folder_path = os.path.abspath(image_output_folder_path)
+
+    folder_name_list = os.listdir(abs_image_output_folder_path)
+
+    file_obj_list = []
+    for folder_name in folder_name_list:
+        sub_output_image_folder_path = os.path.join(abs_image_output_folder_path, folder_name)
+
+        m_timestamp = os.stat(sub_output_image_folder_path).st_mtime
+        modified_datetime = datetime.fromtimestamp(m_timestamp)
+        modified_date_str = modified_datetime.strftime('%Y-%m-%d')
+
+        if modified_datetime <= remove_date_datetime:
+            file_obj = {
+                'path': sub_output_image_folder_path,
+                'date': modified_date_str,
+                'ts': m_timestamp
+            }
+            file_obj_list.append(file_obj)
+
+            if remove:
+                logging.warn('Remove folder: {}'.format(sub_output_image_folder_path))
+                shutil.rmtree(sub_output_image_folder_path)
+
+    if remove:
+        ret_message = '*Removed Hasal Output before {}*\n'.format(remove_date)
+    else:
+        ret_message = '*Query Hasal Output before {}*\n'.format(remove_date)
+
+    for file_obj in file_obj_list:
+        ret_message += '{}, {}\n'.format(file_obj.get('path'),
+                                         file_obj.get('date'))
+
+    return ret_message
+
+
+def query_hasal_output_folder(**kwargs):
+    """
+    task for querying Hasal output folder
+    """
+    key_date = 'date'
+
+    # get queue msg, consumer config from kwargs
+    queue_msg, consumer_config, task_config = init_task(kwargs)
+    slack_sending_queue = kwargs.get('slack_sending_queue')
+
+    remove_date = task_config.get(key_date)
+
+    logging.info('Query Hasal ouput folder')
+    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=False)
+
+    msg_obj = task_generate_slack_sending_message(ret_msg)
+    task_checking_sending_queue(sending_queue=slack_sending_queue)
+    slack_sending_queue.put(msg_obj)
+
+
+def remove_hasal_output_folder(**kwargs):
+    """
+    task for REMOVE Hasal output folder
+    """
+    key_date = 'date'
+
+    # get queue msg, consumer config from kwargs
+    queue_msg, consumer_config, task_config = init_task(kwargs)
+    slack_sending_queue = kwargs.get('slack_sending_queue')
+
+    remove_date = task_config.get(key_date)
+
+    logging.info('REMOVE Hasal ouput folder')
+    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=True)
+
+    msg_obj = task_generate_slack_sending_message(ret_msg)
+    task_checking_sending_queue(sending_queue=slack_sending_queue)
+    slack_sending_queue.put(msg_obj)
