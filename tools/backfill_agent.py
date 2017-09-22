@@ -300,6 +300,17 @@ class BFagent(object):
         return True
 
     @staticmethod
+    def get_url_data(url):
+        timeout_min = 2
+        for _ in range(10):
+            try:
+                response = requests.get(url, timeout=timeout_min * 60)
+                return response
+            except Exception as e:
+                logging.error(e)
+        raise Exception('Can not get data from {}'.format(url))
+
+    @staticmethod
     def get_build_url_data_base_on_current_date(build_date_str=None):
         """
         Get build URL list from Archive server base on today.
@@ -314,23 +325,26 @@ class BFagent(object):
 
         ret_dict = {}
         logging.info('Accessing URL: {}'.format(base_url))
-        response = requests.get(base_url)
-        if response.status_code == 200:
-            html = response.text
-            pattern = r'href="([\w/\-_]+-mozilla-central/)"'
-            url_list = re.findall(pattern, html)
+        try:
+            response = BFagent.get_url_data(base_url)
+            if response.status_code == 200:
+                html = response.text
+                pattern = r'href="([\w/\-_]+-mozilla-central/)"'
+                url_list = re.findall(pattern, html)
 
-            # build_url example: /pub/firefox/nightly/2017/09/2017-09-01-10-03-09-mozilla-central/
-            for build_url in url_list:
-                # build_folder example: 2017-09-01-10-03-09-mozilla-central
-                _, build_folder, _ = build_url.rsplit('/', 2)
-                # build_date_time example: 2017-09-01-10-03-09
-                build_date_time, _, _ = build_folder.rsplit('-', 2)
+                # build_url example: /pub/firefox/nightly/2017/09/2017-09-01-10-03-09-mozilla-central/
+                for build_url in url_list:
+                    # build_folder example: 2017-09-01-10-03-09-mozilla-central
+                    _, build_folder, _ = build_url.rsplit('/', 2)
+                    # build_date_time example: 2017-09-01-10-03-09
+                    build_date_time, _, _ = build_folder.rsplit('-', 2)
 
-                # build_sub_url example: 2017/09/2017-09-01-10-03-09-mozilla-central/
-                _, _, _, _, build_sub_url = build_url.split('/', 4)
+                    # build_sub_url example: 2017/09/2017-09-01-10-03-09-mozilla-central/
+                    _, _, _, _, build_sub_url = build_url.split('/', 4)
 
-                ret_dict[build_date_time] = build_sub_url
+                    ret_dict[build_date_time] = build_sub_url
+        except Exception as e:
+            logging.error(e)
         return ret_dict
 
     @staticmethod
@@ -382,8 +396,9 @@ class BFagent(object):
                 latest_build_date = build_datetime[0:10]
             elif latest_build_date < build_datetime:
                 latest_build_date = build_datetime[0:10]
+        if latest_build_date is None:
+            return False
         logging.info('Get Latest Build Date: {}'.format(latest_build_date))
-
         previous_days = self.generate_previous_days_list(latest_build_date, days_count=backfile_days)
 
         logging.info('Previous {} Days: {}'.format(backfile_days, previous_days))
