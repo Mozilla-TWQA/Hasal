@@ -3,9 +3,11 @@ import re
 import time
 import copy
 import json
+import requests
 import platform
 import subprocess
 import numpy as np
+from tqdm import tqdm
 from environment import Environment
 from logConfig import get_logger
 from datetime import datetime
@@ -558,6 +560,104 @@ class CommonUtil(object):
             else:
                 destination_dict[key] = value
         return destination_dict
+
+
+class NetworkUtil(object):
+
+    @staticmethod
+    def download_file(output_dp, download_link):
+        logger.info("Prepare to download the file from link [%s]" % download_link)
+        response = requests.get(download_link, verify=False, stream=True)
+        download_fn = download_link.split("/")[-1]
+        if os.path.exists(output_dp) is False:
+            os.makedirs(output_dp)
+        download_fp = os.path.join(output_dp, download_fn)
+        try:
+            try:
+                total_len = int(response.headers['content-length'])
+            except:
+                total_len = None
+            with open(download_fp, 'wb') as fh:
+                for data in tqdm(response.iter_content(chunk_size=512 * 1024), total=total_len / (512 * 1024)):
+                    fh.write(data)
+            return download_fp
+        except Exception as e:
+            logger.error("ERROR: [%s]" % e.message)
+            return None
+
+    @staticmethod
+    def get_files_from_remote_url_folder(input_url, input_params=None):
+        return_dict = {}
+        try:
+            if input_params:
+                response_obj = requests.get(input_url, params=input_params)
+            else:
+                response_obj = requests.get(input_url)
+            if response_obj.status_code == 200:
+                for line in response_obj.iter_lines(decode_unicode=True):
+                    match = re.search(r'(?<=href=").*?(?=")', line)
+                    if match:
+                        href_link = match.group(0)
+                        f_name = href_link.split("/")[-1]
+                        return_dict[f_name] = href_link
+            else:
+                logger.error("fetch remote file list error with code [%s]" % str(response_obj.getcode()))
+        except Exception as e:
+            logger.error("ERROR: [%s]" % e.message)
+        return return_dict
+
+    @staticmethod
+    def post_request_and_response(input_url, input_data=None, input_headers=None):
+        """
+
+        @param input_url: url
+        @param input_data: post data
+        @param input_headers: post header
+        @return: response obj, you can get json obj by using response_obj.json()
+        """
+        try:
+            if input_data and input_headers:
+                response_obj = requests.post(input_url, data=input_data, headers=input_headers)
+            elif input_data:
+                response_obj = requests.post(input_url, data=input_data)
+            elif input_headers:
+                response_obj = requests.post(input_url, headers=input_headers)
+            else:
+                response_obj = requests.post(input_url)
+        except Exception as e:
+            logger.error("Send post data failed, error message [%s]" % e.message)
+            return None
+        if response_obj.status_code == 200:
+            return response_obj
+        else:
+            logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s]" % (input_url, input_data, input_headers, response_obj.status_code))
+            return None
+
+    @staticmethod
+    def get_request_and_response(input_url, input_params=None, input_headers=None):
+        """
+
+        @param input_url:
+        @param input_params:
+        @return:
+        """
+        try:
+            if input_params and input_headers:
+                response_obj = requests.get(input_url, params=input_params, headers=input_headers)
+            elif input_params:
+                response_obj = requests.get(input_url, params=input_params)
+            elif input_headers:
+                response_obj = requests.get(input_url, headers=input_headers)
+            else:
+                response_obj = requests.get(input_url)
+        except Exception as e:
+            logger.error("Send post data failed, error message [%s]" % e.message)
+            return None
+        if response_obj.status_code == 200:
+            return response_obj
+        else:
+            logger.error("Send request to url:[%s], with params:[%s], error code:[%s]" % (input_url, input_params, response_obj.status_code))
+            return None
 
 
 class HasalConfigUtil(object):
