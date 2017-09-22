@@ -31,6 +31,7 @@ import logging
 import requests
 from docopt import docopt
 from datetime import datetime
+from requests.exceptions import ConnectTimeout
 
 DEFAULT_QUERY_OPTION = "all"
 DEFAULT_HASAL_SIGNATURES = "hasal_perfherder_signatures.json"
@@ -51,16 +52,23 @@ class QueryData(object):
         @return: dict object
         """
         DEFAULT_URL_HEADER = {'User-Agent': "Hasal Query Perfherder Tool"}
-        try:
-            response_obj = requests.get(url_str, headers=DEFAULT_URL_HEADER)
-        except Exception as e:
-            logging.error("Send post data failed, error message [%s]" % e.message)
-            return None
-        if response_obj.status_code == 200:
-            return response_obj.json()
-        else:
-            logging.error("response status code is [%d]" % response_obj.getcode())
-            return None
+        for _ in range(10):
+            try:
+                timeout_min = 2
+                response_obj = requests.get(url_str, headers=DEFAULT_URL_HEADER, timeout=timeout_min * 60)
+
+                if response_obj.status_code == 200:
+                    return response_obj.json()
+                else:
+                    logging.error("response status code is [%d]" % response_obj.getcode())
+                    return None
+
+            except ConnectTimeout as e:
+                logging.warn('Timeout: {}'.format(e))
+            except Exception as e:
+                logging.error("Send post data failed, error message [%s]" % e.message)
+
+        raise Exception('Can not get data from {}'.format(url_str))
 
     def query_signatures(self):
         url_str = API_URL_QUERY_SIGNATURE_LIST % (DEFAULT_PERFHERDER_PRODUCTION_URL, PROJECT_NAME_MOZILLA_CENTRAL, str(DEFAULT_HASAL_FRAMEWORK_NO))

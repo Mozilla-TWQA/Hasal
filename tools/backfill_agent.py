@@ -71,21 +71,31 @@ task_schedule = [
 
 
 def create_csv(query_days):
-    # query data
+    """
+    query data.
+    @param query_days:
+    @return: True if query and create successfully.
+    """
     DEFAULT_QUERY_OPTION = "all"
     query_sec = query_days * 24 * 60 * 60
     print "Start querying data... might takes a while!"
 
     query_data_obj = QueryData()
-    query_data_obj.query_data(query_interval=str(query_sec),
-                              query_keyword=DEFAULT_QUERY_OPTION,
-                              query_btype=DEFAULT_QUERY_OPTION,
-                              query_platform=DEFAULT_QUERY_OPTION,
-                              query_suite_name=DEFAULT_QUERY_OPTION,
-                              query_begin_date=DEFAULT_QUERY_OPTION,
-                              query_end_date=DEFAULT_QUERY_OPTION,
-                              csv_filename=csv_file)
+    try:
+        query_data_obj.query_data(query_interval=str(query_sec),
+                                  query_keyword=DEFAULT_QUERY_OPTION,
+                                  query_btype=DEFAULT_QUERY_OPTION,
+                                  query_platform=DEFAULT_QUERY_OPTION,
+                                  query_suite_name=DEFAULT_QUERY_OPTION,
+                                  query_begin_date=DEFAULT_QUERY_OPTION,
+                                  query_end_date=DEFAULT_QUERY_OPTION,
+                                  csv_filename=csv_file)
+    except Exception as e:
+        logging.error(e)
+        return False
+
     print "Done query data!"
+    return True
 
 
 def run_backfill():
@@ -231,7 +241,10 @@ class BFagent(object):
     def run(self, need_query):
         """ Refill latest Nightly """
         if need_query or not os.path.isfile(csv_file):
-            create_csv(2)  # just query last two dates data
+            # just query last two dates data
+            ret = create_csv(2)
+            if not ret:
+                return False
 
         self.reset_date_list_dict()
         self.analyze_csv(latest=True)
@@ -245,6 +258,7 @@ class BFagent(object):
 
         # Remove csv file when this round finished
         os.remove(csv_file)
+        return True
 
     def run_history(self, backfill_config):
         # load date config file
@@ -256,7 +270,9 @@ class BFagent(object):
         # TODO: add file checker
 
         # Assume back fill dates are in 14 days
-        create_csv(14)
+        ret = create_csv(14)
+        if not ret:
+            return False
 
         # loop through all the dates picked
         for nightly_build_link in self.history_dates:
@@ -281,6 +297,7 @@ class BFagent(object):
 
         # Remove csv file when this round finished
         os.remove(csv_file)
+        return True
 
     @staticmethod
     def get_build_url_data_base_on_current_date(build_date_str=None):
@@ -339,7 +356,7 @@ class BFagent(object):
         """
 
         @param days_str:
-        @return: True is all builds is ok, False if any one build miss values.
+        @return: True if has missing value.
         """
         if days_str is None:
             backfile_days = 0
@@ -353,7 +370,9 @@ class BFagent(object):
                 backfile_days = min(days_int, 30)
                 logging.info('Backfill {} days.'.format(backfile_days))
 
-        create_csv(backfile_days + 1)
+        ret = create_csv(backfile_days + 1)
+        if not ret:
+            return False
 
         build_urls_dict = self.get_build_url_data_base_on_current_date()
 
@@ -387,7 +406,7 @@ class BFagent(object):
         logging.info('Checking following builds:\n  {}'.format(previous_days_build_url_list))
 
         # loop through all the dates picked
-        is_all_ok = True
+        has_missing_value = False
         for build_url in previous_days_build_url_list:
             build_date = build_url[8:18]
 
@@ -402,13 +421,13 @@ class BFagent(object):
                 print('Congratulation! Everything was fine recently.')
             else:
                 print('Oops! Something is missing. I will help you recover it!')
-                is_all_ok = False
+                has_missing_value = True
                 self.create_json(build_url)
                 run_backfill()
 
         # Remove csv file when this round finished
         os.remove(csv_file)
-        return is_all_ok
+        return has_missing_value
 
 
 def main():
@@ -423,24 +442,32 @@ def main():
 
     agent = BFagent()
 
+    sleep_hour = 1
     # run in different mode
     if arguments['--latest']:
         print('===============\n* Latest mode *\n===============')
         while True:
-            agent.run(True)
+            run_flag = agent.run(True)
+            # sleep and wait for next time if all builds is okay
+            if not run_flag:
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
     elif arguments['--backfill']:
         print('================\n* Backfill mode *\n================')
         while True:
-            is_all_ok = agent.run_backfill(arguments['<days>'])
+            run_flag = agent.run_backfill(arguments['<days>'])
             # sleep and wait for next time if all builds is okay
-            if is_all_ok:
-                sleep_hour = 1
+            if not run_flag:
                 logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
                 time.sleep(sleep_hour * 60 * 60)
     elif arguments['-i']:
         print('================\n* History mode *\n================')
         while True:
-            agent.run_history(arguments['-i'])
+            run_flag = agent.run_history(arguments['-i'])
+            # sleep and wait for next time if all builds is okay
+            if not run_flag:
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
     else:
         print('===============\n* Single mode *\n===============')
         agent.run(arguments['--query'])
