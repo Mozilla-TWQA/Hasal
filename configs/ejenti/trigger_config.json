@@ -10,6 +10,8 @@
       "amount": 6,
       "cmd": "run-hasal-on-latest-nightly",
       "configs": {
+        "CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+        "CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev",
         "OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_firefox_gmail_ail_open_mail,tests.regression.gmail.test_chrome_gmail_ail_open_mail,tests.regression.gmail.test_firefox_gmail_ail_reply_mail,tests.regression.gmail.test_chrome_gmail_ail_reply_mail,tests.regression.gmail.test_firefox_gmail_ail_type_in_reply_field,tests.regression.gmail.test_chrome_gmail_ail_type_in_reply_field",
         "OVERWIRTE_HASAL_CONFIG_CTNT": {
           "configs": {
@@ -41,6 +43,8 @@
       "amount": 1,
       "cmd": "run-hasal-on-latest-nightly",
       "configs": {
+        "CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+        "CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev",
         "OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_firefox_gmail_ail_open_mail,tests.regression.gmail.test_chrome_gmail_ail_open_mail,tests.regression.gmail.test_firefox_gmail_ail_reply_mail,tests.regression.gmail.test_chrome_gmail_ail_reply_mail,tests.regression.gmail.test_firefox_gmail_ail_type_in_reply_field,tests.regression.gmail.test_chrome_gmail_ail_type_in_reply_field",
         "OVERWIRTE_HASAL_CONFIG_CTNT": {
           "configs": {
