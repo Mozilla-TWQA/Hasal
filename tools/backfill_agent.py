@@ -2,6 +2,7 @@
 
 Usage:
   backfill_agent.py [--query] [--latest] [-i=<str>] [--debug]
+  backfill_agent.py [--backfill] [--debug] [<days>]
   backfill_agent.py (-h | --help)
 
 Options:
@@ -9,17 +10,22 @@ Options:
   --query                   Query latest data.
   --latest                  Automatically check latest nightly build.
   -i=<str>                  Automatically refill data from json file.
+  --backfill                Automatically backfill previous <days> days (include current day). Default days is 0, only current day.
   --debug                   Debug Mode [default: False]
 """
 
 import os
+import re
 import csv
 import json
+import time
 import random
 import shutil
 import logging
 import platform
 import datetime
+import urlparse
+import requests
 from dateutil import tz
 from docopt import docopt
 
@@ -28,6 +34,8 @@ from generate_data_for_nightly_build import GenerateData
 
 
 # predefine static data
+ARCHIVE_NIGHTLY_SERVER = 'http://archive.mozilla.org/pub/firefox/nightly/'
+
 BROWSER_SET = ['firefox', 'chrome']
 MACHINE_SET = ['windows8-64', 'windows10-64']
 PLATFORM_DICT = {'Windows-10': 'windows10-64', 'Windows-7': 'windows8-64'}
@@ -63,21 +71,31 @@ task_schedule = [
 
 
 def create_csv(query_days):
-    # query data
+    """
+    query data.
+    @param query_days:
+    @return: True if query and create successfully.
+    """
     DEFAULT_QUERY_OPTION = "all"
     query_sec = query_days * 24 * 60 * 60
     print "Start querying data... might takes a while!"
 
     query_data_obj = QueryData()
-    query_data_obj.query_data(query_interval=str(query_sec),
-                              query_keyword=DEFAULT_QUERY_OPTION,
-                              query_btype=DEFAULT_QUERY_OPTION,
-                              query_platform=DEFAULT_QUERY_OPTION,
-                              query_suite_name=DEFAULT_QUERY_OPTION,
-                              query_begin_date=DEFAULT_QUERY_OPTION,
-                              query_end_date=DEFAULT_QUERY_OPTION,
-                              csv_filename=csv_file)
+    try:
+        query_data_obj.query_data(query_interval=str(query_sec),
+                                  query_keyword=DEFAULT_QUERY_OPTION,
+                                  query_btype=DEFAULT_QUERY_OPTION,
+                                  query_platform=DEFAULT_QUERY_OPTION,
+                                  query_suite_name=DEFAULT_QUERY_OPTION,
+                                  query_begin_date=DEFAULT_QUERY_OPTION,
+                                  query_end_date=DEFAULT_QUERY_OPTION,
+                                  csv_filename=csv_file)
+    except Exception as e:
+        logging.error(e)
+        return False
+
     print "Done query data!"
+    return True
 
 
 def run_backfill():
@@ -223,7 +241,10 @@ class BFagent(object):
     def run(self, need_query):
         """ Refill latest Nightly """
         if need_query or not os.path.isfile(csv_file):
-            create_csv(2)  # just query last two dates data
+            # just query last two dates data
+            ret = create_csv(2)
+            if not ret:
+                return False
 
         self.reset_date_list_dict()
         self.analyze_csv(latest=True)
@@ -237,6 +258,7 @@ class BFagent(object):
 
         # Remove csv file when this round finished
         os.remove(csv_file)
+        return True
 
     def run_history(self, backfill_config):
         # load date config file
@@ -248,7 +270,9 @@ class BFagent(object):
         # TODO: add file checker
 
         # Assume back fill dates are in 14 days
-        create_csv(14)
+        ret = create_csv(14)
+        if not ret:
+            return False
 
         # loop through all the dates picked
         for nightly_build_link in self.history_dates:
@@ -273,6 +297,152 @@ class BFagent(object):
 
         # Remove csv file when this round finished
         os.remove(csv_file)
+        return True
+
+    @staticmethod
+    def get_url_data(url):
+        timeout_min = 2
+        for _ in range(10):
+            try:
+                response = requests.get(url, timeout=timeout_min * 60)
+                return response
+            except Exception as e:
+                logging.error(e)
+        raise Exception('Can not get data from {}'.format(url))
+
+    @staticmethod
+    def get_build_url_data_base_on_current_date(build_date_str=None):
+        """
+        Get build URL list from Archive server base on today.
+        @return: dict obj. ex: {'2017-09-20-22-04-31': '2017/09/2017-09-20-22-04-31-mozilla-central/', ...}
+        """
+        if build_date_str is None:
+            build_date_str = datetime.date.today().strftime('%Y-%m-%d')
+        year_str, month_str, day_str = build_date_str.split('-')
+
+        base_url = urlparse.urljoin(ARCHIVE_NIGHTLY_SERVER, '{}/'.format(year_str))
+        base_url = urlparse.urljoin(base_url, '{}/'.format(month_str))
+
+        ret_dict = {}
+        logging.info('Accessing URL: {}'.format(base_url))
+        try:
+            response = BFagent.get_url_data(base_url)
+            if response.status_code == 200:
+                html = response.text
+                pattern = r'href="([\w/\-_]+-mozilla-central/)"'
+                url_list = re.findall(pattern, html)
+
+                # build_url example: /pub/firefox/nightly/2017/09/2017-09-01-10-03-09-mozilla-central/
+                for build_url in url_list:
+                    # build_folder example: 2017-09-01-10-03-09-mozilla-central
+                    _, build_folder, _ = build_url.rsplit('/', 2)
+                    # build_date_time example: 2017-09-01-10-03-09
+                    build_date_time, _, _ = build_folder.rsplit('-', 2)
+
+                    # build_sub_url example: 2017/09/2017-09-01-10-03-09-mozilla-central/
+                    _, _, _, _, build_sub_url = build_url.split('/', 4)
+
+                    ret_dict[build_date_time] = build_sub_url
+        except Exception as e:
+            logging.error(e)
+        return ret_dict
+
+    @staticmethod
+    def generate_previous_days_list(build_date_str, days_count=14):
+        """
+        Generate days list which contains current build date.
+        @param build_date_str: string, "YYYY-MM-DD". ex: "2017-09-20".
+        @param days_count: how many days. max is 30. ex: 14.
+        @return: list, ex: ['2017-09-20', '2017-09-19', '2017-09-18', ...]
+        """
+        latest_build_date_obj = datetime.datetime.strptime(build_date_str, '%Y-%m-%d')
+
+        days_count = min(days_count, 30)
+
+        ret_list = [build_date_str]
+        for idx in range(1, days_count + 1):
+            previous_date = (latest_build_date_obj - datetime.timedelta(days=idx)).strftime("%Y-%m-%d")
+            logging.debug('previous {} day is {}'.format(idx, previous_date))
+            ret_list.append(previous_date)
+        return ret_list
+
+    def run_backfill(self, days_str):
+        """
+
+        @param days_str:
+        @return: True if has missing value.
+        """
+        if days_str is None:
+            backfile_days = 0
+            logging.info('Backfill only current day.'.format(backfile_days))
+        else:
+            days_int = int(days_str)
+            if days_int <= 0:
+                backfile_days = 0
+                logging.info('Backfill only current day.'.format(backfile_days))
+            else:
+                backfile_days = min(days_int, 30)
+                logging.info('Backfill {} days.'.format(backfile_days))
+
+        ret = create_csv(backfile_days + 1)
+        if not ret:
+            return False
+
+        build_urls_dict = self.get_build_url_data_base_on_current_date()
+
+        latest_build_date = None
+        for build_datetime, build_sub_url in build_urls_dict.items():
+            if latest_build_date is None:
+                latest_build_date = build_datetime[0:10]
+            elif latest_build_date < build_datetime:
+                latest_build_date = build_datetime[0:10]
+        if latest_build_date is None:
+            return False
+        logging.info('Get Latest Build Date: {}'.format(latest_build_date))
+        previous_days = self.generate_previous_days_list(latest_build_date, days_count=backfile_days)
+
+        logging.info('Previous {} Days: {}'.format(backfile_days, previous_days))
+
+        previous_days_build_url_list = []
+        for day in previous_days:
+            matched_build_datetime = [build_datetime for build_datetime in build_urls_dict.keys() if day in build_datetime]
+            if matched_build_datetime:
+                previous_days_build_datetime = sorted(matched_build_datetime)[0]
+                previous_days_build_url_list.append(build_urls_dict.get(previous_days_build_datetime))
+            else:
+                # miss match, might be previous month, retry once
+                build_urls_dict.update(self.get_build_url_data_base_on_current_date(build_date_str=day))
+
+                matched_build_datetime = [build_datetime for build_datetime in build_urls_dict.keys() if day in build_datetime]
+                if matched_build_datetime:
+                    previous_days_build_datetime = sorted(matched_build_datetime)[-1]
+                    previous_days_build_url_list.append(build_urls_dict.get(previous_days_build_datetime))
+
+        logging.info('Checking following builds:\n  {}'.format(previous_days_build_url_list))
+
+        # loop through all the dates picked
+        has_missing_value = False
+        for build_url in previous_days_build_url_list:
+            build_date = build_url[8:18]
+
+            print('\n=======================\n* Checking {} *\n======================='.format(build_date))
+            self.reset_date_list_dict()
+            self.ref_date = build_date
+            self.analyze_csv(latest=False)
+            print('Set Reference Date: {}'.format(self.ref_date))
+
+            self.list_recover_data()
+            if len(self.backfill_list) == 0:
+                print('Congratulation! Everything was fine recently.')
+            else:
+                print('Oops! Something is missing. I will help you recover it!')
+                has_missing_value = True
+                self.create_json(build_url)
+                run_backfill()
+
+        # Remove csv file when this round finished
+        os.remove(csv_file)
+        return has_missing_value
 
 
 def main():
@@ -287,17 +457,34 @@ def main():
 
     agent = BFagent()
 
+    sleep_hour = 1
     # run in different mode
     if arguments['--latest']:
-        print "===============\n* Latest mode *\n==============="
+        print('===============\n* Latest mode *\n===============')
         while True:
-            agent.run(True)
+            run_flag = agent.run(True)
+            # sleep and wait for next time if all builds is okay
+            if not run_flag:
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
+    elif arguments['--backfill']:
+        print('================\n* Backfill mode *\n================')
+        while True:
+            run_flag = agent.run_backfill(arguments['<days>'])
+            # sleep and wait for next time if all builds is okay
+            if not run_flag:
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
     elif arguments['-i']:
-        print "================\n* History mode *\n================"
+        print('================\n* History mode *\n================')
         while True:
-            agent.run_history(arguments['-i'])
+            run_flag = agent.run_history(arguments['-i'])
+            # sleep and wait for next time if all builds is okay
+            if not run_flag:
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
     else:
-        print "===============\n* Single mode *\n==============="
+        print('===============\n* Single mode *\n===============')
         agent.run(arguments['--query'])
 
 
