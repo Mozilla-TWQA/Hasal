@@ -1,7 +1,7 @@
 {
   "enable"                      : false,
   "perfherder-protocol": "http",
-  "perfherder-host": "local.treeherder.mozilla.org",
+  "perfherder-host": "treeherder.mozilla.org",
   "perfherder-client-id": "",
   "perfherder-secret": "",
   "perfherder-repo": "mozilla-central",
