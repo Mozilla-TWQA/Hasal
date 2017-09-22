@@ -1,7 +1,8 @@
 """
 
 Usage:
-  backfill_agent.py [--query] [--latest] [-i=<str>] [--backfill] [--debug]
+  backfill_agent.py [--query] [--latest] [-i=<str>] [--debug]
+  backfill_agent.py [--backfill] [--debug] [<days>]
   backfill_agent.py (-h | --help)
 
 Options:
@@ -9,7 +10,7 @@ Options:
   --query                   Query latest data.
   --latest                  Automatically check latest nightly build.
   -i=<str>                  Automatically refill data from json file.
-  --backfill                Automatically backfill 14 days.
+  --backfill                Automatically backfill previous <days> days (include current day). Default days is 0, only current day.
   --debug                   Debug Mode [default: False]
 """
 
@@ -17,6 +18,7 @@ import os
 import re
 import csv
 import json
+import time
 import random
 import shutil
 import logging
@@ -333,9 +335,23 @@ class BFagent(object):
             ret_list.append(previous_date)
         return ret_list
 
-    def run_backfill(self):
-        # Assume back fill dates are in 14 days
-        backfile_days = 14
+    def run_backfill(self, days_str):
+        """
+
+        @param days_str:
+        @return: True is all builds is ok, False if any one build miss values.
+        """
+        if days_str is None:
+            backfile_days = 0
+            logging.info('Backfill only current day.'.format(backfile_days))
+        else:
+            days_int = int(days_str)
+            if days_int <= 0:
+                backfile_days = 0
+                logging.info('Backfill only current day.'.format(backfile_days))
+            else:
+                backfile_days = min(days_int, 30)
+                logging.info('Backfill {} days.'.format(backfile_days))
 
         create_csv(backfile_days + 1)
 
@@ -371,6 +387,7 @@ class BFagent(object):
         logging.info('Checking following builds:\n  {}'.format(previous_days_build_url_list))
 
         # loop through all the dates picked
+        is_all_ok = True
         for build_url in previous_days_build_url_list:
             build_date = build_url[8:18]
 
@@ -385,10 +402,13 @@ class BFagent(object):
                 print('Congratulation! Everything was fine recently.')
             else:
                 print('Oops! Something is missing. I will help you recover it!')
+                is_all_ok = False
                 self.create_json(build_url)
                 run_backfill()
+
         # Remove csv file when this round finished
         os.remove(csv_file)
+        return is_all_ok
 
 
 def main():
@@ -411,7 +431,12 @@ def main():
     elif arguments['--backfill']:
         print('================\n* Backfill mode *\n================')
         while True:
-            agent.run_backfill()
+            is_all_ok = agent.run_backfill(arguments['<days>'])
+            # sleep and wait for next time if all builds is okay
+            if is_all_ok:
+                sleep_hour = 1
+                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+                time.sleep(sleep_hour * 60 * 60)
     elif arguments['-i']:
         print('================\n* History mode *\n================')
         while True:
