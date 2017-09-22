@@ -612,6 +612,7 @@ def handle_rtm_message(slack_client, rtm_ret, configs, cmd_config, election_type
                             cmd=input_cmd_name,
                             cfg=input_configs)
                     else:
+                        input_cmd_obj['configs'] = {}
                         ret_message = '*[Agent]* {hn}/{ipaddr}\n*[Get Command]* {cmd}\n*[Configs]* no configs'.format(
                             hn=get_current_hostname(),
                             ipaddr=get_current_ip(),

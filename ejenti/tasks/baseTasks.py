@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 def init_task(kwargs):
@@ -23,3 +24,27 @@ def get_hasal_repo_path(task_config):
     default_repo_path = os.sep.join(current_path_list)
     repo_path = task_config.get("repo_path", default_repo_path)
     return repo_path
+
+
+def task_checking_sending_queue(sending_queue):
+    """
+    if the queue is full, then get one item from queue
+    """
+    if sending_queue.full():
+        message_item = sending_queue.get()
+        logging.error('The Slack Sending Queue is full, pop one item.\n{line}\n{obj}\n{line}\n'.format(
+            line='-' * 10,
+            obj=message_item))
+
+
+def task_generate_slack_sending_message(message, channel='mgt'):
+    """
+    Wrapper of generate_slack_sending_message() of slack_bot
+    """
+    if channel not in ['mgt', 'election']:
+        channel = 'mgt'
+    ret_obj = {
+        'message': message,
+        'channel': channel
+    }
+    return ret_obj
