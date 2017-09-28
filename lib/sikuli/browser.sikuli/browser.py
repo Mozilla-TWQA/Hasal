@@ -143,7 +143,8 @@ class Firefox(GeneralBrowser):
                        ('pics/ff_urlbar_gray_focus_win.png', -80, 0, 0.7),
                        ('pics/ff_urlbar_gray_focus_ubuntu.png', -80, 0, 0.7),
                        ('pics/ff_urlbar_black_focus_mac.png', -80, 0, 0.7),
-                       ('pics/ff_urlbar_dev_edition_56_win10.png', -80, 0, 0.7)]
+                       ('pics/ff_urlbar_dev_edition_56_win10.png', -80, 0, 0.7),
+                       ('pics/ff_urlbar_dev_edition_56_win10_2.png', -80, 0, 0.7)]
         for counter in range(20):
             for urlbar_pic, offset_x, offset_y, similarity in urlbar_pics:
                 if exists(Pattern(urlbar_pic).similar(similarity), 0.1):
