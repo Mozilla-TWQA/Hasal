@@ -14,6 +14,7 @@ class gDoc(WebApp):
     """
 
     GDOC_FAVORITE_ICON = [
+        [os.path.join('pics', 'gdoc_bluebg.png'), 0, 0],
         [os.path.join('pics', 'gdoc.png'), 0, 0]
     ]
 
