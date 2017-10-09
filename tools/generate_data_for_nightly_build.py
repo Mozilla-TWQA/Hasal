@@ -338,12 +338,12 @@ class GenerateData(object):
         # filter with platform, and return file name with extension
         if len(remote_file_dict.keys()) == 0:
             print "ERROR: can't get remote file list, could be the network error, or url path[%s] wrong!!" % remote_url_str
-            return False
+            return None, None
         else:
             if self.platform not in self.PLATFORM_FN_MAPPING:
                 print "ERROR: we are currently not support the platform[%s] you specified!" % self.platform
                 print "We are currently support the platform tag: [%s]" % self.PLATFORM_FN_MAPPING.keys()
-                return False
+                return None, None
             else:
                 matched_keyword = self.PLATFORM_FN_MAPPING[self.platform]['key'] + "." + self.PLATFORM_FN_MAPPING[self.platform]['ext']
                 matched_file_list = [fn for fn in remote_file_dict.keys()
@@ -351,7 +351,7 @@ class GenerateData(object):
                 if len(matched_file_list) != 1:
                     print "WARN: the possible match file list is not equal 1, list as below: [%s]" % matched_file_list
                     if len(matched_file_list) < 1:
-                        return False
+                        return None, None
                     matched_file_list = sorted(matched_file_list)[-1:]
                     print "WARN: select following file [%s]" % matched_file_list
 
@@ -362,7 +362,7 @@ class GenerateData(object):
             self.PLATFORM_FN_MAPPING[self.platform]['key'] + ".json")
         if json_file_name not in remote_file_dict:
             print "ERROR: can't find the json file[%s] in remote file list[%s]!" % (json_file_name, remote_file_dict)
-            return False
+            return None, None
         else:
             print "DEBUG: matched file name: [%s], json_file_name: [%s]" % (matched_file_name, json_file_name)
 
@@ -378,7 +378,7 @@ class GenerateData(object):
             return (download_fx_fp, download_json_fp)
         else:
             print "ERROR: build files download in [%s,%s] " % (download_fx_fp, download_json_fp)
-            return None
+            return None, None
 
     def get_nightly_build(self, build_dir_name, output_dp):
         remote_url_str = self.ARCHIVE_URL + self.NIGHTLY_URL_FOLDER + build_dir_name
