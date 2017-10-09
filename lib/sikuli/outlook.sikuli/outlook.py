@@ -70,5 +70,5 @@ class outlook(WebApp):
                            component=outlook.OUTLOOK_DISCARD_MAIL_CONFIRMATION)
 
     def click_compose_new_mail_content(self):
-        return self._click(action_name='Enter compose new mail content',
-                           component=outlook.OUTLOOK_ENTER_COMPOSE_MAIL_CONTENT)
+        self._click(action_name='Enter compose new mail content', component=outlook.OUTLOOK_ENTER_COMPOSE_MAIL_CONTENT)
+        return self._wait_for_loaded(component=outlook.OUTLOOK_COMPOSE_NEW_MAIL_ICON, timeout=60)
