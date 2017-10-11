@@ -35,7 +35,8 @@
     "browser.onboarding.enabled": false,
     "browser.onboarding.hidden": true,
     "browser.onboarding.notification.finished": true,
-    "layout.css.servo.enabled": true
+    "layout.css.servo.enabled": true,
+    "browser.eme.ui.enabled": false
   },
   "cookies": {
     "folder": "0BwkEhia_D6l_bVJ0aDdGSU5pMzg",
