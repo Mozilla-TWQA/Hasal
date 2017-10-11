@@ -42,6 +42,7 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # PRE ACTIONS
         type(Key.PAGE_DOWN)
+        type(Key.UP)
         sleep(2)
 
         # Customized Region
