@@ -33,6 +33,16 @@ class ArchiveMozillaHelper(object):
 
     @staticmethod
     def filter_backfill_period_data(input_backfill_start_date, input_current_date, input_backfill_repo, input_folder_list, input_query_channel_archive_url):
+        """
+
+        @param input_backfill_start_date:
+        @param input_current_date:
+        @param input_backfill_repo:
+        @param input_folder_list:
+        @param input_query_channel_archive_url:
+        @return: {"complete_dir_url": {"folder_name": folder_name, "folder_datetime", folder_datetime}
+        ex: {"https://archive.mozilla.org/pub/firefox/nightly/2017/09/2017-09-01-10-03-09-mozilla-central/": {"folder_name": "2017-09-01-10-03-09-mozilla-central", "folder_datetime": "2017-09-01-10-03-09"}
+        """
         result_dict = {}
         for folder_name in input_folder_list:
             folder_datetime = datetime.datetime.strptime("-".join(folder_name.split("-")[:6]), '%Y-%m-%d-%H-%M-%S')
@@ -48,13 +58,13 @@ class ArchiveMozillaHelper(object):
         return result_dict
 
     @staticmethod
-    def get_backfill_folder_list(input_backfill_days, input_backfill_repo, input_app_name, input_channel_name, input_history_folder_list):
+    def get_backfill_folder_dict(input_backfill_days, input_backfill_repo, input_app_name, input_channel_name, input_history_folder_list):
         """
         base on backfill day and channel filter the archive folder list
         @param input_backfill_days:
         @param input_backfill_repo:
-        @param input_app_name:
-        @param input_channel_name:
+        @param input_app_name: check the example: https://archive.mozilla.org/pub/<input_app_name>/<input_channel_name>
+        @param input_channel_name: check the example: https://archive.mozilla.org/pub/<input_app_name>/<input_channel_name>
         @param input_history_folder_list:
         @return:
          {

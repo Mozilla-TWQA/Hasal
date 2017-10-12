@@ -587,6 +587,13 @@ class NetworkUtil(object):
 
     @staticmethod
     def get_files_from_remote_url_folder(input_url, input_params=None):
+        """
+        Get the files list from remote url folder
+        @param input_url: url string
+        @param input_params:
+        @return: {"file_name": "download link"}
+        """
+
         return_dict = {}
         try:
             if input_params:

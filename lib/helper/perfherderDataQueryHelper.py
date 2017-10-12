@@ -90,6 +90,14 @@ class PerfherderDataQueryHelper(object):
 
     @staticmethod
     def get_perfherder_data(input_white_list, input_query_days=14, input_query_channel="mozilla-central", input_hasal_framework_no=9):
+        """
+
+        @param input_white_list: regular expression list ex: ['^youtube_ail_type_in_search_field ', ]
+        @param input_query_days: int, query days
+        @param input_query_channel: string, ex: "mozilla-central", "mozilla-beta" etc.
+        @param input_hasal_framework_no: int, hasal is always 9
+        @return:
+        """
         query_interval = input_query_days * 24 * 60 * 60
 
         if not os.path.exists(PerfherderDataQueryHelper.DEFAULT_HASAL_SIGNATURES):

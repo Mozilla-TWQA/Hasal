@@ -67,7 +67,7 @@ def checkout_latest_code(**kwargs):
     git_pull(**kwargs)
 
 
-def backfill_hasal_on_perfherder_data(**kwargs):
+def run_hasal_on_specify_nightly(**kwargs):
     """
     Combination task for daily nightly trigger test
     @param kwargs:

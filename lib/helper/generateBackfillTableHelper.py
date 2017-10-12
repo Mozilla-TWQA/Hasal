@@ -65,7 +65,7 @@ class GenerateBackfillTableHelper(object):
                                                                   "archive_datetime": history_archive_datetime,
                                                                   "push_date_stamp": data_timestamp}
 
-        total_backfill_url_dict = ArchiveMozillaHelper.get_backfill_folder_list(input_backfill_days, backfill_repo_name, input_app_name, input_channel_name, history_backfill_dir_list)
+        total_backfill_url_dict = ArchiveMozillaHelper.get_backfill_folder_dict(input_backfill_days, backfill_repo_name, input_app_name, input_channel_name, history_backfill_dir_list)
         for current_backfill_dir_url in total_backfill_url_dict.keys():
 
             # get fx pkg revison
