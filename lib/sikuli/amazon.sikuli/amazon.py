@@ -15,39 +15,48 @@ class Amazon(WebApp):
     """
 
     AMAZON_LOGO = [
-        [os.path.join('pics', 'amazon_logo.png'), 0, 0],
+        [os.path.join('pics', 'amazon_logo.png'), 0, 0]
     ]
 
     AMAZON_SEARCH_BTN = [
-        [os.path.join('pics', 'search_button.png'), 0, 0],
+        [os.path.join('pics', 'search_button.png'), 0, 0]
     ]
 
     AMAZON_SEARCH_FIELD = [
-        [os.path.join('pics', 'search_button.png'), -80, 0],
+        [os.path.join('pics', 'search_button.png'), -80, 0]
     ]
 
     AMAZON_PRODUCT_THUMBNAIL = [
         [os.path.join('pics', 'customers_text.png'), 665, 140],
         [os.path.join('pics', 'customers_text_ch_win7.png'), 665, 140],
-        [os.path.join('pics', 'customers_text_ff_win7.png'), 665, 140],
+        [os.path.join('pics', 'customers_text_ff_win7.png'), 665, 140]
     ]
 
     AMAZON_CUSTOMER_TEXT = [
         [os.path.join('pics', 'customers_text.png'), 0, 0],
         [os.path.join('pics', 'customers_text_ch_win7.png'), 0, 0],
-        [os.path.join('pics', 'customers_text_ff_win7.png'), 0, 0],
+        [os.path.join('pics', 'customers_text_ff_win7.png'), 0, 0]
+    ]
+
+    AMAZON_PRODUCT_DETAILS_TEXT = [
+        [os.path.join('pics', 'product_details_win7.png'), 0, 0],
+        [os.path.join('pics', 'product_details_win10.png'), 0, 0],
+        [os.path.join('pics', 'product_details_ff_win7.png'), 0, 0],
+        [os.path.join('pics', 'product_details_chrome_win7.png'), 0, 0],
+        [os.path.join('pics', 'product_details_ff_win10.png'), 0, 0],
+        [os.path.join('pics', 'product_details_chrome_win10.png'), 0, 0]
     ]
 
     AMAZON_FUNCTION_UNDER_SEARCH_FIELD = [
         [os.path.join('pics', 'function_under_search_field_guest_win7.png'), 0, 0],
         [os.path.join('pics', 'function_under_search_field_guest_win10.png'), 0, 0],
         [os.path.join('pics', 'function_under_search_field_moztpeqa_win7.png'), 0, 0],
-        [os.path.join('pics', 'function_under_search_field_moztpeqa_win10.png'), 0, 0],
+        [os.path.join('pics', 'function_under_search_field_moztpeqa_win10.png'), 0, 0]
     ]
 
     AMAZON_SEARCH_BAR = [
         [os.path.join('pics', 'search_bar_chrome.png'), 0, 0],
-        [os.path.join('pics', 'search_bar_firefox.png'), 0, 0],
+        [os.path.join('pics', 'search_bar_firefox.png'), 0, 0]
     ]
 
     def wait_for_logo_loaded(self, similarity=0.70):
@@ -73,6 +82,12 @@ class Amazon(WebApp):
         @param similarity: The similarity of AMAZON_CUSTOMER_TEXT component. Default: 0.70.
         """
         return self._wait_for_loaded(component=Amazon.AMAZON_CUSTOMER_TEXT, similarity=similarity)
+
+    def wait_for_product_details_text_loaded(self, similarity=0.70):
+        """
+        @param similarity: The similarity of AMAZON_PRODUCT_DETAILS_TEXT component. Default: 0.70.
+        """
+        return self._wait_for_loaded(component=Amazon.AMAZON_PRODUCT_DETAILS_TEXT, similarity=similarity)
 
     def click_search_field(self):
         """
