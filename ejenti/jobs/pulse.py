@@ -1,4 +1,6 @@
 import sys
+import time
+import random
 import socket
 import pickle
 import logging
@@ -140,6 +142,8 @@ def listen_pulse(**kwargs):
         target_queue.put(task_obj)
         logging.debug('Push task into [{}] queue with command name {}.'.format(task_queue_type,
                                                                                task_command_key))
+        # sleep 1.0 ~ 3.0 sec for load-balance
+        time.sleep(random.uniform(1, 3))
 
     def response_agent_info(data_payload):
         """
