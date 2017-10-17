@@ -731,6 +731,7 @@ Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator.generate_uploa
 Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator.__init__	Hasal.lib.helper.uploadResultHelper.PerfherderUploadDataGenerator-class.html#__init__
 Hasal.lib.helper.uploadResultHelper.PerfherderUploader	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html
 Hasal.lib.helper.uploadResultHelper.PerfherderUploader.gen_guid	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#gen_guid
+Hasal.lib.helper.uploadResultHelper.PerfherderUploader.get_machine_name	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#get_machine_name
 Hasal.lib.helper.uploadResultHelper.PerfherderUploader.submit	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#submit
 Hasal.lib.helper.uploadResultHelper.PerfherderUploader.create_job_dataset	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#create_job_dataset
 Hasal.lib.helper.uploadResultHelper.PerfherderUploader.__init__	Hasal.lib.helper.uploadResultHelper.PerfherderUploader-class.html#__init__
