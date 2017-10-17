@@ -44,7 +44,10 @@ class Amazon(WebApp):
         [os.path.join('pics', 'product_details_ff_win7.png'), 0, 0],
         [os.path.join('pics', 'product_details_chrome_win7.png'), 0, 0],
         [os.path.join('pics', 'product_details_ff_win10.png'), 0, 0],
-        [os.path.join('pics', 'product_details_chrome_win10.png'), 0, 0]
+        [os.path.join('pics', 'product_details_chrome_win10.png'), 0, 0],
+        [os.path.join('pics', 'product_details_chrome_win7_20171017'), 0, 0],
+        [os.path.join('pics', 'product_details_ff_win10_20171017'), 0, 0],
+        [os.path.join('pics', 'product_details_chrome_win10_20171017'), 0, 0]
     ]
 
     AMAZON_FUNCTION_UNDER_SEARCH_FIELD = [
