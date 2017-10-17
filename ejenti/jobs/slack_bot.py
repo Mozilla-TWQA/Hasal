@@ -612,14 +612,18 @@ def handle_rtm_message(slack_client, rtm_ret, configs, cmd_config, election_type
                             cmd=input_cmd_name,
                             cfg=input_configs)
                     else:
+                        input_cmd_obj['configs'] = {}
                         ret_message = '*[Agent]* {hn}/{ipaddr}\n*[Get Command]* {cmd}\n*[Configs]* no configs'.format(
                             hn=get_current_hostname(),
                             ipaddr=get_current_ip(),
                             cmd=input_cmd_name)
+
+                    # cmd_input_string not used(only for ejenti interactive mode).
+                    cmd_input_string = ''
                     task_obj = {
                         COMMAND_TASK_KEY_OBJECT: input_cmd_obj,
                         COMMAND_TASK_KEY_PATTERN: input_cmd_name,
-                        COMMAND_TASK_KEY_INPUT_STR: message
+                        COMMAND_TASK_KEY_INPUT_STR: cmd_input_string
                     }
 
                     input_queue_type = input_cmd_obj.get('queue-type')

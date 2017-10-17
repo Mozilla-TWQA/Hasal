@@ -1,12 +1,20 @@
 import os
 import copy
 import json
+import shutil
 import logging
+from datetime import datetime
+
 from lib.common.commonUtil import CommonUtil
 from lib.thirdparty.tee import system2
 from baseTasks import init_task
 from baseTasks import get_hasal_repo_path
 from baseTasks import parse_cmd_parameters
+from baseTasks import task_checking_sending_queue
+from baseTasks import task_generate_slack_sending_message
+from githubTasks import git_checkout
+from githubTasks import git_pull
+from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
 from firefoxBuildTasks import deploy_fx_package
 
@@ -36,10 +44,36 @@ def generate_config_path_json_mapping(input_path, input_json_obj, output_result)
     return output_result
 
 
+def checkout_latest_code(**kwargs):
+    """
+    Will operate the git command to checkout the latest code for certain branch
+    @param kwargs:
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: checkout and pull branch name
+        kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: checkout and pull remote url
+    @return:
+    """
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+    kwargs['queue_msg']['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] = kwargs['queue_msg']['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME']
+
+    # git reset
+    git_reset(**kwargs)
+
+    # git checkout
+    git_checkout(**kwargs)
+
+    # git pull the latest code
+    git_pull(**kwargs)
+
+
 def run_hasal_on_latest_nightly(**kwargs):
     """
     Combination task for daily nightly trigger test
     @param kwargs:
+
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] :: git pull remote url (should be origin)
+        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] :: git pull remote url (current will be dev)
+        kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] :: git checkout branch name
 
         kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
         tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2
@@ -69,6 +103,10 @@ def run_hasal_on_latest_nightly(**kwargs):
 
     @return:
     """
+
+    # checkout latest code
+    checkout_latest_code(**kwargs)
+
     # download latest nightly build
     pkg_download_info_json = download_latest_nightly_build(**kwargs)
 
@@ -260,3 +298,100 @@ def exec_hasal_runtest(**kwargs):
 
     exec_cmd_str = " ".join(exec_cmd_list)
     system2(exec_cmd_str, cwd=workding_dir, logger=default_log_fn, stdout=True, exec_env=os.environ.copy())
+
+
+def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=False):
+    """
+    task for querying and removing Hasal output folder
+    """
+
+    # verify remove date
+    if remove_date is None:
+        remove_date = datetime.now().strftime('%Y-%m-%d')
+    try:
+        remove_date_datetime = datetime.strptime(remove_date, '%Y-%m-%d')
+    except:
+        return 'Remove Date is not correct: {}'.format(remove_date)
+
+    # get Hasal working dir path
+    hasal_working_dir = get_hasal_repo_path(task_config)
+
+    output_folder_name = 'output'
+    image_folder_name = 'images'
+    image_output_folder_name = 'output'
+
+    image_output_folder_path = os.path.join(hasal_working_dir, output_folder_name, image_folder_name, image_output_folder_name)
+    abs_image_output_folder_path = os.path.abspath(image_output_folder_path)
+
+    folder_name_list = os.listdir(abs_image_output_folder_path)
+
+    file_obj_list = []
+    for folder_name in folder_name_list:
+        sub_output_image_folder_path = os.path.join(abs_image_output_folder_path, folder_name)
+
+        m_timestamp = os.stat(sub_output_image_folder_path).st_mtime
+        modified_datetime = datetime.fromtimestamp(m_timestamp)
+        modified_date_str = modified_datetime.strftime('%Y-%m-%d')
+
+        if modified_datetime <= remove_date_datetime:
+            file_obj = {
+                'path': sub_output_image_folder_path,
+                'date': modified_date_str,
+                'ts': m_timestamp
+            }
+            file_obj_list.append(file_obj)
+
+            if remove:
+                logging.warn('Remove folder: {}'.format(sub_output_image_folder_path))
+                shutil.rmtree(sub_output_image_folder_path)
+
+    if remove:
+        ret_message = '*Removed Hasal Output before {}*\n'.format(remove_date)
+    else:
+        ret_message = '*Query Hasal Output before {}*\n'.format(remove_date)
+
+    for file_obj in file_obj_list:
+        ret_message += '{}, {}\n'.format(file_obj.get('path'),
+                                         file_obj.get('date'))
+
+    return ret_message
+
+
+def query_hasal_output_folder(**kwargs):
+    """
+    task for querying Hasal output folder
+    """
+    key_date = 'date'
+
+    # get queue msg, consumer config from kwargs
+    queue_msg, consumer_config, task_config = init_task(kwargs)
+    slack_sending_queue = kwargs.get('slack_sending_queue')
+
+    remove_date = task_config.get(key_date)
+
+    logging.info('Query Hasal ouput folder')
+    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=False)
+
+    msg_obj = task_generate_slack_sending_message(ret_msg)
+    task_checking_sending_queue(sending_queue=slack_sending_queue)
+    slack_sending_queue.put(msg_obj)
+
+
+def remove_hasal_output_folder(**kwargs):
+    """
+    task for REMOVE Hasal output folder
+    """
+    key_date = 'date'
+
+    # get queue msg, consumer config from kwargs
+    queue_msg, consumer_config, task_config = init_task(kwargs)
+    slack_sending_queue = kwargs.get('slack_sending_queue')
+
+    remove_date = task_config.get(key_date)
+
+    logging.info('REMOVE Hasal ouput folder')
+    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=True)
+
+    msg_obj = task_generate_slack_sending_message(ret_msg)
+    task_checking_sending_queue(sending_queue=slack_sending_queue)
+    slack_sending_queue.put(msg_obj)

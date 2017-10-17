@@ -42,12 +42,15 @@ class Case(basecase.SikuliInputLatencyCase):
 
         # PRE ACTIONS
         type(Key.PAGE_DOWN)
+        type(Key.UP)
         sleep(2)
 
         # Customized Region
         customized_region_name = 'end'
 
-        _, obj = app.wait_for_customer_text_loaded()
+        _, obj = app.wait_for_product_details_text_loaded()
+        obj.x, obj.y = obj.x - 20, obj.y - 305
+
         # product thumbnail list region
         compare_area = self.tuning_region(obj, w_offset=850, h_offset=250)
         self.set_override_region_settings(customized_region_name, compare_area)

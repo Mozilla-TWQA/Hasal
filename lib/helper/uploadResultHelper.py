@@ -3,6 +3,7 @@ import copy
 import time
 import random
 import string
+import socket
 import traceback
 from datetime import datetime
 from ..common.pyDriveUtil import PyDriveUtil
@@ -38,8 +39,15 @@ class PerfherderUploader(object):
         length = max(length, min_length)
         return ''.join(random.choice(string.letters + string.digits) for _ in xrange(length))
 
+    @staticmethod
+    def get_machine_name():
+        hostname = socket.gethostname()
+        ipaddr = socket.gethostbyname(hostname)
+        return '{hostname}/{ipaddr}'.format(hostname=hostname, ipaddr=ipaddr)
+
     def create_job_dataset(self, revision, browser, timestamp, perf_data, version='', repo_link='', video_links='', extra_info_obj={}):
         job_guid = PerfherderUploader.gen_guid(len(revision))
+        machine_name = PerfherderUploader.get_machine_name()
 
         if browser.lower() == 'firefox':
             job_symbol = 'F'
@@ -131,7 +139,7 @@ class PerfherderUploader(object):
                     'state': 'completed',
                     'result': 'success',
 
-                    'machine': 'local-machine',
+                    'machine': machine_name,
                     # TODO: read platform test result
                     'build_platform': {
                         'platform': self.platform,

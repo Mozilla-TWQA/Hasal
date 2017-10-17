@@ -91,7 +91,10 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_CLICK_CENTER_HOME_POST_AREA = [
-        [os.path.join('pics', 'facebook_home_post_area.png'), 0, 0]
+        [os.path.join('pics', 'facebook_home_post_area_win10_20171016.png'), 0, 0],
+        [os.path.join('pics', 'facebook_home_post_area_win7_20171016.png'), 0, 0],
+        [os.path.join('pics', 'facebook_home_post_area.png'), 0, 0],
+        [os.path.join('pics', 'facebook_home_post_area_win10.png'), 0, 0]
     ]
 
     FACEBOOK_CLICK_PHOTO_VIDEO_HOME_POST_AREA = [
@@ -197,6 +200,8 @@ class facebook(WebApp):
     ]
 
     FACEBOOK_MESSAGE_SEARCH_BAR = [
+        [os.path.join('pics', 'facebook_message_search_bar_win10.png'), 0, 0],
+        [os.path.join('pics', 'facebook_message_search_bar_win7.png'), 0, 0],
         [os.path.join('pics', 'facebook_message_search_bar.png'), 0, 0]
     ]
 

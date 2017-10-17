@@ -96,6 +96,22 @@
       "func-name": "exec_hasal_runtest",
       "queue-type": "sync",
       "configs":{}
+    },
+    "query-hasal-output":
+    {
+      "desc": "Query Hasal output folder. The configs is {'date': '2017-09-21'} The empty configs is current date.",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "query_hasal_output_folder",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "REMOVE-hasal-output":
+    {
+      "desc": "Remove Hasal output folder. The config is {'date': '2017-09-21'} The empty configs is current date.",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "remove_hasal_output_folder",
+      "queue-type": "sync",
+      "configs":{}
     }
   }
 }

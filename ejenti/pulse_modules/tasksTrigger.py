@@ -1,8 +1,7 @@
 import os
 import re
-import shutil
-import socket
 import json
+import socket
 import hashlib
 import logging
 import urllib2
@@ -63,7 +62,7 @@ class TasksTrigger(object):
         }
     }
 
-    def __init__(self, config, cmd_config_obj):
+    def __init__(self, config, cmd_config_obj, clean_at_begin=False):
         self.all_config = config
         self.cmd_config_obj = cmd_config_obj
 
@@ -74,6 +73,9 @@ class TasksTrigger(object):
 
         self._validate_data()
 
+        if clean_at_begin:
+            self.clean_pulse_queues()
+
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
@@ -82,6 +84,29 @@ class TasksTrigger(object):
         if not self.pulse_username or not self.pulse_password:
             # there is no Pulse account information in "job_config.json"
             raise Exception('Cannot access Pulse due to there is no Pulse account information.')
+
+    def clean_pulse_queues(self):
+        """
+        Cleaning and re-creating enabled Pulse Queues for cleaning Dead Consumer Client on Pulse.
+        Dead Consumer Client will get messages without ack(), so messages will always stay on Pulse, and no one can handle it.
+        """
+        logging.info('Cleaning and re-creating Pulse Queues ...')
+        queues_set = set()
+        for job_name, job_detail in self.jobs_config.items():
+            # have default config
+            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
+            topic = job_detail.get(TasksTrigger.KEY_JOBS_TOPIC, '')
+            if enable and topic:
+                queues_set.add(topic)
+        logging.info('Enabled Pulse Queues: {}'.format(queues_set))
+
+        for topic in queues_set:
+            ret = HasalPulsePublisher.re_create_pulse_queue(username=self.pulse_username,
+                                                            password=self.pulse_password,
+                                                            topic=topic)
+            if not ret:
+                logging.error('Queue [{}] has been deleted, but not be re-created successfully.'.format(topic))
+        logging.info('Clean and re-create Pulse Queues done.')
 
     @staticmethod
     def get_all_latest_files():
@@ -164,6 +189,27 @@ class TasksTrigger(object):
         return hash_string
 
     @staticmethod
+    def check_folder(checked_folder):
+        """
+        Checking folder.
+        @param checked_folder:
+        @return: Return True if folder already exists and is folder, or re-create folder successfully.
+        """
+        try:
+            if os.path.exists(checked_folder):
+                if os.path.isfile(checked_folder):
+                    os.remove(checked_folder)
+                    os.makedirs(checked_folder)
+                return True
+            else:
+                # there is no valid MD5 folder
+                os.makedirs(checked_folder)
+                return True
+        except Exception as e:
+            logging.error(e)
+            return False
+
+    @staticmethod
     def check_latest_info_json_md5_changed(job_name, platform):
         """
         @param job_name: the job name which will set as identify name.
@@ -175,12 +221,8 @@ class TasksTrigger(object):
         md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
 
         # prepare MD5 folder
-        if os.path.exists(md5_folder):
-            if not os.path.isdir(md5_folder):
-                shutil.rmtree(md5_folder)
-                os.makedirs(md5_folder)
-        else:
-            os.makedirs(md5_folder)
+        if not TasksTrigger.check_folder(md5_folder):
+            return False
 
         # get new MD5 hash
         new_hash = TasksTrigger.get_latest_info_json_md5_hash(platform)
@@ -210,6 +252,37 @@ class TasksTrigger(object):
                                                                                             new_hash))
             with open(job_md5_file, 'w') as f:
                 f.write(new_hash)
+            return True
+
+    @staticmethod
+    def clean_md5_by_job_name(job_name):
+        """
+        clean the md5 file by job name.
+        @param job_name: the job name which will set as identify name.
+        """
+        current_file_folder = os.path.dirname(os.path.realpath(__file__))
+
+        md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
+
+        # prepare MD5 folder
+        if not TasksTrigger.check_folder(md5_folder):
+            return False
+
+        # check MD5 file
+        job_md5_file = os.path.join(md5_folder, job_name)
+        if os.path.exists(job_md5_file):
+            if os.path.isfile(job_md5_file):
+                try:
+                    os.remove(job_md5_file)
+                    return True
+                except Exception as e:
+                    logging.error(e)
+                    return False
+            else:
+                logging.warn('The {} is not a file.'.format(job_md5_file))
+                return False
+        else:
+            logging.debug('The {} not exists.'.format(job_md5_file))
             return True
 
     @staticmethod

@@ -17,10 +17,14 @@ class gSheet(WebApp):
     ]
 
     GSHEET_MODIFY_HIGHLIGHT_CELL = [
+        [os.path.join('pics', 'column_header_win10_fx_57_nightly.png'), 450, 180],
+        [os.path.join('pics', 'column_header_mac_fx_57_nightly.png'), 450, 180],
         [os.path.join('pics', 'column_header.png'), 450, 180]
     ]
 
     GSHEET_DELETE_HIGHLIGHT_CELL = [
+        [os.path.join('pics', 'column_header_win10_fx_57_nightly.png'), 450, 180],
+        [os.path.join('pics', 'column_header_mac_fx_57_nightly.png'), 450, 180],
         [os.path.join('pics', 'column_header.png'), 450, 180]
     ]
 
@@ -29,14 +33,20 @@ class gSheet(WebApp):
     ]
 
     GSHEET_MOVE_TO_HIGHLIGHT_SCROLL_CELL = [
+        [os.path.join('pics', 'column_header_win10_fx_57_nightly.png'), 0, 60],
+        [os.path.join('pics', 'column_header_mac_fx_57_nightly.png'), 0, 60],
         [os.path.join('pics', 'column_header.png'), 0, 60]
     ]
 
     GSHEET_COLUMN_HEADER = [
+        [os.path.join('pics', 'column_header_win10_fx_57_nightly.png'), 0, 0],
+        [os.path.join('pics', 'column_header_mac_fx_57_nightly.png'), 0, 0],
         [os.path.join('pics', 'column_header.png'), 0, 0]
     ]
 
     GSHEET_1ST_CELL = [
+        [os.path.join('pics', 'column_header_win10_fx_57_nightly.png'), 0, 80],
+        [os.path.join('pics', 'column_header_mac_fx_57_nightly.png'), 0, 80],
         [os.path.join('pics', 'column_header.png'), 0, 80]
     ]
 

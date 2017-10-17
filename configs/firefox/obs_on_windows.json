@@ -35,7 +35,8 @@
     "browser.onboarding.enabled": false,
     "browser.onboarding.hidden": true,
     "browser.onboarding.notification.finished": true,
-    "layout.css.servo.enabled": true
+    "layout.css.servo.enabled": true,
+    "browser.eme.ui.enabled": false
   },
   "profile_files": {
     "DisableStatusBar": {

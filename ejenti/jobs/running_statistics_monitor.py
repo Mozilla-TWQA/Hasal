@@ -86,6 +86,7 @@ class RunningStatisticsHandler(PatternMatchingEventHandler):
 
         if os.path.exists(running_statistics_file_path) and os.path.isfile(running_statistics_file_path):
 
+            log_level = SLACK_LOGGING_LEVEL_INFO
             msg = ''
             try:
                 with open(running_statistics_file_path, 'r') as f:
@@ -109,22 +110,24 @@ class RunningStatisticsHandler(PatternMatchingEventHandler):
                             error_sikuli_running = True
 
                         if error_img_compare or error_sikuli_running:
+                            log_level = SLACK_LOGGING_LEVEL_ERROR
                             msg = 'We found some error occurred from running_statistics file.\n' \
                                   '*[Case Name]* {casename}\n' \
                                   '*[Timestamp]* {ts}\n' \
                                   '*[Sikuli Running Stat]* {stat_s}\n' \
-                                  '*[Image Comapre Stat]* {stat_i}\n' \
+                                  '*[Image Compare Stat]* {stat_i}\n' \
                                   '*[FPS Stat]* {stat_f}'.format(casename=case_info.get(KEY_CASE_INFO_CASE_NAME),
                                                                  ts=case_info.get(KEY_CASE_INFO_CASE_TIMESTAMP),
                                                                  stat_s=current_status.get(KEY_CURRENT_STATUS_SIKULI_RUNNING_STAT),
                                                                  stat_i=current_status.get(KEY_CURRENT_STATUS_STATUS_IMG_COMPARE_RESULT),
                                                                  stat_f=current_status.get(KEY_CURRENT_STATUS_FPS_STAT))
             except:
+                log_level = SLACK_LOGGING_LEVEL_WARN
                 msg = 'Can not loading *{}* file.'.format(running_statistics_file_path)
 
             if msg:
-                logging.warn(msg)
-                slack_msg = '{level} {msg}\n*[Time]* {time}\n{line}'.format(level=SLACK_LOGGING_LEVEL_ERROR,
+                logging.debug(msg)
+                slack_msg = '{level} {msg}\n*[Time]* {time}\n{line}'.format(level=log_level,
                                                                             msg=msg,
                                                                             time=datetime.now().strftime(
                                                                                 '%Y-%m-%d %H:%M:%S'),

@@ -66,9 +66,9 @@ def get_browser_name_list(browser_type):
     if browser_type == Environment.DEFAULT_BROWSER_TYPE_FIREFOX:
         # This is to ensure all kinds of firefox we supported can be properly moved.
         if sys.platform == 'darwin':
-            return ['Firefox.app', 'FirefoxNightly.app']
+            return ['Firefox.app', 'FirefoxNightly.app', 'FirefoxDeveloperEdition.app']
         else:
-            return ['Mozilla Firefox', 'Nightly']
+            return ['Mozilla Firefox', 'Nightly', 'Firefox Developer Edition']
     elif browser_type.lower() == Environment.DEFAULT_BROWSER_TYPE_CHROME:
         if sys.platform == 'darwin':
             return ['Google Chrome.app', 'Chrome.app']

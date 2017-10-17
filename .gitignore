@@ -41,6 +41,9 @@ firefox-*.dmg
 firefox-*.zip
 firefox-*.tar.bz2
 
+# Backfill Agent
+hasal_perfherder_signatures.json
+
 # File types to ignore
 *.zip
 *.diff
