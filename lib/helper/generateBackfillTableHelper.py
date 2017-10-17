@@ -16,13 +16,14 @@ class GenerateBackfillTableHelper(object):
     DEFAULT_BACKFILL_TABLE_LOCAL_FN = "backfill_table.json"
 
     @staticmethod
-    def generate_archieve_revision_relation_table(input_history_backfill_table, input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly"):
+    def generate_archieve_revision_relation_table(input_history_backfill_table, input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_platform=None):
         """
         generate archive dir and revision relation table
         @param input_backfill_days:
         @param input_backfill_channel:
         @param input_app_name:
         @param input_channel_name:
+        @param input_platform: only accept string value of  "linux64", "mac", "win64"
         @return:
         example:
         {
@@ -38,12 +39,15 @@ class GenerateBackfillTableHelper(object):
         history_backfill_dir_list = []
 
         # init platform value
-        if sys.platform == "linux2":
-            current_platform_for_archive = "linux64"
-        elif sys.platform == "darwin":
-            current_platform_for_archive = "mac"
+        if input_platform:
+            current_platform_for_archive = input_platform
         else:
-            current_platform_for_archive = "win64"
+            if sys.platform == "linux2":
+                current_platform_for_archive = "linux64"
+            elif sys.platform == "darwin":
+                current_platform_for_archive = "mac"
+            else:
+                current_platform_for_archive = "win64"
 
         # generate history backfill dir list
         # convert history data into backfill_url_dict
@@ -115,7 +119,16 @@ class GenerateBackfillTableHelper(object):
         return archieve_revision_relation_table
 
     @staticmethod
-    def generate_archieve_perfherder_releation_table(input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_white_list=[]):
+    def generate_archieve_perfherder_releation_table(input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_white_list=[], input_platform=None):
+        """
+        (I AM THE ENTRY POINT!!!) You can call me to generate the big archive-revision-perfherder releation table
+        @param input_backfill_days:
+        @param input_backfill_repo:
+        @param input_app_name:
+        @param input_channel_name:
+        @param input_white_list:
+        @return:
+        """
 
         # load existing backfill table data
         history_backfill_table = {}
@@ -124,7 +137,7 @@ class GenerateBackfillTableHelper(object):
                 history_backfill_table = json.load(read_fh)
 
         # get archive and revision mapping table data
-        current_archive_data_table = GenerateBackfillTableHelper.generate_archieve_revision_relation_table(history_backfill_table, input_backfill_days, input_backfill_repo, input_app_name, input_channel_name)
+        current_archive_data_table = GenerateBackfillTableHelper.generate_archieve_revision_relation_table(history_backfill_table, input_backfill_days, input_backfill_repo, input_app_name, input_channel_name, input_platform)
 
         # get archive and perfherder mapping table data
         current_perfherder_data_table = PerfherderDataQueryHelper.get_perfherder_data(input_white_list=input_white_list, input_query_days=input_backfill_days, input_query_channel=input_backfill_repo)
