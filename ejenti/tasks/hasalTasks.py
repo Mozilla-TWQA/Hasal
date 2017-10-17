@@ -16,6 +16,7 @@ from githubTasks import git_checkout
 from githubTasks import git_pull
 from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
+from firefoxBuildTasks import download_specify_url_nightly_build
 from firefoxBuildTasks import deploy_fx_package
 
 
@@ -66,14 +67,77 @@ def checkout_latest_code(**kwargs):
     git_pull(**kwargs)
 
 
+def run_hasal_on_specify_nightly(**kwargs):
+    """
+    Combination task for daily nightly trigger test
+    @param kwargs:
+
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: git pull remote url (should be origin)
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: git checkout branch name
+
+        kwargs['cmd_obj']['configs']['DOWNLOAD_PKG_DIR_URL'] :: the full path after https://archive.mozilla.org/pub/firefox/nightly
+
+        kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
+        tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2
+
+        kwargs['cmd_obj']['configs']['OVERWIRTE_HASAL_CONFIG_CTNT'] :: the ctnt use for overwrite the current config example as below:
+        {
+        "configs": {
+            "exec": {
+                "default.json": {
+                    "key1": "value1"
+                }
+            },
+            "firefox": {
+                "default.json": {
+                    "key2": "value2",
+                    "key3": "value3"
+                    }
+            },
+            "online": {
+                "abc.json":{
+                    "key3": "value3",
+                    "key4": "value4"
+                    }
+            }
+        }
+    }
+
+    @return:
+    """
+
+    # checkout latest code
+    checkout_latest_code(**kwargs)
+
+    # download latest nightly build
+    pkg_download_info_json = download_specify_url_nightly_build(**kwargs)
+
+    # deploy fx
+    # specify firefox downloaded package path
+    kwargs['queue_msg']['cmd_obj']['configs']['INPUT_FX_DL_PKG_PATH'] = pkg_download_info_json['FX-DL-PACKAGE-PATH']
+    if deploy_fx_package(**kwargs):
+        # generate hasal config, get the config from upper task and merge with info from nightly json info
+        meta_task_input_config = kwargs['queue_msg']['cmd_obj']['configs'].get("OVERWIRTE_HASAL_CONFIG_CTNT", {})
+        auto_generate_config = {"configs": {
+            "upload": {"default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
+                                        "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}},
+            "exec": {"default.json": {"exec-suite-fp": generate_suite_file(**kwargs)}}}}
+        merge_input_config = CommonUtil.deep_merge_dict(meta_task_input_config, auto_generate_config)
+        kwargs['queue_msg']['cmd_obj']['configs']['OVERWIRTE_HASAL_CONFIG_CTNT'] = merge_input_config
+        ejenti_hasal_config = generate_hasal_config(**kwargs)
+
+        # exec hasal runtest
+        kwargs['queue_msg']['cmd_obj']['configs']['RUNTEST_CONFIG_PARAMETERS'] = ejenti_hasal_config
+        exec_hasal_runtest(**kwargs)
+
+
 def run_hasal_on_latest_nightly(**kwargs):
     """
     Combination task for daily nightly trigger test
     @param kwargs:
 
-        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_REMOTE_URL'] :: git pull remote url (should be origin)
-        kwargs['cmd_obj']['configs']['GIT_PULL_PARAMETER_BRANCH_NAME'] :: git pull remote url (current will be dev)
-        kwargs['cmd_obj']['configs']['GIT_CHECKOUT_PARAMETER_BRANCH_NAME'] :: git checkout branch name
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_REMOTE_URL'] :: git pull remote url (should be origin)
+        kwargs['cmd_obj']['configs']['CHECKOUT_LATEST_CODE_BRANCH_NAME'] :: git checkout branch name
 
         kwargs['cmd_obj']['configs']['OVERWRITE_HASAL_SUITE_CASE_LIST'] :: the case list use for overwrite the current suite file, will generate a new suite file called ejenti.suite, ex:
         tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_1, tests.regression.gdoc.test_firefox_gdoc_read_basic_txt_2

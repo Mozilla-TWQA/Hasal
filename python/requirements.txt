@@ -12,3 +12,7 @@ pyflakes == 0.8.1
 jsonschema==2.6.0
 
 -e python/tidy
+
+# For commonUtil.py
+requests==2.18.4
+tqdm==4.15.0
