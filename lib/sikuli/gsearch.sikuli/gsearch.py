@@ -31,7 +31,8 @@ class Gsearch(WebApp):
 
     GSEARCH_MOZILLA_SUGGESTION = [
         [os.path.join('pics', 'gsearch_search_result_1.png'), 0, 0],
-        [os.path.join('pics', 'gsearch_search_result_2.png'), 0, 0]
+        [os.path.join('pics', 'gsearch_search_result_2.png'), 0, 0],
+        [os.path.join('pics', 'gsearch_search_result_20171018'), 0, 0]
     ]
 
     def wait_gsearch_loaded(self, similarity=0.70):
