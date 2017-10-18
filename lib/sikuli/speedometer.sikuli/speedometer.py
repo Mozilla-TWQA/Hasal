@@ -34,9 +34,7 @@ class speedometer(WebApp):
                                      timeout=timeout)
 
     def start_test(self):
-        return self._click(action_name='Start Test',
-                    component=speedometer.SPEEDOMETER_START_TEST_ICON,
-                    wait_component=speedometer.SPEEDOMETER_START_TEST_ICON)
+        return self._click(action_name='Start Test', component=speedometer.SPEEDOMETER_START_TEST_ICON, wait_component=speedometer.SPEEDOMETER_START_TEST_ICON)
 
     def click_test_result_details(self, similarity=0.80):
         return self._click(action_name='Click Details',

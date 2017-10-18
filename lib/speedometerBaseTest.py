@@ -26,7 +26,6 @@ class SpeedometerBaseTest(baseTest.BaseTest):
         with open(output_result_fp, "wb") as fh:
             json.dump(reulst_data, fh, indent=2)
 
-
     def setUp(self):
         super(SpeedometerBaseTest, self).setUp()
 
