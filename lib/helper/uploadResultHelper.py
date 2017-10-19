@@ -334,14 +334,17 @@ class VideoUploader(object):
     @staticmethod
     def upload_video(upload_config, upload_video_fp):
         # init b2 object
-        b2Obj = B2Util(upload_config)
+        account_id = upload_config.get("b2-account-id", None)
+        account_key = upload_config.get("b2-account-key", None)
+        b2Obj = B2Util(account_id, account_key)
 
         # init upload sub folder name
         upload_subfolder_name = datetime.now().strftime('%Y-%m')
 
         video_perview_url = ""
         if os.path.exists(upload_video_fp):
-            download_video_url = b2Obj.upload_file(upload_video_fp, upload_subfolder_name)
+            bucket_name = upload_config.get("b2-upload-video-bucket-name", None)
+            download_video_url = b2Obj.upload_file(upload_video_fp, bucket_name, upload_subfolder_name)
 
             if download_video_url:
                 video_perview_url = download_video_url

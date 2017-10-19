@@ -5,6 +5,7 @@ import socket
 import shutil
 import datetime
 import logging
+from lib.common.b2Util import B2Util
 from lib.common.commonUtil import CommonUtil
 from lib.common.statusFileCreator import StatusFileCreator
 
@@ -71,7 +72,10 @@ def status_json_creator(**kwargs):
     if "configs" not in kwargs:
         raise Exception("The current input consumer kwargs didn't contain the kwarg [configs]")
 
-    # get data period define
+    # get config defined parameter [data period define]
+    b2_account_id = kwargs['configs'].get("b2_account_id", None)
+    b2_account_key = kwargs['configs'].get("b2_account_key", None)
+    b2_upload_bucket_name = kwargs['configs'].get("b2_upload_bucket_name", None)
     data_recently_define_period = kwargs['configs'].get("data_recently_define_period", DEFAULT_DATA_RECENTLY_DEFINE_PERIOD)
     data_history_define_period = kwargs['configs'].get("data_recently_define_period", DEFAULT_DATA_HISTORY_DEFINE_PERIOD)
 
@@ -152,3 +156,17 @@ def status_json_creator(**kwargs):
     # dump recently json obj to file
     with open(recently_status_json_file_path, "wb") as recently_write_fh:
         json.dump(recently_status_json_obj, recently_write_fh)
+
+    # upload to b2
+    b2_obj = B2Util(b2_account_id, b2_account_key)
+    history_status_json_url = b2_obj.upload_file(history_status_json_file_path, b2_upload_bucket_name)
+    recently_status_json_url = b2_obj.upload_file(recently_status_json_file_path, b2_upload_bucket_name)
+
+    if not history_status_json_url:
+        logging.error("Upload history status json file failed!")
+
+    if not recently_status_json_url:
+        logging.error("Upload recently status json file failed!")
+
+    if history_status_json_url and recently_status_json_url:
+        logging.debug("Upload history and recently status json file success!!")
