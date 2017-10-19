@@ -12,26 +12,28 @@ logger = get_logger(__name__)
 
 
 class GenerateBackfillTableHelper(object):
-    DEFAULT_HG_QUERY_REVISION_JSON_URL = "https://hg.mozilla.org/mozilla-central/json-rev"
-    DEFAULT_BACKFILL_TABLE_LOCAL_FN = "backfill_table.json"
+    DEFAULT_HG_QUERY_REVISION_JSON_URL = 'https://hg.mozilla.org/mozilla-central/json-rev'
+    DEFAULT_BACKFILL_TABLE_LOCAL_FN = 'backfill_table.json'
+    PLATFORM_BACKFILL_TABLE_LOCAL_FN = 'backfill_table_{platform}.json'
 
     @staticmethod
-    def generate_archieve_revision_relation_table(input_history_backfill_table, input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_platform=None):
+    def generate_archive_revision_relation_table(input_history_backfill_table, input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_platform=None):
         """
-        generate archive dir and revision relation table
+        generate archive dir and revision relation table.
+
+        @param input_history_backfill_table:
         @param input_backfill_days:
-        @param input_backfill_channel:
+        @param input_backfill_repo:
         @param input_app_name:
         @param input_channel_name:
         @param input_platform: only accept string value of  "linux64", "mac", "win64"
-        @return:
-        example:
-        {
+        @return: dict object, example::
+            {
+            1505812350: {'pkg_json_url': u'https://archive.mozilla.org/pub/firefox/nightly/2017/09/2017-09-19-10-04-05-mozilla-central/firefox-57.0a1.en-US.mac.json',
+                         'pkg_fn_url': u'https://archive.mozilla.org/pub/firefox/nightly/2017/09/2017-09-19-10-04-05-mozilla-central/firefox-57.0a1.en-US.mac.dmg',
+                         'revision': u'e4261f5b96ebfd63e7cb8af3035ff9fea90c74a5'}
+            }
 
-        1505812350: {'pkg_json_url': u'https://archive.mozilla.org/pub/firefox/nightly/2017/09/2017-09-19-10-04-05-mozilla-central/firefox-57.0a1.en-US.mac.json',
-                     'pkg_fn_url': u'https://archive.mozilla.org/pub/firefox/nightly/2017/09/2017-09-19-10-04-05-mozilla-central/firefox-57.0a1.en-US.mac.dmg',
-                     'revision': u'e4261f5b96ebfd63e7cb8af3035ff9fea90c74a5'}
-        }
         """
         archieve_revision_relation_table = {}
         backfill_repo_name = input_backfill_repo + "/"
@@ -91,7 +93,10 @@ class GenerateBackfillTableHelper(object):
 
                             # the existing data example looks like [1505857765, 0]
                             # not sure what do we need to do with second value, skip handling it first
-                            current_backfill_revision_push_date_stamp = query_hg_json_obj.get("pushdate", None)[0]
+
+                            # should modify from integer to string
+                            current_backfill_revision_push_date_stamp = str(query_hg_json_obj.get("pushdate", None)[0])
+
                             if current_backfill_revision_push_date_stamp:
                                 archieve_revision_relation_table[current_backfill_revision_push_date_stamp] = {"revision": current_backfill_revision,
                                                                                                                "pkg_json_url": current_backfill_fx_pkg_json_url,
@@ -119,7 +124,7 @@ class GenerateBackfillTableHelper(object):
         return archieve_revision_relation_table
 
     @staticmethod
-    def generate_archieve_perfherder_releation_table(input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_white_list=[], input_platform=None):
+    def generate_archive_perfherder_relational_table(input_backfill_days=14, input_backfill_repo="mozilla-central", input_app_name="firefox", input_channel_name="nightly", input_white_list=[], input_platform=None):
         """
         (I AM THE ENTRY POINT!!!) You can call me to generate the big archive-revision-perfherder releation table
         @param input_backfill_days:
@@ -127,17 +132,23 @@ class GenerateBackfillTableHelper(object):
         @param input_app_name:
         @param input_channel_name:
         @param input_white_list:
+        @param input_platform: only accept string value of  "linux64", "mac", "win64"
         @return:
         """
 
         # load existing backfill table data
         history_backfill_table = {}
-        if os.path.exists(GenerateBackfillTableHelper.DEFAULT_BACKFILL_TABLE_LOCAL_FN):
-            with open(GenerateBackfillTableHelper.DEFAULT_BACKFILL_TABLE_LOCAL_FN) as read_fh:
+        if input_platform:
+            backfile_table_file = GenerateBackfillTableHelper.PLATFORM_BACKFILL_TABLE_LOCAL_FN.format(platform=input_platform)
+        else:
+            backfile_table_file = GenerateBackfillTableHelper.DEFAULT_BACKFILL_TABLE_LOCAL_FN
+
+        if os.path.exists(backfile_table_file):
+            with open(backfile_table_file) as read_fh:
                 history_backfill_table = json.load(read_fh)
 
         # get archive and revision mapping table data
-        current_archive_data_table = GenerateBackfillTableHelper.generate_archieve_revision_relation_table(history_backfill_table, input_backfill_days, input_backfill_repo, input_app_name, input_channel_name, input_platform)
+        current_archive_data_table = GenerateBackfillTableHelper.generate_archive_revision_relation_table(history_backfill_table, input_backfill_days, input_backfill_repo, input_app_name, input_channel_name, input_platform)
 
         # get archive and perfherder mapping table data
         current_perfherder_data_table = PerfherderDataQueryHelper.get_perfherder_data(input_white_list=input_white_list, input_query_days=input_backfill_days, input_query_channel=input_backfill_repo)
@@ -145,7 +156,7 @@ class GenerateBackfillTableHelper(object):
         # merge data
         result_data = CommonUtil.deep_merge_dict(current_archive_data_table, current_perfherder_data_table)
 
-        with open(GenerateBackfillTableHelper.DEFAULT_BACKFILL_TABLE_LOCAL_FN, "w") as write_fh:
+        with open(backfile_table_file, "w") as write_fh:
             json.dump(result_data, write_fh)
 
         return result_data

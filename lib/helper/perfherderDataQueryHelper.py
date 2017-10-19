@@ -25,7 +25,8 @@ class PerfherderDataQueryHelper(object):
         @param input_framework_no: Hasal framework no default is 9
         @return:
         """
-        query_url_str = PerfherderDataQueryHelper.API_URL_QUERY_SIGNATURE_LIST % (PerfherderDataQueryHelper.DEFAULT_PERFHERDER_PRODUCTION_URL)
+        query_url_str = PerfherderDataQueryHelper.API_URL_QUERY_SIGNATURE_LIST % (PerfherderDataQueryHelper.DEFAULT_PERFHERDER_PRODUCTION_URL, input_channel_name)
+
         query_params = {"format": "json", "framework": str(input_framework_no)}
         query_header = {'User-Agent': "Hasal Query Perfherder Tool"}
         return_result = {'signature_data': {}, 'suite_list': [], 'browser_type_list': [], 'machine_platform_list': []}
@@ -75,7 +76,10 @@ class PerfherderDataQueryHelper(object):
             for data in input_json[sig]:
                 suite_name_full = signature_data['signature_data'][sig]['suite_name'].split()
                 suite_name = suite_name_full[0]
-                push_tiemstamp = data['push_timestamp']
+
+                # should modify from integer to string
+                push_tiemstamp = str(data['push_timestamp'])
+
                 perfherder_data_index = "%s:%s:%s" % (suite_name, signature_data['signature_data'][sig]['browser_type'], signature_data['signature_data'][sig]['machine_platform'])
                 if push_tiemstamp in input_result_dict:
                     if perfherder_data_index in input_result_dict[push_tiemstamp]['perfherder_data']:
