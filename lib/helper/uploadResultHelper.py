@@ -6,7 +6,7 @@ import string
 import socket
 import traceback
 from datetime import datetime
-from ..common.pyDriveUtil import PyDriveUtil
+from ..common.b2Util import B2Util
 from ..common.logConfig import get_logger
 from lib.helper.desktopHelper import get_browser_version
 from thclient import (TreeherderClient, TreeherderJobCollection)
@@ -330,26 +330,21 @@ class PerfherderUploadDataGenerator(object):
 
 
 class VideoUploader(object):
-    DEFAULT_UPLOAD_VIDEO_YAML_SETTING = "./mozhasalvideo.yaml"
-    DEFAULT_UPLOAD_VIDEO_MYCRED_TXT = "./mycreds_mozhasalvideo.txt"
-    DEFAULT_UPLOAD_FOLDER_URI = "0B6LePZQnd-uOMWpEVFN2NXVBTG8"
 
     @staticmethod
-    def upload_video(upload_video_fp):
-        # init pydrive object
-        pyDriveObj = PyDriveUtil(settings={"settings_file": VideoUploader.DEFAULT_UPLOAD_VIDEO_YAML_SETTING,
-                                           "local_cred_file": VideoUploader.DEFAULT_UPLOAD_VIDEO_MYCRED_TXT})
+    def upload_video(upload_config, upload_video_fp):
+        # init b2 object
+        b2Obj = B2Util(upload_config)
+
+        # init upload sub folder name
+        upload_subfolder_name = datetime.now().strftime('%Y-%m')
+
         video_perview_url = ""
         if os.path.exists(upload_video_fp):
-            # generate folder of current month
-            upload_subfolder_name = datetime.now().strftime('%Y-%m')
-            upload_subfolder_obj = pyDriveObj.create_folder_object(VideoUploader.DEFAULT_UPLOAD_FOLDER_URI, upload_subfolder_name)
+            download_video_url = b2Obj.upload_file(upload_video_fp, upload_subfolder_name)
 
-            upload_folder_uri_id = upload_subfolder_obj.get('id', VideoUploader.DEFAULT_UPLOAD_FOLDER_URI)
-            # upload to pydrive
-            upload_result = pyDriveObj.upload_file(upload_folder_uri_id, upload_video_fp)
-            if upload_result:
-                video_perview_url = "/".join(upload_result['alternateLink'].split("/")[:-1]) + "/preview"
+            if download_video_url:
+                video_perview_url = download_video_url
             else:
                 logger.error("Upload video file [%s] to google drive failed!" % upload_video_fp)
 
