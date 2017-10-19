@@ -8,6 +8,7 @@ import logging
 
 from datetime import datetime
 from slackclient import SlackClient
+from lib.common.statusFileCreator import StatusFileCreator
 
 # The job will be imported by ejenti. Top level will be `ejenti`, not `hasal` or `ejenti.jobs`.
 try:
@@ -626,9 +627,25 @@ def handle_rtm_message(slack_client, rtm_ret, configs, cmd_config, election_type
                         COMMAND_TASK_KEY_INPUT_STR: cmd_input_string
                     }
 
+                    # create job id folder
+                    job_id = StatusFileCreator.create_job_id_folder(StatusFileCreator.STATUS_TAG_SLACK)
+                    job_id_fp = os.path.join(StatusFileCreator.get_status_folder(), job_id)
+
+                    # touch status file before put into local queue
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_SLACK, 100, task_obj)
+
+                    # inject job_id to task_obj
+                    task_obj["job_id"] = job_id
+
                     input_queue_type = input_cmd_obj.get('queue-type')
                     target_queue = queue_mapping.get(input_queue_type)
                     target_queue.put(task_obj)
+
+                    # touch status file after put into local queue
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_SLACK, 200, task_obj)
+
+                    # touch successful status file
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_SLACK, 900)
 
                     return send(slack_client, ret_message, bot_mgt_channel_obj)
 

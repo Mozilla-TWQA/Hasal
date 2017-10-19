@@ -1,4 +1,12 @@
 {
+  "status_json_creator": {
+    "module-path": "jobs.status_json_creator",
+    "trigger-type": "interval",
+    "interval": 30,
+    "max-instances": 1,
+    "default-loaded": true,
+    "configs": {}
+  },
   "async_tasks_consumer": {
     "module-path": "jobs.tasks_consumer",
     "trigger-type": "interval",

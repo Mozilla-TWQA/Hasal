@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import random
@@ -6,6 +7,7 @@ import pickle
 import logging
 import platform
 
+from lib.common.statusFileCreator import StatusFileCreator
 from mozillapulse.messages.base import GenericMessage
 
 # The job will be imported by ejenti. Top level will be `ejenti`, not `hasal` or `ejenti.jobs`.
@@ -109,9 +111,13 @@ def listen_pulse(**kwargs):
 
         data_payload = body.get('payload')
 
+        # create job id folder
+        job_id = StatusFileCreator.create_job_id_folder(StatusFileCreator.STATUS_TAG_PULSE)
+        job_id_fp = os.path.join(StatusFileCreator.get_status_folder(), job_id)
+
         # handle response info to Trigger
         try:
-            response_agent_info(data_payload)
+            response_agent_info(data_payload, job_id_fp)
         except Exception as e:
             logging.error(e)
 
@@ -137,15 +143,27 @@ def listen_pulse(**kwargs):
             return
 
         target_queue = queue_mapping.get(task_queue_type)
-        # push task into queue
+        # get task from meta task obj
         task_obj = meta_task_object.get_cmd()
+
+        # inject job id into task obj
+        task_obj['job_id'] = job_id
+
+        # push task into queue
         target_queue.put(task_obj)
         logging.debug('Push task into [{}] queue with command name {}.'.format(task_queue_type,
                                                                                task_command_key))
+
+        # create status file after put into queue
+        StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE, 200, task_obj)
+
         # sleep 1.0 ~ 3.0 sec for load-balance
         time.sleep(random.uniform(1, 3))
 
-    def response_agent_info(data_payload):
+        # create status file to represent task complete
+        StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE, 900)
+
+    def response_agent_info(data_payload, job_id_fp):
         """
         Return back the received MetaTask UID and agent information to Pulse "mgt" topic channel.
         """
@@ -185,6 +203,9 @@ def listen_pulse(**kwargs):
             PULSE_MGT_OBJECT_CMD_CFG: ret_cmd_cfg,
             PULSE_MGT_OBJECT_QUEUE_TYPE: ret_queue_type
         }
+
+        # create status file before report the mgt channel
+        StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE, 100, data)
 
         # check queue
         queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,

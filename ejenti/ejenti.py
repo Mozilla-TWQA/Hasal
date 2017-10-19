@@ -21,6 +21,7 @@ from docopt import docopt
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from multiprocessing import Manager
+from lib.common.statusFileCreator import StatusFileCreator
 
 
 class MainRunner(object):
@@ -45,7 +46,6 @@ class MainRunner(object):
 
         # init schedulers
         self.scheduler = BackgroundScheduler()
-        self.scheduler.add_jobstore('sqlalchemy', url=self.config['job_store_url'])
         self.scheduler.start()
 
         # init variables
@@ -113,13 +113,32 @@ class MainRunner(object):
             if re_match_obj:
                 current_command_obj = self.cmd_config['cmd-settings'][cmd_pattern]
                 logging.debug("job matched [%s]" % cmd_pattern)
+
+                # create job id folder
+                job_id = StatusFileCreator.create_job_id_folder(StatusFileCreator.STATUS_TAG_INTERACTIVE)
+                job_id_fp = os.path.join(StatusFileCreator.get_status_folder(), job_id)
+
+                task_obj = {"cmd_obj": current_command_obj, "cmd_pattern": cmd_pattern, "input_cmd_str": input_cmd_str}
                 target_queue_type = current_command_obj.get('queue-type', None)
+
+                # touch status file before put into local queue
+                StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_INTERACTIVE, 100)
+
                 if target_queue_type == "async":
-                    self.async_queue.put({"cmd_obj": current_command_obj, "cmd_pattern": cmd_pattern, "input_cmd_str": input_cmd_str})
+                    self.async_queue.put(task_obj)
+                    # touch status file after put into local queue
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_INTERACTIVE, 200, task_obj)
                 elif target_queue_type == "sync":
-                    self.sync_queue.put({"cmd_obj": current_command_obj, "cmd_pattern": cmd_pattern, "input_cmd_str": input_cmd_str})
+                    self.sync_queue.put(task_obj)
+                    # touch status file after put into local queue
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_INTERACTIVE, 200, task_obj)
                 else:
                     self.scheduler_job_handler({cmd_pattern: current_command_obj}, input_cmd_str)
+                    # touch status file after put into local queue
+                    StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_INTERACTIVE, 300, {cmd_pattern: current_command_obj})
+
+                # touch status file for task complete
+                StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_INTERACTIVE, 900)
                 break
 
     def load_default_jobs(self, input_scheduler, input_job_config):
