@@ -19,10 +19,10 @@ class B2Util(object):
         self.auth_token, self.api_url, self.download_url = self.get_auth_token()
 
         if self.auth_token and self.api_url and self.download_url:
-            self.auth_sucess = True
+            self.auth_success = True
             logger.debug("B2 is successfully authenticate, the current auth_toke:[%s], api_url:[%s], download_url:[%s]" % (self.auth_token, self.api_url, self.download_url))
         else:
-            self.auth_sucess = False
+            self.auth_success = False
             logger.error("B2 happends some error during authenication, the current auth_toke:[%s], api_url:[%s], download_url:[%s]" % (self.auth_token, self.api_url, self.download_url))
 
     def get_upload_url(self, input_bucket_id):
@@ -31,7 +31,7 @@ class B2Util(object):
         @param input_bucket_id:
         @return: upload url
         """
-        if self.auth_sucess:
+        if self.auth_success:
             DEFAULT_GET_UPLOAD_URL = self.api_url + "/b2api/v1/b2_get_upload_url"
             url_data = json.dumps({'bucketId': input_bucket_id})
             url_header = {'Authorization': self.auth_token}
@@ -50,7 +50,7 @@ class B2Util(object):
         get bucket list via account id
         @return:
         """
-        if self.auth_sucess:
+        if self.auth_success:
             DEFAULT_GET_BUCKET_LIST_URL = self.api_url + '/b2api/v1/b2_list_buckets'
             url_data = json.dumps({'accountId': self.acct_id})
             url_header = {'Authorization': self.auth_token}
@@ -72,9 +72,10 @@ class B2Util(object):
         @param input_content_type:
         @return: file id
         """
-        if self.auth_sucess:
+        if self.auth_success:
             # will based on your bucket name to check if the bucket exist. If not exist, will create new bucket for it
             bucket_name = self.upload_config.get("b2-upload-video-bucket-name", None)
+            bucket_id = None
             if bucket_name:
                 bucket_list = self.get_bucket_list()
                 for bucket_obj in bucket_list:
@@ -123,11 +124,15 @@ class B2Util(object):
             return None
 
     def request_and_response(self, input_url, input_data, input_headers):
-        response = requests.post(input_url, data=input_data, headers=input_headers)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s]" % (input_url, input_data, input_headers, response.status_code))
+        try:
+            response = requests.post(input_url, data=input_data, headers=input_headers)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (input_url, input_data, input_headers, response.status_code, response.text))
+                return None
+        except Exception, e:
+            logger.error("Exception happended in request_and_response function, message [%s]" % e.message)
             return None
 
     def create_bucket(self, input_bucket_name, input_bucket_type="allPublic", input_bucket_lifecyclerules=None):
@@ -138,7 +143,7 @@ class B2Util(object):
         @param input_bucket_lifecyclerules: ref: https://www.backblaze.com/b2/docs/lifecycle_rules.html
         @return: bucket ID
         """
-        if self.auth_sucess:
+        if self.auth_success:
             DEFAULT_CREATE_BUCKET_URL = self.api_url + "/b2api/v1/b2_create_bucket"
             params = {'accountId': self.acct_id, 'bucketName': input_bucket_name,
                       'bucketType': input_bucket_type}
