@@ -346,6 +346,6 @@ class VideoUploader(object):
             if download_video_url:
                 video_perview_url = download_video_url
             else:
-                logger.error("Upload video file [%s] to google drive failed!" % upload_video_fp)
+                logger.error("Upload video file [%s] to b2 failed!" % upload_video_fp)
 
         return video_perview_url
