@@ -1,5 +1,5 @@
 PYTHON := python
-VENV := ./env-python-dev
+VENV := .env-python-dev
 
 $(VENV)/bin/python:
 	[ -d $(VENV) ] || $(PYTHON) -m virtualenv $(VENV) || virtualenv $(VENV)
@@ -11,6 +11,7 @@ $(VENV)/bin/python:
 	$(VENV)/bin/pip install -U -e git+git://github.com/askeing/bztools.git#egg=bztools
 
 	$(VENV)/bin/pip install -Ur requirements.txt
+	$(VENV)/bin/pip install -Ur ejenti/requirements.txt
 	$(VENV)/bin/python setup.py develop
 
 
@@ -24,9 +25,14 @@ test:
 	./mach test-config
 	./mach test-tidy --no-progress --all
 
-#####################################
-# below are origin makrfile scripts #
-#####################################
+.PHONY: unit
+unit: $(VENV)/bin/python
+	$(VENV)/bin/python -m unittest discover -t . -s unit -v
+
+
+#########################################
+# Original Out-of-date Makefile scripts #
+#########################################
 install: venv-install pip-install video-recording-libs-install
 
 opencv-install:
