@@ -73,7 +73,6 @@ class StatusFileCreator(object):
                 return StatusFileCreator.STATUS_CODE_MAPPING[status_tag][status_code]
         return None
 
-
     @staticmethod
     def create_status_file(status_file_folder, status_tag, status_code, status_content=None):
         """
@@ -112,4 +111,3 @@ class StatusFileCreator(object):
         else:
             logger.error("Cannot find corresponding desc for current status tag[%s] and status code[%s]" % (status_tag, status_code))
             return None
-
