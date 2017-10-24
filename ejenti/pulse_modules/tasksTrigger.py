@@ -11,6 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
+from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
 from hasal_consumer import HasalConsumer
 from hasalPulsePublisher import HasalPulsePublisher
 
@@ -35,6 +36,7 @@ class TasksTrigger(object):
     KEY_JOBS_CONFIGS = 'configs'
 
     MD5_HASH_FOLDER = '.md5'
+    TIMESTAMP_FOLDER = '.timestamp'
 
     # filename example: 'firefox-56.0a1.en-US.linux-x86_64.json'
     MATCH_FORMAT = '.{platform_key}.{ext}'
@@ -61,6 +63,10 @@ class TasksTrigger(object):
             'ext': 'zip'
         }
     }
+
+    # default supported platforms, and query backfill days
+    BACK_FILL_PLATFORM_LIST = ['mac', 'win64']
+    BACK_FILL_DEFAULT_QUERY_DAYS = 14
 
     def __init__(self, config, cmd_config_obj, clean_at_begin=False):
         self.all_config = config
@@ -109,7 +115,49 @@ class TasksTrigger(object):
         logging.info('Clean and re-create Pulse Queues done.')
 
     @staticmethod
-    def get_all_latest_files():
+    def get_current_file_folder():
+        return os.path.dirname(os.path.realpath(__file__))
+
+    @staticmethod
+    def check_folder(checked_folder):
+        """
+        Checking folder.
+        @param checked_folder:
+        @return: Return True if folder already exists and is folder, or re-create folder successfully.
+        """
+        try:
+            if os.path.exists(checked_folder):
+                if os.path.isfile(checked_folder):
+                    os.remove(checked_folder)
+                    os.makedirs(checked_folder)
+                return True
+            else:
+                # there is no valid MD5 folder
+                os.makedirs(checked_folder)
+                return True
+        except Exception as e:
+            logging.error(e)
+            return False
+
+    @staticmethod
+    def _validate_job_config(job_config):
+        """
+        Validate the job config. Required keys: topic, platform_build, and cmd.
+        @param job_config: job detail config.
+        @return: True or False.
+        """
+        required_keys = [TasksTrigger.KEY_JOBS_TOPIC,
+                         TasksTrigger.KEY_JOBS_PLATFORM_BUILD,
+                         TasksTrigger.KEY_JOBS_CMD]
+
+        for required_key in required_keys:
+            if required_key not in job_config:
+                logging.error('There is no required key [{}] in job config.'.format(required_key))
+                return False
+        return True
+
+    @staticmethod
+    def get_all_latest_files_for_md5():
         """
         Get all latest files from ARCHIVE server.
         @return: dict object {'<filename>': '<folder/path/with/filename>', ...}
@@ -133,7 +181,7 @@ class TasksTrigger(object):
         return ret_dict
 
     @staticmethod
-    def get_latest_info_json_url(platform):
+    def get_latest_info_json_url_for_md5(platform):
         """
         Get latest platform build's JSON file URL base on specify platform.
         @param platform: the specify platform. Defined in PLATFORM_MAPPING[<name>]['key'].
@@ -143,7 +191,7 @@ class TasksTrigger(object):
         match_endswith_string = TasksTrigger.MATCH_FORMAT.format(platform_key=platform, ext=ext_json)
 
         # get latest files
-        all_files = TasksTrigger.get_all_latest_files()
+        all_files = TasksTrigger.get_all_latest_files_for_md5()
 
         # find the matched files base on platform, e.g. "win64.json"
         matched_files = {k: v for k, v in all_files.items() if k.endswith(match_endswith_string)}
@@ -184,30 +232,9 @@ class TasksTrigger(object):
         @param platform: the specify platform. Defined in PLATFORM_MAPPING[<name>]['key'].
         @return: the MD5 hash string of latest platform build's JSON file.
         """
-        json_file_url = TasksTrigger.get_latest_info_json_url(platform)
+        json_file_url = TasksTrigger.get_latest_info_json_url_for_md5(platform)
         hash_string = TasksTrigger.get_remote_md5(json_file_url)
         return hash_string
-
-    @staticmethod
-    def check_folder(checked_folder):
-        """
-        Checking folder.
-        @param checked_folder:
-        @return: Return True if folder already exists and is folder, or re-create folder successfully.
-        """
-        try:
-            if os.path.exists(checked_folder):
-                if os.path.isfile(checked_folder):
-                    os.remove(checked_folder)
-                    os.makedirs(checked_folder)
-                return True
-            else:
-                # there is no valid MD5 folder
-                os.makedirs(checked_folder)
-                return True
-        except Exception as e:
-            logging.error(e)
-            return False
 
     @staticmethod
     def check_latest_info_json_md5_changed(job_name, platform):
@@ -216,9 +243,7 @@ class TasksTrigger(object):
         @param platform: the platform archive server.
         @return: True if changed, False if not changed.
         """
-        current_file_folder = os.path.dirname(os.path.realpath(__file__))
-
-        md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
+        md5_folder = os.path.join(TasksTrigger.get_current_file_folder(), TasksTrigger.MD5_HASH_FOLDER)
 
         # prepare MD5 folder
         if not TasksTrigger.check_folder(md5_folder):
@@ -260,9 +285,7 @@ class TasksTrigger(object):
         clean the md5 file by job name.
         @param job_name: the job name which will set as identify name.
         """
-        current_file_folder = os.path.dirname(os.path.realpath(__file__))
-
-        md5_folder = os.path.join(current_file_folder, TasksTrigger.MD5_HASH_FOLDER)
+        md5_folder = os.path.join(TasksTrigger.get_current_file_folder(), TasksTrigger.MD5_HASH_FOLDER)
 
         # prepare MD5 folder
         if not TasksTrigger.check_folder(md5_folder):
@@ -286,21 +309,139 @@ class TasksTrigger(object):
             return True
 
     @staticmethod
-    def _validate_job_config(job_config):
+    def job_pushing_meta_task_md5(username, password, command_config, job_name, topic, amount, platform_build, cmd_name, overwrite_cmd_config=None):
         """
-        Validate the job config. Required keys: topic, platform_build, and cmd.
-        @param job_config: job detail config.
-        @return: True or False.
+        [JOB]
+        Currently we do not use MD5, we use Timestamp from Archive/Perfherder.
+        Pushing the MetaTask if the remote build's MD5 was changed.
+        @param username: Pulse username.
+        @param password: Pulse password.
+        @param command_config: The overall command config dict object.
+        @param job_name: The job name which be defined in trigger_config.json.
+        @param topic: The Topic on Pulse. Refer to `get_topic()` method of `jobs.pulse`.
+        @param amount: The MetaTask amount per time.
+        @param platform_build: The platform on Archive server.
+        @param cmd_name: The MetaTask command name.
+        @param overwrite_cmd_config: The overwrite command config.
         """
-        required_keys = [TasksTrigger.KEY_JOBS_TOPIC,
-                         TasksTrigger.KEY_JOBS_PLATFORM_BUILD,
-                         TasksTrigger.KEY_JOBS_CMD]
+        changed = TasksTrigger.check_latest_info_json_md5_changed(job_name=job_name, platform=platform_build)
+        if changed:
+            # check queue
+            queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,
+                                                                        password=password,
+                                                                        topic=topic)
+            if not queue_exists:
+                logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
 
-        for required_key in required_keys:
-            if required_key not in job_config:
-                logging.error('There is no required key [{}] in job config.'.format(required_key))
+            # Push MetaTask to Pulse
+            publisher = HasalPulsePublisher(username=username,
+                                            password=password,
+                                            command_config=command_config)
+
+            now = datetime.now()
+            now_string = now.strftime('%Y-%m-%d_%H:%M:%S.%f')
+            uid_prefix = '{time}.{job}'.format(time=now_string, job=job_name)
+            # push meta task
+            logging.info('Pushing to Pulse...\n'
+                         '{line}\n'
+                         'UID prefix: {uid_prefix}\n'
+                         'Trigger Job: {job_name}\n'
+                         'Platform: {platform}\n'
+                         'Topic: {topic}\n'
+                         'Amount: {amount}\n'
+                         'command {cmd}\n'
+                         'cmd_config: {cmd_config}\n'
+                         '{line}\n'.format(uid_prefix=uid_prefix,
+                                           job_name=job_name,
+                                           platform=platform_build,
+                                           topic=topic,
+                                           amount=amount,
+                                           cmd=cmd_name,
+                                           cmd_config=overwrite_cmd_config,
+                                           line='-' * 10))
+            for idx in range(amount):
+                uid = '{prefix}.{idx}'.format(prefix=uid_prefix, idx=idx + 1)
+                publisher.push_meta_task(topic=topic,
+                                         command_name=cmd_name,
+                                         overwrite_cmd_configs=overwrite_cmd_config,
+                                         uid=uid)
+
+    @staticmethod
+    def clean_timestamp_by_job_name(job_name):
+        """
+        clean the timestamp file by job name.
+        @param job_name: the job name which will set as identify name.
+        """
+        timestamp_folder = os.path.join(TasksTrigger.get_current_file_folder(), TasksTrigger.TIMESTAMP_FOLDER)
+
+        # prepare timestamp folder
+        if not TasksTrigger.check_folder(timestamp_folder):
+            return False
+
+        # check timestamp file
+        job_timestamp_file = os.path.join(timestamp_folder, job_name)
+        if os.path.exists(job_timestamp_file):
+            if os.path.isfile(job_timestamp_file):
+                try:
+                    os.remove(job_timestamp_file)
+                    return True
+                except Exception as e:
+                    logging.error(e)
+                    return False
+            else:
+                logging.warn('The {} is not a file.'.format(job_timestamp_file))
                 return False
-        return True
+        else:
+            logging.debug('The {} not exists.'.format(job_timestamp_file))
+            return True
+
+    @staticmethod
+    def check_latest_timestamp(job_name, platform):
+        """
+        @param job_name: the job name which will set as identify name.
+        @param platform: the platform archive server.
+        @return: True if changed, False if not changed.
+        """
+        backfill_table_obj = GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table(input_platform=platform)
+
+        if backfill_table_obj:
+            latest_timestamp = sorted(backfill_table_obj.keys())[-1]
+
+            timestamp_folder = os.path.join(TasksTrigger.get_current_file_folder(), TasksTrigger.TIMESTAMP_FOLDER)
+
+            # prepare timestamp folder
+            if not TasksTrigger.check_folder(timestamp_folder):
+                return False
+
+            job_timestamp_file = os.path.join(timestamp_folder, job_name)
+            if os.path.exists(job_timestamp_file):
+                with open(job_timestamp_file, 'r') as f:
+                    original_timestamp = f.readline()
+
+                if original_timestamp == latest_timestamp:
+                    # no changed
+                    return False
+                else:
+                    # changed
+                    logging.info('Job "{}" platform "{}": Latest timestamp [{}], Origin timestamp: [{}]'.format(job_name,
+                                                                                                                platform,
+                                                                                                                latest_timestamp,
+                                                                                                                original_timestamp))
+                    with open(job_timestamp_file, 'w') as f:
+                        f.write(latest_timestamp)
+                    return True
+            else:
+                # found the file for the 1st time
+                logging.info('Job "{}" platform "{}": Latest timestamp [{}], no origin timestamp.'.format(job_name,
+                                                                                                          platform,
+                                                                                                          latest_timestamp))
+                with open(job_timestamp_file, 'w') as f:
+                    f.write(latest_timestamp)
+                return True
+
+        else:
+            logging.error('Cannot retrieve the archive relational table of platform: {platform}'.format(platform=platform))
+            return False
 
     @staticmethod
     def job_pushing_meta_task(username, password, command_config, job_name, topic, amount, platform_build, cmd_name, overwrite_cmd_config=None):
@@ -317,7 +458,10 @@ class TasksTrigger(object):
         @param cmd_name: The MetaTask command name.
         @param overwrite_cmd_config: The overwrite command config.
         """
-        changed = TasksTrigger.check_latest_info_json_md5_changed(job_name=job_name, platform=platform_build)
+        logging.info('checking Job [{}], Platform [{}]...'.format(job_name, platform_build))
+        changed = TasksTrigger.check_latest_timestamp(job_name=job_name, platform=platform_build)
+        logging.info('checking Job [{}], Platform [{}]... {}'.format(job_name, platform_build, changed))
+
         if changed:
             # check queue
             queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,
@@ -435,6 +579,23 @@ class TasksTrigger(object):
                                        'password': self.pulse_password,
                                        'rotating_file_path': MGT_LOG_PATH})
         logging.info('Adding Rotating Logger done: {fp}'.format(fp=os.path.abspath(MGT_LOG_PATH)))
+
+        # 1st time generating backfill table for query
+        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
+            logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
+            GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
+        logging.info('Generating latest backfill tables done.')
+
+        # creating jobs for query backfill table
+        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
+            self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
+                                   trigger='interval',
+                                   id='query_backfill_table_{}'.format(platform_build),
+                                   max_instances=1,
+                                   minutes=30,
+                                   args=[],
+                                   kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
+                                           'input_platform': platform_build})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():

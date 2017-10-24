@@ -61,7 +61,7 @@ def main():
 
                     if input_value.lower() == 'y' or input_value.lower() == 'yes':
                         print('    cleaning checking file ... ', end='')
-                        ret = TasksTrigger.clean_md5_by_job_name(job_name)
+                        ret = TasksTrigger.clean_timestamp_by_job_name(job_name)
                         if ret:
                             print(' OK')
                         else:
