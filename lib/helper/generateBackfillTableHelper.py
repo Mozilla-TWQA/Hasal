@@ -1,7 +1,8 @@
 import os
 import sys
 import json
-from ..common.logConfig import get_logger
+import time
+from lib.common.logConfig import get_logger
 from lib.common.commonUtil import NetworkUtil
 from lib.common.commonUtil import CommonUtil
 from archiveMozillaHelper import ArchiveMozillaHelper
@@ -160,3 +161,27 @@ class GenerateBackfillTableHelper(object):
             json.dump(result_data, write_fh)
 
         return result_data
+
+    @staticmethod
+    def get_history_archive_perfherder_relational_table(input_platform=None):
+        """
+        adding a method for reading history_backfill_table, and return a dict object, which has while loop for try/catch of error handling.
+        @param input_platform: only accept string value of  "linux64", "mac", "win64"
+        @return:
+        """
+        if input_platform:
+            backfill_table_file = GenerateBackfillTableHelper.PLATFORM_BACKFILL_TABLE_LOCAL_FN.format(platform=input_platform)
+        else:
+            backfill_table_file = GenerateBackfillTableHelper.DEFAULT_BACKFILL_TABLE_LOCAL_FN
+
+        history_backfill_table = {}
+        if os.path.exists(backfill_table_file):
+            for _ in range(10):
+                try:
+                    with open(backfill_table_file) as read_fh:
+                        history_backfill_table = json.load(read_fh)
+                        break
+                except:
+                    time.sleep(0.5)
+
+        return history_backfill_table
