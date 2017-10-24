@@ -79,7 +79,8 @@ class StatusFileCreator(object):
         create status file, the status file format will be 123-xyz.json
         @param status_file_folder:
         @param status_tag:
-        @param status_code:
+        @param status_code: status code input here should reference to the StatusFileCreator.STATUS_CODE_MAPPING
+        variable, you can find the detail desc in this variable about different code for different tag
         @param status_content:
         @return:
         """
