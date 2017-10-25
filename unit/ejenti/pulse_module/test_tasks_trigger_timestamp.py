@@ -6,7 +6,7 @@ from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
 from lib.helper.perfherderDataQueryHelper import PerfherderDataQueryHelper
 
 
-class TestTasksTrigger(unittest.TestCase):
+class TestTasksTriggerTimestamp(unittest.TestCase):
 
     def setUp(self):
         self.fake_job_name = 'unittest'

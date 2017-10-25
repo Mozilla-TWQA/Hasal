@@ -503,6 +503,22 @@ class TasksTrigger(object):
                                          uid=uid)
 
     @staticmethod
+    def get_enabled_platform_list_from_trigger_jobs_config(config_dict_obj):
+        """
+        Return the list which contains enabled platforms.
+        @param config_dict_obj: the jobs dict object in trigger config file
+        @return: list
+        """
+        enabled_platform_set = set()
+        for _, job_detail in config_dict_obj.items():
+            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
+            platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
+            if enable and platform_build:
+                enabled_platform_set.add(platform_build)
+        logging.info('Enabled platforms: {}'.format(enabled_platform_set))
+        return list(enabled_platform_set)
+
+    @staticmethod
     def job_listen_response_from_agent(username, password, rotating_file_path):
         """
         [JOB]
@@ -580,13 +596,7 @@ class TasksTrigger(object):
         logging.info('Adding Rotating Logger done: {fp}'.format(fp=os.path.abspath(MGT_LOG_PATH)))
 
         # loading enabled platform list
-        enabled_platform_list = []
-        for _, job_detail in self.jobs_config.items():
-            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
-            platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
-            if enable and platform_build:
-                enabled_platform_list.append(platform_build)
-        logging.info('Enabled platforms: {}'.format(enabled_platform_list))
+        enabled_platform_list = TasksTrigger.get_enabled_platform_list_from_trigger_jobs_config(self.jobs_config)
 
         # 1st time generating backfill table for query
         for platform_build in enabled_platform_list:
