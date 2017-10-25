@@ -44,9 +44,9 @@ class gMail(WebApp):
     ]
 
     GMAIL_FIRST_MAIL = [
-        [os.path.join('pics', 'settings_btn_win.png'), 0, 40],
-        [os.path.join('pics', 'more_btn_win.png'), 0, 40],
-        [os.path.join('pics', 'more_btn_mac.png'), 0, 40],
+        [os.path.join('pics', 'settings_btn_win.png'), -100, 40],
+        [os.path.join('pics', 'more_btn_win.png'), -100, 40],
+        [os.path.join('pics', 'more_btn_mac.png'), -100, 40],
     ]
 
     GMAIL_REPLY_DEL = [
