@@ -33,11 +33,27 @@
       "queue-type": "sync",
       "configs":{}
     },
+    "run-hasal-on-specify-nightly":
+    {
+      "desc": "run hasal test on specify nightly, which will include download nightly and deploy it",
+      "module-path": "tasks.hasalTasks",
+      "func-name": "run_hasal_on_specify_nightly",
+      "queue-type": "sync",
+      "configs":{}
+    },
     "download-latest-nightly":
     {
       "desc": "download the latest nightly and return the dl pkg path and json path",
       "module-path": "tasks.firefoxBuildTasks",
       "func-name": "download_latest_nightly_build",
+      "queue-type": "sync",
+      "configs":{}
+    },
+    "download-specify-nightly":
+    {
+      "desc": "download the specify nightly and return the dl pkg path and json path",
+      "module-path": "tasks.firefoxBuildTasks",
+      "func-name": "download_specify_url_nightly_build",
       "queue-type": "sync",
       "configs":{}
     },
