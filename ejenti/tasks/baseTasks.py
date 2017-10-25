@@ -1,5 +1,5 @@
-import os
 import logging
+from lib.common.commonUtil import CommonUtil
 
 
 def init_task(kwargs):
@@ -15,13 +15,7 @@ def parse_cmd_parameters(input_queue_msg):
 
 
 def get_hasal_repo_path(task_config):
-    current_path_list = os.getcwd().split(os.sep)
-    for d_name in reversed(current_path_list):
-        if d_name.lower() != "hasal":
-            current_path_list.pop()
-        else:
-            break
-    default_repo_path = os.sep.join(current_path_list)
+    default_repo_path = CommonUtil.auto_get_hasal_repo_path()
     repo_path = task_config.get("repo_path", default_repo_path)
     return repo_path
 

@@ -12,11 +12,9 @@ class B2Util(object):
 
     DEFAULT_B2_AUTH_ACCOUNT_REST_API = 'https://api.backblazeb2.com/b2api/v1/b2_authorize_account'
 
-    def __init__(self, upload_config):
-        self.upload_config = upload_config
-
+    def __init__(self, account_id, account_key):
         # get b2 auth token
-        self.auth_token, self.api_url, self.download_url = self.get_auth_token()
+        self.auth_token, self.api_url, self.download_url = self.get_auth_token(account_id, account_key)
 
         if self.auth_token and self.api_url and self.download_url:
             self.auth_success = True
@@ -64,17 +62,17 @@ class B2Util(object):
             logger.error("B2 authenticiation failed, please check the authenication error message above!")
             return None
 
-    def upload_file(self, input_file_path, input_upload_dir_name=None, input_content_type="video/x-matroska"):
+    def upload_file(self, input_file_path, bucket_name, input_upload_dir_name=None, input_content_type="video/x-matroska"):
         """
         Use bucket id and file path to upload file
-        @param input_bucket_id: pre-created bucket id
         @param input_file_path: upload file path
+        @param bucket_name:   bucket name
+        @param input_upload_dir_name:
         @param input_content_type:
-        @return: file id
+        @return:
         """
         if self.auth_success:
             # will based on your bucket name to check if the bucket exist. If not exist, will create new bucket for it
-            bucket_name = self.upload_config.get("b2-upload-video-bucket-name", None)
             bucket_id = None
             if bucket_name:
                 bucket_list = self.get_bucket_list()
@@ -85,11 +83,11 @@ class B2Util(object):
                 if not bucket_id:
                     bucket_id = self.create_bucket(bucket_name)
             else:
-                logger.error("Please specify bucket name in your upload config!!!")
+                logger.error("Please specify bucket name!!!!")
                 return None
 
             # if bucket id is assigned in upload config, will use that bucket id to get upload url
-            self.auth_token, upload_url = self.get_upload_url(bucket_id)
+            self.upload_auth_token, upload_url = self.get_upload_url(bucket_id)
 
             if os.path.exists(input_file_path):
                 with open(input_file_path, 'rb') as fh:
@@ -105,7 +103,7 @@ class B2Util(object):
                 return None
 
             headers = {
-                'Authorization': self.auth_token,
+                'Authorization': self.upload_auth_token,
                 'Content-Length': str(os.path.getsize(input_file_path)),
                 'X-Bz-File-Name': upload_file_name,
                 'Content-Type': input_content_type,
@@ -161,16 +159,16 @@ class B2Util(object):
             logger.error("B2 authenticiation failed, please check the authenication error message above!")
             return None
 
-    def get_auth_token(self):
+    def get_auth_token(self, accountId, accountKey):
         """
         Use account id and account key to combine the auth string, and send the request to B2 Auth API
+        @param accountId:
+        @param accountKey:
         @return: will return the following 3 values
         authorizationToken
         apiUrl
         downloadUrl
         """
-        accountId = self.upload_config.get("b2-account-id", None)
-        accountKey = self.upload_config.get("b2-account-key", None)
         if accountKey and accountId:
             self.acct_id = accountId
             self.acct_key = accountKey
@@ -184,5 +182,5 @@ class B2Util(object):
             else:
                 return None, None, None
         else:
-            logger.error("Please specify account_id and account_key in upload config file!")
+            logger.error("Please specify account_id and account_key")
             return None, None, None

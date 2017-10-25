@@ -3,6 +3,7 @@ import re
 import time
 import copy
 import json
+import datetime
 import requests
 import platform
 import subprocess
@@ -10,7 +11,6 @@ import numpy as np
 from tqdm import tqdm
 from environment import Environment
 from logConfig import get_logger
-from datetime import datetime
 logger = get_logger(__name__)
 
 
@@ -96,7 +96,7 @@ class StatusRecorder(object):
         return self.current_data[self.DEFAULT_FIELD_CASE_INFO]
 
     def set_case_basic_info(self, case_name):
-        current_time_stamp = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
+        current_time_stamp = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d%H%M%S')
         # reset case info, which contains case name and timestamp
         if self.DEFAULT_FIELD_CASE_INFO in self.current_data:
             self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME] = case_name
@@ -349,6 +349,29 @@ class CommonUtil(object):
 
     RECORDER_LIST = [Environment.PROFILER_FLAG_AVCONV, Environment.PROFILER_FLAG_OBS]
     logger = get_logger(__file__)
+
+    @staticmethod
+    def represent_as_int(input_str):
+        try:
+            int(input_str)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def get_utc_now_timestamp():
+        return int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1, 0, 0, 0, 0)).total_seconds())
+
+    @staticmethod
+    def auto_get_hasal_repo_path():
+        current_path_list = os.getcwd().split(os.sep)
+        for d_name in reversed(current_path_list):
+            if d_name.lower() != "hasal":
+                current_path_list.pop()
+            else:
+                break
+        default_repo_path = os.sep.join(current_path_list)
+        return default_repo_path
 
     @staticmethod
     def get_username():

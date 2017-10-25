@@ -1,4 +1,16 @@
 {
+  "status_json_creator": {
+    "module-path": "jobs.status_json_creator",
+    "trigger-type": "interval",
+    "interval": 30,
+    "max-instances": 1,
+    "default-loaded": false,
+    "configs": {
+      "b2_account_id": "",
+      "b2_account_key": "",
+      "b2_upload_bucket_name": ""
+    }
+  },
   "async_tasks_consumer": {
     "module-path": "jobs.tasks_consumer",
     "trigger-type": "interval",
