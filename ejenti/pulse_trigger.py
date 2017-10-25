@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """
 Usage:
-  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean]
+  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean] [--skip-first-query]
   pulse_trigger.py (-h | --help)
 
 Options:
@@ -10,6 +10,7 @@ Options:
   --config=<str>                  Specify the trigger_config.json file path. [default: configs/ejenti/trigger_config.json]
   --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
   --clean                         Clean Pulse Queue on Pulse service. [default: False]
+  --skip-first-query              Skip first time query of Perfherder/Archive server. [default: False]
 """
 
 import os
@@ -70,9 +71,10 @@ def main():
         exit(1)
 
     clean_flag = arguments['--clean']
+    skip_first_query_flag = arguments['--skip-first-query']
     try:
         trigger = TasksTrigger(config=config, cmd_config_obj=command_config, clean_at_begin=clean_flag)
-        trigger.run()
+        trigger.run(skip_first_query=skip_first_query_flag)
 
         while True:
             time.sleep(10)
