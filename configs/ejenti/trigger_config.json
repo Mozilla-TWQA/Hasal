@@ -76,6 +76,15 @@
       "amount": 1,
       "cmd": "download-latest-nightly",
       "configs": {}
+    },
+    "mac-customized-topic": {
+      "enable": false,
+      "topic": "customized-topic-darwin",
+      "platform_build": "mac",
+      "interval_minutes": 1,
+      "amount": 1,
+      "cmd": "download-latest-nightly",
+      "configs": {}
     }
   },
   "log_filter": [
