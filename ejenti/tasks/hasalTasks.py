@@ -218,7 +218,11 @@ def generate_suite_file(**kwargs):
     output_suite_fp = os.path.join(hasal_working_dir, output_suite_fn)
     case_list_str = task_config.get('OVERWRITE_HASAL_SUITE_CASE_LIST', None)
     if case_list_str:
-        case_list = case_list_str.split(",")
+        # if input `OVERWRITE_HASAL_SUITE_CASE_LIST` already be list, do nothing
+        if isinstance(case_list_str, list):
+            case_list = case_list_str
+        else:
+            case_list = case_list_str.split(",")
     else:
         with open(default_suite_fp) as fh:
             case_list = fh.readlines()
