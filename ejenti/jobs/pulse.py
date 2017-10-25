@@ -136,6 +136,7 @@ def listen_pulse(**kwargs):
         # get MetaTask
         meta_task = data_payload.get(PULSE_KEY_TASK)
         meta_task_object = pickle.loads(meta_task)
+        debug_uid = data_payload.get(HasalPulsePublisher.DEBUG_UID)
 
         # Handle command into specify queue
         task_command_key = meta_task_object.command_key
@@ -152,6 +153,9 @@ def listen_pulse(**kwargs):
 
         # inject job id into task obj
         task_obj['job_id'] = job_id
+
+        # inject task uid into task obj
+        task_obj['task_uid'] = debug_uid
 
         # push task into queue
         target_queue.put(task_obj)

@@ -18,48 +18,61 @@ def status_json_creator(**kwargs):
      data example:
     # status json format
     # host_name.json
-    # {"job_name, ex:pulse, slack, interactive": {"utc_timestamp, ex:1508484854": {"status_tag, ex: async_task_consumer":{"status_code":{"utc_timestamp":1508484857,
-    #                                                                                                                                    "desc": "hello world",
-    #                                                                                                                                    "content": {}
-    #                                                                                                                                    }}}}}
-    # {"pulse": {"1508484854": {"async_task_consumer": {"100": {"utc_timestamp": "1508484857",
-    #                                                           "desc": "get message from local queue",
-    #                                                           "content": {}},
-    #                                                   "200": {"utc_timestamp": "1508484859",
-    #                                                           "desc": "call task",
-    #                                                           "content": {}},
-    #                                                   "900": {"utc_timestamp": "1508484899",
-    #                                                           "desc": "successfully complete",
-    #                                                           "content": {}}
-    #                                                   },
-    #                           "trigger_hasal":{"100":{"utc_timestamp": "1508484999",
-    #                                                   "desc": "Start running hasal",
-    #                                                   "content": {}}
-    #                                            }
-    #                           },
-    #            "1508499999": {"async_task_consumer": {"100": {"utc_timestamp": "1508484857",
-    #                                                           "desc": "get message from local queue",
-    #                                                           "content": {}},
-    #                                                   "200": {"utc_timestamp": "1508484859",
-    #                                                           "desc": "call task",
-    #                                                           "content": {}},
-    #                                                   "900": {"utc_timestamp": "1508484899",
-    #                                                           "desc": "successfully complete",
-    #                                                           "content": {}}
-    #                                                   },
-    #                           "trigger_hasal":{"100":{"utc_timestamp": "1508484999",
-    #                                                   "desc": "Start running hasal",
-    #                                                   "content": {}}
-    #                                            }
-    #                           }
-    #            },
-    #  "slack": {"1518484854": {"async_task_consumer": {"100": {"utc_timestamp": "1508484857",
-    #                                                           "desc": "get message from local queue",
-    #                                                           "content": {}},
-    #                                                   "200": {"utc_timestamp": "1508484859",
-    #                                                           "desc": "call task",
-    #                                                           "content": {}}
-    #                                                   }
+    # {
+    "data":[
+        {
+            "type": "interactive",
+            "start_ts": "1234567890",
+            "cmd": "interactive",
+            "status": [
+                {
+                    "code": "100",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567898"
+                },
+                {
+                    "code": "200",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567899"
+                },
+                {
+                    "code": "900",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567900"
+                }
+            ]
+        },
+        {
+            "type": "interactive",
+            "start_ts": "2345678901",
+            "cmd": "interactive",
+            "status": [
+                {
+                    "code": "100",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567898"
+                },
+                {
+                    "code": "300",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567899"
+                }
+            ]
+        },
+        {
+            "type": "interactive",
+            "start_ts": "3456789012",
+            "cmd": "interactive",
+            "status": [
+                {
+                    "code": "100",
+                    "description": "Get command from interactive mode",
+                    "ts": "1234567898"
+                }
+            ]
+        }
+    ]
+}
     #                           }
     #            }
     #  }
@@ -98,16 +111,7 @@ def status_json_creator(**kwargs):
         logging.debug("Housekeeping outdated folder [%s]" % outdated_folder_path)
 
     # generate history period json obj
-    # load exisitng history status json file
-    if os.path.exists(history_status_json_file_path):
-        try:
-            with open(history_status_json_file_path) as read_history_status_json_fh:
-                history_status_json_obj = json.load(read_history_status_json_fh)
-        except Exception, e:
-            logging.error("Load history status json file[%s] with error [%s]" % (history_status_json_file_path, e.message))
-            history_status_json_obj = {}
-    else:
-        history_status_json_obj = {}
+    history_status_json_obj = {"data": []}
 
     # generate status json obj
     history_status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if folder_name.startswith(".") is False and CommonUtil.represent_as_int(folder_name.split("-")[1])]
@@ -115,43 +119,31 @@ def status_json_creator(**kwargs):
         history_status_folder_path = os.path.join(status_folder_path, history_status_folder_name)
         job_name = history_status_folder_name.split("-")[0]
         job_utc_timestamp_string = history_status_folder_name.split("-")[1]
-        task_file_name_list = [task_file_name for task_file_name in os.listdir(history_status_folder_path) if folder_name.startswith(".") is False and CommonUtil.represent_as_int(task_file_name.split("-")[0])]
-        for task_file_name in task_file_name_list:
-            task_file_path = os.path.join(history_status_folder_path, task_file_name)
-            task_name = task_file_name.split("-")[1].split(os.extsep)[0]
-            task_status_code = task_file_name.split("-")[0]
-            try:
-                with open(task_file_path) as read_fh:
-                    task_content = json.load(read_fh)
-            except Exception, e:
-                logging.error("Load task content file[%s] with error [%s]" % e.message)
-                task_content = {}
-            if job_name in history_status_json_obj:
-                if job_utc_timestamp_string in history_status_json_obj[job_name]:
-                    if task_name in history_status_json_obj[job_name][job_utc_timestamp_string]:
-                        if task_status_code in history_status_json_obj[job_name][job_utc_timestamp_string][task_name]:
-                            logging.debug("Skip record task[%s] into history status json file due to status code already exist!" % task_file_path)
-                        else:
-                            history_status_json_obj[job_name][job_utc_timestamp_string][task_name][task_status_code] = task_content
-                    else:
-                        history_status_json_obj[job_name][job_utc_timestamp_string][task_name] = {task_status_code: task_content}
-                else:
-                    history_status_json_obj[job_name][job_utc_timestamp_string] = {task_name: {task_status_code: task_content}}
-            else:
-                history_status_json_obj[job_name] = {job_utc_timestamp_string: {task_name: {task_status_code: task_content}}}
+        task_file_name_list = [task_file_name for task_file_name in os.listdir(history_status_folder_path) if task_file_name.startswith(".") is False and CommonUtil.represent_as_int(task_file_name.split("-")[0])]
+        task_list = list(set([task_file_name.split("-")[1] for task_file_name in task_file_name_list]))
+        for task_name in task_list:
+            data_obj = {"type": job_name,
+                        "start_ts": job_utc_timestamp_string,
+                        "cmd": task_name.split(os.extsep)[0],
+                        "status": []}
+            task_code_file_list = [task_file_name for task_file_name in task_file_name_list if task_file_name.split("-")[1] == task_name]
+            for task_code_file_name in task_code_file_list:
+                task_code_file_path = os.path.join(history_status_folder_path, task_code_file_name)
+                task_code_obj = CommonUtil.load_json_file(task_code_file_path)
+                task_code_obj["code"] = task_code_file_name.split("-")[0]
+                data_obj["status"].append(task_code_obj)
+            history_status_json_obj["data"].append(data_obj)
 
     # dump history json obj to file
     with open(history_status_json_file_path, "wb") as history_write_fh:
         json.dump(history_status_json_obj, history_write_fh)
 
     # generate recently period json obj
-    recently_status_json_obj = {}
+    recently_status_json_obj = {"data": []}
     recently_date = current_utc_time - datetime.timedelta(days=data_recently_define_period)
-    for recently_job_name in history_status_json_obj:
-        recently_period_timestamp_list = [utc_ts for utc_ts in history_status_json_obj[recently_job_name].keys() if recently_date <= datetime.datetime.utcfromtimestamp(int(utc_ts))]
-        recently_status_json_obj[recently_job_name] = {}
-        for recently_period_timestamp in recently_period_timestamp_list:
-            recently_status_json_obj[recently_job_name][recently_period_timestamp] = copy.deepcopy(history_status_json_obj[recently_job_name][recently_period_timestamp])
+    for recently_job_obj in history_status_json_obj["data"]:
+        if recently_date <= datetime.datetime.utcfromtimestamp(int(recently_job_obj["start_ts"])):
+            recently_status_json_obj["data"].append(copy.deepcopy(recently_job_obj))
 
     # dump recently json obj to file
     with open(recently_status_json_file_path, "wb") as recently_write_fh:

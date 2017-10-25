@@ -74,6 +74,21 @@ class StatusFileCreator(object):
         return None
 
     @staticmethod
+    def mask_credential_value(input_dict, input_mask_key=None):
+        DEFAULT_MASK_KEY_LIST = ["perfherder-client-id", "perfherder-secret", "b2-account-id", "b2-account-key", "username", "password", "bot_api_token", "bot_name"]
+        DEFAULT_MASK_VALUE = "hidden_credential_value"
+        if not input_mask_key:
+            input_mask_key = DEFAULT_MASK_KEY_LIST
+
+        for search_key, search_value in input_dict.items():
+            if isinstance(search_value, dict):
+                input_dict[search_key] = StatusFileCreator.mask_credential_value(search_value, input_mask_key)
+        for mask_key in input_mask_key:
+            if mask_key in input_dict:
+                input_dict[mask_key] = DEFAULT_MASK_VALUE
+        return input_dict
+
+    @staticmethod
     def create_status_file(status_file_folder, status_tag, status_code, status_content=None):
         """
         create status file, the status file format will be 123-xyz.json
@@ -97,6 +112,7 @@ class StatusFileCreator(object):
                 else:
                     status_content["status_code_desc"] = status_code_desc
                     status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
+            mask_status_content = StatusFileCreator.mask_credential_value(status_content)
             status_file_name = "%s-%s.json" % (status_code, status_tag)
             status_file_path = os.path.join(status_file_folder, status_file_name)
             if os.path.exists(status_file_folder):
@@ -104,7 +120,7 @@ class StatusFileCreator(object):
                     logger.error("Failed to create status file due to status file path duplicate, status file path [%s]" % status_file_path)
                 else:
                     with open(status_file_path, "wb") as fh:
-                        json.dump(status_content, fh)
+                        json.dump(mask_status_content, fh)
                     return status_file_path
             else:
                 logger.error("Failed to create status file due to status file folder not exist, status file folder [%s]" % status_file_folder)
