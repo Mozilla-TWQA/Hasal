@@ -29,6 +29,7 @@ class TasksTrigger(object):
 
     KEY_CONFIG_PULSE_USER = 'pulse_username'
     KEY_CONFIG_PULSE_PWD = 'pulse_password'
+
     KEY_CONFIG_JOBS = 'jobs'
     KEY_JOBS_ENABLE = 'enable'
     KEY_JOBS_AMOUNT = 'amount'
@@ -526,7 +527,6 @@ class TasksTrigger(object):
                 logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
 
             # Pre-handle specify command
-            overwrite_cmd_config = TasksTrigger.handle_specify_commands(cmd_name, overwrite_cmd_config, build_info)
             overwrite_cmd_config = TasksTrigger.handle_specify_commands(cmd_name, overwrite_cmd_config, build_info)
 
             # Push MetaTask to Pulse
