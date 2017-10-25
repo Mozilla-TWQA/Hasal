@@ -19,6 +19,7 @@ psutil==5.3.0
 beautifulsoup4==4.6.0
 html5lib>=0.999
 tqdm==4.15.0
+pyasn1==0.3.2
 
 # When we remove related imported packages from Hasal, move following packages into other file
 matplotlib==1.5.3
