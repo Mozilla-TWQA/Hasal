@@ -80,6 +80,7 @@ def listen_pulse(**kwargs):
     configs = kwargs.get('configs')
     username = configs.get('username')
     password = configs.get('password')
+    customized_topic = configs.get('customized_topic')
 
     # verify Pulse configs
     if not username or not password:
@@ -89,7 +90,10 @@ def listen_pulse(**kwargs):
         return
 
     topic = get_topic()
+    if customized_topic:
+        topic = customized_topic
     consumer_label = topic
+    logging.debug('Listen on topic [{}]'.format(topic))
 
     queue_type_sync = 'sync'
     queue_type_async = 'async'
