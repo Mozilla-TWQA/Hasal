@@ -64,8 +64,7 @@ class TasksTrigger(object):
         }
     }
 
-    # default supported platforms, and query backfill days
-    BACK_FILL_PLATFORM_LIST = ['mac', 'win64']
+    # default query back fill days
     BACK_FILL_DEFAULT_QUERY_DAYS = 14
 
     def __init__(self, config, cmd_config_obj, clean_at_begin=False):
@@ -580,14 +579,23 @@ class TasksTrigger(object):
                                        'rotating_file_path': MGT_LOG_PATH})
         logging.info('Adding Rotating Logger done: {fp}'.format(fp=os.path.abspath(MGT_LOG_PATH)))
 
+        # loading enabled platform list
+        enabled_platform_list = []
+        for _, job_detail in self.jobs_config.items():
+            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
+            platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
+            if enable and platform_build:
+                enabled_platform_list.append(platform_build)
+        logging.info('Enabled platforms: {}'.format(enabled_platform_list))
+
         # 1st time generating backfill table for query
-        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
+        for platform_build in enabled_platform_list:
             logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
             GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
         logging.info('Generating latest backfill tables done.')
 
         # creating jobs for query backfill table
-        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
+        for platform_build in enabled_platform_list:
             self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
                                    trigger='interval',
                                    id='query_backfill_table_{}'.format(platform_build),
