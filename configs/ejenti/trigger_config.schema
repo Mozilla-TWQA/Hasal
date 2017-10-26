@@ -9,6 +9,18 @@
       "description": "Pulse password",
       "type": "string"
     },
+    "b2_account_id": {
+      "description": "BackBlaze Account ID",
+      "type": "string"
+    },
+    "b2_account_key": {
+      "description": "BackBlaze Application Key",
+      "type": "string"
+    },
+    "b2_upload_bucket_name": {
+      "description": "BackBlaze Bucket Name, no space, no underline",
+      "type": "string"
+    },
     "jobs": {
       "description": "Trigger jobs",
       "type": "object",
