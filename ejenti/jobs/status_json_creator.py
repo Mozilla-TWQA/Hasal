@@ -132,9 +132,7 @@ def status_json_creator(**kwargs):
                                 if job_utc_ts in history_reference_data_table[job_name]:
                                     if task_name in history_reference_data_table[job_name][job_utc_ts]:
                                         if status_code in history_reference_data_table[job_name][job_utc_ts][task_name]:
-                                            logging.error(
-                                                "Skip inject job obj into reference due to status code duplicated!!!, job_name:[%s], job_utc_ts:[%s], task_name:[%s], status_code:[%s]" % (
-                                                job_name, job_utc_ts, task_name, status_code))
+                                            logging.error("Skip inject job obj into reference due to status code duplicated!!!, job_name:[%s], job_utc_ts:[%s], task_name:[%s], status_code:[%s]" % (job_name, job_utc_ts, task_name, status_code))
                                         else:
                                             history_reference_data_table[job_name][job_utc_ts][task_name][
                                                 status_code] = status_obj
