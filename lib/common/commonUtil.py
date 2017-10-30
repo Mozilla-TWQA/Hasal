@@ -351,6 +351,21 @@ class CommonUtil(object):
     logger = get_logger(__file__)
 
     @staticmethod
+    def mask_credential_value(input_dict, input_mask_key=None):
+        DEFAULT_MASK_KEY_LIST = ["perfherder-client-id", "perfherder-secret", "b2-account-id", "b2-account-key", "username", "password", "bot_api_token", "bot_name"]
+        DEFAULT_MASK_VALUE = "hidden_credential_value"
+        if not input_mask_key:
+            input_mask_key = DEFAULT_MASK_KEY_LIST
+
+        for search_key, search_value in input_dict.items():
+            if isinstance(search_value, dict):
+                input_dict[search_key] = CommonUtil.mask_credential_value(search_value, input_mask_key)
+            else:
+                if search_key in input_mask_key:
+                    input_dict[search_key] = DEFAULT_MASK_VALUE
+        return input_dict
+
+    @staticmethod
     def represent_as_int(input_str):
         try:
             int(input_str)

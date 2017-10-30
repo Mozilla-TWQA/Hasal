@@ -1,4 +1,5 @@
 import os
+import copy
 import json
 from commonUtil import CommonUtil
 from logConfig import get_logger
@@ -88,15 +89,17 @@ class StatusFileCreator(object):
         status_code_desc = StatusFileCreator.get_status_code_desc(status_tag, status_code)
         if status_code_desc:
             if not status_content:
-                status_content = {"status_code_desc": status_code_desc,
-                                  "utc_timestamp": str(CommonUtil.get_utc_now_timestamp())}
+                write_status_content = {"status_code_desc": status_code_desc,
+                                        "utc_timestamp": str(CommonUtil.get_utc_now_timestamp())}
             else:
                 if "status_code_desc" in status_content or "utc_timestamp" in status_content:
                     logger.error("Duplicate key[status_code_desc or utc_timestamp] in current status content keys [%s]" % status_content.keys())
                     return None
                 else:
-                    status_content["status_code_desc"] = status_code_desc
-                    status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
+                    write_status_content = CommonUtil.mask_credential_value(copy.deepcopy(status_content))
+                    write_status_content["status_code_desc"] = status_code_desc
+                    write_status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
+
             status_file_name = "%s-%s.json" % (status_code, status_tag)
             status_file_path = os.path.join(status_file_folder, status_file_name)
             if os.path.exists(status_file_folder):
@@ -104,7 +107,7 @@ class StatusFileCreator(object):
                     logger.error("Failed to create status file due to status file path duplicate, status file path [%s]" % status_file_path)
                 else:
                     with open(status_file_path, "wb") as fh:
-                        json.dump(status_content, fh)
+                        json.dump(write_status_content, fh)
                     return status_file_path
             else:
                 logger.error("Failed to create status file due to status file folder not exist, status file folder [%s]" % status_file_folder)
