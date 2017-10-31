@@ -18,6 +18,7 @@ from githubTasks import git_reset
 from firefoxBuildTasks import download_latest_nightly_build
 from firefoxBuildTasks import download_specify_url_nightly_build
 from firefoxBuildTasks import deploy_fx_package
+from lib.common.statusFileCreator import StatusFileCreator
 
 
 def merge_user_input_config_with_default_config(user_input_config, default_config):
@@ -118,10 +119,22 @@ def run_hasal_on_specify_nightly(**kwargs):
     if deploy_fx_package(**kwargs):
         # generate hasal config, get the config from upper task and merge with info from nightly json info
         meta_task_input_config = kwargs['queue_msg']['cmd_obj']['configs'].get("OVERWIRTE_HASAL_CONFIG_CTNT", {})
-        auto_generate_config = {"configs": {
-            "upload": {"default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
-                                        "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}},
-            "exec": {"default.json": {"exec-suite-fp": generate_suite_file(**kwargs)}}}}
+
+        # During the execution of Ejenti job, it will auto fill some values into config to make sure Hasal running under certain control
+        # The value list which will be auto filled as below:
+        # configs/upload/default.json
+        # # perfherder-revision
+        # # perfherder-pkg-platform
+        #
+        # configs/exec/default.json
+        # # exec-suite-fp
+        # # status-job-id
+        auto_generate_config = {"configs": {"upload": {
+            "default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
+                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}}, "exec": {
+            "default.json": {"exec-suite-fp": generate_suite_file(**kwargs),
+                             "status-job-id": kwargs['queue_msg']['job_id']}}}}
+
         merge_input_config = CommonUtil.deep_merge_dict(meta_task_input_config, auto_generate_config)
         kwargs['queue_msg']['cmd_obj']['configs']['OVERWIRTE_HASAL_CONFIG_CTNT'] = merge_input_config
         ejenti_hasal_config = generate_hasal_config(**kwargs)
@@ -181,9 +194,22 @@ def run_hasal_on_latest_nightly(**kwargs):
 
         # generate hasal config, get the config from upper task and merge with info from nightly json info
         meta_task_input_config = kwargs['queue_msg']['cmd_obj']['configs'].get("OVERWIRTE_HASAL_CONFIG_CTNT", {})
-        auto_generate_config = {"configs": {"upload": {"default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
-                                                                        "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}},
-                                            "exec": {"default.json": {"exec-suite-fp": generate_suite_file(**kwargs)}}}}
+
+        # During the execution of Ejenti job, it will auto fill some values into config to make sure Hasal running under certain control
+        # The value list which will be auto filled as below:
+        # configs/upload/default.json
+        # # perfherder-revision
+        # # perfherder-pkg-platform
+        #
+        # configs/exec/default.json
+        # # exec-suite-fp
+        # # status-job-id
+        auto_generate_config = {"configs": {"upload": {
+            "default.json": {"perfherder-revision": pkg_download_info_json['PERFHERDER-REVISION'],
+                             "perfherder-pkg-platform": pkg_download_info_json['PERFHERDER-PKG-PLATFORM']}}, "exec": {
+            "default.json": {"exec-suite-fp": generate_suite_file(**kwargs),
+                             "status-job-id": kwargs['queue_msg']['job_id']}}}}
+
         merge_input_config = CommonUtil.deep_merge_dict(meta_task_input_config, auto_generate_config)
         kwargs['queue_msg']['cmd_obj']['configs']['OVERWIRTE_HASAL_CONFIG_CTNT'] = merge_input_config
         ejenti_hasal_config = generate_hasal_config(**kwargs)
@@ -294,6 +320,9 @@ def generate_hasal_config(**kwargs):
     default_config_settings = task_config.get("DEFAULT_HASAL_CONFIG_CONTENT_TEMPLATE", DEFAULT_HASAL_CONFIG)
     default_runtest_configs = task_config.get("DEFAULT_HASAL_RUNTEST_CMD_PARAMETERS_TEMPLATE", DEFAULT_HASAL_RUNTEST_CONFIGS)
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
     # get input config from user interactive mode
     if len(cmd_parameter_list) == 2:
         input_json_str = cmd_parameter_list[1]
@@ -308,12 +337,15 @@ def generate_hasal_config(**kwargs):
         logging.info("No input config object [%s] detected, will use the default config setting instead" % input_json_obj)
     else:
         json_path = get_hasal_repo_path(task_config)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GENERATE_HASAL_CONFIG, 100, json_path)
 
         # merge default and input
         full_config_obj = merge_user_input_config_with_default_config(input_json_obj, default_config_settings)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GENERATE_HASAL_CONFIG, 200, full_config_obj)
 
         # generate config path and need to modify key-value pair dict
         full_config_path_mapping = generate_config_path_json_mapping(json_path, full_config_obj, {})
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GENERATE_HASAL_CONFIG, 300, full_config_path_mapping)
 
         full_exec_runtest_config = copy.deepcopy(default_runtest_configs)
 
@@ -328,6 +360,8 @@ def generate_hasal_config(**kwargs):
             with open(new_config_path, 'w') as fh:
                 json.dump(tmp_json_obj, fh)
         logging.debug("exec runtest config [%s]" % full_exec_runtest_config)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GENERATE_HASAL_CONFIG, 400, full_exec_runtest_config)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GENERATE_HASAL_CONFIG, 900)
         return full_exec_runtest_config
 
 
@@ -364,8 +398,18 @@ def exec_hasal_runtest(**kwargs):
         for config_name in specify_config_settings:
             exec_cmd_list.extend([config_name, specify_config_settings[config_name]])
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
     exec_cmd_str = " ".join(exec_cmd_list)
+
+    # init exec cmd string
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_RUN_HASAL_RUNTEST_CMD, 100, exec_cmd_str)
+
     system2(exec_cmd_str, cwd=workding_dir, logger=default_log_fn, stdout=True, exec_env=os.environ.copy())
+
+    # Tag success after cmd put into another process
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_RUN_HASAL_RUNTEST_CMD, 900)
 
 
 def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=False):

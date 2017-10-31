@@ -91,7 +91,7 @@ class MainRunner(object):
         self.scheduler.print_jobs()
 
     def scheduler_shutdown(self, **kwargs):
-        self.scheduler.shutdown()
+        self.scheduler.shutdown(wait=False)
         sys.exit(0)
 
     def list_all_commands(self, **kwargs):

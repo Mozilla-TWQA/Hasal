@@ -31,6 +31,7 @@ from lib.common.logConfig import get_logger
 from lib.common.commonUtil import CommonUtil
 from lib.common.commonUtil import StatusRecorder
 from lib.common.commonUtil import HasalConfigUtil
+from lib.common.statusFileCreator import StatusFileCreator
 from lib.helper.desktopHelper import close_browser
 from lib.helper.uploadResultHelper import VideoUploader
 from lib.helper.uploadResultHelper import PerfherderUploader
@@ -112,7 +113,14 @@ class RunTest(object):
         else:
             self._firefox_profile_path = ""
 
-        # chrome config
+        # init status job id path, if not specify in exec config, default will be empty string
+        status_job_id = self.exec_config.get("status-job-id", "")
+        if status_job_id:
+            self.status_job_id_path = os.path.join(StatusFileCreator.get_status_folder(), self.exec_config.get("status-job-id", ""))
+        else:
+            self.status_job_id_path = ""
+
+            # chrome config
         if self.chrome_config.get('enable_create_new_profile', False):
             self.chrome_profile_creator = ChromeProfileCreator(launch_cmd=self.firefox_config.get('launch-browser-cmd-path'))
             chrome_cookies_settings = self.chrome_config.get('cookies', {})
@@ -259,6 +267,9 @@ class RunTest(object):
             upload_result_data[case_time_stamp] = objGeneratePerfherderData.generate_upload_data()
         else:
             self.logger.error("Can't find result json file[%s], please check the current environment!" % self.global_config['default-result-fn'])
+            # write cannot find result json file in local into status file
+            if self.status_job_id_path:
+                StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 700)
 
         server_url = '{protocol}://{host}'.format(protocol=self.upload_config['perfherder-protocol'],
                                                   host=self.upload_config['perfherder-host'])
@@ -281,6 +292,9 @@ class RunTest(object):
                     }
                 else:
                     self.logger.error("Can't find the upload video fp in result json file!")
+                    # write cannot find the upload video fp in result json file into status file
+                    if self.status_job_id_path:
+                        StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 710)
 
             # if video is not uploaded success, will continue upload data, leave the video blank
             uploader_response = perfherder_uploader.submit(upload_result_data[current_time_stamp]['revision'],
@@ -297,12 +311,24 @@ class RunTest(object):
                     upload_success_timestamp_list.append(current_time_stamp)
                     self.logger.debug("upload to perfherder success, result ::: %s" % upload_result_data[current_time_stamp])
                     self.logger.info("upload to perfherder success, status code: [%s], json: [%s]" % (uploader_response.status_code, uploader_response.json()))
+
+                    # write final status for test case into status file
+                    if self.status_job_id_path:
+                        StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 900)
                 else:
                     upload_result_data[current_time_stamp]['upload_status_code'] = uploader_response.status_code
                     upload_result_data[current_time_stamp]['upload_status_json'] = uploader_response.json()
                     self.logger.info("upload to perfherder failed, status code: [%s], json: [%s]" % (uploader_response.status_code, uploader_response.json()))
+
+                    # write upload to perfhderder failed into status file
+                    if self.status_job_id_path:
+                        StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 840, {"upload_status_code": uploader_response.status_code, "upload_status_json": uploader_response.json()})
             else:
                 self.logger.info("upload to perfherder failed, unknown exception happened in submitting to perfherder")
+
+                # write upload to perfhderder failed into status file
+                if self.status_job_id_path:
+                    StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 850)
 
         # remove success time stamp from upload result data
         for del_time_stamp in upload_success_timestamp_list:
@@ -329,6 +355,12 @@ class RunTest(object):
                     current_run = int(status_result[objStatusRecorder.STATUS_TIME_LIST_COUNTER])
                 else:
                     current_run += 1
+
+                # record status into status file
+                if self.status_job_id_path:
+                    StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 200)
+                    StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 900)
+
                 return current_run, current_retry, True
             else:
                 if compare_img_result != objStatusRecorder.PASS_IMG_COMPARE_RESULT:
@@ -336,18 +368,32 @@ class RunTest(object):
                 if round_status != 0:
                     objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_ROUND_STAT_ABNORMAL, round_status)
                 if fps_stat != 0:
-                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_FPS_STAT_ABNORMAL, round_status)
+                    objStatusRecorder.record_case_status_history(StatusRecorder.ERROR_FPS_STAT_ABNORMAL, fps_stat)
                 current_retry += 1
+
+                # record status into status file
+                if self.status_job_id_path:
+                    StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 720, {"compare_img_result": compare_img_result, "round_status": round_status, "fps_stat": fps_stat})
         else:
             self.logger.error("test could raise exception during execution!!")
             objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
                                                          StatusRecorder.ERROR_CANT_FIND_STATUS_FILE)
             current_retry += 1
+
+            # record status into status file
+            if self.status_job_id_path:
+                StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 730)
+
         return current_run, current_retry, False
 
     def loop_test(self, test_case_module_name, test_name, test_env, current_run=0, current_retry=0):
         objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
         objStatusRecorder.set_case_basic_info(test_name)
+
+        # write case basic info into status file
+        if self.status_job_id_path:
+            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 100, {"case_name": test_name})
+
         analyze_result = False
         while current_run < self.exec_config['max-run']:
             self.logger.info("The counter is %d and the retry counter is %d" % (current_run, current_retry))
@@ -357,13 +403,24 @@ class RunTest(object):
                 self.kill_legacy_process()
                 self.run_test(test_case_module_name, test_env)
                 current_run, current_retry, analyze_result = self.run_test_result_analyzer(current_run, current_retry)
-                objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
+                case_exec_time = objStatusRecorder.record_case_exec_time_history(objStatusRecorder.STATUS_DESC_CASE_TOTAL_EXEC_TIME)
+
+                # write case exec time into status file
+                if self.status_job_id_path:
+                    StatusFileCreator.create_status_file(self.status_job_id_path,
+                                                         StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 600,
+                                                         {"case_exec_time": case_exec_time})
             except:
                 self.logger.warn('Exception happened during running test!')
                 traceback.print_exc()
                 objStatusRecorder.record_case_status_history(objStatusRecorder.STATUS_DESC_CASE_RUNNING_STATUS,
                                                              StatusRecorder.ERROR_LOOP_TEST_RAISE_EXCEPTION)
                 current_retry += 1
+
+                # write case failed detail into status file
+                if self.status_job_id_path:
+                    StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 740)
+
             if current_retry >= self.exec_config['max-retry']:
                 self.logger.warn("current retry [%s] exceed the max retry count [%s]" % (current_retry, self.exec_config['max-retry']))
                 return False
@@ -426,8 +483,19 @@ class RunTest(object):
                                 for browser_type in self.exec_config['webdriver-run-browser']:
                                     runtime_case_data['browser_type'] = browser_type
                                     test_env = self.get_test_env(**runtime_case_data)
-                                    if self.loop_test(test_case_module_name, test_name, test_env) and self.upload_config['enable']:
-                                        self.upload_test_result_handler()
+                                    if self.loop_test(test_case_module_name, test_name, test_env):
+                                        # write loop_test success status to status file
+                                        if self.status_job_id_path:
+                                            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 500)
+                                        if self.upload_config['enable']:
+                                            self.upload_test_result_handler()
+                                        else:
+                                            if self.status_job_id_path:
+                                                StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 900)
+                                    else:
+                                        # write loop_test failed status to status file
+                                        if self.status_job_id_path:
+                                            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 830)
                                     self.case_teardown()
                             else:
                                 test_env = self.get_test_env(**runtime_case_data)

@@ -15,6 +15,7 @@ from common.logConfig import get_logger
 from common.commonUtil import CommonUtil
 from common.commonUtil import HasalConfigUtil
 from common.commonUtil import StatusRecorder
+from common.statusFileCreator import StatusFileCreator
 from common.visualmetricsWrapper import find_image_viewport
 
 logger = get_logger(__name__)
@@ -48,6 +49,13 @@ class BaseTest(unittest.TestCase):
 
         # Get Terminal Window Object
         self.terminal_window_obj = terminalHelper.get_terminal_window_object()
+
+        # init status job id path, if not specify in exec config, default will be empty string
+        status_job_id = self.exec_config.get("status-job-id", "")
+        if status_job_id:
+            self.status_job_id_path = os.path.join(StatusFileCreator.get_status_folder(), self.exec_config.get("status-job-id", ""))
+        else:
+            self.status_job_id_path = ""
 
     def set_profiler_path(self):
         for name in self.env.firefox_settings_extensions:
@@ -227,6 +235,10 @@ class BaseTest(unittest.TestCase):
         # output status to static file
         self.objStatusRecorder = StatusRecorder(self.global_config['default-running-statistics-fn'])
         self.objStatusRecorder.record_current_status({self.objStatusRecorder.STATUS_SIKULI_RUNNING_VALIDATION: str(self.round_status)})
+
+        # write sikuli status into status file
+        if self.status_job_id_path:
+            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 300, {"round_status": self.round_status})
 
         # output result
         if self.round_status == 0:

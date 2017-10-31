@@ -10,5 +10,6 @@
   "output-result-ipynb-file": false,
   "output-result-video-file": true,
   "clean-unnecessary-images": true,
-  "clean-unnecessary-images-extend-buffer": 1
+  "clean-unnecessary-images-extend-buffer": 1,
+  "status-job-id": ""
 }
