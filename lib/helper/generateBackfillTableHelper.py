@@ -78,41 +78,44 @@ class GenerateBackfillTableHelper(object):
             # get fx pkg revison
             if current_backfill_dir_url not in history_backfill_url_dict:
                 current_backfill_fx_pkg_fn, current_backfill_fx_pkg_json = ArchiveMozillaHelper.get_fx_pkg_name(current_platform_for_archive, current_backfill_dir_url)
-                current_backfill_fx_pkg_fn_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + current_backfill_fx_pkg_fn
-                current_backfill_fx_pkg_json_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + current_backfill_fx_pkg_json
-                current_backfill_fx_pkg_json_response = NetworkUtil.get_request_and_response(current_backfill_fx_pkg_json_url)
-                if current_backfill_fx_pkg_json_response:
-                    current_backfill_fx_pkg_json_obj = current_backfill_fx_pkg_json_response.json()
-                    current_backfill_revision = current_backfill_fx_pkg_json_obj.get("moz_source_stamp", None)
-                    if current_backfill_revision:
+                if current_backfill_fx_pkg_fn and current_backfill_fx_pkg_json:
+                    current_backfill_fx_pkg_fn_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + current_backfill_fx_pkg_fn
+                    current_backfill_fx_pkg_json_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + current_backfill_fx_pkg_json
+                    current_backfill_fx_pkg_json_response = NetworkUtil.get_request_and_response(current_backfill_fx_pkg_json_url)
+                    if current_backfill_fx_pkg_json_response:
+                        current_backfill_fx_pkg_json_obj = current_backfill_fx_pkg_json_response.json()
+                        current_backfill_revision = current_backfill_fx_pkg_json_obj.get("moz_source_stamp", None)
+                        if current_backfill_revision:
 
-                        # get fx pkg push date
-                        query_hg_json_url = "%s/%s" % (GenerateBackfillTableHelper.DEFAULT_HG_QUERY_REVISION_JSON_URL, current_backfill_revision)
-                        query_hg_json_response = NetworkUtil.get_request_and_response(query_hg_json_url)
-                        if query_hg_json_response:
-                            query_hg_json_obj = query_hg_json_response.json()
+                            # get fx pkg push date
+                            query_hg_json_url = "%s/%s" % (GenerateBackfillTableHelper.DEFAULT_HG_QUERY_REVISION_JSON_URL, current_backfill_revision)
+                            query_hg_json_response = NetworkUtil.get_request_and_response(query_hg_json_url)
+                            if query_hg_json_response:
+                                query_hg_json_obj = query_hg_json_response.json()
 
-                            # the existing data example looks like [1505857765, 0]
-                            # not sure what do we need to do with second value, skip handling it first
+                                # the existing data example looks like [1505857765, 0]
+                                # not sure what do we need to do with second value, skip handling it first
 
-                            # should modify from integer to string
-                            current_backfill_revision_push_date_stamp = str(query_hg_json_obj.get("pushdate", None)[0])
+                                # should modify from integer to string
+                                current_backfill_revision_push_date_stamp = str(query_hg_json_obj.get("pushdate", None)[0])
 
-                            if current_backfill_revision_push_date_stamp:
-                                archieve_revision_relation_table[current_backfill_revision_push_date_stamp] = {"revision": current_backfill_revision,
-                                                                                                               "pkg_json_url": current_backfill_fx_pkg_json_url,
-                                                                                                               "pkg_fn_url": current_backfill_fx_pkg_fn_url,
-                                                                                                               "archive_url": current_backfill_dir_url,
-                                                                                                               "archive_dir": total_backfill_url_dict[current_backfill_dir_url]['folder_name'],
-                                                                                                               "archive_datetime": total_backfill_url_dict[current_backfill_dir_url]['folder_datetime']}
+                                if current_backfill_revision_push_date_stamp:
+                                    archieve_revision_relation_table[current_backfill_revision_push_date_stamp] = {"revision": current_backfill_revision,
+                                                                                                                   "pkg_json_url": current_backfill_fx_pkg_json_url,
+                                                                                                                   "pkg_fn_url": current_backfill_fx_pkg_fn_url,
+                                                                                                                   "archive_url": current_backfill_dir_url,
+                                                                                                                   "archive_dir": total_backfill_url_dict[current_backfill_dir_url]['folder_name'],
+                                                                                                                   "archive_datetime": total_backfill_url_dict[current_backfill_dir_url]['folder_datetime']}
+                                else:
+                                    logger.error("Cannot get corresponding datetime from pushdate key from json obj [%s]" % query_hg_json_obj)
                             else:
-                                logger.error("Cannot get corresponding datetime from pushdate key from json obj [%s]" % query_hg_json_obj)
+                                logger.error("Cannot get corresponding hg revision json content from url : [%s]" % query_hg_json_url)
                         else:
-                            logger.error("Cannot get corresponding hg revision json content from url : [%s]" % query_hg_json_url)
+                            logger.error("Cannot get corresponding revision from moz_source_stamp key from json obj [%s]" % current_backfill_fx_pkg_json_obj)
                     else:
-                        logger.error("Cannot get corresponding revision from moz_source_stamp key from json obj [%s]" % current_backfill_fx_pkg_json_obj)
+                        logger.error("Cannot get corresponding fx pkg json file content from url : [%s]" % current_backfill_fx_pkg_json_url)
                 else:
-                    logger.error("Cannot get corresponding fx pkg json file content from url : [%s]" % current_backfill_fx_pkg_json_url)
+                    logger.error("Cannot get reference fx pkg fn and json fn from archive folder")
             else:
                 archieve_revision_relation_table[history_backfill_url_dict[current_backfill_dir_url]["push_date_stamp"]] = {
                     "revision": history_backfill_url_dict[current_backfill_dir_url]["revision"],
