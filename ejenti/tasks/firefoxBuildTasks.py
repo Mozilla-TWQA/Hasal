@@ -137,7 +137,10 @@ def download_specify_url_nightly_build(**kwargs):
         download_dir_url_path = task_config.get("DOWNLOAD_PKG_DIR_URL", "")
 
     # init download url
-    remote_url_str = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + ArchiveMozillaHelper.DEFAULT_NIGHTLY_ARCHIVE_URL_DIR + download_dir_url_path
+    if download_dir_url_path.startswith(ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + ArchiveMozillaHelper.DEFAULT_NIGHTLY_ARCHIVE_URL_DIR):
+        remote_url_str = download_dir_url_path
+    else:
+        remote_url_str = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + ArchiveMozillaHelper.DEFAULT_NIGHTLY_ARCHIVE_URL_DIR + download_dir_url_path
 
     return download_nightly_build(output_dp, remote_url_str)
 

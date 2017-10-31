@@ -1,5 +1,6 @@
 import os
 import re
+import copy
 import json
 import socket
 import hashlib
@@ -12,6 +13,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
+from lib.modules.build_information import BuildInformation
+from lib.common.statusFileCreator import StatusFileCreator
 from hasal_consumer import HasalConsumer
 from hasalPulsePublisher import HasalPulsePublisher
 
@@ -26,6 +29,7 @@ class TasksTrigger(object):
 
     KEY_CONFIG_PULSE_USER = 'pulse_username'
     KEY_CONFIG_PULSE_PWD = 'pulse_password'
+
     KEY_CONFIG_JOBS = 'jobs'
     KEY_JOBS_ENABLE = 'enable'
     KEY_JOBS_AMOUNT = 'amount'
@@ -64,8 +68,7 @@ class TasksTrigger(object):
         }
     }
 
-    # default supported platforms, and query backfill days
-    BACK_FILL_PLATFORM_LIST = ['mac', 'win64']
+    # default query back fill days
     BACK_FILL_DEFAULT_QUERY_DAYS = 14
 
     def __init__(self, config, cmd_config_obj, clean_at_begin=False):
@@ -400,7 +403,7 @@ class TasksTrigger(object):
         """
         @param job_name: the job name which will set as identify name.
         @param platform: the platform archive server.
-        @return: True if changed, False if not changed.
+        @return: (True, BuildInfomation) if changed, (False, None) if not changed.
         """
         backfill_table_obj = GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table(input_platform=platform)
 
@@ -411,7 +414,7 @@ class TasksTrigger(object):
 
             # prepare timestamp folder
             if not TasksTrigger.check_folder(timestamp_folder):
-                return False
+                return False, None
 
             job_timestamp_file = os.path.join(timestamp_folder, job_name)
             if os.path.exists(job_timestamp_file):
@@ -420,7 +423,7 @@ class TasksTrigger(object):
 
                 if original_timestamp == latest_timestamp:
                     # no changed
-                    return False
+                    return False, None
                 else:
                     # changed
                     logging.info('Job "{}" platform "{}": Latest timestamp [{}], Origin timestamp: [{}]'.format(job_name,
@@ -429,7 +432,7 @@ class TasksTrigger(object):
                                                                                                                 original_timestamp))
                     with open(job_timestamp_file, 'w') as f:
                         f.write(latest_timestamp)
-                    return True
+                    return True, BuildInformation(backfill_table_obj.get(latest_timestamp))
             else:
                 # found the file for the 1st time
                 logging.info('Job "{}" platform "{}": Latest timestamp [{}], no origin timestamp.'.format(job_name,
@@ -437,11 +440,58 @@ class TasksTrigger(object):
                                                                                                           latest_timestamp))
                 with open(job_timestamp_file, 'w') as f:
                     f.write(latest_timestamp)
-                return True
+                return True, BuildInformation(backfill_table_obj.get(latest_timestamp))
 
         else:
             logging.error('Cannot retrieve the archive relational table of platform: {platform}'.format(platform=platform))
-            return False
+            return False, None
+
+    @staticmethod
+    def filter_cmd_config(input_config):
+        """
+        Mask the command config information, and filter some other information
+        @param input_config:
+        @return: the modified config
+        """
+        ret_config = copy.deepcopy(input_config)
+        for config_key, config_value in ret_config.items():
+
+            # convert case list
+            if config_key == 'OVERWRITE_HASAL_SUITE_CASE_LIST':
+                if isinstance(config_value, list):
+                    case_list = config_value
+                else:
+                    case_list = config_value.split(",")
+                ret_config[config_key] = case_list
+
+            # convert secret information
+            if config_key == 'OVERWIRTE_HASAL_CONFIG_CTNT':
+                if isinstance(config_value, dict):
+                    if ret_config[config_key].get('configs', {}):
+                        if ret_config[config_key].get('configs', {}).get('upload', {}):
+                            upload_dict_obj = ret_config[config_key]['configs']['upload']
+                            for upload_dict_key in upload_dict_obj.keys():
+                                upload_file_dict_obj = ret_config[config_key]['configs']['upload'][upload_dict_key]
+                                for upload_file_dict_key in upload_file_dict_obj.keys():
+                                    if upload_file_dict_key in ['perfherder-client-id', 'perfherder-secret']:
+                                        ret_config[config_key]['configs']['upload'][upload_dict_key][upload_file_dict_key] = '*****'
+        return ret_config
+
+    @staticmethod
+    def handle_specify_commands(cmd_name, cmd_configs, build_info):
+        """
+        Return modified cmd_configs base on specify commands
+        @param cmd_name:
+        @param cmd_configs:
+        @param build_info:
+        @return:
+        """
+        if cmd_name in ['run-hasal-on-specify-nightly', 'download-specify-nightly']:
+            # above commands need more information
+            cmd_configs['DOWNLOAD_PKG_DIR_URL'] = build_info.archive_url
+            # additional informaion for tracing
+            cmd_configs['DOWNLOAD_REVISION'] = build_info.revision
+        return cmd_configs
 
     @staticmethod
     def job_pushing_meta_task(username, password, command_config, job_name, topic, amount, platform_build, cmd_name, overwrite_cmd_config=None):
@@ -459,16 +509,25 @@ class TasksTrigger(object):
         @param overwrite_cmd_config: The overwrite command config.
         """
         logging.info('checking Job [{}], Platform [{}]...'.format(job_name, platform_build))
-        changed = TasksTrigger.check_latest_timestamp(job_name=job_name, platform=platform_build)
+        changed, build_info = TasksTrigger.check_latest_timestamp(job_name=job_name, platform=platform_build)
         logging.info('checking Job [{}], Platform [{}]... {}'.format(job_name, platform_build, changed))
 
         if changed:
+            # prepare job id status folder
+            job_id = StatusFileCreator.create_job_id_folder(job_name)
+            job_id_fp = os.path.join(StatusFileCreator.get_status_folder(), job_id)
+            # Recording Status
+            StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE_TRIGGER, 100)
+
             # check queue
             queue_exists = HasalPulsePublisher.check_pulse_queue_exists(username=username,
                                                                         password=password,
                                                                         topic=topic)
             if not queue_exists:
                 logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
+
+            # Pre-handle specify command
+            overwrite_cmd_config = TasksTrigger.handle_specify_commands(cmd_name, overwrite_cmd_config, build_info)
 
             # Push MetaTask to Pulse
             publisher = HasalPulsePublisher(username=username,
@@ -496,12 +555,42 @@ class TasksTrigger(object):
                                            cmd=cmd_name,
                                            cmd_config=overwrite_cmd_config,
                                            line='-' * 10))
+            uid_list = []
             for idx in range(amount):
                 uid = '{prefix}.{idx}'.format(prefix=uid_prefix, idx=idx + 1)
+                uid_list.append(uid)
                 publisher.push_meta_task(topic=topic,
                                          command_name=cmd_name,
                                          overwrite_cmd_configs=overwrite_cmd_config,
                                          uid=uid)
+
+            # Recording Status
+            content = {
+                'job_name': job_name,
+                'platform': platform_build,
+                'topic': topic,
+                'amount': amount,
+                'cmd': cmd_name,
+                'cmd_config': TasksTrigger.filter_cmd_config(overwrite_cmd_config),
+                'task_uid_list': uid_list
+            }
+            StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE_TRIGGER, 900, content)
+
+    @staticmethod
+    def get_enabled_platform_list_from_trigger_jobs_config(config_dict_obj):
+        """
+        Return the list which contains enabled platforms.
+        @param config_dict_obj: the jobs dict object in trigger config file
+        @return: list
+        """
+        enabled_platform_set = set()
+        for _, job_detail in config_dict_obj.items():
+            enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
+            platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
+            if enable and platform_build:
+                enabled_platform_set.add(platform_build)
+        logging.info('Enabled platforms: {}'.format(enabled_platform_set))
+        return list(enabled_platform_set)
 
     @staticmethod
     def job_listen_response_from_agent(username, password, rotating_file_path):
@@ -558,7 +647,7 @@ class TasksTrigger(object):
     def _add_event_listener(self):
         self.scheduler.add_listener(self._job_exception_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
-    def run(self):
+    def run(self, skip_first_query=False):
         """
         Adding jobs into scheduler.
         """
@@ -580,22 +669,27 @@ class TasksTrigger(object):
                                        'rotating_file_path': MGT_LOG_PATH})
         logging.info('Adding Rotating Logger done: {fp}'.format(fp=os.path.abspath(MGT_LOG_PATH)))
 
-        # 1st time generating backfill table for query
-        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
-            logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
-            GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
-        logging.info('Generating latest backfill tables done.')
+        # loading enabled platform list
+        enabled_platform_list = TasksTrigger.get_enabled_platform_list_from_trigger_jobs_config(self.jobs_config)
 
-        # creating jobs for query backfill table
-        for platform_build in TasksTrigger.BACK_FILL_PLATFORM_LIST:
-            self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
-                                   trigger='interval',
-                                   id='query_backfill_table_{}'.format(platform_build),
-                                   max_instances=1,
-                                   minutes=30,
-                                   args=[],
-                                   kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
-                                           'input_platform': platform_build})
+        # 1st time generating back fill table for query
+        if not skip_first_query:
+            for platform_build in enabled_platform_list:
+                logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
+                GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(
+                    input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
+            logging.info('Generating latest backfill tables done.')
+
+            # creating jobs for query backfill table
+            for platform_build in enabled_platform_list:
+                self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
+                                       trigger='interval',
+                                       id='query_backfill_table_{}'.format(platform_build),
+                                       max_instances=1,
+                                       minutes=30,
+                                       args=[],
+                                       kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
+                                               'input_platform': platform_build})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():

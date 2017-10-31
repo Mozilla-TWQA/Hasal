@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """
 Usage:
-  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean]
+  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean] [--skip-first-query]
   pulse_trigger.py (-h | --help)
 
 Options:
@@ -10,15 +10,18 @@ Options:
   --config=<str>                  Specify the trigger_config.json file path. [default: configs/ejenti/trigger_config.json]
   --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
   --clean                         Clean Pulse Queue on Pulse service. [default: False]
+  --skip-first-query              Skip first time query of Perfherder/Archive server. [default: False]
 """
 
 import os
 import time
 import logging
 from docopt import docopt
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from lib.common.commonUtil import CommonUtil
 from pulse_modules.tasksTrigger import TasksTrigger
+from jobs.status_json_creator import status_json_creator
 
 
 class LogFilter(logging.Filter):
@@ -70,9 +73,42 @@ def main():
         exit(1)
 
     clean_flag = arguments['--clean']
+    skip_first_query_flag = arguments['--skip-first-query']
+
     try:
         trigger = TasksTrigger(config=config, cmd_config_obj=command_config, clean_at_begin=clean_flag)
-        trigger.run()
+        trigger.run(skip_first_query=skip_first_query_flag)
+
+        # The `status_json_creator()` method under `ejenti.jobs` package, so `TaskTrigger` is really hard to call it.
+        outside_scheduler = BackgroundScheduler()
+        outside_scheduler.start()
+
+        # create Status B2 upload job
+        KEY_CONFIG_B2_ACCOUNT_ID = 'b2_account_id'
+        KEY_CONFIG_B2_ACCOUNT_KEY = 'b2_account_key'
+        KEY_CONFIG_B2_BUCKET_NAME = 'b2_upload_bucket_name'
+        INTERVAL_MINUTES = 30
+        b2_account_id = config.get(KEY_CONFIG_B2_ACCOUNT_ID)
+        b2_account_key = config.get(KEY_CONFIG_B2_ACCOUNT_KEY)
+        b2_upload_bucket_name = config.get(KEY_CONFIG_B2_BUCKET_NAME)
+        if b2_account_id and b2_account_key and b2_upload_bucket_name:
+            b2_upload_config = {
+                'configs': {
+                    'b2_account_id': b2_account_id,
+                    'b2_account_key': b2_account_key,
+                    'b2_upload_bucket_name': b2_upload_bucket_name
+                }
+            }
+            outside_scheduler.add_job(func=status_json_creator,
+                                      trigger='interval',
+                                      id='status_b2_uploader',
+                                      max_instances=1,
+                                      minutes=INTERVAL_MINUTES,
+                                      args=[],
+                                      kwargs=b2_upload_config)
+            logging.info('Enable Status JSON Creator and B2 Uploader.')
+        else:
+            logging.warn('Please config your B2 Account ID, Key, and Bucket Name to enable Status JSON Creator and B2 Uploader.')
 
         while True:
             time.sleep(10)

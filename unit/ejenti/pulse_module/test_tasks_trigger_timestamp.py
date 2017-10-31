@@ -6,11 +6,11 @@ from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
 from lib.helper.perfherderDataQueryHelper import PerfherderDataQueryHelper
 
 
-class TestTasksTrigger(unittest.TestCase):
+class TestTasksTriggerTimestamp(unittest.TestCase):
 
     def setUp(self):
-        self.fake_job_name = 'unittest'
-        self.target_platform = 'mac'
+        self.fake_job_name = 'unittest_tasks_trigger_timestamp'
+        self.target_platform = 'linux64'
         self.query_days = 1
 
         TasksTrigger.clean_timestamp_by_job_name(self.fake_job_name)
@@ -27,10 +27,10 @@ class TestTasksTrigger(unittest.TestCase):
             input_backfill_days=self.query_days, input_platform=self.target_platform)
 
     def test_check_latest_timestamp(self):
-        ret = TasksTrigger.check_latest_timestamp(self.fake_job_name, self.target_platform)
+        ret, build_info = TasksTrigger.check_latest_timestamp(self.fake_job_name, self.target_platform)
         self.assertTrue(ret, 'First query should be True.')
 
-        ret = TasksTrigger.check_latest_timestamp(self.fake_job_name, self.target_platform)
+        ret, build_info = TasksTrigger.check_latest_timestamp(self.fake_job_name, self.target_platform)
         self.assertFalse(ret, 'Second query should be False.')
 
     def tearDown(self):

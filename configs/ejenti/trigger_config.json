@@ -1,6 +1,9 @@
 {
   "pulse_username": "",
   "pulse_password": "",
+  "b2_account_id": "",
+  "b2_account_key": "",
+  "b2_upload_bucket_name": "pulsetrigger",
   "jobs": {
     "win7_x64": {
       "enable": false,
@@ -8,7 +11,7 @@
       "platform_build": "win64",
       "interval_minutes": 1,
       "amount": 6,
-      "cmd": "run-hasal-on-latest-nightly",
+      "cmd": "run-hasal-on-specify-nightly",
       "configs": {
         "CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
         "CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev",
@@ -41,7 +44,7 @@
       "platform_build": "win64",
       "interval_minutes": 1,
       "amount": 1,
-      "cmd": "run-hasal-on-latest-nightly",
+      "cmd": "run-hasal-on-specify-nightly",
       "configs": {
         "CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
         "CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev",
@@ -71,6 +74,15 @@
     "mac": {
       "enable": false,
       "topic": "darwin",
+      "platform_build": "mac",
+      "interval_minutes": 1,
+      "amount": 1,
+      "cmd": "download-latest-nightly",
+      "configs": {}
+    },
+    "mac-customized-topic": {
+      "enable": false,
+      "topic": "customized-topic-darwin",
       "platform_build": "mac",
       "interval_minutes": 1,
       "amount": 1,

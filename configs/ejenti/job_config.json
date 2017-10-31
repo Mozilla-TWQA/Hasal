@@ -35,7 +35,8 @@
     "default-loaded": false,
     "configs": {
       "username": "",
-      "password": ""
+      "password": "",
+      "customized_topic": ""
     }
   },
   "init_slack_bot": {
