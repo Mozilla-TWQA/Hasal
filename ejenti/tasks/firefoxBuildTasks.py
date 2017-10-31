@@ -28,10 +28,14 @@ def download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp):
     fx_pkg_name_url_path, fx_pkg_json_url_path = ArchiveMozillaHelper.get_fx_pkg_name(dl_pkg_platform, remote_url_str)
 
     # download files
-    download_fx_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + fx_pkg_name_url_path
-    download_fx_fp = NetworkUtil.download_file(output_dp, download_fx_url)
-    download_json_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + fx_pkg_json_url_path
-    download_json_fp = NetworkUtil.download_file(output_dp, download_json_url)
+    if fx_pkg_json_url_path and fx_pkg_json_url_path:
+        download_fx_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + fx_pkg_name_url_path
+        download_fx_fp = NetworkUtil.download_file(output_dp, download_fx_url)
+        download_json_url = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + fx_pkg_json_url_path
+        download_json_fp = NetworkUtil.download_file(output_dp, download_json_url)
+    else:
+        logging.error("Failed to get the reference fx pkg json and fn path")
+        return None, None
 
     # check download status
     if download_fx_fp and download_json_fp:
@@ -39,7 +43,7 @@ def download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp):
         return (download_fx_fp, download_json_fp)
     else:
         logging.error("build files download in [%s,%s] " % (download_fx_fp, download_json_fp))
-        return None
+        return None, None
 
 
 def download_nightly_build(output_dp, remote_url_str):

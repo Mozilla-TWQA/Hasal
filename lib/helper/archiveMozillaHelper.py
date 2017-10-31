@@ -115,12 +115,12 @@ class ArchiveMozillaHelper(object):
         if len(remote_file_dict.keys()) == 0:
             logger.error(
                 "can't get remote file list, could be the network error, or url path[%s] wrong!!" % input_url_str)
-            return False
+            return None, None
         else:
             if input_platform_name not in PLATFORM_FN_MAPPING:
                 logger.error("we are currently not support the platform[%s] you specified!" % input_platform_name)
                 logger.error("We are currently support the platform tag: [%s]" % PLATFORM_FN_MAPPING.keys())
-                return False
+                return None, None
             else:
                 matched_keyword = PLATFORM_FN_MAPPING[input_platform_name]['key'] + "." + PLATFORM_FN_MAPPING[input_platform_name]['ext']
                 matched_file_list = [fn for fn in remote_file_dict.keys()
@@ -128,7 +128,7 @@ class ArchiveMozillaHelper(object):
                 if len(matched_file_list) != 1:
                     logger.warn("the possible match file list is not equal 1, list as below: [%s]" % matched_file_list)
                     if len(matched_file_list) < 1:
-                        return False
+                        return None, None
                     matched_file_list = sorted(matched_file_list)[-1:]
                     logger.warn("select following file [%s]" % matched_file_list)
 
