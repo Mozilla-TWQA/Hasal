@@ -37,18 +37,19 @@ class Case(basecase.SikuliInputLatencyCase):
         app.wait_for_loaded()
 
         # Wait for stable
-        sleep(2)
+        sleep(5)
 
         # PRE ACTIONS
         app.mouse_move_to_compose_new_mail_button()
         app._click(action_name='Click compose new mail icon', component=app.OUTLOOK_COMPOSE_NEW_MAIL_ICON)
         app.click_compose_new_mail_content()
+        app.wait_for_new_mail_button_function_loaded()
         sleep(2)
 
         # Customized Region
         customized_region_name = 'end'
         type_area = self.find_match_region(app.OUTLOOK_MIDDLE_UPPER_MENU_ICON, similarity=0.75)
-        modified_area = self.tuning_region(type_area, y_offset=260, x_offset=-58, w_offset=160, h_offset=20)
+        modified_area = self.tuning_region(type_area, y_offset=260, x_offset=-58, w_offset=-85, h_offset=30)
         self.set_override_region_settings(customized_region_name, modified_area)
 
         # Record T1, and capture the snapshot image
