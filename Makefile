@@ -19,6 +19,12 @@ $(VENV)/bin/python:
 dev-env: $(VENV)/bin/python
 
 
+.PHONY: requirements
+requirements: $(VENV)/bin/python
+	$(VENV)/bin/pip install -Ur requirements.txt
+	$(VENV)/bin/pip install -Ur ejenti/requirements.txt
+	$(VENV)/bin/python setup.py develop
+
 # for testing
 .PHONY: test
 test:
