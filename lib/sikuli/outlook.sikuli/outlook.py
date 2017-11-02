@@ -45,9 +45,13 @@ class outlook(WebApp):
     ]
 
     def wait_for_loaded(self, similarity=0.70):
-        self._wait_for_loaded(component=outlook.OUTLOOK_ACCOUNT_AVATAR, similarity=similarity, timeout=60)
-        self._wait_for_loaded(component=outlook.OUTLOOK_MIDDLE_UPPER_MENU_ICON, similarity=similarity, timeout=60)
-        return self._wait_for_loaded(component=outlook.OUTLOOK_LEFT_UPPER_MENU_ICON, similarity=similarity, timeout=60)
+        self._wait_for_loaded(component=outlook.OUTLOOK_ACCOUNT_AVATAR, similarity=similarity, timeout=120)
+        self._wait_for_loaded(component=outlook.OUTLOOK_MIDDLE_UPPER_MENU_ICON, similarity=similarity, timeout=120)
+        self._wait_for_loaded(component=outlook.OUTLOOK_LEFT_UPPER_MENU_ICON, similarity=similarity, timeout=120)
+        return self._wait_for_loaded(component=outlook.OUTLOOK_COMPOSE_NEW_MAIL_ICON, similarity=similarity, timeout=120)
+
+    def wait_for_new_mail_button_function_loaded(self, similarity=0.70):
+        return self._wait_for_loaded(component=outlook.OUTLOOK_NEW_MAIL_BOTTOM_FUNCTION_ICON, similarity=similarity, timeout=60)
 
     def mouse_move_to_compose_new_mail_button(self):
         return self._mouseMove(action_name='Move mouse to compose new mail button',
@@ -70,5 +74,4 @@ class outlook(WebApp):
                            component=outlook.OUTLOOK_DISCARD_MAIL_CONFIRMATION)
 
     def click_compose_new_mail_content(self):
-        self._click(action_name='Enter compose new mail content', component=outlook.OUTLOOK_ENTER_COMPOSE_MAIL_CONTENT)
-        return self._wait_for_loaded(component=outlook.OUTLOOK_COMPOSE_NEW_MAIL_ICON, timeout=60)
+        return self._click(action_name='Enter compose new mail content', component=outlook.OUTLOOK_ENTER_COMPOSE_MAIL_CONTENT)

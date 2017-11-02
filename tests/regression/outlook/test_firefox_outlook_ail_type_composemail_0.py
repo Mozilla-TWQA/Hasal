@@ -6,8 +6,8 @@ class TestSikuli(PerfBaseTest):
     def setUp(self):
         super(TestSikuli, self).setUp()
         self.set_configs(self.config_name.INDEX,
-                         self.extract_platform_dep_settings({'win32': {'7': {'compare-threshold': 0.05},
-                                                                       '10': {'compare-threshold': 0.05}}}))
+                         self.extract_platform_dep_settings({'win32': {'7': {'compare-threshold': 0.03},
+                                                                       '10': {'compare-threshold': 0.03}}}))
 
     def test_firefox_outlook_ail_type_composemail_0(self):
         self.test_url = self.global_config['outlook']['test-url']
