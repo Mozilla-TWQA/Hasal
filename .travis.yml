@@ -28,6 +28,13 @@ matrix:
         - ./mach
       script:
         - make test
+    # Unittest
+    - env: GOAL=unittest
+      os: linux
+      dist: trusty
+      python: 2.7
+      script:
+        - make unit
     # Test bootstrap-linux
     - env: GOAL=bootstrap
       os: linux
