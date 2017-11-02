@@ -15,6 +15,7 @@ from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
 from lib.modules.build_information import BuildInformation
 from lib.common.statusFileCreator import StatusFileCreator
+from lib.common.commonUtil import CommonUtil
 from hasal_consumer import HasalConsumer
 from hasalPulsePublisher import HasalPulsePublisher
 
@@ -465,16 +466,7 @@ class TasksTrigger(object):
                 ret_config[config_key] = case_list
 
             # convert secret information
-            if config_key == 'OVERWIRTE_HASAL_CONFIG_CTNT':
-                if isinstance(config_value, dict):
-                    if ret_config[config_key].get('configs', {}):
-                        if ret_config[config_key].get('configs', {}).get('upload', {}):
-                            upload_dict_obj = ret_config[config_key]['configs']['upload']
-                            for upload_dict_key in upload_dict_obj.keys():
-                                upload_file_dict_obj = ret_config[config_key]['configs']['upload'][upload_dict_key]
-                                for upload_file_dict_key in upload_file_dict_obj.keys():
-                                    if upload_file_dict_key in ['perfherder-client-id', 'perfherder-secret']:
-                                        ret_config[config_key]['configs']['upload'][upload_dict_key][upload_file_dict_key] = '*****'
+            ret_config = CommonUtil.mask_credential_value(ret_config)
         return ret_config
 
     @staticmethod

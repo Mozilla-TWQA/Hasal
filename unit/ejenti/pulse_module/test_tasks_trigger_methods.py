@@ -127,11 +127,11 @@ class TestTasksTriggerMethods(unittest.TestCase):
         ret_case = ret['OVERWRITE_HASAL_SUITE_CASE_LIST']
         self.assertEqual(expected_case, ret_case)
 
-        expected_id = '*****'
+        expected_id = 'hidden_credential_value'
         ret_id = ret['OVERWIRTE_HASAL_CONFIG_CTNT']['configs']['upload']['fake.json']['perfherder-client-id']
         self.assertEqual(expected_id, ret_id)
 
-        expected_sec = '*****'
+        expected_sec = 'hidden_credential_value'
         ret_sec = ret['OVERWIRTE_HASAL_CONFIG_CTNT']['configs']['upload']['fake.json']['perfherder-secret']
         self.assertEqual(expected_sec, ret_sec)
 

@@ -351,18 +351,44 @@ class CommonUtil(object):
     logger = get_logger(__file__)
 
     @staticmethod
-    def mask_credential_value(input_dict, input_mask_key=None):
-        DEFAULT_MASK_KEY_LIST = ["perfherder-client-id", "perfherder-secret", "b2-account-id", "b2-account-key", "username", "password", "bot_api_token", "bot_name"]
-        DEFAULT_MASK_VALUE = "hidden_credential_value"
-        if not input_mask_key:
-            input_mask_key = DEFAULT_MASK_KEY_LIST
+    def mask_credential_value(input_dict, input_mask_key_list=None, input_mask_symbol=None):
+        """
+        Replace the value by input_mask_symbol if key match one of input_mask_key_list.
+        @param input_dict: input dict object
+        @param input_mask_key_list: the key string list
+        @param input_mask_symbol: the mask symbol, default is `hidden_credential_value`
+        @return: dict object which mask the values of specify keys
+        """
+        DEFAULT_MASK_KEY_LIST = ["perfherder-client-id",
+                                 "perfherder-secret",
+                                 "b2_account_id",
+                                 "b2-account-id",
+                                 "b2_account_key",
+                                 "b2-account-key",
+                                 "username",
+                                 "password",
+                                 "pulse_username",
+                                 "pulse_password",
+                                 "bot_api_token",
+                                 "bot_name",
+                                 "bot_mgt_channel",
+                                 "bot_election_channel"]
+        DEFAULT_MASK_SYMBOL = "hidden_credential_value"
+
+        if input_mask_symbol:
+            mask_symbol = input_mask_symbol
+        else:
+            mask_symbol = DEFAULT_MASK_SYMBOL
+
+        if not input_mask_key_list:
+            input_mask_key_list = DEFAULT_MASK_KEY_LIST
 
         for search_key, search_value in input_dict.items():
             if isinstance(search_value, dict):
-                input_dict[search_key] = CommonUtil.mask_credential_value(search_value, input_mask_key)
+                input_dict[search_key] = CommonUtil.mask_credential_value(search_value, input_mask_key_list, input_mask_symbol)
             else:
-                if search_key in input_mask_key:
-                    input_dict[search_key] = DEFAULT_MASK_VALUE
+                if search_key in input_mask_key_list:
+                    input_dict[search_key] = mask_symbol
         return input_dict
 
     @staticmethod
