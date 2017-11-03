@@ -87,7 +87,7 @@ def git_pull(**kwargs):
         return True
     else:
         # touch status file after command executed successfully
-        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_PULL, 800)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_PULL, 800, exec_cmd)
         return False
 
 
