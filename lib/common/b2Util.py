@@ -62,6 +62,63 @@ class B2Util(object):
             logger.error("B2 authenticiation failed, please check the authenication error message above!")
             return None
 
+    def get_bucket_id_by_name(self, bucket_name):
+        """
+        Return the Bucket ID of given bucket name. None if there is no bucket which match the name.
+        @param bucket_name:
+        @return:
+        """
+        bucket_list = self.get_bucket_list()
+        for bucket_obj in bucket_list:
+            if bucket_obj['bucketName'] == bucket_name:
+                bucket_id = bucket_obj['bucketId']
+                return bucket_id
+        return None
+
+    def get_file_name_list(self, bucket_id):
+        """
+        Get file name list under bucket.
+        Ref: https://www.backblaze.com/b2/docs/b2_list_file_names.html
+        @param bucket_id:
+        @return:
+        """
+        if self.auth_success:
+            DEFAULT_LIST_FILE_NAMES_URL = self.api_url + '/b2api/v1/b2_list_file_names'
+
+            ret_list = []
+            start_file_name = None
+            while True:
+                url_data = json.dumps({
+                    'bucketId': bucket_id,
+                    'startFileName': start_file_name,
+                    'maxFileCount': 2
+                })
+                url_header = {
+                    'Authorization': self.auth_token
+                }
+
+                response_data = self.request_and_response(DEFAULT_LIST_FILE_NAMES_URL, url_data, url_header)
+                if response_data:
+                    logger.debug("Get file name list under bucket id [{}] success, buckets data: [{}]".format(bucket_id, response_data['files']))
+
+                    ret_list = ret_list + response_data['files']
+
+                    # break if there is no next file name
+                    if not response_data['nextFileName']:
+                        logger.debug('There is no next file.')
+                        break
+                    else:
+                        start_file_name = response_data['nextFileName']
+                        logger.debug('Next File Name: {}'.format(start_file_name))
+                else:
+                    break
+
+            return ret_list
+
+        else:
+            logger.error("B2 authenticiation failed, please check the authenication error message above!")
+            return []
+
     def upload_file(self, input_file_path, bucket_name, input_upload_dir_name=None, input_content_type="video/x-matroska"):
         """
         Use bucket id and file path to upload file

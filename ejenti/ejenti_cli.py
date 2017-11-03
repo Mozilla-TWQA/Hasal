@@ -1,8 +1,8 @@
 """ejenti.
 
 Usage:
-  ejenti.py [--cmd-config=<str>] [--job-config=<str>] [--config=<str>]
-  ejenti.py (-h | --help)
+  ejenti_cli.py [--cmd-config=<str>] [--job-config=<str>] [--config=<str>]
+  ejenti_cli.py (-h | --help)
 
 Options:
   -h --help                       Show this screen.

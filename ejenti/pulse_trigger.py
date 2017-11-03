@@ -2,13 +2,14 @@
 # -*- encoding: utf-8 -*-
 """
 Usage:
-  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--clean] [--skip-first-query]
+  pulse_trigger.py [--config=<str>] [--cmd-config=<str>] [--server-job-config=<str>] [--clean] [--skip-first-query]
   pulse_trigger.py (-h | --help)
 
 Options:
   -h --help                       Show this screen.
   --config=<str>                  Specify the trigger_config.json file path. [default: configs/ejenti/trigger_config.json]
   --cmd-config=<str>              Specify the cmd_config.json file path. [default: configs/ejenti/cmd_config.json]
+  --server-job-config=<str>      Specify the server_job_config.json file path. [default: configs/ejenti/server_job_config.json]
   --clean                         Clean Pulse Queue on Pulse service. [default: False]
   --skip-first-query              Skip first time query of Perfherder/Archive server. [default: False]
 """
@@ -16,6 +17,7 @@ Options:
 import os
 import time
 import logging
+import importlib
 from docopt import docopt
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -72,6 +74,13 @@ def main():
         logging.error('There is not command config. (Loaded from {})'.format(cmd_config_file))
         exit(1)
 
+    # loading server job config
+    server_job_config_arg = arguments['--server-job-config']
+    server_job_config_file = os.path.abspath(server_job_config_arg)
+    server_job_config = CommonUtil.load_json_file(server_job_config_file)
+    if not server_job_config:
+        logging.warn('There is not server job config, so, there is no server jobs. But trigger will still running. (Loaded from {})'.format(server_job_config_file))
+
     clean_flag = arguments['--clean']
     skip_first_query_flag = arguments['--skip-first-query']
 
@@ -109,6 +118,38 @@ def main():
             logging.info('Enable Status JSON Creator and B2 Uploader.')
         else:
             logging.warn('Please config your B2 Account ID, Key, and Bucket Name to enable Status JSON Creator and B2 Uploader.')
+
+        # load scheduler server jobs
+        for job_name, job_detail in server_job_config.items():
+            logging.info('Server Job [{}] loading ...'.format(job_name))
+
+            enable = job_detail.get('default-loaded', False)
+            if enable:
+                try:
+                    module_path = job_detail.get('module-path')
+                    class_name = job_detail.get('class-name')
+                    interval_min = job_detail.get('interval-min', 1)
+                    max_instance = job_detail.get('max-instances', 1)
+                    parameters = job_detail.get('parameters', {})
+
+                    loaded_module = importlib.import_module(module_path)
+                    loaded_class = getattr(loaded_module, class_name)
+                    loaded_instance = loaded_class()
+                    func_pointer = loaded_instance.run
+                    # TODO: currently, the trigger type is only interval
+                    outside_scheduler.add_job(func=func_pointer,
+                                              trigger='interval',
+                                              id=job_name,
+                                              max_instances=max_instance,
+                                              minutes=interval_min,
+                                              args=[],
+                                              kwargs=parameters)
+                except Exception as e:
+                    logging.error(e)
+            else:
+                logging.info('Disabled')
+
+            logging.info('Server Job [{}] loading done.'.format(job_name))
 
         while True:
             time.sleep(10)
