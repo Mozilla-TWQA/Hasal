@@ -1,5 +1,5 @@
 {
-  "enable"                      : false,
+  "enable": false,
   "perfherder-protocol": "http",
   "perfherder-host": "treeherder.mozilla.org",
   "perfherder-client-id": "",
