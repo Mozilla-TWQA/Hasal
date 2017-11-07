@@ -79,7 +79,7 @@ def main():
     server_job_config_file = os.path.abspath(server_job_config_arg)
     server_job_config = CommonUtil.load_json_file(server_job_config_file)
     if not server_job_config:
-        logging.warn('There is not server job config, so, there is no server jobs. But trigger will still running. (Loaded from {})'.format(server_job_config_file))
+        logging.warn('There is no server job config included. So, there will be no server job, but trigger will still go on. (Loaded from {})'.format(server_job_config_file))
 
     clean_flag = arguments['--clean']
     skip_first_query_flag = arguments['--skip-first-query']
