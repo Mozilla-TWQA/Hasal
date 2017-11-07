@@ -126,7 +126,7 @@ class ArchiveMozillaHelper(object):
                 matched_file_list = [fn for fn in remote_file_dict.keys()
                                      if ((matched_keyword in fn) and ('firefox' in fn) and (not fn.endswith('.asc')))]
                 if len(matched_file_list) != 1:
-                    logger.warn("the possible match file list is not equal 1, list as below: [%s]" % matched_file_list)
+                    logger.warn("the possible match file list on platform [{p}] and URL [{u}] is not equal 1, list as below: [{ret}]".format(p=input_platform_name, u=input_url_str, ret=matched_file_list))
                     if len(matched_file_list) < 1:
                         return None, None
                     matched_file_list = sorted(matched_file_list)[-1:]
@@ -136,7 +136,7 @@ class ArchiveMozillaHelper(object):
         matched_file_name = matched_file_list[0]
         matched_json_file_name = matched_file_name.replace(PLATFORM_FN_MAPPING[input_platform_name]['key'] + "." + PLATFORM_FN_MAPPING[input_platform_name]['ext'], PLATFORM_FN_MAPPING[input_platform_name]['key'] + ".json")
         if matched_json_file_name not in remote_file_dict:
-            logger.error("can't find the json file[%s] in remote file list[%s]!" % (matched_json_file_name, remote_file_dict))
+            logger.error("can't find the json file [%s] in remote file list [%s]!" % (matched_json_file_name, remote_file_dict))
             return None, None
         else:
             logger.debug("matched file name: [%s], json_file_name: [%s]" % (matched_file_name, matched_json_file_name))
