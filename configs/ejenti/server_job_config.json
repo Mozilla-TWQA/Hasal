@@ -1,0 +1,15 @@
+{
+  "AgentsFileNameListHandler": {
+    "module-path": "ejenti.server_jobs.agents_file_name_list_handler",
+    "class-name": "AgentsFileNameListHandler",
+    "trigger-type": "interval",
+    "interval-min": 60,
+    "max-instances": 1,
+    "default-loaded": false,
+    "configs": {
+      "b2_account_id": "",
+      "b2_account_key": "",
+      "b2_upload_bucket_name": ""
+    }
+  }
+}
