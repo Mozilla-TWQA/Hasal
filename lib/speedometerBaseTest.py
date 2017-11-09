@@ -7,6 +7,7 @@ import lib.sikuli as sikuli
 from helper.profilerHelper import Profilers
 from common.logConfig import get_logger
 from common.commonUtil import StatusRecorder
+from common.statusFileCreator import StatusFileCreator
 
 logger = get_logger(__name__)
 
@@ -69,3 +70,7 @@ class SpeedometerBaseTest(baseTest.BaseTest):
 
             # output result
             self.output_speedometer_result()
+
+        # write sikuli status into status file
+        if self.status_job_id_path:
+            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 300, {"round_status": self.round_status})

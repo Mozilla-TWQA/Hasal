@@ -1,8 +1,10 @@
+import os
 import logging
 from lib.common.commonUtil import CommonUtil
 from baseTasks import init_task
 from baseTasks import parse_cmd_parameters
 from baseTasks import get_hasal_repo_path
+from lib.common.statusFileCreator import StatusFileCreator
 
 
 # After few survey about gitPython, I may not choose gitPython as an operator lib for git cmd due to the issue below
@@ -70,12 +72,22 @@ def git_pull(**kwargs):
         logging.error("Incorrect usage for git pull remote_url:[%s], branch_name:[%s]" % (remote_url, branch_name))
         return False
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file before git pull
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_PULL, 100, exec_cmd)
+
     logging.debug("git pull execute cmd [%s]" % exec_cmd)
     return_code, output = CommonUtil.subprocess_checkoutput_wrapper(exec_cmd, cwd=repo_path)
     if return_code == 0:
+        # touch status file after command executed successfully
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_PULL, 900)
         logging.info("git pull command execute success [%s]! output [%s]" % (queue_msg['input_cmd_str'], output))
         return True
     else:
+        # touch status file after command executed successfully
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_PULL, 800, exec_cmd)
         return False
 
 
@@ -109,12 +121,22 @@ def git_checkout(**kwargs):
     else:
         logging.error("Please specify the checkout branch after cmd or configs")
         return False
+
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file before git checkout
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_CHECKOUT, 100, exec_cmd)
     logging.debug("git checkout execute cmd [%s]" % exec_cmd)
     return_code, output = CommonUtil.subprocess_checkoutput_wrapper(exec_cmd, cwd=repo_path)
     if return_code == 0:
+        # touch status file after command executed successfully
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_CHECKOUT, 900)
         logging.info("git checkout command execute success [%s]! output [%s]" % (queue_msg['input_cmd_str'], output))
         return True
     else:
+        # touch status file after command executed failed
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_CHECKOUT, 800)
         return False
 
 
@@ -152,12 +174,21 @@ def git_fetch(**kwargs):
             logging.error("Remote name cannot find in your repo [%s]" % remote_url)
             return False
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file before git fetch
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_FETCH, 100, exec_cmd)
     logging.debug("git fetch execute cmd [%s]" % exec_cmd)
     return_code, output = CommonUtil.subprocess_checkoutput_wrapper(exec_cmd, cwd=repo_path)
     if return_code == 0:
+        # touch status file after command executed successfully
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_FETCH, 900)
         logging.info("git fetch command execute success [%s]! output [%s]" % (queue_msg['input_cmd_str'], output))
         return True
     else:
+        # touch status file after command executed failed
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_FETCH, 800)
         return False
 
 
@@ -176,9 +207,19 @@ def git_reset(**kwargs):
     repo_path = get_hasal_repo_path(task_config)
 
     logging.debug("git reset execute cmd [%s]" % DEFAULT_GIT_CMD_RESET)
+
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file before git reset
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_RESET, 100, DEFAULT_GIT_CMD_RESET)
     return_code, output = CommonUtil.subprocess_checkoutput_wrapper(DEFAULT_GIT_CMD_RESET, cwd=repo_path)
     if return_code == 0:
+        # touch successful status file after git reset
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_RESET, 900)
         logging.info("git clean command execute success [%s]! output [%s]" % (queue_msg['input_cmd_str'], output))
         return True
     else:
+        # touch failed status file after git reset
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_GIT_RESET, 800)
         return False

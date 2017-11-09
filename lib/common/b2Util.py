@@ -16,6 +16,9 @@ class B2Util(object):
         # get b2 auth token
         self.auth_token, self.api_url, self.download_url = self.get_auth_token(account_id, account_key)
 
+        # init variable
+        self.bucket_list = []
+
         if self.auth_token and self.api_url and self.download_url:
             self.auth_success = True
             logger.debug("B2 is successfully authenticate, the current auth_toke:[%s], api_url:[%s], download_url:[%s]" % (self.auth_token, self.api_url, self.download_url))
@@ -57,10 +60,10 @@ class B2Util(object):
                 logger.debug("Get bucket list success, buckets data: [%s]" % response_data['buckets'])
                 return response_data['buckets']
             else:
-                return None
+                return []
         else:
             logger.error("B2 authenticiation failed, please check the authenication error message above!")
-            return None
+            return []
 
     def get_bucket_id_by_name(self, bucket_name):
         """
@@ -132,8 +135,9 @@ class B2Util(object):
             # will based on your bucket name to check if the bucket exist. If not exist, will create new bucket for it
             bucket_id = None
             if bucket_name:
-                bucket_list = self.get_bucket_list()
-                for bucket_obj in bucket_list:
+                if not self.bucket_list:
+                    self.bucket_list = self.get_bucket_list()
+                for bucket_obj in self.bucket_list:
                     if bucket_obj['bucketName'] == bucket_name:
                         bucket_id = bucket_obj['bucketId']
                         break

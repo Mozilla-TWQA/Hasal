@@ -159,15 +159,17 @@ class StatusRecorder(object):
             json.dump(self.current_data, fh)
 
     def record_case_exec_time_history(self, status_desc):
+        case_exec_time = 0
         self.create_current_case_status_history()
         current_case_name = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_NAME]
         current_case_time_stamp = self.current_data[self.DEFAULT_FIELD_CASE_INFO][self.DEFAULT_FIELD_CASE_TIME_STAMP]
         if status_desc in self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp]:
-            self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = time.time() - self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc]
+            case_exec_time = self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = time.time() - self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc]
         else:
             self.current_data[self.DEFAULT_FIELD_CASE_STATUS_HISTORY][current_case_name][current_case_time_stamp][status_desc] = time.time()
         with open(self.status_fp, "w+") as fh:
             json.dump(self.current_data, fh)
+        return case_exec_time
 
 
 class CalculationUtil(object):

@@ -29,16 +29,19 @@ def status_json_creator(**kwargs):
                     "code": "100",
                     "status_code_desc": "Get command from interactive mode",
                     "utc_timestamp": "1234567898"
+                    "fn_code": "100"
                 },
                 {
                     "code": "200",
                     "status_code_desc": "Get command from interactive mode",
                     "utc_timestamp": "1234567899"
+                    "fn_code": "200"
                 },
                 {
                     "code": "900",
                     "status_code_desc": "Get command from interactive mode",
                     "utc_timestamp": "1234567900"
+                    "fn_code": "900"
                 }
             ]
         },
@@ -51,11 +54,13 @@ def status_json_creator(**kwargs):
                     "code": "100",
                     "status_code_desc": "Get command from interactive mode",
                     "utc_timestamp": "1234567898"
+                    "fn_code": "100"
                 },
                 {
                     "code": "300",
                     "status_code_desc": "Get command from interactive mode",
-                    "utc_timestamp": "1234567899"
+                    "utc_timestamp": "1234567899",
+                    "fn_code": "300-1"
                 }
             ]
         },
@@ -68,6 +73,7 @@ def status_json_creator(**kwargs):
                     "code": "100",
                     "status_code_desc": "Get command from interactive mode",
                     "utc_timestamp": "1234567898"
+                    "fn_code": "100-1",
                 }
             ]
         }
@@ -127,7 +133,7 @@ def status_json_creator(**kwargs):
                         job_utc_ts = data_obj["start_ts"]
                         task_name = data_obj["cmd"]
                         for status_obj in data_obj["status"]:
-                            status_code = status_obj["code"]
+                            status_code = status_obj["fn_code"]
                             if job_name in history_reference_data_table:
                                 if job_utc_ts in history_reference_data_table[job_name]:
                                     if task_name in history_reference_data_table[job_name][job_utc_ts]:
@@ -156,23 +162,27 @@ def status_json_creator(**kwargs):
         job_name = history_status_folder_name.split("-")[0]
         job_utc_timestamp_string = history_status_folder_name.split("-")[1]
         task_file_name_list = [task_file_name for task_file_name in os.listdir(history_status_folder_path) if task_file_name.startswith(".") is False and CommonUtil.represent_as_int(task_file_name.split("-")[0])]
-        task_with_extname_list = list(set([task_file_name.split("-")[1] for task_file_name in task_file_name_list]))
+        task_with_extname_list = list(set([task_file_name.split("-")[-1] for task_file_name in task_file_name_list]))
         for task_with_extname in task_with_extname_list:
             task_name = task_with_extname.split(os.extsep)[0]
             data_obj = {"type": job_name,
                         "start_ts": job_utc_timestamp_string,
                         "cmd": task_name,
                         "status": []}
-            task_code_file_list = [task_file_name for task_file_name in task_file_name_list if task_file_name.split("-")[1].split(os.extsep)[0] == task_name]
+            task_code_file_list = [task_file_name for task_file_name in task_file_name_list if task_file_name.split("-")[-1].split(os.extsep)[0] == task_name]
             for task_code_file_name in task_code_file_list:
+                # fn_code means the real status code in file name ex: 900-1-pulse.json, fn_code would be 900-1 and code would be 900
+                # if example: 900-pulse.json, fn_code would be 900, code would be 900
+                fn_task_code = "-".join(task_code_file_name.split("-")[:-1])
                 task_code = task_code_file_name.split("-")[0]
-                history_reference_data = history_reference_data_table.get(job_name, {}).get(job_utc_timestamp_string, {}).get(task_name, {}).get(task_code, None)
+                history_reference_data = history_reference_data_table.get(job_name, {}).get(job_utc_timestamp_string, {}).get(task_name, {}).get(fn_task_code, None)
                 if history_reference_data:
                     data_obj["status"].append(history_reference_data)
                 else:
                     task_code_file_path = os.path.join(history_status_folder_path, task_code_file_name)
                     task_code_obj = CommonUtil.load_json_file(task_code_file_path)
                     task_code_obj["code"] = task_code
+                    task_code_obj["fn_code"] = fn_task_code
                     data_obj["status"].append(task_code_obj)
             history_status_json_obj["data"].append(data_obj)
 

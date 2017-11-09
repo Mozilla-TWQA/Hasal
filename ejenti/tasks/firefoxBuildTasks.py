@@ -10,6 +10,7 @@ from baseTasks import init_task
 from baseTasks import parse_cmd_parameters
 from lib.common.commonUtil import NetworkUtil
 from lib.helper.archiveMozillaHelper import ArchiveMozillaHelper
+from lib.common.statusFileCreator import StatusFileCreator
 
 
 FIREFOX_BIN_LINUX_FP = "/usr/bin/firefox"
@@ -17,7 +18,7 @@ FIREFOX_BIN_WIN_FP = "C:\\Program Files (x86)\\Mozilla Firefox"
 FIREFOX_BIN_MAC_FP = "/Applications/Firefox.app"
 
 
-def download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp):
+def download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp, job_id_path):
     """
     get latest nightly build list from remote url folder
     @param dl_pkg_platform: linux64/mac/win64
@@ -40,13 +41,16 @@ def download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp):
     # check download status
     if download_fx_fp and download_json_fp:
         logging.info("SUCCESS: build files download in [%s], [%s] " % (download_fx_fp, download_json_fp))
+        # touch status file after download build successfully
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 400, (download_fx_fp, download_json_fp))
         return (download_fx_fp, download_json_fp)
     else:
         logging.error("build files download in [%s,%s] " % (download_fx_fp, download_json_fp))
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 800, (download_fx_fp, download_json_fp))
         return None, None
 
 
-def download_nightly_build(output_dp, remote_url_str):
+def download_nightly_build(output_dp, remote_url_str, job_id_path):
     """
     download nightly build based the url folder name your provided
     @param
@@ -70,7 +74,7 @@ def download_nightly_build(output_dp, remote_url_str):
     return_result['output_dp'] = output_dp
 
     # get download fx package local path and json path
-    download_fx_fp, download_json_fp = download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp)
+    download_fx_fp, download_json_fp = download_from_remote_url_folder(dl_pkg_platform, remote_url_str, output_dp, job_id_path)
     return_result['FX-DL-PACKAGE-PATH'] = download_fx_fp
     return_result['FX-DL-JSON-PATH'] = download_json_fp
 
@@ -102,6 +106,8 @@ def download_nightly_build(output_dp, remote_url_str):
             else:
                 return_result['PERFHERDER-PKG-PLATFORM'] = builddot_mapping_platform[build_pkg_platform]["_"]
 
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 600, return_result)
+        StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 900)
         return return_result
 
 
@@ -142,7 +148,13 @@ def download_specify_url_nightly_build(**kwargs):
     else:
         remote_url_str = ArchiveMozillaHelper.DEFAULT_ARCHIVE_URL + ArchiveMozillaHelper.DEFAULT_NIGHTLY_ARCHIVE_URL_DIR + download_dir_url_path
 
-    return download_nightly_build(output_dp, remote_url_str)
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file after init download url
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 100, remote_url_str)
+
+    return download_nightly_build(output_dp, remote_url_str, job_id_path)
 
 
 def download_latest_nightly_build(**kwargs):
@@ -176,7 +188,13 @@ def download_latest_nightly_build(**kwargs):
     else:
         output_dp = task_config.get("DOWNLOAD_PKG_OUTPUT_DP", os.getcwd())
 
-    return download_nightly_build(output_dp, remote_url_str)
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
+    # touch status file after init download url
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DOWNLOAD_NIGHTLY, 200, remote_url_str)
+
+    return download_nightly_build(output_dp, remote_url_str, job_id_path)
 
 
 def link_fx_pkg():
@@ -260,11 +278,20 @@ def deploy_fx_package(**kwargs):
     else:
         fx_dl_pkg_path = task_config.get("INPUT_FX_DL_PKG_PATH", None)
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
     if fx_dl_pkg_path:
         if extract_fx_pkg(fx_dl_pkg_path):
+            # extract fx pkg successfully
+            StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DEPLOY_FIREFOX_PKG, 100, fx_dl_pkg_path)
             link_fx_pkg()
+            StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DEPLOY_FIREFOX_PKG, 300)
+            StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DEPLOY_FIREFOX_PKG, 900)
             return True
         else:
+            # extract fx pkg successfully
+            StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_DEPLOY_FIREFOX_PKG, 200, fx_dl_pkg_path)
             logging.error("cannot extract firefox package [%s]" % fx_dl_pkg_path)
     else:
         logging.warn("please specify firefox downloaded package path after cmd")
