@@ -126,7 +126,7 @@ class ArchiveMozillaHelper(object):
                 matched_file_list = [fn for fn in remote_file_dict.keys()
                                      if ((matched_keyword in fn) and ('firefox' in fn) and (not fn.endswith('.asc')))]
                 if len(matched_file_list) != 1:
-                    logger.warn("the possible match file list on platform [{p}] and URL [{u}] is not equal 1, list as below: [{ret}]".format(p=input_platform_name, u=input_url_str, ret=matched_file_list))
+                    logger.warn("The possible matching file(s) number on platform [{p}] and URL [{u}] does not equal to 1. The information of the list is shown below: [{ret}]".format(p=input_platform_name, u=input_url_str, ret=matched_file_list))
                     if len(matched_file_list) < 1:
                         return None, None
                     matched_file_list = sorted(matched_file_list)[-1:]
