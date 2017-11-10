@@ -19,7 +19,7 @@ class AgentsFileNameListHandler(object):
         if input_time_str:
             # Parse UTC string into naive datetime, then add timezone
             dt = datetime.datetime.strptime(input_time_str, '%Y-%m-%dT%H:%M:%SZ')
-            return time.mktime(dt.replace(tzinfo=UTC()).timetuple())
+            return int(time.mktime(dt.replace(tzinfo=UTC()).timetuple()))
         return None
 
     @staticmethod
@@ -35,9 +35,8 @@ class AgentsFileNameListHandler(object):
         @return:
         """
         return_dict = {}
-        agent_host_name = None
         keyword_for_recently_filename = '_recently.json'
-        keyword_for_history_filename = '_history_json'
+        keyword_for_history_filename = '_history.json'
         for file_name in input_gist_file_table_dict:
             if file_name.find(keyword_for_recently_filename) >= 0:
                 agent_host_name = file_name.split(keyword_for_recently_filename)[0]
@@ -46,14 +45,17 @@ class AgentsFileNameListHandler(object):
                 agent_host_name = file_name.split(keyword_for_history_filename)[0]
                 period_type = "history"
             else:
+                agent_host_name = None
+                period_type = None
                 logging.warning("Current gist user account contain file [%s] violate the naming rules!" % file_name)
 
             if agent_host_name:
                 if agent_host_name in return_dict:
                     if period_type in return_dict[agent_host_name]:
-                        logging.error("There could be duplicate file name [%s] in gist file table [%s]" % (file_name, input_gist_file_table_dict))
+                        logging.error("There could be duplicate period_type [%s] in generated agent list table [%s]" % (period_type, return_dict[agent_host_name]))
                     else:
                         return_dict[agent_host_name][period_type] = {
+                            "file_name": file_name,
                             "url": input_gist_file_table_dict[file_name]["url"],
                             "raw_url": AgentsFileNameListHandler._strip_revision_for_raw_url(input_gist_file_table_dict[file_name]["raw_url"]),
                             "id": input_gist_file_table_dict[file_name]["id"],
@@ -62,6 +64,7 @@ class AgentsFileNameListHandler(object):
                         }
                 else:
                     return_dict[agent_host_name] = {period_type: {
+                        "file_name": file_name,
                         "url": input_gist_file_table_dict[file_name]["url"],
                         "raw_url": AgentsFileNameListHandler._strip_revision_for_raw_url(input_gist_file_table_dict[file_name]["raw_url"]),
                         "id": input_gist_file_table_dict[file_name]["id"],

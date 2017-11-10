@@ -736,6 +736,7 @@ class NetworkUtil(object):
             else:
                 logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
                 return None
+            time.sleep(1)
 
         return return_result
 
@@ -772,6 +773,7 @@ class NetworkUtil(object):
                 break
             else:
                 logger.error("Send request to url:[%s], with params:[%s], error code:[%s], error message:[%s]" % (input_url, input_params, response_obj.status_code, response_obj.text))
+            time.sleep(1)
 
         return return_result
 
