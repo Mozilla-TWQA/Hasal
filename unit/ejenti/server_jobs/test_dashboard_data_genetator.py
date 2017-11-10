@@ -1,13 +1,13 @@
 import unittest
 from mock import patch
 
-from ejenti.server_jobs.dashboard_data_generator import DashbaordDataGenerator
+from ejenti.server_jobs.dashboard_data_generator import DashboardDataGenerator
 
 
 class TestTasksTriggerMethods(unittest.TestCase):
 
     def test_run_without_gist_info(self):
-        app = DashbaordDataGenerator()
+        app = DashboardDataGenerator()
         with self.assertRaises(Exception) as e:
             app.run(None)
         self.assertEqual(e.exception.message, 'Please config "gist_user_name" and "gist_auth_token".')
@@ -107,7 +107,7 @@ class TestTasksTriggerMethods(unittest.TestCase):
             }
         ]
 
-        app = DashbaordDataGenerator()
+        app = DashboardDataGenerator()
         ret_list = app._generate_source_data()
         self.assertEqual(expected_ret, ret_list)
 
@@ -191,7 +191,7 @@ class TestTasksTriggerMethods(unittest.TestCase):
         }
 
         target_platform = 'windows10-64'
-        app = DashbaordDataGenerator()
+        app = DashboardDataGenerator()
         ret_obj = app.generate_data_for_platform(target_platform)
         self.assertEqual(expected_ret, ret_obj)
 
@@ -334,6 +334,6 @@ class TestTasksTriggerMethods(unittest.TestCase):
         }
 
         target_platform = 'windows10-64'
-        app = DashbaordDataGenerator()
+        app = DashboardDataGenerator()
         ret_obj = app.generate_latest_build_overall_progress_for_platform(target_platform)
         self.assertEqual(expected_ret, ret_obj)

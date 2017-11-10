@@ -1,11 +1,13 @@
 import copy
 import json
-import time
+import logging
 from datetime import datetime
+
+from lib.common.gistUtil import GISTUtil
 from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
 
 
-class DashbaordDataGenerator(object):
+class DashboardDataGenerator(object):
     PLATFORM = 'win64'
 
     KEY_PERFHERDER_DATA = 'perfherder_data'
@@ -147,7 +149,7 @@ class DashbaordDataGenerator(object):
 
     def _generate_source_data(self):
         table_obj = GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table(
-            DashbaordDataGenerator.PLATFORM)
+            DashboardDataGenerator.PLATFORM)
 
         ret_list = []
 
@@ -158,8 +160,8 @@ class DashbaordDataGenerator(object):
             latest_28_builds_timestamp_list = sorted(table_obj.keys())[-28:]
 
             for timestamp in latest_28_builds_timestamp_list:
-                revison = table_obj.get(timestamp, {}).get(DashbaordDataGenerator.KEY_REVISON, '')
-                perf_data_obj_dict = table_obj.get(timestamp, {}).get(DashbaordDataGenerator.KEY_PERFHERDER_DATA, {})
+                revison = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_REVISON, '')
+                perf_data_obj_dict = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_PERFHERDER_DATA, {})
 
                 for key, value in perf_data_obj_dict.items():
                     ret_obj = {}
@@ -169,17 +171,17 @@ class DashbaordDataGenerator(object):
 
                     self.casename_set.add(casename)
 
-                    value_list = value.get(DashbaordDataGenerator.KEY_VLAUE)
-                    signature = value.get(DashbaordDataGenerator.KEY_SIGNATURE)
+                    value_list = value.get(DashboardDataGenerator.KEY_VLAUE)
+                    signature = value.get(DashboardDataGenerator.KEY_SIGNATURE)
 
-                    ret_obj[DashbaordDataGenerator.KEY_TIMESTAMP] = timestamp
-                    ret_obj[DashbaordDataGenerator.KEY_TIMESTAMP_JS] = int(timestamp) * 1000
-                    ret_obj[DashbaordDataGenerator.KEY_CASENAME] = casename
-                    ret_obj[DashbaordDataGenerator.KEY_BROWSER] = browser
-                    ret_obj[DashbaordDataGenerator.KEY_PLATFORM] = platform
-                    ret_obj[DashbaordDataGenerator.KEY_VALUE_LIST] = value_list
-                    ret_obj[DashbaordDataGenerator.KEY_SIGNATURE] = signature
-                    ret_obj[DashbaordDataGenerator.KEY_REVISON] = revison
+                    ret_obj[DashboardDataGenerator.KEY_TIMESTAMP] = timestamp
+                    ret_obj[DashboardDataGenerator.KEY_TIMESTAMP_JS] = int(timestamp) * 1000
+                    ret_obj[DashboardDataGenerator.KEY_CASENAME] = casename
+                    ret_obj[DashboardDataGenerator.KEY_BROWSER] = browser
+                    ret_obj[DashboardDataGenerator.KEY_PLATFORM] = platform
+                    ret_obj[DashboardDataGenerator.KEY_VALUE_LIST] = value_list
+                    ret_obj[DashboardDataGenerator.KEY_SIGNATURE] = signature
+                    ret_obj[DashboardDataGenerator.KEY_REVISON] = revison
 
                     ret_list.append(ret_obj)
 
@@ -193,43 +195,43 @@ class DashbaordDataGenerator(object):
         @return:
         """
         platform_source_data = [item for item in self.source_data if
-                                item.get(DashbaordDataGenerator.KEY_PLATFORM) == platform]
+                                item.get(DashboardDataGenerator.KEY_PLATFORM) == platform]
 
         ret_obj = {}
 
         for casename in self.casename_set:
             casename_with_platform = '{}_{}'.format(casename, platform.split('-')[0])
-            template = copy.deepcopy(DashbaordDataGenerator.JS_DATA_TEMPLATE)
+            template = copy.deepcopy(DashboardDataGenerator.JS_DATA_TEMPLATE)
 
             template['title']['text'] = casename_with_platform
 
             # handle Firefox
             f_casename_platform_source_data = [item for item in platform_source_data
-                                               if item.get(DashbaordDataGenerator.KEY_CASENAME) == casename and
+                                               if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                                                item.get(
-                                                   DashbaordDataGenerator.KEY_BROWSER) == DashbaordDataGenerator.BROWSER_FIREFOX]
+                                                   DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_FIREFOX]
 
-            firefox_data_obj = copy.deepcopy(DashbaordDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
-            firefox_data_obj['name'] = DashbaordDataGenerator.BROWSER_FIREFOX
+            firefox_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
+            firefox_data_obj['name'] = DashboardDataGenerator.BROWSER_FIREFOX
 
             for data in f_casename_platform_source_data:
-                timestamp_js = data.get(DashbaordDataGenerator.KEY_TIMESTAMP_JS)
-                for value in data.get(DashbaordDataGenerator.KEY_VALUE_LIST):
+                timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
+                for value in data.get(DashboardDataGenerator.KEY_VALUE_LIST):
                     firefox_data_obj['data'].append([timestamp_js, value])
 
             template['series'].append(firefox_data_obj)
 
             # handle Chrome
             c_casename_platform_source_data = [item for item in platform_source_data
-                                               if item.get(DashbaordDataGenerator.KEY_CASENAME) == casename and
+                                               if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                                                item.get(
-                                                   DashbaordDataGenerator.KEY_BROWSER) == DashbaordDataGenerator.BROWSER_CHROME]
+                                                   DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_CHROME]
 
-            chrome_data_obj = copy.deepcopy(DashbaordDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
-            chrome_data_obj['name'] = DashbaordDataGenerator.BROWSER_CHROME
+            chrome_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
+            chrome_data_obj['name'] = DashboardDataGenerator.BROWSER_CHROME
             for data in c_casename_platform_source_data:
-                timestamp_js = data.get(DashbaordDataGenerator.KEY_TIMESTAMP_JS)
-                for value in data.get(DashbaordDataGenerator.KEY_VALUE_LIST):
+                timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
+                for value in data.get(DashboardDataGenerator.KEY_VALUE_LIST):
                     chrome_data_obj['data'].append([timestamp_js, value])
 
             template['series'].append(chrome_data_obj)
@@ -246,16 +248,16 @@ class DashbaordDataGenerator(object):
         """
 
         latest_source_data = [item for item in self.source_data if
-                              item.get(DashbaordDataGenerator.KEY_PLATFORM) == platform and item.get(
-                                  DashbaordDataGenerator.KEY_TIMESTAMP) == self.latest_timestamp]
+                              item.get(DashboardDataGenerator.KEY_PLATFORM) == platform and item.get(
+                                  DashboardDataGenerator.KEY_TIMESTAMP) == self.latest_timestamp]
 
         ret_obj = {}
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_CASES] = {}
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS] = {}
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES] = {}
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS] = {}
 
         # Firefox and Chrome
         total_case_number = len(self.casename_set) * 2
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_TOTAL_CASE_NUMBER] = total_case_number
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_TOTAL_CASE_NUMBER] = total_case_number
 
         SUITE_STATUS_SUCCESS = 0
         SUITE_STATUS_RUNNING = 1
@@ -263,89 +265,97 @@ class DashbaordDataGenerator(object):
 
         finished_counter = 0
         for casename in self.casename_set:
-            ret_obj[DashbaordDataGenerator.KEY_OVERALL_CASES][casename] = {}
+            ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES][casename] = {}
 
             suite_name = casename.split('_')[0]
-            if not ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS].get(suite_name):
-                ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name] = {}
+            if not ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS].get(suite_name):
+                ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name] = {}
 
             #
             # handle Firefox
             #
             counter = 0
             f_result_data = [item for item in latest_source_data
-                             if item.get(DashbaordDataGenerator.KEY_CASENAME) == casename and
+                             if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                              item.get(
-                                 DashbaordDataGenerator.KEY_BROWSER) == DashbaordDataGenerator.BROWSER_FIREFOX]
+                                 DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_FIREFOX]
             for result_data in f_result_data:
-                counter = counter + len(result_data[DashbaordDataGenerator.KEY_VALUE_LIST])
-            ret_obj[DashbaordDataGenerator.KEY_OVERALL_CASES][casename][
-                DashbaordDataGenerator.BROWSER_FIREFOX] = counter
+                counter = counter + len(result_data[DashboardDataGenerator.KEY_VALUE_LIST])
+            ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES][casename][
+                DashboardDataGenerator.BROWSER_FIREFOX] = counter
 
             # count all cases number
-            if counter >= DashbaordDataGenerator.RESULT_AMOUNT:
+            if counter >= DashboardDataGenerator.RESULT_AMOUNT:
                 finished_counter += 1
 
             # case suite status
-            if not ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name].get(
-                    DashbaordDataGenerator.BROWSER_FIREFOX):
-                ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][
-                    DashbaordDataGenerator.BROWSER_FIREFOX] = SUITE_STATUS_SUCCESS
+            if not ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name].get(
+                    DashboardDataGenerator.BROWSER_FIREFOX):
+                ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][
+                    DashboardDataGenerator.BROWSER_FIREFOX] = SUITE_STATUS_SUCCESS
 
-            if counter >= DashbaordDataGenerator.RESULT_AMOUNT:
+            if counter >= DashboardDataGenerator.RESULT_AMOUNT:
                 current_case_status = SUITE_STATUS_SUCCESS
-            elif 0 < counter < DashbaordDataGenerator.RESULT_AMOUNT:
+            elif 0 < counter < DashboardDataGenerator.RESULT_AMOUNT:
                 current_case_status = SUITE_STATUS_RUNNING
             else:
                 current_case_status = SUITE_STATUS_NO_RESULT
-            ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashbaordDataGenerator.BROWSER_FIREFOX] = max(current_case_status, ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashbaordDataGenerator.BROWSER_FIREFOX])
+            ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashboardDataGenerator.BROWSER_FIREFOX] = max(current_case_status, ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashboardDataGenerator.BROWSER_FIREFOX])
 
             #
             # handle Chrome
             #
             counter = 0
             c_result_data = [item for item in latest_source_data
-                             if item.get(DashbaordDataGenerator.KEY_CASENAME) == casename and
+                             if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                              item.get(
-                                 DashbaordDataGenerator.KEY_BROWSER) == DashbaordDataGenerator.BROWSER_CHROME]
+                                 DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_CHROME]
             for result_data in c_result_data:
-                counter = counter + len(result_data[DashbaordDataGenerator.KEY_VALUE_LIST])
-            ret_obj[DashbaordDataGenerator.KEY_OVERALL_CASES][casename][
-                DashbaordDataGenerator.BROWSER_CHROME] = counter
+                counter = counter + len(result_data[DashboardDataGenerator.KEY_VALUE_LIST])
+            ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES][casename][
+                DashboardDataGenerator.BROWSER_CHROME] = counter
 
             # count all cases number
-            if counter >= DashbaordDataGenerator.RESULT_AMOUNT:
+            if counter >= DashboardDataGenerator.RESULT_AMOUNT:
                 finished_counter += 1
 
             # case suite status
-            if not ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name].get(
-                    DashbaordDataGenerator.BROWSER_CHROME):
-                ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][
-                    DashbaordDataGenerator.BROWSER_CHROME] = SUITE_STATUS_SUCCESS
+            if not ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name].get(
+                    DashboardDataGenerator.BROWSER_CHROME):
+                ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][
+                    DashboardDataGenerator.BROWSER_CHROME] = SUITE_STATUS_SUCCESS
 
-            if counter >= DashbaordDataGenerator.RESULT_AMOUNT:
+            if counter >= DashboardDataGenerator.RESULT_AMOUNT:
                 current_case_status = SUITE_STATUS_SUCCESS
-            elif 0 < counter < DashbaordDataGenerator.RESULT_AMOUNT:
+            elif 0 < counter < DashboardDataGenerator.RESULT_AMOUNT:
                 current_case_status = SUITE_STATUS_RUNNING
             else:
                 current_case_status = SUITE_STATUS_NO_RESULT
-            ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashbaordDataGenerator.BROWSER_CHROME] = max(current_case_status, ret_obj[DashbaordDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashbaordDataGenerator.BROWSER_CHROME])
+            ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashboardDataGenerator.BROWSER_CHROME] = max(current_case_status, ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS][suite_name][DashboardDataGenerator.BROWSER_CHROME])
 
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_FINISH_CASE_NUMBER] = finished_counter
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_FINISH_CASE_NUMBER] = finished_counter
         percentage = float(finished_counter) / float(total_case_number)
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_FINISH_PERCENTAGE] = percentage
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_FINISH_PERCENTAGE] = percentage
 
         # generate gauge object
-        gauge_obj = copy.deepcopy(DashbaordDataGenerator.JS_GAUGE_TEMPLATE)
-        gauge_series_obj = copy.deepcopy(DashbaordDataGenerator.JS_GAUGE_SERIES_OBJ_TEMPLATE)
+        gauge_obj = copy.deepcopy(DashboardDataGenerator.JS_GAUGE_TEMPLATE)
+        gauge_series_obj = copy.deepcopy(DashboardDataGenerator.JS_GAUGE_SERIES_OBJ_TEMPLATE)
         gauge_series_obj['name'] = platform
         gauge_series_obj['data'] = [int(percentage * 100)]
         gauge_obj['series'].append(gauge_series_obj)
-        ret_obj[DashbaordDataGenerator.KEY_OVERALL_GAUGE] = gauge_obj
+        ret_obj[DashboardDataGenerator.KEY_OVERALL_GAUGE] = gauge_obj
 
         return ret_obj
 
     def run(self, gist_user_name=None, gist_auth_token=None):
+        """
+        Generate the dashboard data for "windows8-64" and "windows10-64" (platform = win64).
+        @param gist_user_name:
+        @param gist_auth_token:
+        @return:
+        """
+        logging.info('Dashboard Data Generator starting ...')
+
         if not gist_user_name or not gist_auth_token:
             raise Exception('Please config "gist_user_name" and "gist_auth_token".')
 
@@ -373,13 +383,20 @@ class DashbaordDataGenerator(object):
             'windows10': self.generate_latest_build_overall_progress_for_platform('windows10-64')
         }
 
-        # TODO: should upload file to Gist after GistUtil is ready
-        with open('win_dashboard_data.json', 'w') as f:
-            json.dump(data_obj, f)
-        with open('win_dashboard_progress.json', 'w') as f:
-            json.dump(progress_obj, f)
+        # upload files to gist
+        gist_obj = GISTUtil(gist_user_name, gist_auth_token)
+
+        data_obj_string = json.dumps(data_obj).replace('\\', '\\\\').replace('"', '\\"')
+        gist_obj.upload_content(input_file_name='win_dashboard_data.json', input_content=data_obj_string)
+        logging.info('Dashboard Data Generator: win_dashboard_data.json uploaded.')
+
+        progress_obj_string = json.dumps(progress_obj).replace('\\', '\\\\').replace('"', '\\"')
+        gist_obj.upload_content(input_file_name='win_dashboard_progress.json', input_content=progress_obj_string)
+        logging.info('Dashboard Data Generator: win_dashboard_progress.json uploaded.')
+
+        logging.info('Dashboard Data Generator done.')
 
 
 if __name__ == '__main__':
-    app = DashbaordDataGenerator()
+    app = DashboardDataGenerator()
     app.run(gist_user_name='foo', gist_auth_token='bar')
