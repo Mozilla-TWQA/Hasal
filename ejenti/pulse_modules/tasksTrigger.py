@@ -572,10 +572,16 @@ class TasksTrigger(object):
     def get_enabled_platform_list_from_trigger_jobs_config(config_dict_obj):
         """
         Return the list which contains enabled platforms.
+        Note:
+        - Default enable "win64" platform builds. So, cases progress dashboard can also use this information.
         @param config_dict_obj: the jobs dict object in trigger config file
         @return: list
         """
         enabled_platform_set = set()
+
+        # Default enable platform build "win64"
+        enabled_platform_set.add('win64')
+
         for _, job_detail in config_dict_obj.items():
             enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
             platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)

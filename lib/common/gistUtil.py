@@ -161,7 +161,7 @@ class GISTUtil(object):
         if os.path.exists(input_file_path):
             with open(input_file_path, 'rb') as fh:
                 if input_content_type == self.DEFAULT_CTNT_TYPE_JSON:
-                    file_data = json.dumps(json.load(fh)).replace('"', '\\"')
+                    file_data = json.dumps(json.load(fh)).replace('\\', '\\\\').replace('"', '\\"')
                 else:
                     file_data = fh.read()
         else:
