@@ -6,10 +6,9 @@
     "interval-min": 60,
     "max-instances": 1,
     "default-loaded": false,
-    "configs": {
-      "b2_account_id": "",
-      "b2_account_key": "",
-      "b2_upload_bucket_name": ""
+    "parameters": {
+      "gist_user_name": "",
+      "gist_auth_token": ""
     }
   }
 }

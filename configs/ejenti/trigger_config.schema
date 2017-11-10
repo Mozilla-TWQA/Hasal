@@ -9,16 +9,12 @@
       "description": "Pulse password",
       "type": "string"
     },
-    "b2_account_id": {
-      "description": "BackBlaze Account ID",
+    "gist_user_name": {
+      "description": "GIST user name",
       "type": "string"
     },
-    "b2_account_key": {
-      "description": "BackBlaze Application Key",
-      "type": "string"
-    },
-    "b2_upload_bucket_name": {
-      "description": "BackBlaze Bucket Name, no space, no underline",
+    "gist_auth_token": {
+      "description": "GIST user auth token",
       "type": "string"
     },
     "jobs": {
