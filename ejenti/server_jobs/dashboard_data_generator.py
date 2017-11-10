@@ -350,8 +350,10 @@ class DashbaordDataGenerator(object):
             raise Exception('Please config "gist_user_name" and "gist_auth_token".')
 
         current_utc = datetime.utcnow()
-        cuttrnt_utc_timestamp = str(time.mktime(current_utc.timetuple()))
-        cuttrnt_utc_timestamp_js = time.mktime(current_utc.timetuple()) * 1000
+        # the result of time.mktime(current_utc.timetuple()) is larger than utc_ts 28800 sec
+        utc_ts = int((current_utc - datetime(1970, 1, 1, 0, 0, 0, 0)).total_seconds())
+        cuttrnt_utc_timestamp = str(utc_ts)
+        cuttrnt_utc_timestamp_js = utc_ts * 1000
 
         data_obj = {
             'cuttrnt_utc_timestamp': cuttrnt_utc_timestamp,

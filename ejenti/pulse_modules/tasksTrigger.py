@@ -678,7 +678,7 @@ class TasksTrigger(object):
                                        trigger='interval',
                                        id='query_backfill_table_{}'.format(platform_build),
                                        max_instances=1,
-                                       minutes=30,
+                                       minutes=15,
                                        args=[],
                                        kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
                                                'input_platform': platform_build})
