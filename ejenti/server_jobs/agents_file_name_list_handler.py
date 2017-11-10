@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import logging
 import datetime
 from lib.common.gistUtil import GISTUtil
@@ -19,7 +18,7 @@ class AgentsFileNameListHandler(object):
         if input_time_str:
             # Parse UTC string into naive datetime, then add timezone
             dt = datetime.datetime.strptime(input_time_str, '%Y-%m-%dT%H:%M:%SZ')
-            return int(time.mktime(dt.replace(tzinfo=UTC()).timetuple()))
+            return int((dt.replace(tzinfo=UTC()) - datetime.datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=UTC())).total_seconds())
         return None
 
     @staticmethod

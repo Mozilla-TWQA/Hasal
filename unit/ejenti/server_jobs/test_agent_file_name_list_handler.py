@@ -16,16 +16,16 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "id": "760a7061d0a2b3f7de81b7b8c88a3152",
                 "url": "https://api.github.com/gists/760a7061d0a2b3f7de81b7b8c88a3152",
                 "raw_url": "https://gist.githubusercontent.com/mozhasalstatus/760a7061d0a2b3f7de81b7b8c88a3152/raw/Hasals-iMac.local_recently.json",
-                "created_at": 1510194152,
-                "updated_at": 1510250252
+                "created_at": 1510222952,
+                "updated_at": 1510279052
             },
             "history": {
                 "file_name": "Hasals-iMac.local_history.json",
                 "id": "3d0a6d09c75e08fe6c361cd3422453d0",
                 "url": "https://api.github.com/gists/3d0a6d09c75e08fe6c361cd3422453d0",
                 "raw_url": "https://gist.githubusercontent.com/mozhasalstatus/3d0a6d09c75e08fe6c361cd3422453d0/raw/Hasals-iMac.local_history.json",
-                "created_at": 1510190201,
-                "updated_at": 1510250249
+                "created_at": 1510219001,
+                "updated_at": 1510279049
             }
         }
         }
