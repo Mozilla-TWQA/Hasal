@@ -678,16 +678,16 @@ class TasksTrigger(object):
                     input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
             logging.info('Generating latest backfill tables done.')
 
-            # creating jobs for query backfill table
-            for platform_build in enabled_platform_list:
-                self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
-                                       trigger='interval',
-                                       id='query_backfill_table_{}'.format(platform_build),
-                                       max_instances=1,
-                                       minutes=15,
-                                       args=[],
-                                       kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
-                                               'input_platform': platform_build})
+        # creating jobs for query backfill table
+        for platform_build in enabled_platform_list:
+            self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
+                                   trigger='interval',
+                                   id='query_backfill_table_{}'.format(platform_build),
+                                   max_instances=1,
+                                   minutes=15,
+                                   args=[],
+                                   kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
+                                           'input_platform': platform_build})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():
