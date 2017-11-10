@@ -727,7 +727,6 @@ class NetworkUtil(object):
                     response_obj = requests.post(input_url)
             except Exception as e:
                 logger.error("Send post data failed, error message [%s]" % e.message)
-                return None
 
             # check return status, will break the for loop when return code in our accepted code list
             if response_obj.status_code in input_accept_status_code:
@@ -735,7 +734,6 @@ class NetworkUtil(object):
                 break
             else:
                 logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
-                return None
             time.sleep(1)
 
         return return_result
