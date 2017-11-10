@@ -12,13 +12,14 @@ import sys
 FILE_PATTERNS_TO_CHECK = ["*.py", "*.json"]
 
 # File patterns that are ignored for all tidy and lint checks.
-FILE_PATTERNS_TO_IGNORE = ["*.#*", "*.pyc", "__init__.py", "firefox-*.json"]
+FILE_PATTERNS_TO_IGNORE = ["*.#*", "*.pyc", "__init__.py", "firefox-*.json", "backfill_table*.json"]
 
 # Files that are ignored for all tidy and lint checks.
 IGNORED_FILES = [
     os.path.join(".", "stat.json"),
     os.path.join(".", "client_secrets.json"),
     os.path.join(".", "result.json"),
+    os.path.join(".", "upload_result_failed.json"),
     # Hidden files
     os.path.join(".", "."),
 ]
@@ -35,6 +36,7 @@ IGNORED_DIRS = [
     os.path.join(".", "resource"),
     os.path.join(".", "python", "_virtualenv"),
     os.path.join(".", "python", "tidy"),
+    os.path.join(".", "status"),
     os.path.join(".", "temp"),
     # Hidden directories
     os.path.join(".", "."),

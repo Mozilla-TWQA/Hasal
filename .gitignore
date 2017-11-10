@@ -25,6 +25,11 @@ _virtualenv
 HasalServer.log.*
 stage/*
 docs/*
+running_statistics.json
+upload_result_failed.json
+status/
+backfill_table*.json
+firefox/
 ! thirdParty/userChrome.css
 ! thirdParty/extensions
 ! thirdParty/obsConfigs
@@ -32,6 +37,7 @@ docs/*
 
 # ejenti
 ejenti/**/.md5/
+ejenti/**/.timestamp/
 rotating_mgt.log.*
 job_store.db
 ejenti.json
