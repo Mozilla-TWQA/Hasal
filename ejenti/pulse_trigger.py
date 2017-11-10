@@ -93,19 +93,16 @@ def main():
         outside_scheduler.start()
 
         # create Status B2 upload job
-        KEY_CONFIG_B2_ACCOUNT_ID = 'b2_account_id'
-        KEY_CONFIG_B2_ACCOUNT_KEY = 'b2_account_key'
-        KEY_CONFIG_B2_BUCKET_NAME = 'b2_upload_bucket_name'
+        KEY_CONFIG_GIST_USER_NAME = 'gist_user_name'
+        KEY_CONFIG_GIST_AUTH_TOKEN = 'gist_auth_token'
         INTERVAL_MINUTES = 30
-        b2_account_id = config.get(KEY_CONFIG_B2_ACCOUNT_ID)
-        b2_account_key = config.get(KEY_CONFIG_B2_ACCOUNT_KEY)
-        b2_upload_bucket_name = config.get(KEY_CONFIG_B2_BUCKET_NAME)
-        if b2_account_id and b2_account_key and b2_upload_bucket_name:
-            b2_upload_config = {
+        gist_user_name = config.get(KEY_CONFIG_GIST_USER_NAME)
+        gist_auth_token = config.get(KEY_CONFIG_GIST_AUTH_TOKEN)
+        if gist_user_name and gist_auth_token:
+            gist_upload_config = {
                 'configs': {
-                    'b2_account_id': b2_account_id,
-                    'b2_account_key': b2_account_key,
-                    'b2_upload_bucket_name': b2_upload_bucket_name
+                    'gist_user_name': gist_user_name,
+                    'gist_auth_token': gist_auth_token
                 }
             }
             outside_scheduler.add_job(func=status_json_creator,
@@ -114,10 +111,10 @@ def main():
                                       max_instances=1,
                                       minutes=INTERVAL_MINUTES,
                                       args=[],
-                                      kwargs=b2_upload_config)
-            logging.info('Enable Status JSON Creator and B2 Uploader.')
+                                      kwargs=gist_upload_config)
+            logging.info('Enable Status JSON Creator and GIST Uploader.')
         else:
-            logging.warn('Please config your B2 Account ID, Key, and Bucket Name to enable Status JSON Creator and B2 Uploader.')
+            logging.warn('Please config your GIST user name and auth token to enable Status JSON Creator and GIST Uploader.')
 
         # load scheduler server jobs
         for job_name, job_detail in server_job_config.items():

@@ -1,8 +1,11 @@
 import os
 import json
+import time
 import logging
-from lib.common.b2Util import B2Util
+import datetime
+from lib.common.gistUtil import GISTUtil
 from lib.common.statusFileCreator import StatusFileCreator
+from lib.common.commonUtil import UTC
 
 
 class AgentsFileNameListHandler(object):
@@ -12,56 +15,85 @@ class AgentsFileNameListHandler(object):
     FILE_NAME_LIST_FILE_NAME = 'file_name_list.json'
 
     @staticmethod
-    def _get_file_name_list_from_object_list(file_object_list):
-        """
-        Return the file name list.
-        Ref:
-        @param file_object_list:
-        @return:
-        """
-        return [obj.get('fileName') for obj in file_object_list]
+    def _strptime_to_timestamp(input_time_str):
+        if input_time_str:
+            # Parse UTC string into naive datetime, then add timezone
+            dt = datetime.datetime.strptime(input_time_str, '%Y-%m-%dT%H:%M:%SZ')
+            return time.mktime(dt.replace(tzinfo=UTC()).timetuple())
+        return None
 
     @staticmethod
-    def _get_agent_name_list_from_file_name_list(file_name_list):
+    def _strip_revision_for_raw_url(input_raw_url):
+        return "/".join(input_raw_url.split("/")[:-2]) + "/" + input_raw_url.split("/")[-1]
+
+    @staticmethod
+    def _convert_gist_file_table_to_agent_list(input_gist_file_table_dict):
         """
         Return the agent name list from file name list.
         Ref:
         @param file_name_list:
         @return:
         """
+        return_dict = {}
+        agent_host_name = None
         keyword_for_recently_filename = '_recently.json'
-        return [name.replace(keyword_for_recently_filename, '') for name in file_name_list if name.endswith(keyword_for_recently_filename)]
+        keyword_for_history_filename = '_history_json'
+        for file_name in input_gist_file_table_dict:
+            if file_name.find(keyword_for_recently_filename) >= 0:
+                agent_host_name = file_name.split(keyword_for_recently_filename)[0]
+                period_type = "recently"
+            elif file_name.find(keyword_for_history_filename) >= 0:
+                agent_host_name = file_name.split(keyword_for_history_filename)[0]
+                period_type = "history"
+            else:
+                logging.warning("Current gist user account contain file [%s] violate the naming rules!" % file_name)
 
-    def run(self, b2_account_id, b2_account_key, b2_upload_bucket_name):
+            if agent_host_name:
+                if agent_host_name in return_dict:
+                    if period_type in return_dict[agent_host_name]:
+                        logging.error("There could be duplicate file name [%s] in gist file table [%s]" % (file_name, input_gist_file_table_dict))
+                    else:
+                        return_dict[agent_host_name][period_type] = {
+                            "url": input_gist_file_table_dict[file_name]["url"],
+                            "raw_url": AgentsFileNameListHandler._strip_revision_for_raw_url(input_gist_file_table_dict[file_name]["raw_url"]),
+                            "id": input_gist_file_table_dict[file_name]["id"],
+                            "created_at": AgentsFileNameListHandler._strptime_to_timestamp(input_gist_file_table_dict[file_name]["created_at"]),
+                            "updated_at": AgentsFileNameListHandler._strptime_to_timestamp(input_gist_file_table_dict[file_name]["updated_at"])
+                        }
+                else:
+                    return_dict[agent_host_name] = {period_type: {
+                        "url": input_gist_file_table_dict[file_name]["url"],
+                        "raw_url": AgentsFileNameListHandler._strip_revision_for_raw_url(input_gist_file_table_dict[file_name]["raw_url"]),
+                        "id": input_gist_file_table_dict[file_name]["id"],
+                        "created_at": AgentsFileNameListHandler._strptime_to_timestamp(input_gist_file_table_dict[file_name]["created_at"]),
+                        "updated_at": AgentsFileNameListHandler._strptime_to_timestamp(input_gist_file_table_dict[file_name]["updated_at"])
+                    }}
+
+        return return_dict
+
+    def run(self, gist_user_name, gist_auth_token):
         logging.info('Agents File Name List Handler starting ...')
 
         agent_file_name_list_file_path = os.path.join(StatusFileCreator.get_status_folder(), AgentsFileNameListHandler.FILE_NAME_LIST_FILE_NAME)
 
-        b2_obj = B2Util(b2_account_id, b2_account_key)
-        bucket_id = b2_obj.get_bucket_id_by_name(b2_upload_bucket_name)
+        gist_obj = GISTUtil(gist_user_name, gist_auth_token)
 
-        logging.debug('Bucket [{}] ID is {}'.format(b2_upload_bucket_name, bucket_id))
+        list_gists_response_obj = gist_obj.list_gists()
 
-        ret_list = b2_obj.get_file_name_list(bucket_id)
+        if list_gists_response_obj:
+            gist_file_table_dict = gist_obj.generate_gist_file_table(list_gists_response_obj.json())
+        else:
+            logging.error("Cannot get gist list of user [%s], skip generate agent list file!" % gist_user_name)
+            return None
 
-        filename_list = AgentsFileNameListHandler._get_file_name_list_from_object_list(ret_list)
-        agentname_list = AgentsFileNameListHandler._get_agent_name_list_from_file_name_list(filename_list)
+        agents_data = AgentsFileNameListHandler._convert_gist_file_table_to_agent_list(gist_file_table_dict)
 
-        ret_obj = {
-            AgentsFileNameListHandler.KEY_FILE_NAME_LIST: filename_list,
-            AgentsFileNameListHandler.KEY_AGENT_NAME_LIST: agentname_list
-        }
-        logging.debug('Get the file name list from Bucket [{}]: {}'.format(b2_upload_bucket_name, ret_obj))
+        logging.debug('Get the file name list from GIST user [{}]: {}'.format(gist_user_name, agents_data))
 
         # dump to file
         with open(agent_file_name_list_file_path, "wb") as f:
-            json.dump(ret_obj, f, indent=4)
+            json.dump(agents_data, f, indent=4)
 
-        uploaded_agent_file_name_list_file_url = b2_obj.upload_file(agent_file_name_list_file_path, b2_upload_bucket_name)
+        uploaded_agent_file_name_list_file_url = gist_obj.upload_file(agent_file_name_list_file_path)
         logging.info('Upload Agents File Name List to {}'.format(uploaded_agent_file_name_list_file_url))
         logging.info('Agents File Name List Handler done.')
-
-
-if __name__ == '__main__':
-    app = AgentsFileNameListHandler()
-    app.run()

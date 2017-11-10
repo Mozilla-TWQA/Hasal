@@ -14,6 +14,26 @@ from logConfig import get_logger
 logger = get_logger(__name__)
 
 
+class UTC(datetime.tzinfo):
+    """
+    UTC reimplementation, to avoid a dependency on pytz or dateutil.
+    """
+
+    ZERO = datetime.timedelta(0)
+
+    def __repr__(self):
+        return 'UTC()'
+
+    def dst(self, dt):
+        return self.ZERO
+
+    def tzname(self, dt):
+        return 'UTC'
+
+    def utcoffset(self, dt):
+        return self.ZERO
+
+
 class StatusRecorder(object):
     """
     output sample 2017/05/22
@@ -374,7 +394,8 @@ class CommonUtil(object):
                                  "bot_api_token",
                                  "bot_name",
                                  "bot_mgt_channel",
-                                 "bot_election_channel"]
+                                 "bot_election_channel",
+                                 "gist_auth_token"]
         DEFAULT_MASK_SYMBOL = "hidden_credential_value"
 
         if input_mask_symbol:
@@ -680,7 +701,7 @@ class NetworkUtil(object):
         return return_dict
 
     @staticmethod
-    def post_request_and_response(input_url, input_data=None, input_headers=None):
+    def post_request_and_response(input_url, input_data=None, input_headers=None, input_accept_status_code=None):
         """
 
         @param input_url: url
@@ -688,49 +709,71 @@ class NetworkUtil(object):
         @param input_headers: post header
         @return: response obj, you can get json obj by using response_obj.json()
         """
-        try:
-            if input_data and input_headers:
-                response_obj = requests.post(input_url, data=input_data, headers=input_headers)
-            elif input_data:
-                response_obj = requests.post(input_url, data=input_data)
-            elif input_headers:
-                response_obj = requests.post(input_url, headers=input_headers)
+        # init variables
+        return_result = None
+        if not input_accept_status_code:
+            input_accept_status_code = [200]
+
+        # will retry 10 times
+        for _ in range(10):
+            try:
+                if input_data and input_headers:
+                    response_obj = requests.post(input_url, data=input_data, headers=input_headers)
+                elif input_data:
+                    response_obj = requests.post(input_url, data=input_data)
+                elif input_headers:
+                    response_obj = requests.post(input_url, headers=input_headers)
+                else:
+                    response_obj = requests.post(input_url)
+            except Exception as e:
+                logger.error("Send post data failed, error message [%s]" % e.message)
+                return None
+
+            # check return status, will break the for loop when return code in our accepted code list
+            if response_obj.status_code in input_accept_status_code:
+                return_result = response_obj
+                break
             else:
-                response_obj = requests.post(input_url)
-        except Exception as e:
-            logger.error("Send post data failed, error message [%s]" % e.message)
-            return None
-        if response_obj.status_code == 200:
-            return response_obj
-        else:
-            logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s]" % (input_url, input_data, input_headers, response_obj.status_code))
-            return None
+                logger.error("Send request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
+                return None
+
+        return return_result
 
     @staticmethod
-    def get_request_and_response(input_url, input_params=None, input_headers=None):
+    def get_request_and_response(input_url, input_params=None, input_headers=None, input_accept_status_code=None):
         """
 
         @param input_url:
         @param input_params:
         @return:
         """
-        try:
-            if input_params and input_headers:
-                response_obj = requests.get(input_url, params=input_params, headers=input_headers)
-            elif input_params:
-                response_obj = requests.get(input_url, params=input_params)
-            elif input_headers:
-                response_obj = requests.get(input_url, headers=input_headers)
+        # init variables
+        return_result = None
+        if not input_accept_status_code:
+            input_accept_status_code = [200]
+
+        # will retry 10 times
+        for _ in range(10):
+            try:
+                if input_params and input_headers:
+                    response_obj = requests.get(input_url, params=input_params, headers=input_headers)
+                elif input_params:
+                    response_obj = requests.get(input_url, params=input_params)
+                elif input_headers:
+                    response_obj = requests.get(input_url, headers=input_headers)
+                else:
+                    response_obj = requests.get(input_url)
+            except Exception as e:
+                logger.error("Send post data failed, error message [%s]" % e.message)
+
+            # check return status, will break the for loop when return code in our accepted code list
+            if response_obj.status_code in input_accept_status_code:
+                return_result = response_obj
+                break
             else:
-                response_obj = requests.get(input_url)
-        except Exception as e:
-            logger.error("Send post data failed, error message [%s]" % e.message)
-            return None
-        if response_obj.status_code == 200:
-            return response_obj
-        else:
-            logger.error("Send request to url:[%s], with params:[%s], error code:[%s]" % (input_url, input_params, response_obj.status_code))
-            return None
+                logger.error("Send request to url:[%s], with params:[%s], error code:[%s], error message:[%s]" % (input_url, input_params, response_obj.status_code, response_obj.text))
+
+        return return_result
 
 
 class HasalConfigUtil(object):
