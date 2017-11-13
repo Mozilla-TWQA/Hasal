@@ -85,10 +85,9 @@ def main():
     skip_first_query_flag = arguments['--skip-first-query']
 
     try:
-        trigger = TasksTrigger(config=config, cmd_config_obj=command_config, clean_at_begin=clean_flag)
-        trigger.run(skip_first_query=skip_first_query_flag)
-
-        # The `status_json_creator()` method under `ejenti.jobs` package, so `TaskTrigger` is really hard to call it.
+        #
+        # The `status_json_creator()` for upload Trigger Builds Status
+        #
         outside_scheduler = BackgroundScheduler()
         outside_scheduler.start()
 
@@ -116,7 +115,9 @@ def main():
         else:
             logging.warn('Please config your GIST user name and auth token to enable Status JSON Creator and GIST Uploader.')
 
+        #
         # load scheduler server jobs
+        #
         for job_name, job_detail in server_job_config.items():
             logging.info('Server Job [{}] loading ...'.format(job_name))
 
@@ -147,6 +148,12 @@ def main():
                 logging.info('Disabled')
 
             logging.info('Server Job [{}] loading done.'.format(job_name))
+
+        #
+        # Pulse Trigger
+        #
+        trigger = TasksTrigger(config=config, cmd_config_obj=command_config, clean_at_begin=clean_flag)
+        trigger.run(skip_first_query=skip_first_query_flag)
 
         while True:
             time.sleep(10)
