@@ -92,7 +92,7 @@ def main():
         outside_scheduler = BackgroundScheduler()
         outside_scheduler.start()
 
-        # create Status B2 upload job
+        # create Status GIST upload job
         KEY_CONFIG_GIST_USER_NAME = 'gist_user_name'
         KEY_CONFIG_GIST_AUTH_TOKEN = 'gist_auth_token'
         INTERVAL_MINUTES = 30
@@ -107,7 +107,7 @@ def main():
             }
             outside_scheduler.add_job(func=status_json_creator,
                                       trigger='interval',
-                                      id='status_b2_uploader',
+                                      id='status_gist_uploader',
                                       max_instances=1,
                                       minutes=INTERVAL_MINUTES,
                                       args=[],

@@ -359,6 +359,9 @@ class DashboardDataGenerator(object):
         if not gist_user_name or not gist_auth_token:
             raise Exception('Please config "gist_user_name" and "gist_auth_token".')
 
+        # init the source data
+        self._generate_source_data()
+
         current_utc = datetime.utcnow()
         # the result of time.mktime(current_utc.timetuple()) is larger than utc_ts 28800 sec
         utc_ts = int((current_utc - datetime(1970, 1, 1, 0, 0, 0, 0)).total_seconds())
