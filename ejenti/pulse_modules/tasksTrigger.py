@@ -31,7 +31,7 @@ class TasksTrigger(object):
     KEY_CONFIG_PULSE_USER = 'pulse_username'
     KEY_CONFIG_PULSE_PWD = 'pulse_password'
 
-    KEY_CONFIG_SIGNATURE_WHITE_LIST = 'signature_white_list'
+    KEY_CONFIG_SUITE_WHITE_LIST_FOR_SIGNATURE = 'suite_white_list_for_signature'
 
     KEY_CONFIG_JOBS = 'jobs'
     KEY_JOBS_ENABLE = 'enable'
@@ -82,7 +82,7 @@ class TasksTrigger(object):
         self.jobs_config = config.get(TasksTrigger.KEY_CONFIG_JOBS, {})
         self.pulse_username = config.get(TasksTrigger.KEY_CONFIG_PULSE_USER)
         self.pulse_password = config.get(TasksTrigger.KEY_CONFIG_PULSE_PWD)
-        self.signature_white_list = config.get(TasksTrigger.KEY_CONFIG_SIGNATURE_WHITE_LIST, [])
+        self.suite_white_list_for_signature = config.get(TasksTrigger.KEY_CONFIG_SUITE_WHITE_LIST_FOR_SIGNATURE, [])
 
         self._validate_data()
 
@@ -679,7 +679,7 @@ class TasksTrigger(object):
                 logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
                 GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(
                     input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build,
-                    input_white_list=self.signature_white_list)
+                    input_white_list=self.suite_white_list_for_signature)
             logging.info('Generating latest backfill tables done.')
 
         # creating jobs for query backfill table
@@ -692,7 +692,7 @@ class TasksTrigger(object):
                                    args=[],
                                    kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
                                            'input_platform': platform_build,
-                                           'input_white_list': self.signature_white_list})
+                                           'input_white_list': self.suite_white_list_for_signature})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():

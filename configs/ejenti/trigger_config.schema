@@ -17,6 +17,10 @@
       "description": "GIST user auth token",
       "type": "string"
     },
+    "suite_white_list_for_signature":{
+      "description": "Suite white list for signature",
+      "type": "string"
+    },
     "jobs": {
       "description": "Trigger jobs",
       "type": "object",
@@ -74,7 +78,8 @@
     "pulse_username",
     "pulse_password",
     "jobs",
-    "log_filter"
+    "log_filter",
+    "suite_white_list_for_signature"
   ],
   "additionalProperties": false
 }
