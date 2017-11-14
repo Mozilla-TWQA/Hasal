@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 from datetime import datetime
+from numpy import median
 
 from lib.common.gistUtil import GISTUtil
 from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
@@ -24,6 +25,8 @@ class DashboardDataGenerator(object):
 
     BROWSER_FIREFOX = 'firefox'
     BROWSER_CHROME = 'chrome'
+    BROWSER_FIREFOX_MEDIAN = 'firefox_median'
+    BROWSER_CHROME_MEDIAN = 'chrome_median'
 
     RESULT_AMOUNT = 6
     KEY_OVERALL_TOTAL_CASE_NUMBER = 'total_case_number'
@@ -32,6 +35,14 @@ class DashboardDataGenerator(object):
     KEY_OVERALL_GAUGE = 'gauge'
     KEY_OVERALL_CASES = 'cases'
     KEY_OVERALL_SUITE_STATUS = 'suite_status'
+
+    COLOR_FIREFOX = 'rgba(232, 163, 23, 1)'
+    COLOR_FIREFOX_OPACITY = 'rgba(232, 163, 23, 0.3)'
+    SYMBOL_FIREFOX = 'circle'
+
+    COLOR_CHROME = 'rgba(189, 21, 80, 1)'
+    COLOR_CHROME_OPACITY = 'rgba(189, 21, 80, 0.3)'
+    SYMBOL_CHROME = 'triangle'
 
     JS_DATA_TEMPLATE = {
         'chart': {
@@ -71,6 +82,12 @@ class DashboardDataGenerator(object):
     }
 
     JS_DATA_SERIES_OBJ_TEMPLATE = {
+        'name': '',
+        'type': 'scatter',
+        'data': []
+    }
+
+    JS_DATA_SERIES_MEDIAN_OBJ_TEMPLATE = {
         'name': '',
         'data': []
     }
@@ -205,55 +222,90 @@ class DashboardDataGenerator(object):
 
             template['title']['text'] = casename_with_platform
 
+            #
             # handle Firefox
+            #
             f_casename_platform_source_data = [item for item in platform_source_data
                                                if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                                                item.get(
                                                    DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_FIREFOX]
 
+            firefox_median_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_MEDIAN_OBJ_TEMPLATE)
+            firefox_median_data_obj['name'] = DashboardDataGenerator.BROWSER_FIREFOX_MEDIAN
+            firefox_median_data_obj['color'] = DashboardDataGenerator.COLOR_FIREFOX
+            firefox_median_data_obj['marker'] = {'symbol': DashboardDataGenerator.SYMBOL_FIREFOX}
+
             firefox_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
             firefox_data_obj['name'] = DashboardDataGenerator.BROWSER_FIREFOX
+            firefox_data_obj['color'] = DashboardDataGenerator.COLOR_FIREFOX_OPACITY
+            firefox_data_obj['marker'] = {'symbol': DashboardDataGenerator.SYMBOL_FIREFOX}
 
             for data in f_casename_platform_source_data:
                 timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
-                for value in data.get(DashboardDataGenerator.KEY_VALUE_LIST):
+                value_list = data.get(DashboardDataGenerator.KEY_VALUE_LIST)
+
+                # median_values is (timestamp, median value) tuple
+                firefox_median_data_obj['data'].append((timestamp_js, median(value_list)))
+
+                for value in value_list:
                     firefox_data_obj['data'].append([timestamp_js, value])
 
             template['series'].append(firefox_data_obj)
+            template['series'].append(firefox_median_data_obj)
 
+            #
             # handle Chrome
+            #
             c_casename_platform_source_data = [item for item in platform_source_data
                                                if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                                                item.get(
                                                    DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_CHROME]
 
+            chrome_median_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_MEDIAN_OBJ_TEMPLATE)
+            chrome_median_data_obj['name'] = DashboardDataGenerator.BROWSER_CHROME_MEDIAN
+            chrome_median_data_obj['color'] = DashboardDataGenerator.COLOR_CHROME
+            chrome_median_data_obj['marker'] = {'symbol': DashboardDataGenerator.SYMBOL_CHROME}
+
             chrome_data_obj = copy.deepcopy(DashboardDataGenerator.JS_DATA_SERIES_OBJ_TEMPLATE)
             chrome_data_obj['name'] = DashboardDataGenerator.BROWSER_CHROME
+            chrome_data_obj['color'] = DashboardDataGenerator.COLOR_CHROME_OPACITY
+            chrome_data_obj['marker'] = {'symbol': DashboardDataGenerator.SYMBOL_CHROME}
+
             for data in c_casename_platform_source_data:
                 timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
-                for value in data.get(DashboardDataGenerator.KEY_VALUE_LIST):
+                value_list = data.get(DashboardDataGenerator.KEY_VALUE_LIST)
+
+                # median_values is (timestamp, median value) tuple
+                chrome_median_data_obj['data'].append((timestamp_js, median(value_list)))
+
+                for value in value_list:
                     chrome_data_obj['data'].append([timestamp_js, value])
 
             template['series'].append(chrome_data_obj)
+            template['series'].append(chrome_median_data_obj)
 
             ret_obj[casename_with_platform] = template
 
         return ret_obj
 
-    def generate_latest_build_overall_progress_for_platform(self, platform):
+    def generate_build_overall_progress_via_platform_timestamp(self, platform, timestamp):
         """
 
         @param platform: ex: windows8-64, windows10-64
+        @param timestamp:
         @return:
         """
 
-        latest_source_data = [item for item in self.source_data if
+        target_source_data = [item for item in self.source_data if
                               item.get(DashboardDataGenerator.KEY_PLATFORM) == platform and item.get(
-                                  DashboardDataGenerator.KEY_TIMESTAMP) == self.latest_timestamp]
+                                  DashboardDataGenerator.KEY_TIMESTAMP) == timestamp]
 
         ret_obj = {}
         ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES] = {}
         ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS] = {}
+
+        # set revision
+        ret_obj[DashboardDataGenerator.KEY_REVISON] = target_source_data[0].get(DashboardDataGenerator.KEY_REVISON)
 
         # Firefox and Chrome
         total_case_number = len(self.casename_set) * 2
@@ -275,7 +327,7 @@ class DashboardDataGenerator(object):
             # handle Firefox
             #
             counter = 0
-            f_result_data = [item for item in latest_source_data
+            f_result_data = [item for item in target_source_data
                              if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                              item.get(
                                  DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_FIREFOX]
@@ -306,7 +358,7 @@ class DashboardDataGenerator(object):
             # handle Chrome
             #
             counter = 0
-            c_result_data = [item for item in latest_source_data
+            c_result_data = [item for item in target_source_data
                              if item.get(DashboardDataGenerator.KEY_CASENAME) == casename and
                              item.get(
                                  DashboardDataGenerator.KEY_BROWSER) == DashboardDataGenerator.BROWSER_CHROME]
@@ -346,6 +398,14 @@ class DashboardDataGenerator(object):
         ret_obj[DashboardDataGenerator.KEY_OVERALL_GAUGE] = gauge_obj
 
         return ret_obj
+
+    def generate_latest_build_overall_progress_for_platform(self, platform):
+        """
+
+        @param platform: ex: windows8-64, windows10-64
+        @return:
+        """
+        return self.generate_build_overall_progress_via_platform_timestamp(platform=platform, timestamp=self.latest_timestamp)
 
     def run(self, gist_user_name=None, gist_auth_token=None):
         """

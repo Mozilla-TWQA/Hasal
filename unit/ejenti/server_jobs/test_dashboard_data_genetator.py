@@ -169,9 +169,33 @@ class TestTasksTriggerMethods(unittest.TestCase):
                     'text': 'foo_ail_type_in_search_field_windows10'
                 },
                 'series': [
-                    {'data': [[1510091849000, 5.56], [1510138316000, 11.11], [1510138316000, 5.56],
-                              [1510138316000, 22.22]], 'name': 'firefox'},
-                    {'data': [[1510091849000, 5.56], [1510091849000, 5.56], [1510138316000, 5.56]], 'name': 'chrome'}],
+                    {
+                        'name': 'firefox',
+                        'type': 'scatter',
+                        'data': [[1510091849000, 5.56], [1510138316000, 11.11], [1510138316000, 5.56], [1510138316000, 22.22]],
+                        'color': 'rgba(232, 163, 23, 0.3)',
+                        'marker': {'symbol': 'circle'}
+                    },
+                    {
+                        'name': 'firefox_median',
+                        'data': [(1510091849000, 5.5599999999999996), (1510138316000, 11.109999999999999)],
+                        'color': 'rgba(232, 163, 23, 1)',
+                        'marker': {'symbol': 'circle'}
+                    },
+                    {
+                        'name': 'chrome',
+                        'type': 'scatter',
+                        'data': [[1510091849000, 5.56], [1510091849000, 5.56], [1510138316000, 5.56]],
+                        'color': 'rgba(189, 21, 80, 0.3)',
+                        'marker': {'symbol': 'triangle'}
+                    },
+                    {
+                        'name': 'chrome_median',
+                        'data': [(1510091849000, 5.5599999999999996), (1510138316000, 5.5599999999999996)],
+                        'color': 'rgba(189, 21, 80, 1)',
+                        'marker': {'symbol': 'triangle'}
+                    }
+                ],
                 'yAxis': {
                     'title': {'text': 'Asynchronize Input latency (ms)'},
                     'min': 0
@@ -193,6 +217,7 @@ class TestTasksTriggerMethods(unittest.TestCase):
         target_platform = 'windows10-64'
         app = DashboardDataGenerator()
         ret_obj = app.generate_data_for_platform(target_platform)
+
         self.assertEqual(expected_ret, ret_obj)
 
     @patch('lib.helper.generateBackfillTableHelper.GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table')
@@ -274,6 +299,7 @@ class TestTasksTriggerMethods(unittest.TestCase):
             'total_case_number': 4,
             'finish_percentage': 0.5,
             'finish_case_number': 2,
+            'revision': 'rev_1510138316',
             'cases': {
                 'foo_ail_type_in_search_field': {
                     'chrome': 1,
@@ -336,4 +362,5 @@ class TestTasksTriggerMethods(unittest.TestCase):
         target_platform = 'windows10-64'
         app = DashboardDataGenerator()
         ret_obj = app.generate_latest_build_overall_progress_for_platform(target_platform)
+
         self.assertEqual(expected_ret, ret_obj)
