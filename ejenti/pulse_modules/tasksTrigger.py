@@ -31,6 +31,8 @@ class TasksTrigger(object):
     KEY_CONFIG_PULSE_USER = 'pulse_username'
     KEY_CONFIG_PULSE_PWD = 'pulse_password'
 
+    KEY_CONFIG_SIGNATURE_WHITE_LIST = 'signature_white_list'
+
     KEY_CONFIG_JOBS = 'jobs'
     KEY_JOBS_ENABLE = 'enable'
     KEY_JOBS_AMOUNT = 'amount'
@@ -80,6 +82,7 @@ class TasksTrigger(object):
         self.jobs_config = config.get(TasksTrigger.KEY_CONFIG_JOBS, {})
         self.pulse_username = config.get(TasksTrigger.KEY_CONFIG_PULSE_USER)
         self.pulse_password = config.get(TasksTrigger.KEY_CONFIG_PULSE_PWD)
+        self.signature_white_list = config.get(TasksTrigger.KEY_CONFIG_SIGNATURE_WHITE_LIST, [])
 
         self._validate_data()
 
@@ -675,7 +678,8 @@ class TasksTrigger(object):
             for platform_build in enabled_platform_list:
                 logging.info('Generating latest [{}] backfill table ...'.format(platform_build))
                 GenerateBackfillTableHelper.generate_archive_perfherder_relational_table(
-                    input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
+                    input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build,
+                    input_white_list=self.signature_white_list)
             logging.info('Generating latest backfill tables done.')
 
         # creating jobs for query backfill table
@@ -687,7 +691,8 @@ class TasksTrigger(object):
                                    minutes=10,
                                    args=[],
                                    kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
-                                           'input_platform': platform_build})
+                                           'input_platform': platform_build,
+                                           'input_white_list': self.signature_white_list})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():
