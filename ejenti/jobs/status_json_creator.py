@@ -106,7 +106,10 @@ def status_json_creator(**kwargs):
     history_status_json_file_path = os.path.join(status_folder_path, history_status_json_file_name)
 
     # housekeeping the status folder before generating the status json file
-    status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if folder_name.startswith(".") is False and CommonUtil.represent_as_int(folder_name.split("-")[1])]
+    status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if
+                          folder_name.startswith(".") is False and
+                          len(folder_name.split("-")) >= 2 and
+                          CommonUtil.represent_as_int(folder_name.split("-")[1])]
     current_utc_time = datetime.datetime.utcnow()
     outdated_date = current_utc_time - datetime.timedelta(days=data_history_define_period)
     outdated_status_folder_list = [folder_name for folder_name in status_folder_list if datetime.datetime.utcfromtimestamp(int(folder_name.split("-")[1])) < outdated_date]
@@ -155,7 +158,10 @@ def status_json_creator(**kwargs):
                 "Load history status json file[%s] with error [%s]" % (history_status_json_file_path, e.message))
 
     # generate status json obj
-    history_status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if folder_name.startswith(".") is False and CommonUtil.represent_as_int(folder_name.split("-")[1])]
+    history_status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if
+                                  folder_name.startswith(".") is False and
+                                  len(folder_name.split("-")) >= 2 and
+                                  CommonUtil.represent_as_int(folder_name.split("-")[1])]
     for history_status_folder_name in history_status_folder_list:
         history_status_folder_path = os.path.join(status_folder_path, history_status_folder_name)
         job_name = history_status_folder_name.split("-")[0]

@@ -10,5 +10,17 @@
       "gist_user_name": "",
       "gist_auth_token": ""
     }
+  },
+  "DashboardDataGenerator": {
+    "module-path": "ejenti.server_jobs.dashboard_data_generator",
+    "class-name": "DashboardDataGenerator",
+    "trigger-type": "interval",
+    "interval-min": 10,
+    "max-instances": 1,
+    "default-loaded": false,
+    "parameters": {
+      "gist_user_name": "",
+      "gist_auth_token": ""
+    }
   }
 }

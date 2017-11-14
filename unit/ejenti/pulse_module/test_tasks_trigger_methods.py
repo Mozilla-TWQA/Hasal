@@ -46,7 +46,8 @@ class TestTasksTriggerMethods(unittest.TestCase):
             }
         }
 
-        expected_ret = ['foo_platform', 'bar_platform']
+        # adding "win64" as default enabled platform
+        expected_ret = ['win64', 'foo_platform', 'bar_platform']
         ret = TasksTrigger.get_enabled_platform_list_from_trigger_jobs_config(fake_pass_job_config)
         self.assertEqual(expected_ret, ret)
 

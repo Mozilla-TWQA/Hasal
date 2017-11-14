@@ -572,10 +572,16 @@ class TasksTrigger(object):
     def get_enabled_platform_list_from_trigger_jobs_config(config_dict_obj):
         """
         Return the list which contains enabled platforms.
+        Note:
+        - Default enable "win64" platform builds. So, cases progress dashboard can also use this information.
         @param config_dict_obj: the jobs dict object in trigger config file
         @return: list
         """
         enabled_platform_set = set()
+
+        # Default enable platform build "win64"
+        enabled_platform_set.add('win64')
+
         for _, job_detail in config_dict_obj.items():
             enable = job_detail.get(TasksTrigger.KEY_JOBS_ENABLE, False)
             platform_build = job_detail.get(TasksTrigger.KEY_JOBS_PLATFORM_BUILD)
@@ -672,16 +678,16 @@ class TasksTrigger(object):
                     input_backfill_days=TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS, input_platform=platform_build)
             logging.info('Generating latest backfill tables done.')
 
-            # creating jobs for query backfill table
-            for platform_build in enabled_platform_list:
-                self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
-                                       trigger='interval',
-                                       id='query_backfill_table_{}'.format(platform_build),
-                                       max_instances=1,
-                                       minutes=30,
-                                       args=[],
-                                       kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
-                                               'input_platform': platform_build})
+        # creating jobs for query backfill table
+        for platform_build in enabled_platform_list:
+            self.scheduler.add_job(func=GenerateBackfillTableHelper.generate_archive_perfherder_relational_table,
+                                   trigger='interval',
+                                   id='query_backfill_table_{}'.format(platform_build),
+                                   max_instances=1,
+                                   minutes=10,
+                                   args=[],
+                                   kwargs={'input_backfill_days': TasksTrigger.BACK_FILL_DEFAULT_QUERY_DAYS,
+                                           'input_platform': platform_build})
 
         # create each Trigger jobs
         for job_name, job_detail in self.jobs_config.items():
