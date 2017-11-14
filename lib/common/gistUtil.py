@@ -74,8 +74,11 @@ class GISTUtil(object):
         return NetworkUtil.post_request_and_response(update_url, post_data, headers, [200, 201])
 
     def list_gists(self):
+        headers = {
+            'Authorization': "token %s" % self.auth_token,
+        }
         query_url = "%s/users/%s/gists" % (self.DEFAULT_GITHUB_API_URL, self.user_name)
-        return NetworkUtil.get_request_and_response(query_url)
+        return NetworkUtil.get_request_and_response(query_url, input_headers=headers)
 
     def generate_gist_file_table(self, input_gist_result_list):
         return_table_dict = {}
