@@ -19,7 +19,7 @@
     },
     "suite_white_list_for_signature":{
       "description": "Suite white list for signature",
-      "type": "string"
+      "type": "array"
     },
     "jobs": {
       "description": "Trigger jobs",
