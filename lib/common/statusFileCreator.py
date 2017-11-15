@@ -159,11 +159,10 @@ class StatusFileCreator(object):
                     logger.error("Duplicate key[status_code_desc or utc_timestamp] in current status content keys [%s]" % status_content.keys())
                     return None
                 else:
-                    mask_status_content = CommonUtil.mask_credential_value(copy.deepcopy(status_content))
-                    if isinstance(mask_status_content, dict):
-                        write_status_content = mask_status_content
+                    if isinstance(status_content, dict):
+                        write_status_content = CommonUtil.mask_credential_value(copy.deepcopy(status_content))
                     else:
-                        write_status_content = {"status_content": mask_status_content}
+                        write_status_content = {"status_content": status_content}
                     write_status_content["status_code_desc"] = status_code_desc
                     write_status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
 
