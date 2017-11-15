@@ -2,8 +2,11 @@
 # -*- coding:utf-8 -*-
 
 # from distutils.sysconfig import get_python_lib
+from __future__ import print_function
+
 import os
 import sys
+import shutil
 from setuptools import setup, find_packages
 
 
@@ -12,11 +15,34 @@ def validate_pywin32():
         import win32gui  # NOQA
         import win32con  # NOQA
     except ImportError as e:
-        print e
+        print(e)
         sys.exit("Please make sure you already install the pywin32 properly. You can download the latest version from here https://sourceforge.net/projects/pywin32/")
 
+#
+# Clean up some critical files which will crash the program
+#
+clean_file_list = [
+    os.path.join('ejenti', 'ejenti.pyc'),
+]
 
+for clean_file in clean_file_list:
+    print('Checking {} ... '.format(clean_file), end='')
+    if os.path.exists(clean_file):
+        print('found')
+        print('Removing {} ... '.format(clean_file), end='')
+        if os.path.isfile(clean_file):
+            os.remove(clean_file)
+        elif os.path.isdir(clean_file):
+            shutil.rmtree(clean_file)
+        print('done')
+    else:
+        print('not found')
+
+#
+# Requirement files
+#
 DEFAULT_REQUIREMENT_DOC = "requirements.txt"
+DEFAULT_REQUIREMENT_EJENTI_DOC = os.path.join("ejenti", "requirements.txt")
 DEFAULT_REQUIREMENT_DOC_FOR_WIN = "requirements_windows.txt"
 DEFAULT_REQUIREMENT_DOC_FOR_MAC = "requirements_mac.txt"
 
@@ -35,6 +61,8 @@ DEFAULT_REQUIREMENT_DOC_FOR_MAC = "requirements_mac.txt"
 with open(DEFAULT_REQUIREMENT_DOC) as f:
     deps = f.read().splitlines()
 
+with open(DEFAULT_REQUIREMENT_EJENTI_DOC) as f_ejenti:
+    deps.extend(f_ejenti.read().splitlines())
 
 if sys.platform == 'win32':
     if os.path.exists(DEFAULT_REQUIREMENT_DOC_FOR_WIN):
