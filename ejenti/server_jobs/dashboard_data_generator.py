@@ -28,6 +28,9 @@ class DashboardDataGenerator(object):
     BROWSER_FIREFOX_MEDIAN = 'firefox_median'
     BROWSER_CHROME_MEDIAN = 'chrome_median'
 
+    PLATFORM_WIN7 = 'windows8-64'
+    PLATFORM_WIN10 = 'windows10-64'
+
     RESULT_AMOUNT = 6
     KEY_OVERALL_TOTAL_CASE_NUMBER = 'total_case_number'
     KEY_OVERALL_FINISH_CASE_NUMBER = 'finish_case_number'
@@ -161,6 +164,7 @@ class DashboardDataGenerator(object):
         self.source_data = []
         self.casename_set = set()
         self.latest_timestamp = ''
+        self.latest_28_builds_timestamp_list = []
 
         self._generate_source_data()
 
@@ -174,9 +178,9 @@ class DashboardDataGenerator(object):
             self.latest_timestamp = sorted(table_obj.keys())[-1]
             self.latest_timestamp_js = int(self.latest_timestamp) * 1000
             # get 28 builds (almost 14 days) timestamp
-            latest_28_builds_timestamp_list = sorted(table_obj.keys())[-28:]
+            self.latest_28_builds_timestamp_list = sorted(table_obj.keys())[-28:]
 
-            for timestamp in latest_28_builds_timestamp_list:
+            for timestamp in self.latest_28_builds_timestamp_list:
                 revison = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_REVISON, '')
                 perf_data_obj_dict = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_PERFHERDER_DATA, {})
 
@@ -201,6 +205,31 @@ class DashboardDataGenerator(object):
                     ret_obj[DashboardDataGenerator.KEY_REVISON] = revison
 
                     ret_list.append(ret_obj)
+
+            # traverse all timestamp to check all "casename:browser:platform" has value list.
+            for timestamp in self.latest_28_builds_timestamp_list:
+                revison = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_REVISON, '')
+                for casename in self.casename_set:
+                    for browser in [DashboardDataGenerator.BROWSER_FIREFOX, DashboardDataGenerator.BROWSER_CHROME]:
+                        for platform in [DashboardDataGenerator.PLATFORM_WIN7, DashboardDataGenerator.PLATFORM_WIN10]:
+                            ret = [obj for obj in ret_list if
+                                   obj.get(DashboardDataGenerator.KEY_TIMESTAMP) == timestamp and
+                                   obj.get(DashboardDataGenerator.KEY_CASENAME) == casename and
+                                   obj.get(DashboardDataGenerator.KEY_BROWSER) == browser and
+                                   obj.get(DashboardDataGenerator.KEY_PLATFORM) == platform]
+                            if not ret:
+                                logging.debug('Timestamp {ts} missed {c}:{b}:{p} value list, added an empty list.'.format(ts=timestamp, c=casename, b=browser, p=platform))
+                                no_value_obj = {
+                                    DashboardDataGenerator.KEY_TIMESTAMP: timestamp,
+                                    DashboardDataGenerator.KEY_TIMESTAMP_JS: int(timestamp) * 1000,
+                                    DashboardDataGenerator.KEY_CASENAME: casename,
+                                    DashboardDataGenerator.KEY_BROWSER: browser,
+                                    DashboardDataGenerator.KEY_PLATFORM: platform,
+                                    DashboardDataGenerator.KEY_VALUE_LIST: [],
+                                    DashboardDataGenerator.KEY_SIGNATURE: '',
+                                    DashboardDataGenerator.KEY_REVISON: revison
+                                }
+                                ret_list.append(no_value_obj)
 
         self.source_data = ret_list
         return ret_list
@@ -244,8 +273,9 @@ class DashboardDataGenerator(object):
                 timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
                 value_list = data.get(DashboardDataGenerator.KEY_VALUE_LIST)
 
-                # median_values is (timestamp, median value) tuple
-                firefox_median_data_obj['data'].append((timestamp_js, median(value_list)))
+                if value_list:
+                    # median_values is (timestamp, median value) tuple
+                    firefox_median_data_obj['data'].append((timestamp_js, median(value_list)))
 
                 for value in value_list:
                     firefox_data_obj['data'].append([timestamp_js, value])
@@ -275,8 +305,9 @@ class DashboardDataGenerator(object):
                 timestamp_js = data.get(DashboardDataGenerator.KEY_TIMESTAMP_JS)
                 value_list = data.get(DashboardDataGenerator.KEY_VALUE_LIST)
 
-                # median_values is (timestamp, median value) tuple
-                chrome_median_data_obj['data'].append((timestamp_js, median(value_list)))
+                if value_list:
+                    # median_values is (timestamp, median value) tuple
+                    chrome_median_data_obj['data'].append((timestamp_js, median(value_list)))
 
                 for value in value_list:
                     chrome_data_obj['data'].append([timestamp_js, value])

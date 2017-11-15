@@ -66,49 +66,90 @@ class TestTasksTriggerMethods(unittest.TestCase):
 
         expected_ret = [
             {
-                'timestamp': '1510091849',
-                'timestamp_js': 1510091849000,
-                'casename': 'foo_ail_type_in_search_field',
-                'browser': 'chrome',
-                'platform': 'windows10-64',
-                'value_list': [5.56, 5.56],
-                'revision': 'rev_1510091849',
-                'signature': 'sig_foo_chrome_win10'
+                "timestamp": "1510091849",
+                "timestamp_js": 1510091849000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "chrome",
+                "platform": "windows10-64",
+                "value_list": [5.56, 5.56],
+                "revision": "rev_1510091849",
+                "signature": "sig_foo_chrome_win10"
             },
             {
-                'timestamp': '1510091849',
-                'timestamp_js': 1510091849000,
-                'casename': 'foo_ail_type_in_search_field',
-                'browser': 'firefox',
-                'platform': 'windows10-64',
-                'value_list': [5.56, ],
-                'revision': 'rev_1510091849',
-                'signature': 'sig_foo_firefox_win10'
+                "timestamp": "1510091849",
+                "timestamp_js": 1510091849000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "firefox",
+                "platform": "windows10-64",
+                "value_list": [5.56],
+                "revision": "rev_1510091849",
+                "signature": "sig_foo_firefox_win10"
             },
             {
-                'timestamp': '1510138316',
-                'timestamp_js': 1510138316000,
-                'casename': 'foo_ail_type_in_search_field',
-                'browser': 'chrome',
-                'platform': 'windows10-64',
-                'value_list': [5.56, ],
-                'revision': 'rev_1510138316',
-                'signature': 'sig_foo_chrome_win10'
+                "timestamp": "1510138316",
+                "timestamp_js": 1510138316000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "chrome",
+                "platform": "windows10-64",
+                "value_list": [5.56],
+                "revision": "rev_1510138316",
+                "signature": "sig_foo_chrome_win10"
             },
             {
-                'timestamp': '1510138316',
-                'timestamp_js': 1510138316000,
-                'casename': 'foo_ail_type_in_search_field',
-                'browser': 'firefox',
-                'platform': 'windows10-64',
-                'value_list': [11.11, 5.56, 22.22],
-                'revision': 'rev_1510138316',
-                'signature': 'sig_foo_firefox_win10'
+                "timestamp": "1510138316",
+                "timestamp_js": 1510138316000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "firefox",
+                "platform": "windows10-64",
+                "value_list": [11.11, 5.56, 22.22],
+                "revision": "rev_1510138316",
+                "signature": "sig_foo_firefox_win10"
+            },
+            {
+                "timestamp": "1510091849",
+                "timestamp_js": 1510091849000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "firefox",
+                "platform": "windows8-64",
+                "value_list": [],
+                "revision": "rev_1510091849",
+                "signature": ""
+            },
+            {
+                "timestamp": "1510091849",
+                "timestamp_js": 1510091849000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "chrome",
+                "platform": "windows8-64",
+                "value_list": [],
+                "revision": "rev_1510091849",
+                "signature": ""
+            },
+            {
+                "timestamp": "1510138316",
+                "timestamp_js": 1510138316000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "firefox",
+                "platform": "windows8-64",
+                "value_list": [],
+                "revision": "rev_1510138316",
+                "signature": ""
+            },
+            {
+                "timestamp": "1510138316",
+                "timestamp_js": 1510138316000,
+                "casename": "foo_ail_type_in_search_field",
+                "browser": "chrome",
+                "platform": "windows8-64",
+                "value_list": [],
+                "revision": "rev_1510138316",
+                "signature": "",
             }
         ]
 
         app = DashboardDataGenerator()
         ret_list = app._generate_source_data()
+
         self.assertEqual(expected_ret, ret_list)
 
     @patch('lib.helper.generateBackfillTableHelper.GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table')
