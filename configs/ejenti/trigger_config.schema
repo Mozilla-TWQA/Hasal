@@ -78,8 +78,7 @@
     "pulse_username",
     "pulse_password",
     "jobs",
-    "log_filter",
-    "suite_white_list_for_signature"
+    "log_filter"
   ],
   "additionalProperties": false
 }
