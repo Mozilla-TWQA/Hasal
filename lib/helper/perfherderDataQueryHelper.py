@@ -54,15 +54,17 @@ class PerfherderDataQueryHelper(object):
 
     @staticmethod
     def filter_signatures_by_whitelist(input_signatures_data, input_white_list):
+        return_data = copy.deepcopy(input_signatures_data)
         if len(input_white_list) > 0:
+            return_data['signature_data'].clear()
             for pattern in input_white_list:
-                logger.debug('Filter Black word by pattern: {}'.format(pattern))
+                logger.debug('Filter White word by pattern: {}'.format(pattern))
                 for sig_key, sig_obj in input_signatures_data['signature_data'].items():
                     suite_name = sig_obj.get('suite_name', '')
                     if re.match(pattern, suite_name):
-                        logger.debug('Del sig [{sig}] with suite name [{suite_name}]'.format(sig=sig_key, suite_name=suite_name))
-                        del input_signatures_data['signature_data'][sig_key]
-        return input_signatures_data
+                        logger.debug('Add sig [{sig}] with suite name [{suite_name}]'.format(sig=sig_key, suite_name=suite_name))
+                        return_data['signature_data'][sig_key] = copy.deepcopy(input_signatures_data['signature_data'][sig_key])
+        return return_data
 
     @staticmethod
     def convert_query_result(input_json, signature_data, input_result_dict):
@@ -97,11 +99,36 @@ class PerfherderDataQueryHelper(object):
         """
 
         @param input_white_list: regular expression list ex: ['^youtube_ail_type_in_search_field ', ]
+        white list sample:
+        [
+            "^gmail_ail_reply_mail",
+            "^youtube_ail_type_in_search_field",
+            "^gmail_ail_open_mail Median",
+            "^gdoc_ail_pagedown_10_text",
+            "^facebook_ail_type_message_1_txt",
+            "^facebook_ail_scroll_home_1_txt",
+            "^gmail_ail_type_in_reply_field",
+            "^facebook_ail_click_open_chat_tab",
+            "^gsearch_ail_select_image_cat",
+            "^amazon_ail_hover_related_product_thumbnail",
+            "^gsearch_ail_type_searchbox",
+            "^facebook_ail_click_photo_viewer_right_arrow",
+            "^facebook_ail_type_comment_1_txt",
+            "^gmail_ail_compose_new_mail_via_keyboard",
+            "^facebook_ail_type_composerbox_1_txt",
+            "^facebook_ail_click_open_chat_tab_emoji",
+            "^amazon_ail_type_in_search_field",
+            "^facebook_ail_click_close_chat_tab",
+            "^amazon_ail_select_search_suggestion",
+            "^gsearch_ail_select_search_suggestion",
+            "^youtube_ail_select_search_suggestion"
+        ]
         @param input_query_days: int, query days
         @param input_query_channel: string, ex: "mozilla-central", "mozilla-beta" etc.
         @param input_hasal_framework_no: int, hasal is always 9
         @return:
         """
+        signature_list_number_hard_limit = 42
         query_interval = input_query_days * 24 * 60 * 60
 
         if not os.path.exists(PerfherderDataQueryHelper.DEFAULT_HASAL_SIGNATURES):
@@ -113,21 +140,35 @@ class PerfherderDataQueryHelper(object):
         filtered_signature_data = PerfherderDataQueryHelper.filter_signatures_by_whitelist(input_signatures_data=raw_signature_data, input_white_list=input_white_list)
         filtered_signature_list = copy.deepcopy(filtered_signature_data['signature_data'].keys())
 
+        # Have to limit the signature list under 42 signatures or
+        # it will get the http error code 400, request Line is too large (6480 &gt; 4094)
+        query_signature_list = [[]]
+        filtered_signature_count = 1
+        query_signature_list_count = 0
+        for filtered_signature in filtered_signature_list:
+            if filtered_signature_count <= signature_list_number_hard_limit:
+                query_signature_list[query_signature_list_count].append(filtered_signature)
+                filtered_signature_count += 1
+            else:
+                query_signature_list.append([filtered_signature])
+                query_signature_list_count += 1
+                filtered_signature_count = 1
+
         all_result_dict = {}
         counter = 0
-        for signature in filtered_signature_list:
+        for signature_list in query_signature_list:
             counter += 1
             query_header = {'User-Agent': "Hasal Query Perfherder Tool"}
             query_url_str = PerfherderDataQueryHelper.API_URL_QUERY_DATA % (PerfherderDataQueryHelper.DEFAULT_PERFHERDER_PRODUCTION_URL, input_query_channel)
-            query_params = {"format": "json", "framework": str(input_hasal_framework_no), "interval": str(query_interval), "signatures": signature}
+            query_params_dict = {"format": "json", "framework": str(input_hasal_framework_no), "interval": str(query_interval), "signatures": "&signatures=".join(signature_list)}
+            query_params_str = "&".join("%s=%s" % (k, v) for k, v in query_params_dict.items())
 
-            logger.debug('Query with sig [{}] ...'.format(signature))
-            query_response = NetworkUtil.get_request_and_response(input_url=query_url_str, input_params=query_params, input_headers=query_header)
-            logger.debug('Query with sig [{}] done.'.format(signature))
+            logger.debug('Query with sig [{}] ...'.format(signature_list))
+            query_response = NetworkUtil.get_request_and_response(input_url=query_url_str, input_params=query_params_str, input_headers=query_header)
+            logger.debug('Query with sig [{}] done.'.format(signature_list))
 
             if query_response:
                 json_obj = query_response.json()
-                logger.debug('\rStarting query result ... {counter}/{total}'.format(counter=counter, total=len(filtered_signature_list)), end='')
                 PerfherderDataQueryHelper.convert_query_result(json_obj, filtered_signature_data, all_result_dict)
 
         return all_result_dict

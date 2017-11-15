@@ -17,6 +17,10 @@
       "description": "GIST user auth token",
       "type": "string"
     },
+    "suite_white_list_for_signature":{
+      "description": "Suite white list for signature",
+      "type": "array"
+    },
     "jobs": {
       "description": "Trigger jobs",
       "type": "object",
