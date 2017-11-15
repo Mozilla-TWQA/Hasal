@@ -395,7 +395,8 @@ class CommonUtil(object):
                                  "bot_name",
                                  "bot_mgt_channel",
                                  "bot_election_channel",
-                                 "gist_auth_token"]
+                                 "gist_auth_token",
+                                 "gist_user_name"]
         DEFAULT_MASK_SYMBOL = "hidden_credential_value"
 
         if input_mask_symbol:
