@@ -18,11 +18,13 @@ class gSlide(WebApp):
     ]
 
     GSLIDE_TXT_IMG_SHAPE_ICON = [
+        [os.path.join('pics', 'TextImageShapeIcon_20171115.png'), 0, 0],
         [os.path.join('pics', 'TextImageShapeIcon_DevEd56.png'), 0, 0],
         [os.path.join('pics', 'TextImageShapeIcon.png'), 0, 0]
     ]
 
     GSLIDE_CLICK_CONTENT_TEXT_BOX = [
+        [os.path.join('pics', 'TextImageShapeIcon_20171115.png'), 0, 250],
         [os.path.join('pics', 'TextImageShapeIcon_DevEd56.png'), 0, 250],
         [os.path.join('pics', 'TextImageShapeIcon.png'), 0, 250]
     ]
