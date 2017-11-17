@@ -13,6 +13,8 @@ class DashboardDataGenerator(object):
 
     KEY_PERFHERDER_DATA = 'perfherder_data'
     KEY_VLAUE = 'value'
+    KEY_ARCHIVE_URL = 'archive_url'
+    KEY_ARCHIVE_DIR = 'archive_dir'
 
     KEY_TIMESTAMP = 'timestamp'
     KEY_TIMESTAMP_JS = 'timestamp_js'
@@ -181,8 +183,12 @@ class DashboardDataGenerator(object):
             self.latest_28_builds_timestamp_list = sorted(table_obj.keys())[-28:]
 
             for timestamp in self.latest_28_builds_timestamp_list:
-                revison = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_REVISON, '')
-                perf_data_obj_dict = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_PERFHERDER_DATA, {})
+                current_obj = table_obj.get(timestamp, {})
+                revison = current_obj.get(DashboardDataGenerator.KEY_REVISON, '')
+                archive_url = current_obj.get(DashboardDataGenerator.KEY_ARCHIVE_URL, '')
+                archive_folder_name = current_obj.get(DashboardDataGenerator.KEY_ARCHIVE_DIR, '').replace('/', '')
+
+                perf_data_obj_dict = current_obj.get(DashboardDataGenerator.KEY_PERFHERDER_DATA, {})
 
                 for key, value in perf_data_obj_dict.items():
                     ret_obj = {}
@@ -192,8 +198,8 @@ class DashboardDataGenerator(object):
 
                     self.casename_set.add(casename)
 
-                    value_list = value.get(DashboardDataGenerator.KEY_VLAUE)
-                    signature = value.get(DashboardDataGenerator.KEY_SIGNATURE)
+                    value_list = value.get(DashboardDataGenerator.KEY_VLAUE, [])
+                    signature = value.get(DashboardDataGenerator.KEY_SIGNATURE, '')
 
                     ret_obj[DashboardDataGenerator.KEY_TIMESTAMP] = timestamp
                     ret_obj[DashboardDataGenerator.KEY_TIMESTAMP_JS] = int(timestamp) * 1000
@@ -203,12 +209,15 @@ class DashboardDataGenerator(object):
                     ret_obj[DashboardDataGenerator.KEY_VALUE_LIST] = value_list
                     ret_obj[DashboardDataGenerator.KEY_SIGNATURE] = signature
                     ret_obj[DashboardDataGenerator.KEY_REVISON] = revison
+                    ret_obj[DashboardDataGenerator.KEY_ARCHIVE_URL] = archive_url
+                    ret_obj[DashboardDataGenerator.KEY_ARCHIVE_DIR] = archive_folder_name
 
                     ret_list.append(ret_obj)
 
             # traverse all timestamp to check all "casename:browser:platform" has value list.
             for timestamp in self.latest_28_builds_timestamp_list:
-                revison = table_obj.get(timestamp, {}).get(DashboardDataGenerator.KEY_REVISON, '')
+                current_obj = table_obj.get(timestamp, {})
+                revison = current_obj.get(DashboardDataGenerator.KEY_REVISON, '')
                 for casename in self.casename_set:
                     for browser in [DashboardDataGenerator.BROWSER_FIREFOX, DashboardDataGenerator.BROWSER_CHROME]:
                         for platform in [DashboardDataGenerator.PLATFORM_WIN7, DashboardDataGenerator.PLATFORM_WIN10]:
@@ -227,7 +236,9 @@ class DashboardDataGenerator(object):
                                     DashboardDataGenerator.KEY_PLATFORM: platform,
                                     DashboardDataGenerator.KEY_VALUE_LIST: [],
                                     DashboardDataGenerator.KEY_SIGNATURE: '',
-                                    DashboardDataGenerator.KEY_REVISON: revison
+                                    DashboardDataGenerator.KEY_REVISON: revison,
+                                    DashboardDataGenerator.KEY_ARCHIVE_URL: '',
+                                    DashboardDataGenerator.KEY_ARCHIVE_DIR: ''
                                 }
                                 ret_list.append(no_value_obj)
 
@@ -335,8 +346,10 @@ class DashboardDataGenerator(object):
         ret_obj[DashboardDataGenerator.KEY_OVERALL_CASES] = {}
         ret_obj[DashboardDataGenerator.KEY_OVERALL_SUITE_STATUS] = {}
 
-        # set revision
+        # set revision / archive info
         ret_obj[DashboardDataGenerator.KEY_REVISON] = target_source_data[0].get(DashboardDataGenerator.KEY_REVISON)
+        ret_obj[DashboardDataGenerator.KEY_ARCHIVE_DIR] = target_source_data[0].get(DashboardDataGenerator.KEY_ARCHIVE_DIR)
+        ret_obj[DashboardDataGenerator.KEY_ARCHIVE_URL] = target_source_data[0].get(DashboardDataGenerator.KEY_ARCHIVE_URL)
 
         # Firefox and Chrome
         total_case_number = len(self.casename_set) * 2
