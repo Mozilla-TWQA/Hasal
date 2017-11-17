@@ -15,6 +15,7 @@ class BackFillTrigger(object):
 
     PLATFORM = 'win64'
     RESULT_AMOUNT = 6
+    WAIT_TIMEOUT_DELTA_HOUR = 8
 
     DEFAULT_CMD_CONFIG_FILE_PATH = os.path.join('configs', 'ejenti', 'cmd_config.json')
 
@@ -119,7 +120,7 @@ class BackFillTrigger(object):
         current_time = datetime.utcnow()
         build_time = datetime.strptime(build_info.archive_datetime, '%Y-%m-%d-%H-%M-%S')
 
-        delta_hours = timedelta(hours=8)
+        delta_hours = timedelta(hours=BackFillTrigger.WAIT_TIMEOUT_DELTA_HOUR)
         if (current_time - build_time) > delta_hours:
             logging.info('Archive Build Time {}, the time delta is more than 8 hours.'.format(build_time))
         else:
@@ -156,7 +157,7 @@ class BackFillTrigger(object):
                         else:
                             backfill_amount = 0
                     else:
-                        backfill_amount = 6
+                        backfill_amount = BackFillTrigger.RESULT_AMOUNT
 
                     if backfill_amount > 0:
                         ret_dict[BackFillTrigger.PLATFORM_MAPPING.get(platform)][real_casename] = backfill_amount
