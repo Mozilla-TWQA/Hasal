@@ -6,6 +6,8 @@ from ejenti.server_jobs.dashboard_data_generator import DashboardDataGenerator
 
 class TestTasksTriggerMethods(unittest.TestCase):
 
+    maxDiff = None
+
     def test_run_without_gist_info(self):
         app = DashboardDataGenerator()
         with self.assertRaises(Exception) as e:
@@ -73,7 +75,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows10-64",
                 "value_list": [5.56, 5.56],
                 "revision": "rev_1510091849",
-                "signature": "sig_foo_chrome_win10"
+                "signature": "sig_foo_chrome_win10",
+                "archive_dir": "2017-11-07-22-01-15-mozilla-central",
+                "archive_url": "https://archive.mozilla.org/pub/firefox/nightly/2017/11/2017-11-07-22-01-15-mozilla-central/"
             },
             {
                 "timestamp": "1510091849",
@@ -83,7 +87,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows10-64",
                 "value_list": [5.56],
                 "revision": "rev_1510091849",
-                "signature": "sig_foo_firefox_win10"
+                "signature": "sig_foo_firefox_win10",
+                "archive_dir": "2017-11-07-22-01-15-mozilla-central",
+                "archive_url": "https://archive.mozilla.org/pub/firefox/nightly/2017/11/2017-11-07-22-01-15-mozilla-central/"
             },
             {
                 "timestamp": "1510138316",
@@ -93,7 +99,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows10-64",
                 "value_list": [5.56],
                 "revision": "rev_1510138316",
-                "signature": "sig_foo_chrome_win10"
+                "signature": "sig_foo_chrome_win10",
+                "archive_dir": "2017-11-08-11-08-38-mozilla-central",
+                "archive_url": "https://archive.mozilla.org/pub/firefox/nightly/2017/11/2017-11-08-11-08-38-mozilla-central/"
             },
             {
                 "timestamp": "1510138316",
@@ -103,7 +111,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows10-64",
                 "value_list": [11.11, 5.56, 22.22],
                 "revision": "rev_1510138316",
-                "signature": "sig_foo_firefox_win10"
+                "signature": "sig_foo_firefox_win10",
+                "archive_dir": "2017-11-08-11-08-38-mozilla-central",
+                "archive_url": "https://archive.mozilla.org/pub/firefox/nightly/2017/11/2017-11-08-11-08-38-mozilla-central/"
             },
             {
                 "timestamp": "1510091849",
@@ -113,7 +123,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows8-64",
                 "value_list": [],
                 "revision": "rev_1510091849",
-                "signature": ""
+                "signature": "",
+                "archive_dir": "",
+                "archive_url": ""
             },
             {
                 "timestamp": "1510091849",
@@ -123,7 +135,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows8-64",
                 "value_list": [],
                 "revision": "rev_1510091849",
-                "signature": ""
+                "signature": "",
+                "archive_dir": "",
+                "archive_url": ""
             },
             {
                 "timestamp": "1510138316",
@@ -133,7 +147,9 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "platform": "windows8-64",
                 "value_list": [],
                 "revision": "rev_1510138316",
-                "signature": ""
+                "signature": "",
+                "archive_dir": "",
+                "archive_url": ""
             },
             {
                 "timestamp": "1510138316",
@@ -144,12 +160,13 @@ class TestTasksTriggerMethods(unittest.TestCase):
                 "value_list": [],
                 "revision": "rev_1510138316",
                 "signature": "",
+                "archive_dir": "",
+                "archive_url": ""
             }
         ]
 
         app = DashboardDataGenerator()
         ret_list = app._generate_source_data()
-
         self.assertEqual(expected_ret, ret_list)
 
     @patch('lib.helper.generateBackfillTableHelper.GenerateBackfillTableHelper.get_history_archive_perfherder_relational_table')
@@ -341,6 +358,8 @@ class TestTasksTriggerMethods(unittest.TestCase):
             'finish_percentage': 0.5,
             'finish_case_number': 2,
             'revision': 'rev_1510138316',
+            'archive_dir': '2017-11-08-11-08-38-mozilla-central',
+            'archive_url': 'https://archive.mozilla.org/pub/firefox/nightly/2017/11/2017-11-08-11-08-38-mozilla-central/',
             'cases': {
                 'foo_ail_type_in_search_field': {
                     'chrome': 1,
