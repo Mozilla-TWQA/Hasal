@@ -11,6 +11,7 @@ class StatusFileCreator(object):
 
     STATUS_TAG_PULSE = "pulse"
     STATUS_TAG_PULSE_TRIGGER = "pulse_trigger"
+    STATUS_TAG_PULSE_TRIGGER_BACKFILL = "pulse_trigger_backfill"
     STATUS_TAG_SLACK = "slack"
     STATUS_TAG_INTERACTIVE = "interactive"
     STATUS_TAG_SYNC_TASK_CONSUMER = "sync_task_consumer"
@@ -44,7 +45,9 @@ class StatusFileCreator(object):
                                               200: "Put message into local queue",
                                               900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
                            STATUS_TAG_PULSE_TRIGGER: {100: "Detect new build, push tasks to Pulse MQ",
-                                                      900: "Push all tasks to Pulse MQ, successfully complete"},
+                                                      900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
+                           STATUS_TAG_PULSE_TRIGGER_BACKFILL: {100: "Push back fill task to Pulse MQ",
+                                                               900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
                            STATUS_TAG_SYNC_TASK_CONSUMER: {100: "Get queue message from sync queue",
                                                            900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
                            STATUS_TAG_ASYNC_TASK_CONSUMER: {100: "Get queue message from async queue",
