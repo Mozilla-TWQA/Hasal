@@ -15,7 +15,7 @@ class BackFillTrigger(object):
 
     PLATFORM = 'win64'
     RESULT_AMOUNT = 6
-    WAIT_TIMEOUT_DELTA_HOUR = 8
+    DEFAULT_WAIT_TIMEOUT_DELTA_HOUR = 6
 
     DEFAULT_CMD_CONFIG_FILE_PATH = os.path.join('configs', 'ejenti', 'cmd_config.json')
 
@@ -115,12 +115,16 @@ class BackFillTrigger(object):
         }
         StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE_TRIGGER_BACKFILL, 900, content)
 
-    def trigger_latest_back_fill(self, build_info):
+    def trigger_latest_back_fill(self, build_info, wait_timeout_hour=None):
 
         current_time = datetime.utcnow()
         build_time = datetime.strptime(build_info.archive_datetime, '%Y-%m-%d-%H-%M-%S')
 
-        delta_hours = timedelta(hours=BackFillTrigger.WAIT_TIMEOUT_DELTA_HOUR)
+        if wait_timeout_hour:
+            timeout_hour = wait_timeout_hour
+        else:
+            timeout_hour = BackFillTrigger.DEFAULT_WAIT_TIMEOUT_DELTA_HOUR
+        delta_hours = timedelta(hours=timeout_hour)
         if (current_time - build_time) > delta_hours:
             logging.info('Archive Build Time {}, the time delta is more than 8 hours.'.format(build_time))
         else:
@@ -181,7 +185,7 @@ class BackFillTrigger(object):
                                         amount=amount,
                                         build_info=build_info)
 
-    def run(self, pulse_username='', pulse_password='', pulse_configs={}):
+    def run(self, pulse_username='', pulse_password='', pulse_configs={}, wait_timeout_hour=None):
         """
         Generate the dashboard data for "windows8-64" and "windows10-64" (platform = win64).
         @return:
@@ -214,7 +218,7 @@ class BackFillTrigger(object):
                     self.casename_set.add(casename)
 
             latest_build_info = BuildInformation(table_obj.get(latest_timestamp))
-            self.trigger_latest_back_fill(build_info=latest_build_info)
+            self.trigger_latest_back_fill(build_info=latest_build_info, wait_timeout_hour=wait_timeout_hour)
 
         logging.info('Back Fill Trigger done.')
 
