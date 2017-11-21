@@ -463,26 +463,35 @@ def main():
         print('===============\n* Latest mode *\n===============')
         while True:
             run_flag = agent.run(True)
+            if run_flag:
+                logging.info('Success.')
+            else:
+                logging.info('Fail.')
             # sleep and wait for next time if all builds is okay
-            if not run_flag:
-                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
-                time.sleep(sleep_hour * 60 * 60)
+            logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+            time.sleep(sleep_hour * 60 * 60)
     elif arguments['--backfill']:
         print('================\n* Backfill mode *\n================')
         while True:
             run_flag = agent.run_backfill(arguments['<days>'])
+            if run_flag:
+                logging.info('Success.')
+            else:
+                logging.info('Fail.')
             # sleep and wait for next time if all builds is okay
-            if not run_flag:
-                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
-                time.sleep(sleep_hour * 60 * 60)
+            logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+            time.sleep(sleep_hour * 60 * 60)
     elif arguments['-i']:
         print('================\n* History mode *\n================')
         while True:
             run_flag = agent.run_history(arguments['-i'])
+            if run_flag:
+                logging.info('Success.')
+            else:
+                logging.info('Fail.')
             # sleep and wait for next time if all builds is okay
-            if not run_flag:
-                logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
-                time.sleep(sleep_hour * 60 * 60)
+            logging.info('Sleep {} hour and wait for next run...'.format(sleep_hour))
+            time.sleep(sleep_hour * 60 * 60)
     else:
         print('===============\n* Single mode *\n===============')
         agent.run(arguments['--query'])
