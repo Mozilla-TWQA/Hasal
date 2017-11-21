@@ -412,7 +412,7 @@ def exec_hasal_runtest(**kwargs):
     StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_RUN_HASAL_RUNTEST_CMD, 900)
 
 
-def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=False, status_job_id_path=None, status_tag=None):
+def query_and_remove_hasal_output_folder(task_config, status_job_id_path, status_tag, remove_date=None, remove=False):
     """
     task for querying and removing Hasal output folder
     """
@@ -424,10 +424,9 @@ def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=F
         remove_date_datetime = datetime.strptime(remove_date, '%Y-%m-%d')
     except:
         err_msg = 'Remove Date is not correct: {}'.format(remove_date)
-        if status_job_id_path and status_tag:
-            StatusFileCreator.create_status_file(status_job_id_path,
-                                                 status_tag,
-                                                 800, {'error': err_msg})
+        StatusFileCreator.create_status_file(status_job_id_path,
+                                             status_tag,
+                                             800, {'error': err_msg})
         return err_msg, None
 
     # get Hasal working dir path
@@ -473,10 +472,9 @@ def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=F
                             os.remove(sub_output_image_folder_path)
                     except Exception as e:
                         logging.error(e)
-                        if status_job_id_path and status_tag:
-                            StatusFileCreator.create_status_file(status_job_id_path,
-                                                                 status_tag,
-                                                                 700, {'exception': e.message})
+                        StatusFileCreator.create_status_file(status_job_id_path,
+                                                             status_tag,
+                                                             700, {'exception': e.message})
 
     if remove:
         ret_message = '*Removed Hasal Output before {}*\n'.format(remove_date)
@@ -507,9 +505,10 @@ def query_hasal_output_folder(**kwargs):
     StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD, 100, remove_date)
 
     logging.info('Query Hasal ouput folder')
-    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=False,
+    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config,
                                                                   status_job_id_path=job_id_path,
-                                                                  status_tag=StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD)
+                                                                  status_tag=StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD,
+                                                                  remove_date=remove_date, remove=False)
 
     msg_obj = task_generate_slack_sending_message(ret_msg)
     task_checking_sending_queue(sending_queue=slack_sending_queue)
@@ -538,9 +537,10 @@ def remove_hasal_output_folder(**kwargs):
     StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD, 100, remove_date)
 
     logging.info('REMOVE Hasal ouput folder')
-    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=True,
+    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config,
                                                                   status_job_id_path=job_id_path,
-                                                                  status_tag=StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD)
+                                                                  status_tag=StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD,
+                                                                  remove_date=remove_date, remove=True)
 
     msg_obj = task_generate_slack_sending_message(ret_msg)
     task_checking_sending_queue(sending_queue=slack_sending_queue)
