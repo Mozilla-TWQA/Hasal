@@ -88,7 +88,7 @@ setup(
     author_email="tw-qa@mozilla.com",
     license="MPL",
     install_requires=deps,
-    packages=find_packages(),
+    packages=find_packages(exclude=['output', 'result']),
     include_package_data=True,
     zip_safe=False
 )
