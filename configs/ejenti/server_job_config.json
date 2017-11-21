@@ -22,5 +22,51 @@
       "gist_user_name": "",
       "gist_auth_token": ""
     }
+  },
+  "BackFillTrigger": {
+    "module-path": "ejenti.server_jobs.backfill_trigger",
+    "class-name": "BackFillTrigger",
+    "trigger-type": "interval",
+    "interval-min": 60,
+    "max-instances": 1,
+    "default-loaded": false,
+    "parameters": {
+      "pulse_username": "",
+      "pulse_password": "",
+      "pulse_configs": {
+        "CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+        "CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev",
+        "OVERWRITE_HASAL_SUITE_CASE_LIST": "",
+        "OVERWIRTE_HASAL_CONFIG_CTNT": {
+          "configs": {
+            "exec": {
+              "default.json": {
+                "max-retry": 3
+              }
+            },
+            "firefox": {
+              "obs_on_windows.json": {}
+            },
+            "index": {
+              "inputLatencyAnimationDctGenerator.json": {}
+            },
+            "upload": {
+              "default.json": {
+                "enable": true,
+                "perfherder-protocol": "https",
+                "perfherder-host": "treeherder.mozilla.org",
+                "perfherder-client-id": "",
+                "perfherder-secret": "",
+                "perfherder-repo": "mozilla-central",
+                "b2-account-id": "",
+                "b2-account-key": "",
+                "b2-upload-video-bucket-name": "",
+                "b2-upload-video-bucket-lifecyclerule": {}
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
