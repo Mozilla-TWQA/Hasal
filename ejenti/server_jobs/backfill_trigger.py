@@ -3,6 +3,7 @@ import json
 import random
 import logging
 from datetime import datetime, timedelta
+from logging.handlers import TimedRotatingFileHandler
 
 from lib.common.statusFileCreator import StatusFileCreator
 from lib.helper.generateBackfillTableHelper import GenerateBackfillTableHelper
@@ -38,11 +39,26 @@ class BackFillTrigger(object):
         'windows10-64': 'win10'
     }
 
+    BACK_FILL_LOG = 'back_fill.log'
+
     def __init__(self):
         self.pulse_username = ''
         self.pulse_password = ''
         self.pulse_configs = {}
         self.casename_set = set()
+
+        self.logger = logging.getLogger('Back_Fill')
+        self.logger.setLevel(logging.DEBUG)
+
+        # create Rotating File Handler, 1 day, backup 14 times.
+        rotating_handler = TimedRotatingFileHandler(BackFillTrigger.BACK_FILL_LOG,
+                                                    when='midnight',
+                                                    interval=1,
+                                                    backupCount=14)
+
+        rotating_formatter = logging.Formatter('%(asctime)s %(levelname)s [%(name)s.%(funcName)s] %(message)s')
+        rotating_handler.setFormatter(rotating_formatter)
+        self.logger.addHandler(rotating_handler)
 
     def send_task_to_pulse(self, job_name, topic, real_casename, amount, build_info):
         job_id = StatusFileCreator.create_job_id_folder(job_name)
@@ -56,7 +72,7 @@ class BackFillTrigger(object):
                                                                     topic=topic)
 
         if not queue_exists:
-            logging.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
+            self.logger.error('There is not Queue for Topic [{topic}]. Message might be ignored.'.format(topic=topic))
 
         #
         # Pre-handle specify command
@@ -79,21 +95,21 @@ class BackFillTrigger(object):
         now_string = now.strftime('%Y-%m-%d_%H:%M:%S.%f')
         uid_prefix = '{time}.{job}'.format(time=now_string, job=job_name)
         # push meta task
-        logging.info('Pushing to Pulse...\n'
-                     '{line}\n'
-                     'UID prefix: {uid_prefix}\n'
-                     'Trigger Job: {job_name}\n'
-                     'Topic: {topic}\n'
-                     'Amount: {amount}\n'
-                     'command {cmd}\n'
-                     'cmd_config: {cmd_config}\n'
-                     '{line}\n'.format(uid_prefix=uid_prefix,
-                                       job_name=job_name,
-                                       topic=topic,
-                                       amount=amount,
-                                       cmd=cmd_name,
-                                       cmd_config=overwrite_cmd_config,
-                                       line='-' * 10))
+        self.logger.info('Pushing to Pulse...\n'
+                         '{line}\n'
+                         'UID prefix: {uid_prefix}\n'
+                         'Trigger Job: {job_name}\n'
+                         'Topic: {topic}\n'
+                         'Amount: {amount}\n'
+                         'command {cmd}\n'
+                         'cmd_config: {cmd_config}\n'
+                         '{line}\n'.format(uid_prefix=uid_prefix,
+                                           job_name=job_name,
+                                           topic=topic,
+                                           amount=amount,
+                                           cmd=cmd_name,
+                                           cmd_config=overwrite_cmd_config,
+                                           line='-' * 10))
         uid_list = []
         for idx in range(amount):
             uid = '{prefix}.{idx}'.format(prefix=uid_prefix, idx=idx + 1)
@@ -126,9 +142,9 @@ class BackFillTrigger(object):
             timeout_hour = BackFillTrigger.DEFAULT_WAIT_TIMEOUT_DELTA_HOUR
         delta_hours = timedelta(hours=timeout_hour)
         if (current_time - build_time) > delta_hours:
-            logging.info('Archive Build Time {}, the time delta is more than 8 hours.'.format(build_time))
+            self.logger.info('Archive Build Time {bt}, the time delta is more than {timeout} hours ({delta}), run!'.format(bt=build_time, timeout=timeout_hour, delta=(current_time - build_time)))
         else:
-            logging.info('Archive Build Time {}, the time delta is less than 8 hours ({}), skip.'.format(build_time, (current_time - build_time)))
+            self.logger.info('Archive Build Time {bt}, the time delta is less than {timeout} hours ({delta}), skip.'.format(bt=build_time, timeout=timeout_hour, delta=(current_time - build_time)))
             return
 
         perf_data = build_info.perfherder_data
@@ -166,7 +182,7 @@ class BackFillTrigger(object):
                     if backfill_amount > 0:
                         ret_dict[BackFillTrigger.PLATFORM_MAPPING.get(platform)][real_casename] = backfill_amount
 
-        logging.debug('Back fill table:\n{}'.format(json.dumps(ret_dict, indent=2)))
+        self.logger.debug('Back fill table:\n{}'.format(json.dumps(ret_dict, indent=2)))
 
         for topic, detail in ret_dict.items():
 
@@ -177,7 +193,7 @@ class BackFillTrigger(object):
                 amount = detail.get(real_casename)
                 casename = real_casename.split('.')[-1]
                 backfill_job_name = '{topic}_{case}'.format(topic=topic, case=casename)
-                logging.debug('Back fill case [{}] with [] times. '.format(backfill_job_name, amount))
+                self.logger.debug('Back fill case [{}] with [] times. '.format(backfill_job_name, amount))
 
                 self.send_task_to_pulse(job_name=backfill_job_name,
                                         topic=topic,
@@ -190,7 +206,7 @@ class BackFillTrigger(object):
         Generate the dashboard data for "windows8-64" and "windows10-64" (platform = win64).
         @return:
         """
-        logging.info('Back Fill Trigger starting ...')
+        self.logger.info('Back Fill Trigger starting ...')
 
         if not pulse_username or not pulse_password or not pulse_configs:
             raise Exception('Please config "pulse_username", "pulse_password" and "pulse_configs" for back fill data.')
@@ -220,7 +236,7 @@ class BackFillTrigger(object):
             latest_build_info = BuildInformation(table_obj.get(latest_timestamp))
             self.trigger_latest_back_fill(build_info=latest_build_info, wait_timeout_hour=wait_timeout_hour)
 
-        logging.info('Back Fill Trigger done.')
+        self.logger.info('Back Fill Trigger done.')
 
 
 if __name__ == '__main__':
