@@ -193,7 +193,7 @@ class BackFillTrigger(object):
                 amount = detail.get(real_casename)
                 casename = real_casename.split('.')[-1]
                 backfill_job_name = '{topic}_{case}'.format(topic=topic, case=casename)
-                self.logger.debug('Back fill case [{}] with [] times. '.format(backfill_job_name, amount))
+                self.logger.debug('Back fill case [{}] with [{}] times. '.format(backfill_job_name, amount))
 
                 self.send_task_to_pulse(job_name=backfill_job_name,
                                         topic=topic,
