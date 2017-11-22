@@ -412,7 +412,7 @@ def exec_hasal_runtest(**kwargs):
     StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_RUN_HASAL_RUNTEST_CMD, 900)
 
 
-def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=False):
+def query_and_remove_hasal_output_folder(task_config, status_job_id_path, status_tag, remove_date=None, remove=False):
     """
     task for querying and removing Hasal output folder
     """
@@ -423,50 +423,67 @@ def query_and_remove_hasal_output_folder(task_config, remove_date=None, remove=F
     try:
         remove_date_datetime = datetime.strptime(remove_date, '%Y-%m-%d')
     except:
-        return 'Remove Date is not correct: {}'.format(remove_date)
+        err_msg = 'Remove Date is not correct: {}'.format(remove_date)
+        StatusFileCreator.create_status_file(status_job_id_path,
+                                             status_tag,
+                                             800, {'error': err_msg})
+        return err_msg, None
 
     # get Hasal working dir path
     hasal_working_dir = get_hasal_repo_path(task_config)
 
     output_folder_name = 'output'
     image_folder_name = 'images'
+    video_folder_name = 'videos'
     image_output_folder_name = 'output'
+    sample_output_folder_name = 'sample'
 
     image_output_folder_path = os.path.join(hasal_working_dir, output_folder_name, image_folder_name, image_output_folder_name)
-    abs_image_output_folder_path = os.path.abspath(image_output_folder_path)
-
-    folder_name_list = os.listdir(abs_image_output_folder_path)
+    sample_output_folder_path = os.path.join(hasal_working_dir, output_folder_name, image_folder_name, sample_output_folder_name)
+    video_output_folder_path = os.path.join(hasal_working_dir, output_folder_name, video_folder_name)
 
     file_obj_list = []
-    for folder_name in folder_name_list:
-        sub_output_image_folder_path = os.path.join(abs_image_output_folder_path, folder_name)
+    for scan_path in [image_output_folder_path, sample_output_folder_path, video_output_folder_path]:
+        abs_image_output_folder_path = os.path.abspath(scan_path)
 
-        m_timestamp = os.stat(sub_output_image_folder_path).st_mtime
-        modified_datetime = datetime.fromtimestamp(m_timestamp)
-        modified_date_str = modified_datetime.strftime('%Y-%m-%d')
+        folder_name_list = os.listdir(abs_image_output_folder_path)
 
-        if modified_datetime <= remove_date_datetime:
-            file_obj = {
-                'path': sub_output_image_folder_path,
-                'date': modified_date_str,
-                'ts': m_timestamp
-            }
-            file_obj_list.append(file_obj)
+        for folder_name in folder_name_list:
+            sub_output_image_folder_path = os.path.join(abs_image_output_folder_path, folder_name)
 
-            if remove:
-                logging.warn('Remove folder: {}'.format(sub_output_image_folder_path))
-                shutil.rmtree(sub_output_image_folder_path)
+            m_timestamp = os.stat(sub_output_image_folder_path).st_mtime
+            modified_datetime = datetime.fromtimestamp(m_timestamp)
+            modified_date_str = modified_datetime.strftime('%Y-%m-%d')
+
+            if modified_datetime <= remove_date_datetime:
+                file_obj = {
+                    'path': sub_output_image_folder_path,
+                    'date': modified_date_str,
+                    'ts': m_timestamp
+                }
+                file_obj_list.append(file_obj)
+                if remove:
+                    try:
+                        if os.path.isdir(sub_output_image_folder_path):
+                            logging.warn('Remove folder: {}'.format(sub_output_image_folder_path))
+                            shutil.rmtree(sub_output_image_folder_path)
+                        elif os.path.isfile(sub_output_image_folder_path):
+                            logging.warn('Remove file: {}'.format(sub_output_image_folder_path))
+                            os.remove(sub_output_image_folder_path)
+                    except Exception as e:
+                        logging.error(e)
+                        StatusFileCreator.create_status_file(status_job_id_path,
+                                                             status_tag,
+                                                             700, {'exception': e.message})
 
     if remove:
         ret_message = '*Removed Hasal Output before {}*\n'.format(remove_date)
     else:
         ret_message = '*Query Hasal Output before {}*\n'.format(remove_date)
 
-    for file_obj in file_obj_list:
-        ret_message += '{}, {}\n'.format(file_obj.get('path'),
-                                         file_obj.get('date'))
+    ret_message += '{} folders/files.'.format(len(file_obj_list))
 
-    return ret_message
+    return ret_message, file_obj_list
 
 
 def query_hasal_output_folder(**kwargs):
@@ -479,14 +496,26 @@ def query_hasal_output_folder(**kwargs):
     queue_msg, consumer_config, task_config = init_task(kwargs)
     slack_sending_queue = kwargs.get('slack_sending_queue')
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
     remove_date = task_config.get(key_date)
 
+    # init exec cmd string
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD, 100, remove_date)
+
     logging.info('Query Hasal ouput folder')
-    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=False)
+    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config,
+                                                                  status_job_id_path=job_id_path,
+                                                                  status_tag=StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD,
+                                                                  remove_date=remove_date, remove=False)
 
     msg_obj = task_generate_slack_sending_message(ret_msg)
     task_checking_sending_queue(sending_queue=slack_sending_queue)
     slack_sending_queue.put(msg_obj)
+
+    # Tag success after cmd put into another process
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_QUERY_HASAL_OUTPUT_CMD, 900, {'date': remove_date, 'result': file_obj_list})
 
 
 def remove_hasal_output_folder(**kwargs):
@@ -499,11 +528,23 @@ def remove_hasal_output_folder(**kwargs):
     queue_msg, consumer_config, task_config = init_task(kwargs)
     slack_sending_queue = kwargs.get('slack_sending_queue')
 
+    # get job_id_path from queue_msg
+    job_id_path = os.path.join(StatusFileCreator.get_status_folder(), queue_msg['job_id'])
+
     remove_date = task_config.get(key_date)
 
+    # init exec cmd string
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD, 100, remove_date)
+
     logging.info('REMOVE Hasal ouput folder')
-    ret_msg = query_and_remove_hasal_output_folder(task_config, remove_date=remove_date, remove=True)
+    ret_msg, file_obj_list = query_and_remove_hasal_output_folder(task_config,
+                                                                  status_job_id_path=job_id_path,
+                                                                  status_tag=StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD,
+                                                                  remove_date=remove_date, remove=True)
 
     msg_obj = task_generate_slack_sending_message(ret_msg)
     task_checking_sending_queue(sending_queue=slack_sending_queue)
     slack_sending_queue.put(msg_obj)
+
+    # Tag success after cmd put into another process
+    StatusFileCreator.create_status_file(job_id_path, StatusFileCreator.STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD, 900, {'date': remove_date, 'result': file_obj_list})

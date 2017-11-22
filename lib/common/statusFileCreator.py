@@ -30,6 +30,8 @@ class StatusFileCreator(object):
     # hasalTasks.py
     STATUS_TAG_GENERATE_HASAL_CONFIG = "generate_hasal_config"
     STATUS_TAG_RUN_HASAL_RUNTEST_CMD = "run_hasal_runtest_cmd"
+    STATUS_TAG_QUERY_HASAL_OUTPUT_CMD = "query_hasal_output_folder"
+    STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD = "remove_hasal_output_folder"
 
     # runtest.py
     STATUS_TAG_RUNTEST_CMD = "runtest_cmd"
@@ -80,6 +82,14 @@ class StatusFileCreator(object):
                                                               900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
                            STATUS_TAG_RUN_HASAL_RUNTEST_CMD: {100: "Init runtest cmd string",
                                                               900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
+                           STATUS_TAG_QUERY_HASAL_OUTPUT_CMD: {100: "Query Hasal Output Folder",
+                                                               700: "Exception",
+                                                               800: "Error",
+                                                               900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
+                           STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD: {100: "Remove Hasal Output Folder",
+                                                                700: "Exception",
+                                                                800: "Error",
+                                                                900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
                            STATUS_TAG_RUNTEST_CMD: {100: "Get case information",
                                                     200: "Case executed successfully, pass image compare, fps and sikuli round status validation also pass",
                                                     300: "Sikuli script running status",

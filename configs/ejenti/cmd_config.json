@@ -115,7 +115,7 @@
     },
     "query-hasal-output":
     {
-      "desc": "Query Hasal output folder. The configs is {'date': '2017-09-21'} The empty configs is current date.",
+      "desc": "Query Hasal output folder. The configs is {\"date\": \"2017-09-21\"} The empty configs is current date.",
       "module-path": "tasks.hasalTasks",
       "func-name": "query_hasal_output_folder",
       "queue-type": "sync",
@@ -123,7 +123,7 @@
     },
     "REMOVE-hasal-output":
     {
-      "desc": "Remove Hasal output folder. The config is {'date': '2017-09-21'} The empty configs is current date.",
+      "desc": "Remove Hasal output folder. The config is {\"date\": \"2017-09-21\"} The empty configs is current date.",
       "module-path": "tasks.hasalTasks",
       "func-name": "remove_hasal_output_folder",
       "queue-type": "sync",
