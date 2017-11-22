@@ -39,6 +39,7 @@ firefox/
 ejenti/**/.md5/
 ejenti/**/.timestamp/
 rotating_mgt.log.*
+back_fill.log.*
 job_store.db
 ejenti.json
 ejenti.txt
