@@ -141,7 +141,7 @@ class StatusFileCreator(object):
         return None
 
     @staticmethod
-    def create_status_file(status_file_folder, status_tag, status_code, status_content=None, allow_duplicate_status_file=True):
+    def create_status_file(status_file_folder, status_tag, status_code, input_status_content=None, allow_duplicate_status_file=True):
         """
         create status file, the status file format will be 123-xyz.json
         @param status_file_folder:
@@ -151,7 +151,7 @@ class StatusFileCreator(object):
         @param status_content:
         @return:
         """
-
+        status_content = copy.deepcopy(input_status_content)
         status_code_desc = StatusFileCreator.get_status_code_desc(status_tag, status_code)
         if status_code_desc:
             if not status_content:

@@ -206,7 +206,7 @@ def status_json_creator(**kwargs):
     with open(recently_status_json_file_path, "wb") as recently_write_fh:
         json.dump(recently_status_json_obj, recently_write_fh)
 
-    # upload to b2
+    # upload to gist
     gist_obj = GISTUtil(gist_user_name, gist_auth_token)
     history_status_json_url = gist_obj.upload_file(history_status_json_file_path)
     recently_status_json_url = gist_obj.upload_file(recently_status_json_file_path)
