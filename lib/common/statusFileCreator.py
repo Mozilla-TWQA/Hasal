@@ -9,6 +9,7 @@ logger = get_logger(__name__)
 class StatusFileCreator(object):
     DEFAULT_STATUS_FOLDER_NAME = "status"
 
+    # job tags
     STATUS_TAG_PULSE = "pulse"
     STATUS_TAG_PULSE_TRIGGER = "pulse_trigger"
     STATUS_TAG_PULSE_TRIGGER_BACKFILL = "pulse_trigger_backfill"
@@ -16,6 +17,7 @@ class StatusFileCreator(object):
     STATUS_TAG_INTERACTIVE = "interactive"
     STATUS_TAG_SYNC_TASK_CONSUMER = "sync_task_consumer"
     STATUS_TAG_ASYNC_TASK_CONSUMER = "async_task_consumer"
+    STATUS_TAG_SYSTEM_INFO_MONITOR = "system_info_monitor"
 
     # githubTasks.py
     STATUS_TAG_GIT_RESET = "git_reset"
@@ -33,8 +35,16 @@ class StatusFileCreator(object):
     STATUS_TAG_QUERY_HASAL_OUTPUT_CMD = "query_hasal_output_folder"
     STATUS_TAG_REMOVE_HASAL_OUTPUT_CMD = "remove_hasal_output_folder"
 
+    # system_info_monitor.py
+    STATUS_TAG_DISK_USAGE_MONITOR = "disk_usage_monitor"
+    STATUS_TAG_GET_HOST_NAME = "get_host_name"
+    STATUS_TAG_GET_HOST_IP = "get_host_ip"
+
     # runtest.py
     STATUS_TAG_RUNTEST_CMD = "runtest_cmd"
+
+    # tags will be concat into one field
+    STATUS_CONCAT_TAG_LIST = [STATUS_TAG_SYSTEM_INFO_MONITOR]
 
     # common tempate
     STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY = "Successfully complete"
@@ -104,7 +114,10 @@ class StatusFileCreator(object):
                                                     840: "Upload to perfherder failed with error coce",
                                                     850: "Upload to perfherder failed due to unknown exception",
                                                     900: "Case execute successfully and upload to perfhderder successfully or upload option disabled"
-                                                    }
+                                                    },
+                           STATUS_TAG_DISK_USAGE_MONITOR: {900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
+                           STATUS_TAG_GET_HOST_NAME: {900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY},
+                           STATUS_TAG_GET_HOST_IP: {900: STATUS_CODE_DESC_CMD_EXECUTED_SUCCESSFULLY}
                            }
 
     @staticmethod
@@ -168,16 +181,17 @@ class StatusFileCreator(object):
                 write_status_content = {"status_code_desc": status_code_desc,
                                         "utc_timestamp": str(CommonUtil.get_utc_now_timestamp())}
             else:
-                if "status_code_desc" in status_content or "utc_timestamp" in status_content:
-                    logger.error("Duplicate key[status_code_desc or utc_timestamp] in current status content keys [%s]" % status_content.keys())
-                    return None
-                else:
-                    if isinstance(status_content, dict):
-                        write_status_content = CommonUtil.mask_credential_value(copy.deepcopy(status_content))
+                if isinstance(status_content, dict):
+                    if "status_code_desc" in status_content or "utc_timestamp" in status_content:
+                        logger.error(
+                            "Duplicate key[status_code_desc or utc_timestamp] in current status content keys [%s]" % status_content.keys())
+                        return None
                     else:
-                        write_status_content = {"status_content": status_content}
-                    write_status_content["status_code_desc"] = status_code_desc
-                    write_status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
+                        write_status_content = CommonUtil.mask_credential_value(copy.deepcopy(status_content))
+                else:
+                    write_status_content = {"status_content": status_content}
+                write_status_content["status_code_desc"] = status_code_desc
+                write_status_content["utc_timestamp"] = str(CommonUtil.get_utc_now_timestamp())
 
             status_file_name = "%s-%s.json" % (status_code, status_tag)
             status_file_path = os.path.join(status_file_folder, status_file_name)
