@@ -469,7 +469,8 @@ class TasksTrigger(object):
                 ret_config[config_key] = case_list
 
             # convert secret information
-            ret_config = CommonUtil.mask_credential_value(ret_config)
+            for_record_status_config = copy.deepcopy(ret_config)
+            ret_config = CommonUtil.mask_credential_value(for_record_status_config)
         return ret_config
 
     @staticmethod
