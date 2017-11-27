@@ -63,6 +63,7 @@ def monitor_system_info(**kwargs):
     StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_GET_HOST_IP, 900,
                                          current_host_ip)
 
+
 def check_disk_usage(sending_queue, configs, job_id_fp):
     """
     Sending alert if the disk usage exceed the alert percent.
