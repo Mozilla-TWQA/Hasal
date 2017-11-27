@@ -248,8 +248,12 @@ def status_json_creator(**kwargs):
 
     # upload to gist
     gist_obj = GISTUtil(gist_user_name, gist_auth_token)
+    info_status_json_url = gist_obj.upload_file(info_status_json_file_path)
     history_status_json_url = gist_obj.upload_file(history_status_json_file_path)
     recently_status_json_url = gist_obj.upload_file(recently_status_json_file_path)
+
+    if not info_status_json_url:
+        logging.error("Upload info status json file failed!")
 
     if not history_status_json_url:
         logging.error("Upload history status json file failed!")
@@ -257,5 +261,5 @@ def status_json_creator(**kwargs):
     if not recently_status_json_url:
         logging.error("Upload recently status json file failed!")
 
-    if history_status_json_url and recently_status_json_url:
-        logging.debug("Upload history and recently status json file success!!")
+    if info_status_json_url and history_status_json_url and recently_status_json_url:
+        logging.debug("Upload info, history and recently status json file success!!")
