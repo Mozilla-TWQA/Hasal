@@ -702,7 +702,7 @@ class NetworkUtil(object):
         return return_dict
 
     @staticmethod
-    def post_request_and_response(input_url, input_data=None, input_headers=None, input_accept_status_code=None):
+    def delete_request_and_response(input_url, input_data=None, input_headers=None, input_accept_status_code=None, max_retry=10):
         """
 
         @param input_url: url
@@ -716,7 +716,47 @@ class NetworkUtil(object):
             input_accept_status_code = [200]
 
         # will retry 10 times
-        for _ in range(10):
+        for _ in range(max_retry):
+            try:
+                if input_data and input_headers:
+                    response_obj = requests.delete(input_url, data=input_data, headers=input_headers)
+                elif input_data:
+                    response_obj = requests.delete(input_url, data=input_data)
+                elif input_headers:
+                    response_obj = requests.delete(input_url, headers=input_headers)
+                else:
+                    response_obj = requests.delete(input_url)
+            except Exception as e:
+                logger.error("Send delete request data failed, error message [%s]" % e.message)
+
+            # check return status, will break the for loop when return code in our accepted code list
+            if response_obj.status_code in input_accept_status_code:
+                return_result = response_obj
+                break
+            else:
+                logger.error(
+                    "Send delete request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (
+                    input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
+            time.sleep(1)
+
+        return return_result
+
+    @staticmethod
+    def post_request_and_response(input_url, input_data=None, input_headers=None, input_accept_status_code=None, max_retry=10):
+        """
+
+        @param input_url: url
+        @param input_data: post data
+        @param input_headers: post header
+        @return: response obj, you can get json obj by using response_obj.json()
+        """
+        # init variables
+        return_result = None
+        if not input_accept_status_code:
+            input_accept_status_code = [200]
+
+        # will retry 10 times
+        for _ in range(max_retry):
             try:
                 if input_data and input_headers:
                     response_obj = requests.post(input_url, data=input_data, headers=input_headers)
@@ -740,7 +780,7 @@ class NetworkUtil(object):
         return return_result
 
     @staticmethod
-    def get_request_and_response(input_url, input_params=None, input_headers=None, input_accept_status_code=None):
+    def get_request_and_response(input_url, input_params=None, input_headers=None, input_accept_status_code=None, max_retry=10):
         """
 
         @param input_url:
@@ -753,7 +793,7 @@ class NetworkUtil(object):
             input_accept_status_code = [200]
 
         # will retry 10 times
-        for _ in range(10):
+        for _ in range(max_retry):
             try:
                 if input_params and input_headers:
                     response_obj = requests.get(input_url, params=input_params, headers=input_headers)
