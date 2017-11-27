@@ -1,4 +1,5 @@
 import os
+import copy
 import json
 import random
 import logging
@@ -121,12 +122,13 @@ class BackFillTrigger(object):
                                      uid=uid)
 
         # Recording Status
+        for_record_status_config = copy.deepcopy(overwrite_cmd_config)
         content = {
             'job_name': job_name,
             'topic': topic,
             'amount': amount,
             'cmd': cmd_name,
-            'cmd_config': CommonUtil.mask_credential_value(overwrite_cmd_config),
+            'cmd_config': CommonUtil.mask_credential_value(for_record_status_config),
             'task_uid_list': uid_list
         }
         StatusFileCreator.create_status_file(job_id_fp, StatusFileCreator.STATUS_TAG_PULSE_TRIGGER_BACKFILL, 900, content)
