@@ -1,3 +1,4 @@
+import copy
 import time
 import pickle
 import logging
@@ -152,8 +153,11 @@ class HasalPulsePublisher(object):
         @param uid: unique ID string.
         @return:
         """
+        # copy input command configs to avoid the configs be modified
+        copied_cmd_configs = copy.deepcopy(overwrite_cmd_configs)
+
         # get MetaTask
-        meta_task = self.get_meta_task(command_name, overwrite_cmd_configs=overwrite_cmd_configs)
+        meta_task = self.get_meta_task(command_name, overwrite_cmd_configs=copied_cmd_configs)
         if not meta_task:
             self.logger.error('Skip pushing task.')
         pickle_meta_task = pickle.dumps(meta_task)
@@ -172,7 +176,7 @@ class HasalPulsePublisher(object):
         mymessage.set_data(self.DEBUG_QUEUE_TYPE, meta_task.queue_type)
         mymessage.set_data(self.DEBUG_COMMAND_NAME, command_name)
         mymessage.set_data(self.DEBUG_COMMAND_CONFIG, self.command_config)
-        mymessage.set_data(self.DEBUG_OVERWRITE_COMMAND_CONFIGS, overwrite_cmd_configs)
+        mymessage.set_data(self.DEBUG_OVERWRITE_COMMAND_CONFIGS, copied_cmd_configs)
         mymessage.set_data(self.DEBUG_UID, uid)
 
         # send
