@@ -17,6 +17,18 @@ class GISTUtil(object):
         self.user_name = userName
         self.auth_token = authToken
 
+    def query_user(self):
+        query_url = "%s/users/%s" % (GISTUtil.DEFAULT_GITHUB_API_URL, self.user_name)
+
+        headers = {
+            'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
+        }
+
+        logger.debug("Query gist user with url:[%s], headers:[%s]" % (query_url, headers))
+
+        return NetworkUtil.get_request_and_response(query_url, input_headers=headers, input_accept_status_code=[200, 201])
+
     def create_new_gist(self, input_file_name, input_file_content, input_file_desc="", input_content_type=DEFAULT_CTNT_TYPE_JSON, input_public_flag=True):
         """
         create new gist
@@ -31,7 +43,8 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
-            'Content-Type': input_content_type
+            'Content-Type': input_content_type,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         post_data = """{
@@ -59,7 +72,8 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
-            'Content-Type': input_content_type
+            'Content-Type': input_content_type,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         post_data = """{
@@ -79,6 +93,7 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         logger.debug("delete file on gist with url:[%s], headers:[%s]" % (delete_url, headers))
@@ -90,6 +105,7 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         logger.debug("query gist with url:[%s], headers:[%s]" % (query_url, headers))
@@ -99,6 +115,7 @@ class GISTUtil(object):
     def list_gists(self):
         headers = {
             'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
         query_url = "%s/users/%s/gists" % (self.DEFAULT_GITHUB_API_URL, self.user_name)
         return NetworkUtil.get_request_and_response(query_url, input_headers=headers)
