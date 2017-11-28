@@ -734,9 +734,7 @@ class NetworkUtil(object):
                 return_result = response_obj
                 break
             else:
-                logger.error(
-                    "Send delete request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (
-                    input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
+                logger.error("Send delete request to url:[%s], with data:[%s] and header:[%s] failed, error code:[%s], error message:[%s]" % (input_url, input_data, input_headers, response_obj.status_code, response_obj.text))
             time.sleep(1)
 
         return return_result
