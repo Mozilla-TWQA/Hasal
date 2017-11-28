@@ -51,8 +51,8 @@
       "bot_election_channel": ""
     }
   },
-  "monitor_disk_usage": {
-    "module-path": "jobs.disk_usage_monitor",
+  "monitor_system_info": {
+    "module-path": "jobs.system_info_monitor",
     "trigger-type": "interval",
     "interval": 10800,
     "max-instances": 1,

@@ -102,8 +102,10 @@ def status_json_creator(**kwargs):
     current_host_name = socket.gethostname()
     recently_status_json_file_name = "%s_recently.json" % current_host_name
     history_status_json_file_name = "%s_history.json" % current_host_name
+    info_status_json_file_name = "%s_info.json" % current_host_name
     recently_status_json_file_path = os.path.join(status_folder_path, recently_status_json_file_name)
     history_status_json_file_path = os.path.join(status_folder_path, history_status_json_file_name)
+    info_status_json_file_path = os.path.join(status_folder_path, info_status_json_file_name)
 
     # housekeeping the status folder before generating the status json file
     status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if
@@ -157,11 +159,15 @@ def status_json_creator(**kwargs):
             logging.error(
                 "Load history status json file[%s] with error [%s]" % (history_status_json_file_path, e.message))
 
-    # generate status json obj
+    # generate history status json obj
+    # generate folder list, the folder name must comply the naming rule (statusTag_timestamp), and the statusTag cannot
+    # in the STATUS_CONCAT_TAG_LIST
     history_status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if
                                   folder_name.startswith(".") is False and
                                   len(folder_name.split("-")) >= 2 and
-                                  CommonUtil.represent_as_int(folder_name.split("-")[1])]
+                                  CommonUtil.represent_as_int(folder_name.split("-")[1]) and
+                                  folder_name.split("-")[0] not in StatusFileCreator.STATUS_CONCAT_TAG_LIST]
+
     for history_status_folder_name in history_status_folder_list:
         history_status_folder_path = os.path.join(status_folder_path, history_status_folder_name)
         job_name = history_status_folder_name.split("-")[0]
@@ -206,10 +212,48 @@ def status_json_creator(**kwargs):
     with open(recently_status_json_file_path, "wb") as recently_write_fh:
         json.dump(recently_status_json_obj, recently_write_fh)
 
+    # generate info status json obj
+    info_status_json_obj = {}
+    info_status_folder_list = [folder_name for folder_name in os.listdir(status_folder_path) if
+                               folder_name.startswith(".") is False and
+                               len(folder_name.split("-")) >= 2 and
+                               CommonUtil.represent_as_int(folder_name.split("-")[1]) and
+                               folder_name.split("-")[0] in StatusFileCreator.STATUS_CONCAT_TAG_LIST]
+
+    # only keep the distinguish tag
+    info_status_reduced_tag_list = set([f_name.split("-")[0] for f_name in info_status_folder_list])
+
+    # filter the tag folder with latest timestamp
+    info_status_reduced_list = [sorted_list[0] for sorted_list in [
+        sorted([d_name for d_name in info_status_folder_list if tag_name == d_name.split("-")[0]],
+               key=lambda x: int(x.split("-")[1]), reverse=True) for tag_name in info_status_reduced_tag_list]]
+
+    # info status will only record the statuscontent of the status 900 into result
+    for info_status_folder_name in info_status_reduced_list:
+        info_status_folder_path = os.path.join(status_folder_path, info_status_folder_name)
+        info_job_name = info_status_folder_name.split("-")[0]
+        info_job_utc_timestamp_string = info_status_folder_name.split("-")[1]
+        info_task_file_name_list = [task_file_name for task_file_name in os.listdir(info_status_folder_path) if task_file_name.startswith(".") is False and CommonUtil.represent_as_int(task_file_name.split("-")[0])]
+        info_status_json_obj[info_job_name] = {"job_utc_timestamp": info_job_utc_timestamp_string}
+        for info_task_file_name in info_task_file_name_list:
+            info_task_status_code = info_task_file_name.split(os.extsep)[0].split("-")[0]
+            if int(info_task_status_code) == 900:
+                info_task_file_path = os.path.join(info_status_folder_path, info_task_file_name)
+                info_task_name = info_task_file_name.split(os.extsep)[0].split("-")[1]
+                info_status_json_obj[info_job_name][info_task_name] = CommonUtil.load_json_file(info_task_file_path)
+
+    # dump info json obj to file
+    with open(info_status_json_file_path, "wb") as info_write_fh:
+        json.dump(info_status_json_obj, info_write_fh)
+
     # upload to gist
     gist_obj = GISTUtil(gist_user_name, gist_auth_token)
+    info_status_json_url = gist_obj.upload_file(info_status_json_file_path)
     history_status_json_url = gist_obj.upload_file(history_status_json_file_path)
     recently_status_json_url = gist_obj.upload_file(recently_status_json_file_path)
+
+    if not info_status_json_url:
+        logging.error("Upload info status json file failed!")
 
     if not history_status_json_url:
         logging.error("Upload history status json file failed!")
@@ -217,5 +261,5 @@ def status_json_creator(**kwargs):
     if not recently_status_json_url:
         logging.error("Upload recently status json file failed!")
 
-    if history_status_json_url and recently_status_json_url:
-        logging.debug("Upload history and recently status json file success!!")
+    if info_status_json_url and history_status_json_url and recently_status_json_url:
+        logging.debug("Upload info, history and recently status json file success!!")
