@@ -2,7 +2,7 @@
   "status_json_creator": {
     "module-path": "jobs.status_json_creator",
     "trigger-type": "interval",
-    "interval": 30,
+    "interval": 600,
     "max-instances": 1,
     "default-loaded": false,
     "configs": {

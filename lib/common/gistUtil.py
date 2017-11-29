@@ -128,13 +128,17 @@ class GISTUtil(object):
                 if filename in return_table_dict:
                     logger.error("Find duplicate file name [%s] in current user [%s] gist list" % (filename, self.user_name))
                 else:
+                    if "history" in gist_obj:
+                        revision_count = len(gist_obj["history"])
+                    else:
+                        revision_count = 1000
                     return_table_dict[filename] = {
                         "id": gist_obj["id"],
                         "url": gist_obj["url"],
                         "raw_url": filename_dict[filename]["raw_url"],
                         "created_at": gist_obj["created_at"],
                         "updated_at": gist_obj["updated_at"],
-                        "revision_count": len(gist_obj["history"])
+                        "revision_count": revision_count
                     }
         return return_table_dict
 
