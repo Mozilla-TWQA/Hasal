@@ -85,7 +85,7 @@ def status_json_creator(**kwargs):
 
     """
     DEFAULT_DATA_RECENTLY_DEFINE_PERIOD = 3
-    DEFAULT_DATA_HISTORY_DEFINE_PERIOD = 5
+    DEFAULT_DATA_HISTORY_DEFINE_PERIOD = 3
 
     # check configs in kwargs
     if "configs" not in kwargs:
