@@ -10,11 +10,24 @@ class GISTUtil(object):
 
     DEFAULT_GITHUB_API_URL = 'https://api.github.com'
     DEFAULT_CTNT_TYPE_JSON = "application/json"
+    DEFAULT_GIST_MAX_LIMIT_COMMITS = 1000
 
     def __init__(self, userName, authToken):
 
         self.user_name = userName
         self.auth_token = authToken
+
+    def query_user(self):
+        query_url = "%s/users/%s" % (GISTUtil.DEFAULT_GITHUB_API_URL, self.user_name)
+
+        headers = {
+            'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
+        }
+
+        logger.debug("Query gist user with url:[%s], headers:[%s]" % (query_url, headers))
+
+        return NetworkUtil.get_request_and_response(query_url, input_headers=headers, input_accept_status_code=[200, 201])
 
     def create_new_gist(self, input_file_name, input_file_content, input_file_desc="", input_content_type=DEFAULT_CTNT_TYPE_JSON, input_public_flag=True):
         """
@@ -30,7 +43,8 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
-            'Content-Type': input_content_type
+            'Content-Type': input_content_type,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         post_data = """{
@@ -58,7 +72,8 @@ class GISTUtil(object):
 
         headers = {
             'Authorization': "token %s" % self.auth_token,
-            'Content-Type': input_content_type
+            'Content-Type': input_content_type,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
 
         post_data = """{
@@ -73,9 +88,34 @@ class GISTUtil(object):
 
         return NetworkUtil.post_request_and_response(update_url, post_data, headers, [200, 201])
 
+    def delete_gist(self, input_gist_id):
+        delete_url = "%s/gists/%s" % (self.DEFAULT_GITHUB_API_URL, input_gist_id)
+
+        headers = {
+            'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
+        }
+
+        logger.debug("delete file on gist with url:[%s], headers:[%s]" % (delete_url, headers))
+
+        return NetworkUtil.delete_request_and_response(delete_url, input_headers=headers, input_accept_status_code=[200, 201, 204])
+
+    def list_single_gist(self, input_gist_id, max_retry=1):
+        query_url = "%s/gists/%s" % (self.DEFAULT_GITHUB_API_URL, input_gist_id)
+
+        headers = {
+            'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
+        }
+
+        logger.debug("query gist with url:[%s], headers:[%s]" % (query_url, headers))
+
+        return NetworkUtil.get_request_and_response(query_url, input_headers=headers, input_accept_status_code=[200, 201], max_retry=max_retry)
+
     def list_gists(self):
         headers = {
             'Authorization': "token %s" % self.auth_token,
+            "User-Agent": "Hasal-%s-App" % self.user_name
         }
         query_url = "%s/users/%s/gists" % (self.DEFAULT_GITHUB_API_URL, self.user_name)
         return NetworkUtil.get_request_and_response(query_url, input_headers=headers)
@@ -88,12 +128,17 @@ class GISTUtil(object):
                 if filename in return_table_dict:
                     logger.error("Find duplicate file name [%s] in current user [%s] gist list" % (filename, self.user_name))
                 else:
+                    if "history" in gist_obj:
+                        revision_count = len(gist_obj["history"])
+                    else:
+                        revision_count = 1000
                     return_table_dict[filename] = {
                         "id": gist_obj["id"],
                         "url": gist_obj["url"],
                         "raw_url": filename_dict[filename]["raw_url"],
                         "created_at": gist_obj["created_at"],
-                        "updated_at": gist_obj["updated_at"]
+                        "updated_at": gist_obj["updated_at"],
+                        "revision_count": revision_count
                     }
         return return_table_dict
 
@@ -120,8 +165,21 @@ class GISTUtil(object):
 
         # create new gist if file not exist, update gist if file exists
         if input_file_name in gist_file_table_dict:
-            response_gist_obj = self.update_existing_gist(gist_file_table_dict[input_file_name]["id"], input_file_name,
-                                                          input_content, input_file_desc, input_content_type)
+            if gist_file_table_dict[input_file_name]["revision_count"] >= GISTUtil.DEFAULT_GIST_MAX_LIMIT_COMMITS:
+                delete_response_obj = self.delete_gist(gist_file_table_dict[input_file_name]["id"])
+                query_single_gist_obj = self.list_single_gist(gist_file_table_dict[input_file_name]["id"])
+                if delete_response_obj and not query_single_gist_obj:
+                    response_gist_obj = self.create_new_gist(input_file_name, input_content, input_file_desc,
+                                                             input_content_type,
+                                                             input_public_flag)
+                else:
+                    response_gist_obj = self.update_existing_gist(gist_file_table_dict[input_file_name]["id"],
+                                                                  input_file_name, input_content, input_file_desc,
+                                                                  input_content_type)
+            else:
+                response_gist_obj = self.update_existing_gist(gist_file_table_dict[input_file_name]["id"],
+                                                              input_file_name, input_content, input_file_desc,
+                                                              input_content_type)
         else:
             response_gist_obj = self.create_new_gist(input_file_name, input_content, input_file_desc, input_content_type,
                                                      input_public_flag)
