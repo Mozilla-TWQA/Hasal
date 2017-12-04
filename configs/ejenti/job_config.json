@@ -58,7 +58,9 @@
     "max-instances": 1,
     "default-loaded": true,
     "configs": {
-      "alert_usage_percent": 80
+      "alert_usage_percent": 70,
+      "auto_clean_up": true,
+      "auto_clean_up_keep_data_period": 3
     }
   },
   "monitor_upload_result": {

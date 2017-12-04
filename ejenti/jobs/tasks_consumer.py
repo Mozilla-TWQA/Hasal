@@ -33,6 +33,7 @@ def sync_tasks_consumer(**kwargs):
         'cmd_obj': the dict value from cmd_config['cmd-settings'][cmd_pattern], cmd_pattern usually mean the command name here
         'cmd_pattern': cmd_pattern, or aka cmd_name
         'input_cmd_str': the full command string include the parameters after cmd
+        'job_id': will provide by calling function, will use for status json create
 
     @return:
     """
@@ -68,6 +69,7 @@ def async_tasks_consumer(**kwargs):
             'cmd_obj': the dict value from cmd_config['cmd-settings'][cmd_pattern], cmd_pattern usually mean the command name here
             'cmd_pattern': cmd_pattern, or aka cmd_name
             'input_cmd_str': the full command string include the parameters after cmd
+            'job_id': will provide by calling function , will use for status json create
 
         @return:
         """

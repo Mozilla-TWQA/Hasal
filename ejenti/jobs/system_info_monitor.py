@@ -15,8 +15,13 @@ SLACK_LOGGING_LEVEL_INFO = '*[INFO]*'
 SLACK_LOGGING_LEVEL_WARN = '*[WARN]*'
 SLACK_LOGGING_LEVEL_ERROR = '*[ERROR]*'
 
-DEFAULT_ALERT_USAGE_PERCENT = 80
+DEFAULT_ALERT_USAGE_PERCENT = 70
+DEFAULT_AUTO_CLEAN_UP_FLAG = True
+DEFAULT_AUTO_CLEAN_UP_KEEP_DATA_PERIOD = 3
 KEY_ALERT_USAGE_PERCENT = 'alert_usage_percent'
+KEY_AUTO_CLEAN_UP_FLAG = 'auto_clean_up'
+KEY_AUTO_CLEAN_UP_KEEP_DATA_PERIOD = 'auto_clean_up_keep_data_period'
+KEY_REMOVE_HASAL_OUTPUT_CMD = 'REMOVE-hasal-output'
 
 
 def verify_consumer_kwargs(kwargs):
@@ -50,8 +55,14 @@ def monitor_system_info(**kwargs):
     # prepare configs
     configs = kwargs.get('configs')
 
+    # get sync queue
+    sync_queue = kwargs.get('sync_queue')
+
+    # get cmd settings
+    cmd_setting = kwargs.get('cmd_config')
+
     # checking disk usage
-    check_disk_usage(sending_queue=sending_queue, configs=configs, job_id_fp=job_id_fp)
+    check_disk_usage(sending_queue=sending_queue, configs=configs, job_id=job_id, job_id_fp=job_id_fp, cmd_setting=cmd_setting, sync_queue=sync_queue)
 
     # get current host name
     current_host_name = socket.gethostname()
@@ -64,7 +75,7 @@ def monitor_system_info(**kwargs):
                                          current_host_ip)
 
 
-def check_disk_usage(sending_queue, configs, job_id_fp):
+def check_disk_usage(sending_queue, configs, job_id, job_id_fp, cmd_setting, sync_queue):
     """
     Sending alert if the disk usage exceed the alert percent.
     @param sending_queue:
@@ -72,6 +83,8 @@ def check_disk_usage(sending_queue, configs, job_id_fp):
     @return:
     """
     alert_usage_percent = float(configs.get(KEY_ALERT_USAGE_PERCENT, DEFAULT_ALERT_USAGE_PERCENT))
+    auto_clean_up_flag =  configs.get(KEY_AUTO_CLEAN_UP_FLAG, DEFAULT_AUTO_CLEAN_UP_FLAG)
+    auto_clean_up_data_keep_period = int(configs.get(KEY_AUTO_CLEAN_UP_KEEP_DATA_PERIOD, DEFAULT_AUTO_CLEAN_UP_KEEP_DATA_PERIOD))
     disk_usage = psutil.disk_usage(os.path.abspath(os.sep))
     current_percent = disk_usage.percent
 
@@ -96,6 +109,25 @@ def check_disk_usage(sending_queue, configs, job_id_fp):
 
         check_sending_queue(sending_queue=sending_queue)
         sending_queue.put(msg_obj)
+
+        # auto clean up action
+        if auto_clean_up_flag:
+
+            # get remove hasal cmd obj
+            remove_hasal_output_cmd_obj = cmd_setting['cmd-settings'][KEY_REMOVE_HASAL_OUTPUT_CMD]
+
+            # add remove date in cmd config
+            # generate keep data date period
+            current_utc_time = datetime.datetime.utcnow()
+            outdated_date = current_utc_time - datetime.timedelta(days=auto_clean_up_data_keep_period)
+            remove_hasal_output_cmd_obj['configs']['date'] = outdated_date.strftime('%Y-%m-%d')
+
+            # generate task obj for sync queue
+            task_obj = {"job_id": job_id, "cmd_obj": remove_hasal_output_cmd_obj, "cmd_pattern": KEY_REMOVE_HASAL_OUTPUT_CMD, "input_cmd_str": KEY_REMOVE_HASAL_OUTPUT_CMD}
+
+            # put task obj into queue
+            sync_queue.put(task_obj)
+
 
 
 def check_sending_queue(sending_queue):
