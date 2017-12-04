@@ -140,7 +140,6 @@ class GISTUtil(object):
             return None
         return list_gists_data
 
-
     def generate_gist_file_table(self, input_gist_result_list):
         return_table_dict = {}
         for gist_obj in input_gist_result_list:
