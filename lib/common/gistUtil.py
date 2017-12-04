@@ -124,7 +124,8 @@ class GISTUtil(object):
             links_data = list_gists_response_obj.links
             while "next" in links_data:
                 requery_url = links_data["next"]["url"].split("?")[0]
-                requery_params = {links_data["next"]["url"].split("?")[1].split("=")[0]: links_data["next"]["url"].split("?")[1].split("=")[1]}
+                requery_params_str = links_data["next"]["url"].split("?")[1]
+                requery_params = {requery_params_str.split("=")[0]: requery_params_str.split("=")[1]}
                 requery_respones_obj = NetworkUtil.get_request_and_response(requery_url, input_headers=headers, input_params=requery_params)
                 if requery_respones_obj:
                     list_gists_data.extend(requery_respones_obj.json())
