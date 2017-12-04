@@ -118,7 +118,27 @@ class GISTUtil(object):
             "User-Agent": "Hasal-%s-App" % self.user_name
         }
         query_url = "%s/users/%s/gists" % (self.DEFAULT_GITHUB_API_URL, self.user_name)
-        return NetworkUtil.get_request_and_response(query_url, input_headers=headers)
+        list_gists_response_obj = NetworkUtil.get_request_and_response(query_url, input_headers=headers)
+        if list_gists_response_obj:
+            list_gists_data = list_gists_response_obj.json()
+            links_data = list_gists_response_obj.links
+            while "next" in links_data:
+                requery_url = links_data["next"]["url"].split("?")[0]
+                requery_params = {links_data["next"]["url"].split("?")[1].split("=")[0]: links_data["next"]["url"].split("?")[1].split("=")[1]}
+                requery_respones_obj = NetworkUtil.get_request_and_response(requery_url, input_headers=headers, input_params=requery_params)
+                if requery_respones_obj:
+                    list_gists_data.extend(requery_respones_obj.json())
+                    links_data = requery_respones_obj.links
+                else:
+                    logger.error(
+                        "Cannot get gist list of user [%s], skip upload file to avoid file name duplicate!" % self.user_name)
+                    return None
+        else:
+            logger.error(
+                "Cannot get gist list of user [%s], skip upload file to avoid file name duplicate!" % self.user_name)
+            return None
+        return list_gists_data
+
 
     def generate_gist_file_table(self, input_gist_result_list):
         return_table_dict = {}
@@ -155,9 +175,9 @@ class GISTUtil(object):
         """
 
         # get gist list and generate gist file table
-        list_gists_response_obj = self.list_gists()
-        if list_gists_response_obj:
-            gist_file_table_dict = self.generate_gist_file_table(list_gists_response_obj.json())
+        list_gists_obj = self.list_gists()
+        if list_gists_obj:
+            gist_file_table_dict = self.generate_gist_file_table(list_gists_obj)
         else:
             logger.error(
                 "Cannot get gist list of user [%s], skip upload file to avoid file name duplicate!" % self.user_name)
@@ -211,11 +231,12 @@ class GISTUtil(object):
         input_file_name = os.path.basename(input_file_path)
 
         # get gist list and generate gist file table
-        list_gists_response_obj = self.list_gists()
-        if list_gists_response_obj:
-            gist_file_table_dict = self.generate_gist_file_table(list_gists_response_obj.json())
+        list_gists_obj = self.list_gists()
+        if list_gists_obj:
+            gist_file_table_dict = self.generate_gist_file_table(list_gists_obj)
         else:
-            logger.error("Cannot get gist list of user [%s], skip upload file to avoid file name duplicate!" % self.user_name)
+            logger.error(
+                "Cannot get gist list of user [%s], skip upload file to avoid file name duplicate!" % self.user_name)
             return None
 
         # get file content
