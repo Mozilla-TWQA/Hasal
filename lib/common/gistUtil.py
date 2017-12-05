@@ -11,6 +11,7 @@ class GISTUtil(object):
     DEFAULT_GITHUB_API_URL = 'https://api.github.com'
     DEFAULT_CTNT_TYPE_JSON = "application/json"
     DEFAULT_GIST_MAX_LIMIT_COMMITS = 1000
+    DEFAULT_GIST_MAX_LIMIT_FLAG = False
 
     def __init__(self, userName, authToken):
 
@@ -185,7 +186,7 @@ class GISTUtil(object):
 
         # create new gist if file not exist, update gist if file exists
         if input_file_name in gist_file_table_dict:
-            if gist_file_table_dict[input_file_name]["revision_count"] >= GISTUtil.DEFAULT_GIST_MAX_LIMIT_COMMITS:
+            if GISTUtil.DEFAULT_GIST_MAX_LIMIT_FLAG and gist_file_table_dict[input_file_name]["revision_count"] >= GISTUtil.DEFAULT_GIST_MAX_LIMIT_COMMITS:
                 delete_response_obj = self.delete_gist(gist_file_table_dict[input_file_name]["id"])
                 query_single_gist_obj = self.list_single_gist(gist_file_table_dict[input_file_name]["id"])
                 if delete_response_obj and not query_single_gist_obj:
