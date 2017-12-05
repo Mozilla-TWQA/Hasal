@@ -84,10 +84,10 @@ class AgentsFileNameListHandler(object):
 
         gist_obj = GISTUtil(gist_user_name, gist_auth_token)
 
-        list_gists_response_obj = gist_obj.list_gists()
+        list_gists_obj = gist_obj.list_gists()
 
-        if list_gists_response_obj:
-            gist_file_table_dict = gist_obj.generate_gist_file_table(list_gists_response_obj.json())
+        if list_gists_obj:
+            gist_file_table_dict = gist_obj.generate_gist_file_table(list_gists_obj)
         else:
             logging.error("Cannot get gist list of user [%s], skip generate agent list file!" % gist_user_name)
             return None
