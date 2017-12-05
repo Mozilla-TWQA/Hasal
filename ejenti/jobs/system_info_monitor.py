@@ -83,7 +83,7 @@ def check_disk_usage(sending_queue, configs, job_id, job_id_fp, cmd_setting, syn
     @return:
     """
     alert_usage_percent = float(configs.get(KEY_ALERT_USAGE_PERCENT, DEFAULT_ALERT_USAGE_PERCENT))
-    auto_clean_up_flag =  configs.get(KEY_AUTO_CLEAN_UP_FLAG, DEFAULT_AUTO_CLEAN_UP_FLAG)
+    auto_clean_up_flag = configs.get(KEY_AUTO_CLEAN_UP_FLAG, DEFAULT_AUTO_CLEAN_UP_FLAG)
     auto_clean_up_data_keep_period = int(configs.get(KEY_AUTO_CLEAN_UP_KEEP_DATA_PERIOD, DEFAULT_AUTO_CLEAN_UP_KEEP_DATA_PERIOD))
     disk_usage = psutil.disk_usage(os.path.abspath(os.sep))
     current_percent = disk_usage.percent
@@ -127,7 +127,6 @@ def check_disk_usage(sending_queue, configs, job_id, job_id_fp, cmd_setting, syn
 
             # put task obj into queue
             sync_queue.put(task_obj)
-
 
 
 def check_sending_queue(sending_queue):
