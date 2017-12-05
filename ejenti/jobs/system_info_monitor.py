@@ -2,7 +2,7 @@ import os
 import socket
 import psutil
 import logging
-from datetime import datetime
+import datetime
 from lib.common.statusFileCreator import StatusFileCreator
 from slack_bot import generate_slack_sending_message
 
@@ -102,7 +102,7 @@ def check_disk_usage(sending_queue, configs, job_id, job_id_fp, cmd_setting, syn
 
         slack_msg = '{level} {msg}\n*[Time]* {time}\n{line}'.format(level=SLACK_LOGGING_LEVEL_WARN,
                                                                     msg=msg,
-                                                                    time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                                                                    time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                                                                     line=DEFAULT_LINE)
         # sending to slack sending queue
         msg_obj = generate_slack_sending_message(slack_msg)
