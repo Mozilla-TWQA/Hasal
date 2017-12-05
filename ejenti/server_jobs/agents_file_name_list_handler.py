@@ -36,6 +36,7 @@ class AgentsFileNameListHandler(object):
         return_dict = {}
         keyword_for_recently_filename = '_recently.json'
         keyword_for_history_filename = '_history.json'
+        keyword_for_info_filename = '_info.json'
         for file_name in input_gist_file_table_dict:
             if file_name.find(keyword_for_recently_filename) >= 0:
                 agent_host_name = file_name.split(keyword_for_recently_filename)[0]
@@ -43,6 +44,9 @@ class AgentsFileNameListHandler(object):
             elif file_name.find(keyword_for_history_filename) >= 0:
                 agent_host_name = file_name.split(keyword_for_history_filename)[0]
                 period_type = "history"
+            elif file_name.find(keyword_for_info_filename) >= 0:
+                agent_host_name = file_name.split(keyword_for_info_filename)[0]
+                period_type = "info"
             else:
                 agent_host_name = None
                 period_type = None
