@@ -499,8 +499,19 @@ class RunTest(object):
                                     self.case_teardown()
                             else:
                                 test_env = self.get_test_env(**runtime_case_data)
-                                if self.loop_test(test_case_module_name, test_name, test_env) and self.upload_config['enable']:
-                                    self.upload_test_result_handler()
+                                if self.loop_test(test_case_module_name, test_name, test_env):
+                                    # write loop_test success status to status file
+                                    if self.status_job_id_path:
+                                        StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 500)
+                                    if self.upload_config['enable']:
+                                        self.upload_test_result_handler()
+                                    else:
+                                        if self.status_job_id_path:
+                                            StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 900)
+                                else:
+                                    # write loop_test failed status to status file
+                                    if self.status_job_id_path:
+                                        StatusFileCreator.create_status_file(self.status_job_id_path, StatusFileCreator.STATUS_TAG_RUNTEST_CMD, 830)
                                 self.case_teardown()
 
         else:
