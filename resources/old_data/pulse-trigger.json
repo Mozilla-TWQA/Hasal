@@ -1,0 +1,262 @@
+{
+	"mac_download": {
+		"1508985972": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508985972"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "download-latest-nightly",
+					"task_uid_list": ["2017-10-26_10:46:14.141499.mac_download.1", "2017-10-26_10:46:14.141499.mac_download.2", "2017-10-26_10:46:14.141499.mac_download.3"],
+					"utc_timestamp": "1508985979",
+					"topic": "testing-darwin",
+					"platform": "mac",
+					"amount": 3,
+					"cmd_config": {},
+					"job_name": "mac_download"
+				}
+			}
+		},
+		"1508926961": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508926961"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "download-latest-nightly",
+					"task_uid_list": ["2017-10-25_18:22:43.223272.mac_download.1", "2017-10-25_18:22:43.223272.mac_download.2", "2017-10-25_18:22:43.223272.mac_download.3"],
+					"utc_timestamp": "1508926968",
+					"topic": "testing-darwin",
+					"platform": "mac",
+					"amount": 3,
+					"cmd_config": {},
+					"job_name": "mac_download"
+				}
+			}
+		},
+		"1509002405": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1509002405"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "download-latest-nightly",
+					"task_uid_list": ["2017-10-26_15:20:07.162518.mac_download.1", "2017-10-26_15:20:07.162518.mac_download.2", "2017-10-26_15:20:07.162518.mac_download.3"],
+					"utc_timestamp": "1509002412",
+					"topic": "testing-darwin",
+					"platform": "mac",
+					"amount": 3,
+					"cmd_config": {},
+					"job_name": "mac_download"
+				}
+			}
+		},
+		"1508985401": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508985401"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "download-latest-nightly",
+					"task_uid_list": ["2017-10-26_10:36:43.558544.mac_download.1", "2017-10-26_10:36:43.558544.mac_download.2", "2017-10-26_10:36:43.558544.mac_download.3"],
+					"utc_timestamp": "1508985408",
+					"topic": "testing-darwin",
+					"platform": "mac",
+					"amount": 3,
+					"cmd_config": {},
+					"job_name": "mac_download"
+				}
+			}
+		}
+	},
+	"win7_x64": {
+		"1508985972": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508985972"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "run-hasal-on-specify-nightly",
+					"task_uid_list": ["2017-10-26_10:46:14.102753.win7_x64.1", "2017-10-26_10:46:14.102753.win7_x64.2"],
+					"utc_timestamp": "1508985977",
+					"topic": "testing-win7",
+					"platform": "win64",
+					"amount": 2,
+					"cmd_config": {
+						"DOWNLOAD_REVISION": "a124f4901430f6db74cfc7fe3b07957a1c691b40",
+						"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+						"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-24-22-03-25-mozilla-central/",
+						"OVERWRITE_HASAL_SUITE_CASE_LIST": ["tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard", "tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard"],
+						"OVERWIRTE_HASAL_CONFIG_CTNT": {
+							"configs": {
+								"index": {
+									"inputLatencyAnimationDctGenerator.json": {}
+								},
+								"firefox": {
+									"obs_on_windows.json": {}
+								},
+								"upload": {
+									"default.json": {
+										"enable": true,
+										"perfherder-secret": "*****",
+										"perfherder-client-id": "*****",
+										"perfherder-host": "treeherder.allizom.org",
+										"perfherder-repo": "mozilla-central",
+										"perfherder-protocol": "https"
+									}
+								}
+							}
+						},
+						"CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+					},
+					"job_name": "win7_x64"
+				}
+			}
+		},
+		"1508926961": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508926961"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "run-hasal-on-specify-nightly",
+					"task_uid_list": ["2017-10-25_18:22:43.859478.win7_x64.1", "2017-10-25_18:22:43.859478.win7_x64.2"],
+					"utc_timestamp": "1508926967",
+					"topic": "testing-win7",
+					"platform": "win64",
+					"amount": 2,
+					"cmd_config": {
+						"DOWNLOAD_REVISION": "a124f4901430f6db74cfc7fe3b07957a1c691b40",
+						"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+						"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-24-22-03-25-mozilla-central/",
+						"OVERWRITE_HASAL_SUITE_CASE_LIST": ["tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard", "tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard"],
+						"OVERWIRTE_HASAL_CONFIG_CTNT": {
+							"configs": {
+								"index": {
+									"inputLatencyAnimationDctGenerator.json": {}
+								},
+								"firefox": {
+									"obs_on_windows.json": {}
+								},
+								"upload": {
+									"default.json": {
+										"enable": true,
+										"perfherder-secret": "*****",
+										"perfherder-client-id": "*****",
+										"perfherder-host": "treeherder.allizom.org",
+										"perfherder-repo": "mozilla-central",
+										"perfherder-protocol": "https"
+									}
+								}
+							}
+						},
+						"CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+					},
+					"job_name": "win7_x64"
+				}
+			}
+		},
+		"1509002405": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1509002405"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "run-hasal-on-specify-nightly",
+					"task_uid_list": ["2017-10-26_15:20:07.193698.win7_x64.1", "2017-10-26_15:20:07.193698.win7_x64.2"],
+					"utc_timestamp": "1509002410",
+					"topic": "testing-win7",
+					"platform": "win64",
+					"amount": 2,
+					"cmd_config": {
+						"DOWNLOAD_REVISION": "a124f4901430f6db74cfc7fe3b07957a1c691b40",
+						"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+						"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-24-22-03-25-mozilla-central/",
+						"OVERWRITE_HASAL_SUITE_CASE_LIST": ["tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard", "tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard"],
+						"OVERWIRTE_HASAL_CONFIG_CTNT": {
+							"configs": {
+								"index": {
+									"inputLatencyAnimationDctGenerator.json": {}
+								},
+								"firefox": {
+									"obs_on_windows.json": {}
+								},
+								"upload": {
+									"default.json": {
+										"enable": true,
+										"perfherder-secret": "*****",
+										"perfherder-client-id": "*****",
+										"perfherder-host": "treeherder.allizom.org",
+										"perfherder-repo": "mozilla-central",
+										"perfherder-protocol": "https"
+									}
+								}
+							}
+						},
+						"CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+					},
+					"job_name": "win7_x64"
+				}
+			}
+		},
+		"1508985401": {
+			"pulse_trigger": {
+				"100": {
+					"status_code_desc": "Detect new build, push tasks to Pulse MQ",
+					"utc_timestamp": "1508985401"
+				},
+				"900": {
+					"status_code_desc": "Get response from Pulse MQ, successfully complete",
+					"cmd": "run-hasal-on-specify-nightly",
+					"task_uid_list": ["2017-10-26_10:36:43.397704.win7_x64.1", "2017-10-26_10:36:43.397704.win7_x64.2"],
+					"utc_timestamp": "1508985406",
+					"topic": "testing-win7",
+					"platform": "win64",
+					"amount": 2,
+					"cmd_config": {
+						"DOWNLOAD_REVISION": "a124f4901430f6db74cfc7fe3b07957a1c691b40",
+						"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+						"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-24-22-03-25-mozilla-central/",
+						"OVERWRITE_HASAL_SUITE_CASE_LIST": ["tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard", "tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard"],
+						"OVERWIRTE_HASAL_CONFIG_CTNT": {
+							"configs": {
+								"index": {
+									"inputLatencyAnimationDctGenerator.json": {}
+								},
+								"firefox": {
+									"obs_on_windows.json": {}
+								},
+								"upload": {
+									"default.json": {
+										"enable": true,
+										"perfherder-secret": "*****",
+										"perfherder-client-id": "*****",
+										"perfherder-host": "treeherder.allizom.org",
+										"perfherder-repo": "mozilla-central",
+										"perfherder-protocol": "https"
+									}
+								}
+							}
+						},
+						"CHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+					},
+					"job_name": "win7_x64"
+				}
+			}
+		}
+	}
+}

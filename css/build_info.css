@@ -1,0 +1,20 @@
+#title {
+    display: block;
+    font-size: 2.5em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dataTables_wrapper {
+    margin: 0 auto;
+}
+.dataTables_filter {
+    text-align: right;
+}
+
+th { font-size: 18px; }
+td { font-size: 16px; }

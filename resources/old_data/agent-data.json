@@ -1,0 +1,86 @@
+{
+	"interactive": {
+		"1508485380": {
+			"interactive": {
+				"100": {
+					"status_code_desc": "Get command from interactive mode",
+					"utc_timestamp": "1508485380"
+				}
+			}
+		},
+		"1508485586": {
+			"interactive": {
+				"200": {
+					"status_code_desc": "Get command from interactive mode",
+					"utc_timestamp": "1508485587"
+				},
+				"300": {
+					"list-job": {
+						"configs": {},
+						"func-name": "scheduler_list_job",
+						"desc": "list the current jobs"
+					},
+					"status_code_desc": "Execute scheduler realted command",
+					"utc_timestamp": "1508999999",
+                                        "task_uid": "2017-10-25_18:22:43.859478.win7_x64.2"
+				}
+			}
+		},
+		"1508485005": {
+			"interactive": {
+				"100": {
+					"status_code_desc": "Get command from interactive mode",
+					"utc_timestamp": "1508485005"
+				},
+				"900": {
+					"status_code_desc": "Successfully complete",
+					"utc_timestamp": "1508485005"
+				}
+			}
+		},
+		"1508484584": {
+			"interactive": {
+				"300": {
+					"status_code_desc": "Execute scheduler realted command",
+					"help": {
+						"configs": {},
+						"func-name": "list_all_commands",
+						"desc": "list all support commands"
+					},
+					"utc_timestamp": "1508484584"
+				},
+				"100": {
+					"status_code_desc": "Get command from interactive mode",
+					"utc_timestamp": "1508484584"
+				},
+				"900": {
+					"status_code_desc": "Successfully complete",
+					"utc_timestamp": "1508484584",
+                                        "task_uid": "2017-10-26_10:46:14.102753.win7_x64.2"
+				}
+			}
+		},
+		"1508485575": {
+			"interactive": {
+				"300": {
+					"status_code_desc": "Execute scheduler realted command",
+					"help": {
+						"configs": {},
+						"func-name": "list_all_commands",
+						"desc": "list all support commands"
+					},
+					"utc_timestamp": "1508485575"
+				},
+				"100": {
+					"status_code_desc": "Get command from interactive mode",
+					"utc_timestamp": "1508485575",
+                                        "task_uid": "2017-10-26_10:46:14.102753.win7_x64.1"
+				},
+				"900": {
+					"status_code_desc": "Successfully complete",
+					"utc_timestamp": "1508485575"
+				}
+			}
+		}
+	}
+}

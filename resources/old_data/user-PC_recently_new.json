@@ -1,0 +1,884 @@
+{
+	"data": [{
+		"status": [{
+			"status_code_desc": "Get command from interactive mode",
+			"code": "100",
+			"utc_timestamp": "1509611534",
+			"fn_code": "100"
+		}],
+		"type": "interactive",
+		"cmd": "interactive",
+		"start_ts": "1509611534"
+	}, {
+		"status": [{
+			"status_code_desc": "Get command from interactive mode",
+			"code": "100",
+			"utc_timestamp": "1509611586",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Execute scheduler realted command",
+			"code": "300",
+			"help": {
+				"configs": {},
+				"func-name": "list_all_commands",
+				"desc": "list all support commands"
+			},
+			"utc_timestamp": "1509611586",
+			"fn_code": "300"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509611586",
+			"fn_code": "900"
+		}],
+		"type": "interactive",
+		"cmd": "interactive",
+		"start_ts": "1509611586"
+	}, {
+		"status": [{
+			"status_code_desc": "Get command from interactive mode",
+			"code": "100",
+			"utc_timestamp": "1509611590",
+			"fn_code": "100"
+		}],
+		"type": "interactive",
+		"cmd": "interactive",
+		"start_ts": "1509611590"
+	}, {
+		"status": [{
+			"status_code_desc": "Init runtest cmd string",
+			"code": "100",
+			"status_content": "python runtest.py --upload-config C:\\Users\\user\\Hasal\\configs\\upload\\ejenti.json --chrome-config C:\\Users\\user\\Hasal\\configs\\chrome\\ejenti.json --index-config C:\\Users\\user\\Hasal\\configs\\index\\ejenti.json --firefox-config C:\\Users\\user\\Hasal\\configs\\firefox\\ejenti.json --global-config C:\\Users\\user\\Hasal\\configs\\global\\ejenti.json --exec-config C:\\Users\\user\\Hasal\\configs\\exec\\ejenti.json",
+			"utc_timestamp": "1509606431",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606658",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "run_hasal_runtest_cmd",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "pull", "https://github.com/ShakoHo/Hasal.git", "ShakoHo-upload-task-status-to-b2"],
+			"utc_timestamp": "1509606407",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Failed on exeucting the command",
+			"code": "800",
+			"utc_timestamp": "1509606409",
+			"fn_code": "800"
+		}],
+		"type": "pulse",
+		"cmd": "git_pull",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"fn_code": "100-1",
+			"status_code_desc": "Get case information",
+			"code": "100",
+			"utc_timestamp": "1509606555",
+			"case_name": "test_chrome_gmail_ail_compose_new_mail_via_keyboard"
+		}, {
+			"fn_code": "100",
+			"status_code_desc": "Get case information",
+			"code": "100",
+			"utc_timestamp": "1509606442",
+			"case_name": "test_firefox_gmail_ail_compose_new_mail_via_keyboard"
+		}, {
+			"status_code_desc": "Case executed successfully, pass image compare, fps and sikuli round status validation also pass",
+			"code": "200",
+			"utc_timestamp": "1509606652",
+			"fn_code": "200-1"
+		}, {
+			"status_code_desc": "Case executed successfully, pass image compare, fps and sikuli round status validation also pass",
+			"code": "200",
+			"utc_timestamp": "1509606550",
+			"fn_code": "200"
+		}, {
+			"round_status": 0,
+			"status_code_desc": "Sikuli script running status",
+			"code": "300",
+			"utc_timestamp": "1509606612",
+			"fn_code": "300-1"
+		}, {
+			"round_status": 0,
+			"status_code_desc": "Sikuli script running status",
+			"code": "300",
+			"utc_timestamp": "1509606506",
+			"fn_code": "300"
+		}, {
+			"case_exec_time": 96.7649998664856,
+			"code": "600",
+			"status_code_desc": "Case exec time",
+			"utc_timestamp": "1509606652",
+			"fn_code": "600-1"
+		}, {
+			"case_exec_time": 107.63000011444092,
+			"code": "600",
+			"status_code_desc": "Case exec time",
+			"utc_timestamp": "1509606550",
+			"fn_code": "600"
+		}, {
+			"status_code_desc": "Case execute successfully and upload to perfhderder successfully or upload option disabled",
+			"code": "900",
+			"utc_timestamp": "1509606656",
+			"fn_code": "900-1"
+		}, {
+			"status_code_desc": "Case execute successfully and upload to perfhderder successfully or upload option disabled",
+			"code": "900",
+			"utc_timestamp": "1509606550",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "runtest_cmd",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Extract firefox package successfully",
+			"code": "100",
+			"status_content": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip",
+			"utc_timestamp": "1509606430",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Link firefox package successfully",
+			"code": "300",
+			"utc_timestamp": "1509606431",
+			"fn_code": "300"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606431",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "deploy_firefox_pkg",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "checkout", "ShakoHo-upload-task-status-to-b2"],
+			"utc_timestamp": "1509606407",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606407",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "git_checkout",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"code": "100",
+			"job_id": "pulse-1509606401",
+			"input_cmd_str": "",
+			"cmd_obj": {
+				"queue-type": "sync",
+				"configs": {
+					"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+					"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+					"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+					"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+					"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+					"OVERWIRTE_HASAL_CONFIG_CTNT": {
+						"configs": {
+							"index": {
+								"inputLatencyAnimationDctGenerator.json": {}
+							},
+							"firefox": {
+								"obs_on_windows.json": {}
+							},
+							"upload": {
+								"default.json": {
+									"enable": true,
+									"perfherder-secret": "hidden_credential_value",
+									"perfherder-client-id": "hidden_credential_value",
+									"perfherder-host": "treeherder.allizom.org",
+									"perfherder-repo": "mozilla-central",
+									"perfherder-protocol": "https"
+								}
+							}
+						}
+					},
+					"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+					"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+				},
+				"module-path": "tasks.hasalTasks",
+				"desc": "run hasal test on specify nightly, which will include download nightly and deploy it",
+				"func-name": "run_hasal_on_specify_nightly"
+			},
+			"utc_timestamp": "1509606404",
+			"status_code_desc": "Get queue message from sync queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.1",
+			"cmd_pattern": "run-hasal-on-specify-nightly",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606658",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "sync_task_consumer",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"code": "100",
+			"ip": "10.247.120.213",
+			"hostname": "user-PC",
+			"queue_type": "sync",
+			"utc_timestamp": "1509606401",
+			"cmd_configs": {
+				"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+				"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+				"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+				"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+				"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+				"OVERWIRTE_HASAL_CONFIG_CTNT": {
+					"configs": {
+						"index": {
+							"inputLatencyAnimationDctGenerator.json": {}
+						},
+						"firefox": {
+							"obs_on_windows.json": {}
+						},
+						"upload": {
+							"default.json": {
+								"enable": true,
+								"perfherder-secret": "hidden_credential_value",
+								"perfherder-client-id": "hidden_credential_value",
+								"perfherder-host": "treeherder.allizom.org",
+								"perfherder-repo": "mozilla-central",
+								"perfherder-protocol": "https"
+							}
+						}
+					}
+				},
+				"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+				"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+			},
+			"topic": "win7",
+			"platform": "win32",
+			"status_code_desc": "Get message from pulse queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.1",
+			"cmd_name": "run-hasal-on-specify-nightly",
+			"fn_code": "100"
+		}, {
+			"code": "200",
+			"job_id": "pulse-1509606401",
+			"input_cmd_str": "",
+			"cmd_obj": {
+				"queue-type": "sync",
+				"configs": {
+					"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+					"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+					"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+					"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+					"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+					"OVERWIRTE_HASAL_CONFIG_CTNT": {
+						"configs": {
+							"index": {
+								"inputLatencyAnimationDctGenerator.json": {}
+							},
+							"firefox": {
+								"obs_on_windows.json": {}
+							},
+							"upload": {
+								"default.json": {
+									"enable": true,
+									"perfherder-secret": "hidden_credential_value",
+									"perfherder-client-id": "hidden_credential_value",
+									"perfherder-host": "treeherder.allizom.org",
+									"perfherder-repo": "mozilla-central",
+									"perfherder-protocol": "https"
+								}
+							}
+						}
+					},
+					"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+					"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+				},
+				"module-path": "tasks.hasalTasks",
+				"desc": "run hasal test on specify nightly, which will include download nightly and deploy it",
+				"func-name": "run_hasal_on_specify_nightly"
+			},
+			"utc_timestamp": "1509606404",
+			"status_code_desc": "Put message into local queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.1",
+			"cmd_pattern": "run-hasal-on-specify-nightly",
+			"fn_code": "200"
+		}, {
+			"status_code_desc": {
+				"900": "Successfully complete",
+				"800": "Failed on exeucting the command",
+				"100": "Prepare to execute the command"
+			},
+			"code": "900",
+			"utc_timestamp": "1509606405",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "pulse",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Download specify nightly build, init download url",
+			"code": "100",
+			"status_content": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+			"utc_timestamp": "1509606409",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Download build succssfully",
+			"code": "400",
+			"status_content": ["C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip", "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.json"],
+			"utc_timestamp": "1509606426",
+			"fn_code": "400"
+		}, {
+			"code": "600",
+			"PERFHERDER-REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+			"utc_timestamp": "1509606426",
+			"FX-DL-JSON-PATH": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.json",
+			"status_code_desc": "Parse fx pkg json file successfully",
+			"PERFHERDER-PKG-PLATFORM": "windows8-64",
+			"fn_code": "600",
+			"FX-DL-PACKAGE-PATH": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip",
+			"output_dp": "C:\\Users\\user\\Hasal"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606426",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "download_nightly",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "reset", "--hard", "HEAD"],
+			"utc_timestamp": "1509606407",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606407",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "git_reset",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Get Hasal repo path",
+			"code": "100",
+			"status_content": "C:\\Users\\user\\Hasal",
+			"utc_timestamp": "1509606431",
+			"fn_code": "100"
+		}, {
+			"configs": {
+				"index": {
+					"inputLatencyAnimationDctGenerator.json": {}
+				},
+				"firefox": {
+					"obs_on_windows.json": {}
+				},
+				"exec": {
+					"default.json": {
+						"exec-suite-fp": "C:\\Users\\user\\Hasal\\ejenti.suite",
+						"status-job-id": "pulse-1509606401"
+					}
+				},
+				"chrome": {
+					"default.json": {}
+				},
+				"global": {
+					"default.json": {}
+				},
+				"upload": {
+					"default.json": {
+						"enable": true,
+						"perfherder-revision": "515407ebfa1433c31144374313bbfd8b942af41c",
+						"perfherder-secret": "hidden_credential_value",
+						"perfherder-client-id": "hidden_credential_value",
+						"perfherder-host": "treeherder.allizom.org",
+						"perfherder-pkg-platform": "windows8-64",
+						"perfherder-repo": "mozilla-central",
+						"perfherder-protocol": "https"
+					}
+				}
+			},
+			"code": "200",
+			"status_code_desc": "Merge default and user input config into one object",
+			"utc_timestamp": "1509606431",
+			"fn_code": "200"
+		}, {
+			"code": "300",
+			"C:\\Users\\user\\Hasal\\configs\\firefox\\obs_on_windows.json": {},
+			"C:\\Users\\user\\Hasal\\configs\\chrome\\default.json": {},
+			"C:\\Users\\user\\Hasal\\configs\\exec\\default.json": {
+				"exec-suite-fp": "C:\\Users\\user\\Hasal\\ejenti.suite",
+				"status-job-id": "pulse-1509606401"
+			},
+			"C:\\Users\\user\\Hasal\\configs\\upload\\default.json": {
+				"enable": true,
+				"perfherder-revision": "515407ebfa1433c31144374313bbfd8b942af41c",
+				"perfherder-secret": "hidden_credential_value",
+				"perfherder-client-id": "hidden_credential_value",
+				"perfherder-host": "treeherder.allizom.org",
+				"perfherder-pkg-platform": "windows8-64",
+				"perfherder-repo": "mozilla-central",
+				"perfherder-protocol": "https"
+			},
+			"C:\\Users\\user\\Hasal\\configs\\index\\inputLatencyAnimationDctGenerator.json": {},
+			"status_code_desc": "Generate config path and content obj mapping",
+			"utc_timestamp": "1509606431",
+			"C:\\Users\\user\\Hasal\\configs\\global\\default.json": {},
+			"fn_code": "300"
+		}, {
+			"--upload-config": "C:\\Users\\user\\Hasal\\configs\\upload\\ejenti.json",
+			"--chrome-config": "C:\\Users\\user\\Hasal\\configs\\chrome\\ejenti.json",
+			"--index-config": "C:\\Users\\user\\Hasal\\configs\\index\\ejenti.json",
+			"--firefox-config": "C:\\Users\\user\\Hasal\\configs\\firefox\\ejenti.json",
+			"utc_timestamp": "1509606431",
+			"--global-config": "C:\\Users\\user\\Hasal\\configs\\global\\ejenti.json",
+			"status_code_desc": "Generate runtest.py command parameters mapping",
+			"code": "400",
+			"--exec-config": "C:\\Users\\user\\Hasal\\configs\\exec\\ejenti.json",
+			"fn_code": "400"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606431",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "generate_hasal_config",
+		"start_ts": "1509606401"
+	}, {
+		"status": [{
+			"status_code_desc": "Init runtest cmd string",
+			"code": "100",
+			"status_content": "python runtest.py --upload-config C:\\Users\\user\\Hasal\\configs\\upload\\ejenti.json --chrome-config C:\\Users\\user\\Hasal\\configs\\chrome\\ejenti.json --index-config C:\\Users\\user\\Hasal\\configs\\index\\ejenti.json --firefox-config C:\\Users\\user\\Hasal\\configs\\firefox\\ejenti.json --global-config C:\\Users\\user\\Hasal\\configs\\global\\ejenti.json --exec-config C:\\Users\\user\\Hasal\\configs\\exec\\ejenti.json",
+			"utc_timestamp": "1509606665",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606886",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "run_hasal_runtest_cmd",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "pull", "https://github.com/ShakoHo/Hasal.git", "ShakoHo-upload-task-status-to-b2"],
+			"utc_timestamp": "1509606660",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Failed on exeucting the command",
+			"code": "800",
+			"utc_timestamp": "1509606662",
+			"fn_code": "800"
+		}],
+		"type": "pulse",
+		"cmd": "git_pull",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"fn_code": "100-1",
+			"status_code_desc": "Get case information",
+			"code": "100",
+			"utc_timestamp": "1509606773",
+			"case_name": "test_chrome_gmail_ail_compose_new_mail_via_keyboard"
+		}, {
+			"fn_code": "100",
+			"status_code_desc": "Get case information",
+			"code": "100",
+			"utc_timestamp": "1509606676",
+			"case_name": "test_firefox_gmail_ail_compose_new_mail_via_keyboard"
+		}, {
+			"status_code_desc": "Case executed successfully, pass image compare, fps and sikuli round status validation also pass",
+			"code": "200",
+			"utc_timestamp": "1509606878",
+			"fn_code": "200-1"
+		}, {
+			"status_code_desc": "Case executed successfully, pass image compare, fps and sikuli round status validation also pass",
+			"code": "200",
+			"utc_timestamp": "1509606770",
+			"fn_code": "200"
+		}, {
+			"round_status": 0,
+			"status_code_desc": "Sikuli script running status",
+			"code": "300",
+			"utc_timestamp": "1509606831",
+			"fn_code": "300-1"
+		}, {
+			"round_status": 0,
+			"status_code_desc": "Sikuli script running status",
+			"code": "300",
+			"utc_timestamp": "1509606737",
+			"fn_code": "300"
+		}, {
+			"case_exec_time": 104.69400000572205,
+			"code": "600",
+			"status_code_desc": "Case exec time",
+			"utc_timestamp": "1509606878",
+			"fn_code": "600-1"
+		}, {
+			"case_exec_time": 93.8989999294281,
+			"code": "600",
+			"status_code_desc": "Case exec time",
+			"utc_timestamp": "1509606770",
+			"fn_code": "600"
+		}, {
+			"status_code_desc": "Case execute successfully and upload to perfhderder successfully or upload option disabled",
+			"code": "900",
+			"utc_timestamp": "1509606883",
+			"fn_code": "900-1"
+		}, {
+			"status_code_desc": "Case execute successfully and upload to perfhderder successfully or upload option disabled",
+			"code": "900",
+			"utc_timestamp": "1509606770",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "runtest_cmd",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Extract firefox package successfully",
+			"code": "100",
+			"status_content": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip",
+			"utc_timestamp": "1509606665",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Link firefox package successfully",
+			"code": "300",
+			"utc_timestamp": "1509606665",
+			"fn_code": "300"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606665",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "deploy_firefox_pkg",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "checkout", "ShakoHo-upload-task-status-to-b2"],
+			"utc_timestamp": "1509606660",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606660",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "git_checkout",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"code": "100",
+			"job_id": "pulse-1509606405",
+			"input_cmd_str": "",
+			"cmd_obj": {
+				"queue-type": "sync",
+				"configs": {
+					"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+					"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+					"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+					"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+					"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+					"OVERWIRTE_HASAL_CONFIG_CTNT": {
+						"configs": {
+							"index": {
+								"inputLatencyAnimationDctGenerator.json": {}
+							},
+							"firefox": {
+								"obs_on_windows.json": {}
+							},
+							"upload": {
+								"default.json": {
+									"enable": true,
+									"perfherder-secret": "hidden_credential_value",
+									"perfherder-client-id": "hidden_credential_value",
+									"perfherder-host": "treeherder.allizom.org",
+									"perfherder-repo": "mozilla-central",
+									"perfherder-protocol": "https"
+								}
+							}
+						}
+					},
+					"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+					"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+				},
+				"module-path": "tasks.hasalTasks",
+				"desc": "run hasal test on specify nightly, which will include download nightly and deploy it",
+				"func-name": "run_hasal_on_specify_nightly"
+			},
+			"utc_timestamp": "1509606659",
+			"status_code_desc": "Get queue message from sync queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.2",
+			"cmd_pattern": "run-hasal-on-specify-nightly",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606886",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "sync_task_consumer",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"code": "100",
+			"ip": "10.247.120.213",
+			"hostname": "user-PC",
+			"queue_type": "sync",
+			"utc_timestamp": "1509606405",
+			"cmd_configs": {
+				"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+				"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+				"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+				"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+				"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+				"OVERWIRTE_HASAL_CONFIG_CTNT": {
+					"configs": {
+						"index": {
+							"inputLatencyAnimationDctGenerator.json": {}
+						},
+						"firefox": {
+							"obs_on_windows.json": {}
+						},
+						"upload": {
+							"default.json": {
+								"enable": true,
+								"perfherder-secret": "hidden_credential_value",
+								"perfherder-client-id": "hidden_credential_value",
+								"perfherder-host": "treeherder.allizom.org",
+								"perfherder-repo": "mozilla-central",
+								"perfherder-protocol": "https"
+							}
+						}
+					}
+				},
+				"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+				"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+			},
+			"topic": "win7",
+			"platform": "win32",
+			"status_code_desc": "Get message from pulse queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.2",
+			"cmd_name": "run-hasal-on-specify-nightly",
+			"fn_code": "100"
+		}, {
+			"code": "200",
+			"job_id": "pulse-1509606405",
+			"input_cmd_str": "",
+			"cmd_obj": {
+				"queue-type": "sync",
+				"configs": {
+					"XCHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/Mozilla-TWQA/Hasal.git",
+					"CHECKOUT_LATEST_CODE_REMOTE_URL": "https://github.com/ShakoHo/Hasal.git",
+					"DOWNLOAD_REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+					"DOWNLOAD_PKG_DIR_URL": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+					"CHECKOUT_LATEST_CODE_BRANCH_NAME": "ShakoHo-upload-task-status-to-b2",
+					"OVERWIRTE_HASAL_CONFIG_CTNT": {
+						"configs": {
+							"index": {
+								"inputLatencyAnimationDctGenerator.json": {}
+							},
+							"firefox": {
+								"obs_on_windows.json": {}
+							},
+							"upload": {
+								"default.json": {
+									"enable": true,
+									"perfherder-secret": "hidden_credential_value",
+									"perfherder-client-id": "hidden_credential_value",
+									"perfherder-host": "treeherder.allizom.org",
+									"perfherder-repo": "mozilla-central",
+									"perfherder-protocol": "https"
+								}
+							}
+						}
+					},
+					"OVERWRITE_HASAL_SUITE_CASE_LIST": "tests.regression.gmail.test_firefox_gmail_ail_compose_new_mail_via_keyboard,tests.regression.gmail.test_chrome_gmail_ail_compose_new_mail_via_keyboard",
+					"XCHECKOUT_LATEST_CODE_BRANCH_NAME": "dev"
+				},
+				"module-path": "tasks.hasalTasks",
+				"desc": "run hasal test on specify nightly, which will include download nightly and deploy it",
+				"func-name": "run_hasal_on_specify_nightly"
+			},
+			"utc_timestamp": "1509606410",
+			"status_code_desc": "Put message into local queue",
+			"task_uid": "2017-11-02_15:05:18.987994.win7_x64.2",
+			"cmd_pattern": "run-hasal-on-specify-nightly",
+			"fn_code": "200"
+		}, {
+			"status_code_desc": {
+				"900": "Successfully complete",
+				"800": "Failed on exeucting the command",
+				"100": "Prepare to execute the command"
+			},
+			"code": "900",
+			"utc_timestamp": "1509606411",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "pulse",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Download specify nightly build, init download url",
+			"code": "100",
+			"status_content": "https://archive.mozilla.org/pub/firefox/nightly/2017/10/2017-10-30-10-36-05-mozilla-central/",
+			"utc_timestamp": "1509606662",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Download build succssfully",
+			"code": "400",
+			"status_content": ["C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip", "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.json"],
+			"utc_timestamp": "1509606662",
+			"fn_code": "400"
+		}, {
+			"code": "600",
+			"PERFHERDER-REVISION": "515407ebfa1433c31144374313bbfd8b942af41c",
+			"utc_timestamp": "1509606662",
+			"FX-DL-JSON-PATH": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.json",
+			"status_code_desc": "Parse fx pkg json file successfully",
+			"PERFHERDER-PKG-PLATFORM": "windows8-64",
+			"fn_code": "600",
+			"FX-DL-PACKAGE-PATH": "C:\\Users\\user\\Hasal\\firefox-58.0a1.en-US.win64.zip",
+			"output_dp": "C:\\Users\\user\\Hasal"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606662",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "download_nightly",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Prepare to execute the command",
+			"code": "100",
+			"status_content": ["git", "reset", "--hard", "HEAD"],
+			"utc_timestamp": "1509606659",
+			"fn_code": "100"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606660",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "git_reset",
+		"start_ts": "1509606405"
+	}, {
+		"status": [{
+			"status_code_desc": "Get Hasal repo path",
+			"code": "100",
+			"status_content": "C:\\Users\\user\\Hasal",
+			"utc_timestamp": "1509606665",
+			"fn_code": "100"
+		}, {
+			"configs": {
+				"index": {
+					"inputLatencyAnimationDctGenerator.json": {}
+				},
+				"firefox": {
+					"obs_on_windows.json": {}
+				},
+				"exec": {
+					"default.json": {
+						"exec-suite-fp": "C:\\Users\\user\\Hasal\\ejenti.suite",
+						"status-job-id": "pulse-1509606405"
+					}
+				},
+				"chrome": {
+					"default.json": {}
+				},
+				"global": {
+					"default.json": {}
+				},
+				"upload": {
+					"default.json": {
+						"enable": true,
+						"perfherder-revision": "515407ebfa1433c31144374313bbfd8b942af41c",
+						"perfherder-secret": "hidden_credential_value",
+						"perfherder-client-id": "hidden_credential_value",
+						"perfherder-host": "treeherder.allizom.org",
+						"perfherder-pkg-platform": "windows8-64",
+						"perfherder-repo": "mozilla-central",
+						"perfherder-protocol": "https"
+					}
+				}
+			},
+			"code": "200",
+			"status_code_desc": "Merge default and user input config into one object",
+			"utc_timestamp": "1509606665",
+			"fn_code": "200"
+		}, {
+			"code": "300",
+			"C:\\Users\\user\\Hasal\\configs\\firefox\\obs_on_windows.json": {},
+			"C:\\Users\\user\\Hasal\\configs\\chrome\\default.json": {},
+			"C:\\Users\\user\\Hasal\\configs\\exec\\default.json": {
+				"exec-suite-fp": "C:\\Users\\user\\Hasal\\ejenti.suite",
+				"status-job-id": "pulse-1509606405"
+			},
+			"C:\\Users\\user\\Hasal\\configs\\upload\\default.json": {
+				"enable": true,
+				"perfherder-revision": "515407ebfa1433c31144374313bbfd8b942af41c",
+				"perfherder-secret": "hidden_credential_value",
+				"perfherder-client-id": "hidden_credential_value",
+				"perfherder-host": "treeherder.allizom.org",
+				"perfherder-pkg-platform": "windows8-64",
+				"perfherder-repo": "mozilla-central",
+				"perfherder-protocol": "https"
+			},
+			"C:\\Users\\user\\Hasal\\configs\\index\\inputLatencyAnimationDctGenerator.json": {},
+			"status_code_desc": "Generate config path and content obj mapping",
+			"utc_timestamp": "1509606665",
+			"C:\\Users\\user\\Hasal\\configs\\global\\default.json": {},
+			"fn_code": "300"
+		}, {
+			"--upload-config": "C:\\Users\\user\\Hasal\\configs\\upload\\ejenti.json",
+			"--chrome-config": "C:\\Users\\user\\Hasal\\configs\\chrome\\ejenti.json",
+			"--index-config": "C:\\Users\\user\\Hasal\\configs\\index\\ejenti.json",
+			"--firefox-config": "C:\\Users\\user\\Hasal\\configs\\firefox\\ejenti.json",
+			"utc_timestamp": "1509606665",
+			"--global-config": "C:\\Users\\user\\Hasal\\configs\\global\\ejenti.json",
+			"status_code_desc": "Generate runtest.py command parameters mapping",
+			"code": "400",
+			"--exec-config": "C:\\Users\\user\\Hasal\\configs\\exec\\ejenti.json",
+			"fn_code": "400"
+		}, {
+			"status_code_desc": "Successfully complete",
+			"code": "900",
+			"utc_timestamp": "1509606665",
+			"fn_code": "900"
+		}],
+		"type": "pulse",
+		"cmd": "generate_hasal_config",
+		"start_ts": "1509606405"
+	}]
+}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Ejenti Dashboard - Agents</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link href="https://cdn.datatables.net/responsive/2.2.0/css/responsive.dataTables.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Local Common JS/CSS Library by Walter -->
+    <link href="css\common.css" rel="stylesheet" type="text/css">
+    <script src="js\common.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js"></script>
+
+    <!-- Localforage : Caching downloaded data-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.4.0/localforage.min.js"></script>
+    <script src="js\cachedFetch.js"></script>
+
+</head>
+
+<body>
+
+    <div id="title"></div>
+
+    <div class="alert alert-success" style="font-size:18px; width: 80%; margin:0px auto;">
+        <ul>
+            <li>Machine IP: <label id="machine_ip"></label> </li>
+            <li>Machine Host Name: <label id="machine_host_name"></label> </li>
+            <li>Disk Usage: <label id="used_space"></label> </li>
+            <li>Number of latest status as 700s (within 24 hours): <label id="stat700"></label> </li>
+            <li>Number of latest status as 900 but having 700s (within 24 hours): <label id="stat900with700"></label> </li>
+        </ul>
+    </div>
+    <br/>
+
+    <div id="notification" class="alert alert-warning alert-dismissable" style="font-size:18px; width: 80%; margin:0px auto;">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        This is a public information.
+    </div>
+    <br/>
+
+    <!-- Get Agent Name as Title -->
+    <script>
+        document.getElementById("title").innerText = agent_name;
+        document.title = "Ejenti Dashboard : " + agent_name;
+    </script>
+
+    <div class="panel panel-info" style="width: 80%; margin:0px auto;">
+        <div class="panel-body">
+            <!-- Main Table -->
+            <table id="dataTables" class="table table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Type</th>
+                        <th>Command</th>
+                        <th>Start Time</th>
+                        <th>Latest Updated</th>
+                        <th>Task Status</th>
+                        <th>Task Description</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <br />
+
+    <div class="col-lg-3.5" style="float: right; margin-right:9.2%;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="fa fa-refresh fa-fw"></i> Page Refreshed Time: <label><script>document.write(new Date());</script></label><br />
+                <i class="fa fa-clock-o fa-fw"></i> Data Acquired Time: <label id="data_acquired_time"></label> <br />
+            </div>
+            <!-- /.panel-heading -->
+        </div>
+    </div>
+
+    <script>
+        $('body').block( {  
+            message : '<h1> Loading Data from Remote ... </h1>',
+            css : {  
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                opacity: .5,
+                color: '#fff',
+                position: 'fixed',
+                margin: 'auto'
+            },
+            centerY: false,
+            centerX: false
+        });
+    </script>
+
+    <!-- load agent data and translated to new object format-->
+    <script>
+
+        // Load Cached Data : Agents List
+        var current_timestamp = Date.now();
+        // var agents_list_url = "https://gist.githubusercontent.com/mozhasalstatus/cf4b97a3273e2f3117211a3663928133/raw/file_name_list.json?" + parseInt(current_timestamp/500000);
+        var agents_list_url = "https://gist.githubusercontent.com/mozhasalstatus/23c1d64642e5838900c01a3ccbbaee7c/raw/file_name_list.json?" + parseInt(current_timestamp/500000);
+        var cached_agents_list = cachedFetch(agents_list_url);
+        var data_acquired_time = getCachedTime(agents_list_url);
+
+        // Wait for document loaded and set data acquired time
+        $(document).ready(function() {
+            data_acquired_time.then(function(timestamp){
+                document.getElementById("data_acquired_time").innerText = new Date(timestamp);
+            });
+        });
+
+        var cached_data;
+        var agent_info_data;
+
+        cached_agents_list.then(function(input){
+            if (Object.keys(input).indexOf(agent_name) >= 0) {
+                console.log(page + ": " + agent_name + " found in agent list.");
+                cached_data = cachedFetch(input[agent_name]["recently"]["raw_url"]);
+                agent_info_data = cachedFetch(input[agent_name]["info"]["raw_url"]);
+            } else {
+                console.log(page + ": " + agent_name + " not found in agent list.");
+                return;
+            }
+
+            // wait till fulfilled and started to handle machine information data
+            agent_info_data.then(function(machine_info){
+                console.log(page + ": got machine information data for processing");
+                let info = machine_info.system_info_monitor;
+
+                $(document).ready(function() {
+                    document.getElementById("machine_ip").innerText = info.get_host_ip.status_content;
+                    document.getElementById("machine_host_name").innerText = info.get_host_name.status_content;
+                    document.getElementById("used_space").innerText = info.disk_usage_monitor.status_content + "%";
+                });
+            });
+
+            // wait till fulfilled and started to handle agent data
+            cached_data.then(function(wrapped_data){
+                console.log(page + ": got cached data for processing");
+                var data = wrapped_data.data;
+
+                $(document).ready(function() {
+                    let counter_700 = 0;
+                    let counter_900but700 = 0;
+                    // Transfer to array for main table to be constructed
+                    var final_table = jQuery.map(data, function(dt, i) {
+                        let latest_status = dt.status.getMax("code");
+                        let start_datime = new Date(parseInt(dt.start_ts*1000)).toUTCString("en-US");
+                        let last_datime = new Date(parseInt(latest_status.utc_timestamp*1000)).toUTCString("en-US");
+                        let counter = {};
+
+                        let latest_status_code_desc = "";
+                        if (latest_status.status_code_desc) {
+                            latest_status_code_desc = latest_status.status_code_desc;
+                        }
+
+                        //special handler for "runtest_cmd"
+                        let latest_status_code = latest_status.code;
+                        if(dt.cmd == "runtest_cmd") {
+                            result = dt.status.filter(item => ((item.code >= 700) && (item.code < 800)) && ( Date.now() - item.utc_timestamp*1000 <= 1000 * 60 * 60 * 24));
+                            if(result.length > 0) {
+                                if((latest_status.code >= 700) && (latest_status.code < 800)) {
+                                    counter_700 = counter_700 + 1;
+                                } else if(latest_status.code == 900) {
+                                    counter_900but700 = counter_900but700 + 1;
+                                    latest_status_code = "900/700";
+                                }
+                            }
+                        }
+
+                        return [["", dt.type, dt.cmd, start_datime, last_datime, "[" + latest_status_code + "]", latest_status_code_desc, dt]];
+                    });
+                    document.getElementById("stat700").innerText = counter_700;
+                    document.getElementById("stat900with700").innerText = counter_900but700;
+                    
+
+                    // Entry point of agent data
+                    var table = $('#dataTables').DataTable({
+                        "aaData": final_table,
+                        "aoColumns": [
+                             {
+                                 "className":      "details-control",
+                                 "orderable":      false,
+                                 "data":           null,
+                                 "defaultContent": '<i class="fa fa-hand-o-right fa-fw fa-1x" style="text-align:center;"></i>'
+                             },
+                             { "sTitle": "Type" },
+                             { "sTitle": "Command" },
+                             { "sTitle": "Start Time" },
+                             { "sTitle": "Latest Updated" },
+                             { "sTitle": "Status", "sClass": "more" },
+                             { "sTitle": "Task Description"},
+                             { "sTitle": "Data Set", "bVisible": false }
+                        ]
+                    });
+
+                    // Disabled Jquery blockUI
+                    $.unblockUI();
+
+                    // Subarea: Detailed data
+                    function format ( input_data ) {
+                        // check if (Type, Command, Start Time) pair is correct
+                        var filtered_data = data.filter((obj) => (obj.type == input_data[1]) && (obj.cmd == input_data[2]) 
+                                                                        && ((new Date(parseInt(obj.start_ts*1000)).toUTCString("en-US")) == input_data[3]));
+                        var title = "<div style='font-weight: bold;'>Details Data:</div>";
+                        var content = "";
+                        var status = filtered_data[0]['status'];
+
+                        for(var i = status.length - 1; i >= 0; i--) {
+                            // Using toString() will return local time
+                            dtime = new Date(parseInt(status[i].utc_timestamp*1000)).toUTCString("en-US");
+                            content += "<li>" + status[i].code + " (" + status[i].status_code_desc + ") in " + dtime;
+                        }
+                        return '<div class="shown_table" style="background-color: lightgrey;">' + title + '<ul>' + content + '</ul>' + '</div>';
+                    };
+
+                    // Add event listener for opening and closing details
+                    $('#dataTables tbody').on('click', 'td.details-control', function () {
+                        var tr = $(this).closest('tr');
+                        var row = table.row( tr );
+
+                        if ( row.child.isShown() ) {
+                            // This row is already open - close it
+                            row.child.hide();
+                            tr.removeClass('shown');
+                        } else {
+                            // Hide all shown details
+                            console.log(page + ": hide shown columns")
+                            $(".shown_table").parent().hide();
+                            $(".shown").removeClass('shown');
+                            // Open detailed data for selected column
+                            console.log(page + ": show selected column");
+                            row.child( format(row.data()) ).show();
+                            tr.addClass('shown');
+                        }
+                    });
+
+                    // Add event listener for getting detailed status
+                    $('#dataTables tbody').on('click', '.more', function () {
+                        console.log(page + ": getting detailed status from data in the row");
+                        current_table_data = table.row($(this).parent()).data();
+                        detailed_status = current_table_data[current_table_data.length-1]["status"];
+
+                        // open a popup window
+                        console.log(page + ": open a popup window for status to be output");
+                        var win = window.open("statusInfo", "statusInfo", "width=600, height=400");
+                        var doc = win.document;
+                        doc.open("application/json");
+
+                        // sort by time first and then sort by status code
+                        console.log(page + ": sort the status before output it");
+                        ordered_status = detailed_status.slice(0);
+                        ordered_status.sort(function(a, b) { 
+                            // if time is the same, sort by status code
+                            if (b.utc_timestamp == a.utc_timestamp) {
+                                return b.code - a.code;
+                            } else {
+                                return b.utc_timestamp - a.utc_timestamp;
+                            }
+                        });
+
+                        // out put the status in JSON format with indent 4
+                        doc.write(JSON.stringify(ordered_status, null, 4));
+                        doc.close();
+                        win.focus();
+                    });
+    
+                });
+
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>
