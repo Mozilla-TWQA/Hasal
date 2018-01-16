@@ -1,6 +1,6 @@
 {
   "max-run"      : 1,
-  "max-retry"    : 1,
+  "max-retry"    : 3,
   "advance"      : false,
   "keep-browser" : false,
   "comment"      : "<today>",
