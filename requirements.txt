@@ -30,4 +30,4 @@ runipy==0.1.5
 
 # When we replace the old agent by ejenti, then we can remove following package
 APScheduler==3.3.1
-web.py==0.38
+web.py==0.39
