@@ -1,5 +1,5 @@
 theano==0.8.2
-numpy==1.13.1
+numpy==1.17.1
 oauth2client==3.0.0
 google-api-python-client==1.5.3
 PyDrive==1.0.1
