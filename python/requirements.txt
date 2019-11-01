@@ -14,5 +14,5 @@ jsonschema==2.6.0
 -e python/tidy
 
 # For commonUtil.py
-requests==2.18.4
+requests==2.22.0
 tqdm==4.15.0
