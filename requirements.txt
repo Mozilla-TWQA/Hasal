@@ -14,7 +14,7 @@ selenium==3.0.2
 jsonschema==2.6.0
 geckoprofiler_controller==0.0.4
 requests==2.24.0
-lxml==4.0.0
+lxml==4.6.1
 psutil==5.7.3
 beautifulsoup4==4.6.0
 html5lib>=0.999
